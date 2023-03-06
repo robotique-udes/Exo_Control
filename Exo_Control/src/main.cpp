@@ -5,11 +5,34 @@
 #include "test.h"
 #include "touchScreen.h"
 
+
+#define IN1  4
+
+#define IN2 3
+
+#define EN 2
+
+#define CT A11
+
 void setup() {
-  // put your setup code here, to run once:
+  
+  Serial.begin(9600);
+  nexInit();  
+  
+  pinMode(31 , INPUT_PULLUP);
+
+  pinMode(34 , INPUT_PULLUP);
+
+  pinMode(EN , OUTPUT);
+
+  pinMode(IN1 , OUTPUT);
+
+  pinMode(IN2 , OUTPUT);
+
+  pinMode(CT, INPUT);
 }
 
 void loop() {
-    nexLoop(nex_listen_list);
-  // put your main code here, to run repeatedly:
+    //nextLoop();
+
 }

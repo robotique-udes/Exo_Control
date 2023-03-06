@@ -1,52 +1,17 @@
 #include "motorControl.h"
 
-int IN1 = 4;
 
-int IN2 = 3;
+Motor::Motor()
+{}
 
-int EN = 2;
-
-int CT = A11;
-
-float CTval=0.0;
-
-float current=0.0;
-
-ExponentialFilter<float> FilteredCurrent(7, 0);
-
-float Acurrent;
-
+Motor::~Motor()
+{}
 
 //Servo MonServo;
 
 
 
-void setup() {
-
-
-
-  Serial.begin(9600);
-
-  pinMode(31 , INPUT_PULLUP);
-
-  pinMode(34 , INPUT_PULLUP);
-
-  pinMode(EN , OUTPUT);
-
-  pinMode(IN1 , OUTPUT);
-
-  pinMode(IN2 , OUTPUT);
-
-  pinMode(CT, INPUT);
-
-
-
-
-}
-
-
-
-void loop() {
+bool Motor::stopMotor(int cap) {
 
   //Serial.println(digitalRead(31));
 
