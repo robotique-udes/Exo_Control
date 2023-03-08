@@ -1,3 +1,5 @@
+#ifndef MOTORCONTROL_H
+#define MOTORCONTROL_H
 #include <Arduino.h>
 #include <MegunoLink.h>
 #include <filter.h>
@@ -28,6 +30,11 @@ class Motor
         Motor();
         ~Motor();
 
+        void motorSetSpeed(int val);
+        void motorOn();
+        void motorOff();
         bool stopMotor(int cap);
 
 };
+
+#endif 

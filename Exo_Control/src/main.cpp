@@ -6,13 +6,16 @@
 #include "touchScreen.h"
 
 SoftwareSerial nextion(2, 3);
+
 #define IN1  4
-
 #define IN2 3
-
 #define EN 2
-
 #define CT A11
+#define neutral 0
+#define auto 1
+#define manuel 2
+
+Screen ecran;
 
 void setup() {
   
@@ -30,11 +33,11 @@ void setup() {
   pinMode(IN2 , OUTPUT);
 
   pinMode(CT, INPUT);
+Serial.println("Ini motor exo----------");
 
-  
 }
 
-void loop() {
-    //nextLoop();
-
+void loop() 
+{
+    ecran.nextLoop();
 }

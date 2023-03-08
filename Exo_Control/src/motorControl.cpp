@@ -64,3 +64,23 @@ else{
 
 return true;
 }
+
+void Motor::motorSetSpeed(int val)
+{
+    digitalWrite(IN2 , HIGH);
+    digitalWrite(IN1 , LOW);
+    analogWrite(EN , val);
+}
+
+void Motor::motorOn()
+{
+    digitalWrite(IN2 , HIGH);
+    digitalWrite(IN1 , LOW);
+    analogWrite(EN , 150);
+}
+void Motor::motorOff()
+{
+    digitalWrite(IN2 , HIGH);
+    digitalWrite(IN1 , LOW);
+    analogWrite(EN , 0);
+}

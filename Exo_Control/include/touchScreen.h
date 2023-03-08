@@ -7,6 +7,7 @@
 #include <SoftwareSerial.h>
 #include <SD.h>
 #include <string.h>
+#include "motorControl.h"
 using namespace std;
 #define neutral 0;
 #define auto 1;
@@ -16,8 +17,8 @@ using namespace std;
 class Screen
 {
     private:
-        static int mode;
 
+        static Motor moteur01;
         //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
         static NexButton bON; // STATE ON
         static NexButton bOFF; // STATE OFF
@@ -40,10 +41,6 @@ class Screen
 
         //---------------------------------------TEXTES--------------------------------------------
         static NexText t0; //TEXTE STATE
-
-        //---------------------------------------NOTIFS--------------------------------------------
-
-
         //---------------------------------------FONCTIONS-----------------------------------------
         static void StateON(void *ptr);
 
@@ -88,7 +85,7 @@ class Screen
 
         static void GoosePage(void *ptr);
 
-        static void nextLoop();
+
 
         static NexTouch *nex_listen_list[];
 
@@ -97,7 +94,8 @@ class Screen
         Screen();
         ~Screen();
 
-
+        static void nextLoop();
+        static int mode;
 
 };
 

@@ -15,6 +15,9 @@ NexButton Screen::bROBOT_page = NexButton(0, 7, "b3") = NexButton(1, 3, "b3") = 
 NexButton Screen::bSETTINGS_page = NexButton(0, 8, "b4") = NexButton(1, 4, "b4") = NexButton(2, 4, "b4") = NexButton(3, 4, "b4"); //Page 2
 NexButton Screen::bGOOSE_page = NexButton(0, 9, "b5") = NexButton(1, 5, "b5") = NexButton(2, 5, "b5") = NexButton(3, 5, "b5"); //Page 3
 NexText Screen::t0 = NexText(0, 3, "t0");
+Motor Screen::moteur01;
+
+int Screen::mode = 0;
 
 NexTouch *Screen::nex_listen_list[] = { //notif quand appele
 
@@ -40,6 +43,7 @@ NexTouch *Screen::nex_listen_list[] = { //notif quand appele
 
 Screen::Screen()
 {
+
   bMAIN_page.attachPush(MainPage, &bMAIN_page);
   bROBOT_page.attachPush(RobotPage, &bROBOT_page);
 
@@ -76,7 +80,8 @@ Screen::~Screen(){}
 //---------------------------------------STATE--------------------------------------------
 //STATE AUTO (1)
 void Screen::StateON(void *ptr)
-{  
+{ 
+  moteur01.motorOn(); 
   Serial.print("\nAUTO");
   mode = auto;
 }
@@ -84,6 +89,7 @@ void Screen::StateON(void *ptr)
 //STATE NEUTRAL (0)
 void Screen::StateOFF(void *ptr)
 {
+  moteur01.motorOff(); 
   Serial.print("\nNEUTRE");
   mode = neutral;
 }
@@ -92,16 +98,18 @@ void Screen::StateOFF(void *ptr)
 //Left
 void Screen::LeftHip_UP(void *ptr)
 {
-  Serial.print("\nLEFT HIP UP");   
+  Serial.print("\nLEFT HIP UP");  
+    moteur01.motorOn();  
 }
 
 void Screen::LeftHip_DOWN(void *ptr){
   Serial.print("\nLEFT HIP DOWN");
- 
+    moteur01.motorOn();  
 }
 
 void Screen::LeftHip_NEUTRAL(void *ptr){
   Serial.print("\nLEFT HIP NEUTRAL");
+    moteur01.motorOff(); 
  
 }
 
