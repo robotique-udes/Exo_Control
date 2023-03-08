@@ -13,11 +13,12 @@
 
 #define CT A11
 
-ExponentialFilter<float> FilteredCurrent(7, 0);
+
 
 class Motor 
 {
     private:
+        
         float CTval=0.0;
         int Bouton1 = digitalRead(31);
         int Bouton2 = digitalRead(34);

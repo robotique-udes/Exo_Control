@@ -1,5 +1,6 @@
 #include "motorControl.h"
 
+ExponentialFilter<float> FilteredCurrent(7, 0);
 
 Motor::Motor()
 {}
@@ -18,12 +19,6 @@ bool Motor::stopMotor(int cap) {
   //Serial.print(" ");
 
   // Serial.println(digitalRead(34));
-
-  int Bouton1 = digitalRead(31);
-
-  int Bouton2 = digitalRead(34);
-
-
 
   /*if(Bouton1 == 0){
 
@@ -67,4 +62,5 @@ else{
   FilteredCurrent.Filter(current);
   Serial.println(FilteredCurrent.Current());
 
+return true;
 }

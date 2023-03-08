@@ -5,7 +5,7 @@
 #include "test.h"
 #include "touchScreen.h"
 
-
+SoftwareSerial nextion(2, 3);
 #define IN1  4
 
 #define IN2 3
@@ -30,6 +30,8 @@ void setup() {
   pinMode(IN2 , OUTPUT);
 
   pinMode(CT, INPUT);
+
+  
 }
 
 void loop() {
