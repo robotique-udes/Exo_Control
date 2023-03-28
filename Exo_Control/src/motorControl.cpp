@@ -104,4 +104,70 @@ float Motor::ReadCurrent()
     return FilteredCurrent.Current()*Rotation;
 }
 
+void Motor::setAngle( long Count_pulses)
+{
+      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
+    if(angle > 2*PI)
+    {
+      Count_pulses -= PULSE_PAR_TOUR;
+      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
+      }
+    else if (angle < 0)
+    {
+      Count_pulses +=  PULSE_PAR_TOUR;
+      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
+    }
+}
 
+void Motor::CapperFloat(float &val, float max)
+{
+  if(val > max)
+    val = max;
+  else if(val < -max)
+    val = -max;
+}
+
+void Motor::neededTorque()
+{
+    //Trouver valeur du courant pour gravité
+    T_gravite = DIST_CM * MASSE * 9.81 * sin(angle);
+    CourantSouhaite = T_gravite / TORQUE2CURRENT * 1000;
+}
+
+float Motor::neededCurrent()
+{
+      //PID for current 
+    e = CourantSouhaite - ReadCurrent();
+   
+    integral = integral + e;
+    derivative = e - previous_error;
+    CapperFloat(e, 5);
+    //CapperFloat(derivative, 50);
+    PWM += KP*e + KI*integral + KD*derivative;
+    previous_error = e;
+
+    CapperFloat(PWM, 255);
+    if(angle<0.2 || angle>(2*PI-0.2))
+      PWM = 0;
+    
+    return PWM;
+
+}
+
+void Motor::printData(long Count_pulses)
+{
+        Serial.print(" Angle: ");
+    Serial.print(angle);
+    Serial.print("Courant RESSORT: ");
+    Serial.print(I_ressort);
+    Serial.print(" Courant GRAVITE: ");
+    Serial.print(I_gravite);
+    Serial.print(" derivate: ");
+    Serial.print(derivative);
+    Serial.print(" Courant actuel: ");
+    Serial.print(ReadCurrent());
+    Serial.print(" Count_pulses: ");
+    Serial.print(Count_pulses);
+    Serial.print(" PWM: ");
+    Serial.println(PWM);
+}

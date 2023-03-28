@@ -24,18 +24,7 @@ Screen ecran;
 Motor motor;
 
 long Count_pulses = 0;
-float current=0.0;
-float I_ressort = 0.0;
-float I_gravite = 0.0;
-float T_ressort = 0.0;
-float T_gravite = 0.0;
-float CourantSouhaite = 0.0;
-float e = 0.0;
-float angle = 0.0;
-float integral = 0.0;
-float derivative = 0.0;
-float previous_error = 0.0;
-float PWM = 0.0;
+
 
 
 void ReadEncoder();
@@ -63,61 +52,17 @@ Serial.println("Ini motor exo----------");
 void loop() 
 {
     //ecran.nextLoop();
-    //Get angle
-    angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
-    if(angle > 2*PI)
-    {
-      Count_pulses -= PULSE_PAR_TOUR;
-      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
-      }
-    else if (angle < 0)
-    {
-      Count_pulses +=  PULSE_PAR_TOUR;
-      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
-      }
 
-
-
-    //Trouver valeur du courant pour gravité
-    T_gravite = DIST_CM * MASSE * 9.81 * sin(angle);
-    CourantSouhaite = T_gravite / TORQUE2CURRENT * 1000;
-
-
-    //PID for current 
-    e = CourantSouhaite - motor.ReadCurrent();
-   
-    integral = integral + e;
-    derivative = e - previous_error;
-    CapperFloat(e, 5);
-    //CapperFloat(derivative, 50);
-    PWM += KP*e + KI*integral + KD*derivative;
-    previous_error = e;
-
-    CapperFloat(PWM, 255);
-    if(angle<0.2 || angle>(2*PI-0.2))
-      PWM = 0;
 
 
     //Set PWM
-    motor.motorSetSpeed(PWM);
-
-
-    Serial.print("Courant RESSORT: ");
-    Serial.print(I_ressort);
-    Serial.print(" Courant GRAVITE: ");
-    Serial.print(I_gravite);
-    Serial.print(" derivate: ");
-    Serial.print(derivative);
-    Serial.print(" Courant actuel: ");
-    Serial.print(motor.ReadCurrent());
-    Serial.print(" Angle: ");
-    Serial.print(angle);
-    Serial.print(" Count_pulses: ");
-    Serial.print(Count_pulses);
-    Serial.print(" PWM: ");
-    Serial.println(PWM);
+    motor.setAngle(Count_pulses);
+    motor.neededTorque();
+    motor.motorSetSpeed(motor.neededCurrent());
+    motor.printData(Count_pulses);
     delay(10);
 
+    
 }
 
 void ReadEncoder() {
@@ -127,12 +72,4 @@ void ReadEncoder() {
   } else {
     Count_pulses--;
   }
-}
-
-void CapperFloat(float &val, float max)
-{
-  if(val > max)
-    val = max;
-  else if(val < -max)
-    val = -max;
 }
