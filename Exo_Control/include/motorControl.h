@@ -7,13 +7,17 @@
 #include <ArduinoTimer.h>
 
 
-#define IN1  4
+#define IN1  6
+#define IN2 5
+#define EN 4
+#define CT A10
+#define ENCB 3 
+#define ENCA 2
 
-#define IN2 3
+#define ClockWise 1
+#define CounterClockWise -1
 
-#define EN 2
 
-#define CT A11
 
 
 
@@ -26,14 +30,19 @@ class Motor
         int Bouton2 = digitalRead(34);
         float Acurrent;
         float current=0.0;
+        int Rotation = 1;
     public:
         Motor();
         ~Motor();
 
+        
+
+        void beginInterrupt();
         void motorSetSpeed(int val);
         void motorOn();
         void motorOff();
         bool stopMotor(int cap);
+        float ReadCurrent();
 
 };
 
