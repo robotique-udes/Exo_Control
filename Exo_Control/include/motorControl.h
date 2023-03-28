@@ -22,6 +22,17 @@
 #define KI 0
 #define KD 0
 
+#define LH 0.5        // longueur haut du corps
+#define LF 0.3        // longueur femur
+#define LT 0.2        // longueur tibia
+#define LHCM = LH / 2 // longueur haut du corps
+#define LFCM = LF / 2 // longueur femur
+#define LTCM = LT / 2 // longueur tibia
+#define G = 9.81      // gravité
+#define MH = 25       // Masse haut du corps/2
+#define MF = 30       // Masse femur
+#define MT = 15       // Masse tibia
+
 #define ClockWise 1
 #define CounterClockWise -1
 

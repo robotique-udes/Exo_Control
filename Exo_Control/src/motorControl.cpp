@@ -10,6 +10,13 @@ Motor::~Motor()
 
 //Servo MonServo;
 
+/*Fonctions de torque a integrer
+
+TgSol = (((cos(angleGenoux)*LF) - 0.5*LH*cos(angleHanche))*Fgh) + (0.5*LF*cos(angleGenoux)*Fgf);
+TgVide = (cos(angleGenoux)*Fgt*LG)/2;
+ThSol = (0.5*LH*cos(angleHanche)*Fgh);
+ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*LG)/2)*Fgt;
+*/
 
 
 bool Motor::stopMotor(int cap) {
