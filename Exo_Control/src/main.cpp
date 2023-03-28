@@ -19,6 +19,24 @@ SoftwareSerial nextion(2, 3);
 #define KP 0.1
 #define KI 0
 #define KD 0
+#define LH 0.5 // longueur haut du corps
+#define LF 0.3 
+#define LT 0.2
+#define LHCM = LH/2
+#define LFCM = LF/2
+#define LTCM = LT/2
+#define G = 9.81
+#define MH = 25 // Masse haut du corps/2
+#define MF = 30
+#define MT = 15
+
+/*Fonctions de torque a integrer
+
+TgSol = (((cos(angleGenoux)*LF) - 0.5*LH*cos(angleHanche))*Fgh) + (0.5*LF*cos(angleGenoux)*Fgf);
+TgVide = (cos(angleGenoux)*Fgt*LG)/2;
+ThSol = (0.5*LH*cos(angleHanche)*Fgh);
+ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*LG)/2)*Fgt;
+*/
 
 Screen ecran;
 Motor motor;
