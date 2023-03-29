@@ -52,7 +52,7 @@ void loop()
   motor.neededTorque();
   motor.motorSetSpeed(motor.neededCurrent());
   motor.printData(Count_pulses);
-  delay(10);
+  // delay(5);
 }
 
 void ReadEncoder()

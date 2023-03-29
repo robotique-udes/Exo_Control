@@ -163,18 +163,16 @@ float Motor::neededCurrent()
 
 void Motor::printData(long Count_pulses)
 {
-        Serial.print(" Angle: ");
-    Serial.print(angle);
-    Serial.print("Courant RESSORT: ");
-    Serial.print(I_ressort);
+    // Serial.print(" Angle: ");
+    // Serial.print(angle);
     Serial.print(" Courant GRAVITE: ");
-    Serial.print(I_gravite);
-    Serial.print(" derivate: ");
-    Serial.print(derivative);
+    Serial.print(CourantSouhaite);
+    // Serial.print(" derivate: ");
+    // Serial.print(derivative);
     Serial.print(" Courant actuel: ");
     Serial.print(ReadCurrent());
-    Serial.print(" Count_pulses: ");
-    Serial.print(Count_pulses);
+    // Serial.print(" Count_pulses: ");
+    // Serial.print(Count_pulses);
     Serial.print(" PWM: ");
     Serial.println(PWM);
 }

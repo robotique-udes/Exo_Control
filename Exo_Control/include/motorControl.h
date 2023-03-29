@@ -15,10 +15,10 @@
 #define ENCA 2
 #define K_RESSORT 0.25
 #define DIST_CM 0.245
-#define MASSE 0.066
+#define MASSE 0.366
 #define PULSE_PAR_TOUR 300
-#define TORQUE2CURRENT 6.470
-#define KP 0.1
+#define TORQUE2CURRENT 0.6//6.470
+#define KP 2.5
 #define KI 0
 #define KD 0
 
@@ -50,8 +50,6 @@ class Motor
         float Acurrent;
         float current=0.0;
         int Rotation = 1;
-        float I_ressort = 0.0;
-        float I_gravite = 0.0;
         float T_ressort = 0.0;
         float T_gravite = 0.0;
         float CourantSouhaite = 0.0;
