@@ -4,7 +4,8 @@
 #include <Arduino.h>
 #include <Nextion.h>
 #include <SPI.h>
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
+#include <HardwareSerial.h>
 #include <SD.h>
 #include <string.h>
 #include "motorControl.h"

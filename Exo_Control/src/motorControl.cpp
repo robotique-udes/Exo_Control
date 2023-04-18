@@ -1,6 +1,6 @@
 #include "motorControl.h"
 
-ExponentialFilter<float> FilteredCurrent(7, 0);
+//ExponentialFilter<float> FilteredCurrent(7, 0);
 
 Motor::Motor()
 {}
@@ -18,59 +18,6 @@ ThSol = (0.5*LH*cos(angleHanche)*Fgh);
 ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*LG)/2)*Fgt;
 */
 
-
-bool Motor::stopMotor(int cap) {
-
-  //Serial.println(digitalRead(31));
-
-  //Serial.print(" ");
-
-  // Serial.println(digitalRead(34));
-
-  /*if(Bouton1 == 0){
-
-   digitalWrite(IN1 , HIGH);
-
-   digitalWrite(IN2 , LOW);
-
-   analogWrite(EN , 120);
-
-  }
-  else if(Bouton2 == 0){
-
-   digitalWrite(IN2 , HIGH);
-
-   digitalWrite(IN1 , LOW);
-
-   analogWrite(EN , 120);
-
-  }*/
-
-  if(Acurrent >1300){
-
-    analogWrite(EN , 0);
-    Serial.println("loop 2");
-
-  }
-
-  else{
-
-      digitalWrite(IN2 , HIGH);
-      digitalWrite(IN1 , LOW);
-      analogWrite(EN , 55);
-      Acurrent = FilteredCurrent.Current();
-      Serial.println("------loop 1");
-
-  }
-  
-
-  CTval = analogRead(CT);
-  current = ((CTval * 27.0) / 1023.0) * 1000.0;
-  FilteredCurrent.Filter(current);
-  Serial.println(FilteredCurrent.Current());
-
-return true;
-}
 
 void Motor::motorSetSpeed(int val)
 {
@@ -107,8 +54,9 @@ float Motor::ReadCurrent()
 {
     CTval = analogRead(CT);
     current = ((CTval * 27.0) / 1023.0) * 1000.0;
-    FilteredCurrent.Filter(current);
-    return FilteredCurrent.Current()*Rotation;
+    //FilteredCurrent.Filter(current);
+    //return FilteredCurrent.Current()*Rotation;
+    return current;
 }
 
 void Motor::setAngle( long Count_pulses)
@@ -175,4 +123,48 @@ void Motor::printData(long Count_pulses)
     // Serial.print(Count_pulses);
     Serial.print(" PWM: ");
     Serial.println(PWM);
+}
+
+bool Motor::sonarRead()
+{
+    float erreur = 0;
+    duration = pulseIn(echoPin, HIGH);
+
+    cm = (duration/2) / 29.1;
+
+    inches = (duration/2) / 74;
+    if (state==false)
+    {
+        for (int i =0; i<iteration;i++) if (cm<height) erreur+=1;
+        erreur=erreur/iteration;
+        if(erreur<=0.2) state=true;
+    }
+    else
+    {
+        for (int i=0; i<iteration;i++) if (cm>height) erreur+=1;
+        erreur=erreur/iteration;
+        if(erreur<=0.2) state=false;
+    }
+    if(state==false)
+    {
+        //Serial.println("Sol");
+        return true;
+    }
+    else
+    {
+        //Serial.println("      Air");
+        return false;
+    }
+
+    //Serial.print(inches);
+
+    //Serial.print("in, ");
+    //Serial.print("State: ");
+    //Serial.println(state);
+    //Serial.print(cm);
+
+    //Serial.print("cm");
+    //Serial.println();
+    //delay(200);
+
 }

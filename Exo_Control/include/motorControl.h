@@ -1,10 +1,10 @@
 #ifndef MOTORCONTROL_H
 #define MOTORCONTROL_H
 #include <Arduino.h>
-#include <MegunoLink.h>
-#include <filter.h>
-#include <CommandHandler.h>
-#include <ArduinoTimer.h>
+//#include <MegunoLink.h>
+//#include <filter.h>
+//#include <CommandHandler.h>
+//#include <ArduinoTimer.h>
 
 
 #define IN1  6
@@ -59,6 +59,15 @@ class Motor
         float derivative = 0.0;
         float previous_error = 0.0;
         float PWM = 0.0;
+
+        //control sonar
+        long duration;
+        double cm, inches;
+        int trigPin = 26;  // Trigger
+        int echoPin = 27;  // Echo
+        bool state=false;
+        double height=40;
+        int iteration= 20;
     public:
         Motor();
         ~Motor();
@@ -69,13 +78,13 @@ class Motor
         void motorSetSpeed(int val);
         void motorOn();
         void motorOff();
-        bool stopMotor(int cap);
         float ReadCurrent();
         void setAngle(long Count_pulses);
         void CapperFloat(float &val, float max);
         void neededTorque();
         float neededCurrent();
         void printData(long Count_pulses);
+        bool sonarRead();//return true if grounded, false if not
 
 };
 
