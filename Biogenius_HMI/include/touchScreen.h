@@ -10,9 +10,15 @@
 #include <string.h>
 #include "motorControl.h"
 using namespace std;
-#define neutral 0;
-#define auto 1;
-#define manuel 2;
+
+
+#define neutral 0
+#define auto 1
+#define manuel 2
+
+#define RX_HMI 16
+#define TX_HMI 17
+
 // Nextion TX to pin 2 and RX to pin 3 of Arduino
 
 class Screen

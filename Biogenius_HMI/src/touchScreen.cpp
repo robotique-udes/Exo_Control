@@ -81,7 +81,6 @@ Screen::~Screen(){}
 //STATE AUTO (1)
 void Screen::StateON(void *ptr)
 { 
-  moteur01.motorOn(); 
   Serial.print("\nAUTO");
   mode = auto;
 }
@@ -89,7 +88,6 @@ void Screen::StateON(void *ptr)
 //STATE NEUTRAL (0)
 void Screen::StateOFF(void *ptr)
 {
-  moteur01.motorOff(); 
   Serial.print("\nNEUTRE");
   mode = neutral;
 }
@@ -99,18 +97,14 @@ void Screen::StateOFF(void *ptr)
 void Screen::LeftHip_UP(void *ptr)
 {
   Serial.print("\nLEFT HIP UP");  
-    moteur01.motorOn();  
 }
 
 void Screen::LeftHip_DOWN(void *ptr){
   Serial.print("\nLEFT HIP DOWN");
-    moteur01.motorOn();  
 }
 
 void Screen::LeftHip_NEUTRAL(void *ptr){
   Serial.print("\nLEFT HIP NEUTRAL");
-    moteur01.motorOff(); 
- 
 }
 
 //Right

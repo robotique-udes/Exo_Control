@@ -19,8 +19,40 @@ ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*
 */
 
 
-void Motor::motorSetSpeed(int val)
+
+
+void Motor::motorSetSpeed(int ID, int val)
 {
+
+  int IN1;
+  int IN2;
+  int EN;
+
+  if(ID == MOTEUR_GENOU_GAUCHE)
+  {
+    IN1 = D1_IN1_A;
+    IN2 = D1_IN2_A;
+    EN = D1_EN_A;
+  }
+  else if(ID == MOTEUR_GENOU_DROIT)
+  {
+    IN1 = D2_IN1_A;
+    IN2 = D2_IN2_A;
+    EN = D2_EN_A;
+  }
+  // else if(ID == MOTEUR_HANCHE_GAUCHE)
+  // {
+  //   IN1 = D1_IN1_B;
+  //   IN2 = D1_IN2_B;
+  //   EN = D1_EN_B;
+  // }
+  // else if(ID == MOTEUR_HANCHE_DROITE)
+  // {
+  //   IN1 = D2_IN1_B;
+  //   IN2 = D2_IN2_B;
+  //   EN = D2_EN_B;
+  // }
+
   if(val >= 0)
   {
     digitalWrite(IN2 , HIGH);
@@ -38,20 +70,20 @@ void Motor::motorSetSpeed(int val)
     analogWrite(EN , val);
 }
 
-void Motor::motorOn()
+
+float Motor::ReadCurrent(int ID)
 {
-    digitalWrite(IN2 , HIGH);
-    digitalWrite(IN1 , LOW);
-    analogWrite(EN , 150);
-}
-void Motor::motorOff()
-{
-    digitalWrite(IN2 , HIGH);
-    digitalWrite(IN1 , LOW);
-    analogWrite(EN , 0);
-}
-float Motor::ReadCurrent()
-{
+  int CT;
+
+  if(ID == MOTEUR_GENOU_GAUCHE)
+    CT = D1_CT_A;
+  else if(ID == MOTEUR_GENOU_DROIT)
+    CT = D2_CT_A;
+  // else if(ID == MOTEUR_HANCHE_GAUCHE)
+  //   CT = D1_CT_B;
+  // else if(ID == MOTEUR_HANCHE_DROITE)
+  //   CT = D2_CT_B;
+
     CTval = analogRead(CT);
     current = ((CTval * 27.0) / 1023.0) * 1000.0;
     //FilteredCurrent.Filter(current);
@@ -61,17 +93,17 @@ float Motor::ReadCurrent()
 
 void Motor::setAngle( long Count_pulses)
 {
-      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
-    if(angle > 2*PI)
-    {
-      Count_pulses -= PULSE_PAR_TOUR;
-      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
-      }
-    else if (angle < 0)
-    {
-      Count_pulses +=  PULSE_PAR_TOUR;
-      angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
+  angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
+  if(angle > 2*PI)
+  {
+    Count_pulses -= PULSE_PAR_TOUR;
+    angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
     }
+  else if (angle < 0)
+  {
+    Count_pulses +=  PULSE_PAR_TOUR;
+    angle = Count_pulses * 2*PI /PULSE_PAR_TOUR;
+  }
 }
 
 void Motor::CapperFloat(float &val, float max)
@@ -92,7 +124,7 @@ void Motor::neededTorque()
 float Motor::neededCurrent()
 {
       //PID for current 
-    e = CourantSouhaite - ReadCurrent();
+    e = CourantSouhaite - ReadCurrent(MOTEUR_GENOU_DROIT);
    
     integral = integral + e;
     derivative = e - previous_error;
@@ -118,19 +150,43 @@ void Motor::printData(long Count_pulses)
     // Serial.print(" derivate: ");
     // Serial.print(derivative);
     Serial.print(" Courant actuel: ");
-    Serial.print(ReadCurrent());
+    Serial.print(ReadCurrent(MOTEUR_GENOU_DROIT));
     // Serial.print(" Count_pulses: ");
     // Serial.print(Count_pulses);
     Serial.print(" PWM: ");
     Serial.println(PWM);
 }
 
-bool Motor::sonarRead()
+bool Motor::sonarRead(int ID)
 {
+  int trigPin;
+  int echoPin;
+
+  if(ID == SONAR_GAUCHE)
+  {
+    trigPin = TRIG_PIN_GAUCHE;
+    echoPin = ECHO_PIN_GAUCHE;
+  }
+  else if(ID == SONAR_DROIT)
+  {
+    trigPin = TRIG_PIN_DROIT;
+    echoPin = ECHO_PIN_DROIT;
+  }
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+
     float erreur = 0;
     duration = pulseIn(echoPin, HIGH);
 
     cm = (duration/2) / 29.1;
+
+    // Serial.print("Dist: ");
+    // Serial.println(cm);
 
     inches = (duration/2) / 74;
     if (state==false)
@@ -159,12 +215,44 @@ bool Motor::sonarRead()
     //Serial.print(inches);
 
     //Serial.print("in, ");
-    //Serial.print("State: ");
+    // Serial.print("Dist: ");
     //Serial.println(state);
-    //Serial.print(cm);
+    // Serial.println(cm);
 
     //Serial.print("cm");
     //Serial.println();
     //delay(200);
 
+}
+
+void Motor::setRelais(int ID, bool state)
+{
+  if(ID == RELAIS_GENOU_GAUCHE)
+  {
+    if(state == true)
+      digitalWrite(RELAIS_PIN_GENOU_GAUCHE, HIGH);
+    else
+      digitalWrite(RELAIS_PIN_GENOU_GAUCHE, LOW);
+  }
+  else if(ID == RELAIS_GENOU_DROIT)
+  {
+    if(state == true)
+      digitalWrite(RELAIS_PIN_GENOU_DROIT, HIGH);
+    else
+      digitalWrite(RELAIS_PIN_GENOU_DROIT, LOW);
+  }
+  else if(ID == RELAIS_HANCHE_GAUCHE)
+  {
+    if(state == true)
+      digitalWrite(RELAIS_PIN_HANCHE_GAUCHE, HIGH);
+    else
+      digitalWrite(RELAIS_PIN_HANCHE_GAUCHE, LOW);
+  }
+  else if(ID == RELAIS_HANCHE_DROITE)
+  {
+    if(state == true)
+      digitalWrite(RELAIS_PIN_HANCHE_DROITE, HIGH);
+    else
+      digitalWrite(RELAIS_PIN_HANCHE_DROITE, LOW);
+  }
 }
