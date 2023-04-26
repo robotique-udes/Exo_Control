@@ -256,3 +256,48 @@ void Motor::setRelais(int ID, bool state)
       digitalWrite(RELAIS_PIN_HANCHE_DROITE, LOW);
   }
 }
+
+void Motor::testRelais()
+{
+ //Test Relais
+  Serial.print("Relais 1: ");
+  setRelais(RELAIS_GENOU_GAUCHE, ON);
+  delay(1000);
+  setRelais(RELAIS_GENOU_GAUCHE, OFF);
+  Serial.print("Relais 2: ");
+  setRelais(RELAIS_GENOU_DROIT, ON);
+  delay(1000);
+  setRelais(RELAIS_GENOU_DROIT, OFF);
+  Serial.print("Relais 3: ");
+  setRelais(RELAIS_HANCHE_GAUCHE, ON);
+  delay(1000);
+  setRelais(RELAIS_HANCHE_GAUCHE, OFF);
+  Serial.print("Relais 4: ");
+  setRelais(RELAIS_HANCHE_DROITE, ON);
+  delay(1000);
+  setRelais(RELAIS_HANCHE_DROITE, OFF);
+
+}
+void Motor::testMotor()
+{
+  //Test Motor
+  Serial.println("Test Motor Gauche----------");
+  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 100);
+  delay(300);
+  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
+  delay(1000);
+  motorSetSpeed(MOTEUR_GENOU_GAUCHE, -100);
+  delay(300);
+  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
+  delay(1000);
+  Serial.println("Test Motor Droit----------");
+  motorSetSpeed(MOTEUR_GENOU_DROIT, 100);
+  delay(300);
+  motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
+  delay(1000);
+  motorSetSpeed(MOTEUR_GENOU_DROIT, -100);
+  delay(300);
+  motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
+  delay(1000);
+
+}

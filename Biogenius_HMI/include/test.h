@@ -14,6 +14,7 @@ private:
     int echoPin = 27;  // Echo
     bool state=false;
     double height=40;
+    
 };
 
 #endif

@@ -7,18 +7,18 @@
 //#include <ArduinoTimer.h>
 
 //PINS MOTEURS
-#define D1_IN1_A 5
-#define D1_IN2_A 18
-#define D1_EN_A 19
-#define D1_CT_A A11
+#define D2_IN1_A 5
+#define D2_IN2_A 18
+#define D2_EN_A 19
+#define D2_CT_A A11
 // #define D1_IN1_B 9 //Pour prochain PCB
 // #define D1_IN2_B 10
 // #define D1_EN_B 11
 // #define D1_CT_B A6
-#define D2_IN1_A 1
-#define D2_IN2_A 22
-#define D2_EN_A 23
-#define D2_CT_A A10
+#define D1_IN1_A 16
+#define D1_IN2_A 22
+#define D1_EN_A 23
+#define D1_CT_A A10
 // #define D2_IN1_B 8 //Pour prochain PCB
 // #define D2_IN2_B 7
 // #define D2_EN_B 6
@@ -74,6 +74,9 @@
 #define RELAIS_HANCHE_GAUCHE 2
 #define RELAIS_HANCHE_DROITE 3
 
+#define ON 1
+#define OFF 0
+
 
 
 class Motor 
@@ -118,6 +121,8 @@ class Motor
         void printData(long Count_pulses);
         bool sonarRead(int ID);//return true if grounded, false if not
         void setRelais(int ID, bool state);
+        void testRelais();
+        void testMotor();
 
 };
 
