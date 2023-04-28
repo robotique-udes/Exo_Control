@@ -5,7 +5,7 @@
 #include "test.h"
 // #include "touchScreen.h"
 #include <HardwareSerial.h>
-//bruh
+#include "imu.h"
 
 HardwareSerial SerialPort(2);
 
@@ -16,6 +16,8 @@ HardwareSerial SerialPort(2);
 // Screen ecran;
 Motor motor;
 Test test01;
+Imu imu01;
+
 
 
 void setup()
@@ -26,15 +28,17 @@ void setup()
   // nexInit();
 
   motor.setPins();
-
+  delay(10000);
 
   Serial.println("Ini motor exo----------");
+  while(!imu01.IMUSetup());
 }
 
 void loop()
 {
-  motor.testMotor();
-  motor.testRelais();
+  imu01.printAngles();
+  //motor.testMotor();
+  //motor.testRelais();
 
   // ecran.nextLoop();
 

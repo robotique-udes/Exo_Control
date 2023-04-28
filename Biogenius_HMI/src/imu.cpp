@@ -1,24 +1,57 @@
 #include "imu.h"
 
-IMU::IMU()
+const char *ssid = "BioGenius";
+const char *password = "biogenius!";
+long last_sent_millis = 0;
+
+// Create AsyncWebServer object on port 80
+// WebServer server(80);
+IPAddress local_ip(192, 168, 4, 1);
+IPAddress gateway(192, 168, 4, 1);
+IPAddress subnet(255, 255, 255, 0);
+
+AsyncWebServer server(80);
+AsyncWebSocket ws("/ws");
+AsyncWebSocketClient *globalClient = NULL;
+
+// Create an Event Source on /events
+AsyncEventSource events("/events");
+
+// Check I2C device address and correct line below (by default address is 0x29 or 0x28)
+//                                   id, address
+TwoWire BUS_I2C_1 = TwoWire(0);
+TwoWire BUS_I2C_2 = TwoWire(1);
+TwoWire BUS_I2C_3 = TwoWire(2);
+
+Adafruit_BNO055 IMU_HAUT_G = Adafruit_BNO055(55, 0x29, &BUS_I2C_1);
+Adafruit_BNO055 IMU_BAS_G = Adafruit_BNO055(55, 0x28, &BUS_I2C_1);
+Adafruit_BNO055 IMU_HAUT_D = Adafruit_BNO055(55, 0x29, &BUS_I2C_2);
+Adafruit_BNO055 IMU_BAS_D = Adafruit_BNO055(55, 0x28, &BUS_I2C_2);
+Adafruit_BNO055 IMU_DOS = Adafruit_BNO055(55, 0x28, &BUS_I2C_3);
+
+Imu::Imu()
+{
+    
+}
+
+Imu::~Imu()
 {
 }
 
-IMU::~IMU()
-{
-}
-
-void IMU::IMUSetup()
+void Imu::wifiSetup()
 {
     initWiFi();
     initSPIFFS();
-    ws.onEvent(&IMU::onWsEvent);
+    ws.onEvent(&Imu::onWsEvent);
     server.addHandler(&ws);
     server.begin();
+}
+
+bool Imu::IMUSetup()
+{
 
     Serial.println("Orientation Sensor Test");
     Serial.println("");
-
     BUS_I2C_1.begin(I2C_SDA1, I2C_SCL1);
     BUS_I2C_2.begin(I2C_SDA2, I2C_SCL2);
     BUS_I2C_3.begin(I2C_SDA3, I2C_SCL3);
@@ -27,94 +60,112 @@ void IMU::IMUSetup()
     if (!IMU_HAUT_G.begin())
     {
         /* There was a problem detecting the BNO055 ... check your connections */
-        Serial.print("Ooops, no BNO055_1 detected ... Check your wiring or I2C ADDR!");
-        while (1)
-            ;
+        Serial.println("Ooops, no BNO055_1 detected ... Check your wiring or I2C ADDR!");
+        
+        return false;
     }
 
     if (!IMU_BAS_G.begin())
     {
         /* There was a problem detecting the BNO055 ... check your connections */
-        Serial.print("Ooops, no BNO055_2 detected ... Check your wiring or I2C ADDR!");
-        while (1)
-            ;
+        Serial.println("Ooops, no BNO055_2 detected ... Check your wiring or I2C ADDR!");
+        return false;
     }
 
     if (!IMU_HAUT_D.begin())
     {
         /* There was a problem detecting the BNO055 ... check your connections */
-        Serial.print("Ooops, no BNO055_3 detected ... Check your wiring or I2C ADDR!");
-        while (1)
-            ;
+        Serial.println("Ooops, no BNO055_3 detected ... Check your wiring or I2C ADDR!");
+        return false;
     }
 
     if (!IMU_BAS_D.begin())
     {
         /* There was a problem detecting the BNO055 ... check your connections */
-        Serial.print("Ooops, no BNO055_4 detected ... Check your wiring or I2C ADDR!");
-        while (1)
-            ;
+        Serial.println("Ooops, no BNO055_4 detected ... Check your wiring or I2C ADDR!");
+        return false;
     }
 
     if (!IMU_DOS.begin())
     {
         /* There was a problem detecting the BNO055 ... check your connections */
-        Serial.print("Ooops, no BNO055_5 detected ... Check your wiring or I2C ADDR!");
-        while (1)
-            ;
+        Serial.println("Ooops, no BNO055_5 detected ... Check your wiring or I2C ADDR!");
+        return false;
     }
 
+    Serial.println("Setup done");
     /* Use external crystal for better accuracy */
     IMU_HAUT_G.setExtCrystalUse(true);
     IMU_BAS_G.setExtCrystalUse(true);
     IMU_HAUT_D.setExtCrystalUse(true);
     IMU_BAS_D.setExtCrystalUse(true);
     IMU_DOS.setExtCrystalUse(true);
+    return true;
 }
 
-float IMU::toDegrees(float radians)
+float Imu::toDegrees(float radians)
 {
     return radians * 180 / PI;
 }
 
 // get angles from sensor
-String IMU::getAngles()
+void Imu::getAngles()
 {
-    sensors_event_t event;
-    imu::Quaternion quat;
-    imu::Quaternion quat2;
-    imu::Vector<3> g_alpha;
-    imu::Vector<3> g_beta;
-    imu::Vector<3> d_alpha;
-    imu::Vector<3> d_beta;
-    imu::Vector<3> SPLINE;
 
     quat = IMU_HAUT_G.getQuat();
     g_alpha = quat.toEuler();
+
+    quat = IMU_BAS_G.getQuat();
+    g_beta = quat.toEuler();
+
+    quat = IMU_HAUT_D.getQuat();
+    d_alpha = quat.toEuler();
+
+    quat = IMU_BAS_D.getQuat();
+    d_beta = quat.toEuler();
+
+    quat = IMU_DOS.getQuat();
+    SPLINE = quat.toEuler();
+}
+
+void Imu::printAngles()
+{
+    getAngles();
+    Serial.print("g_alpha: ");
+    Serial.println(g_alpha.x());
+
+    Serial.print("g_beta: ");
+    Serial.println(g_beta.x());
+
+    Serial.print("d_alpha: ");
+    Serial.println(d_alpha.x());
+
+    Serial.print("d_beta: ");
+    Serial.println(d_beta.x());
+
+    Serial.print("SPLINE: ");
+    Serial.println(SPLINE.x());
+}
+
+String Imu::writeJson()
+{
+    getAngles();
     readings["G_ALPHA_X"] = toDegrees(g_alpha.x());
     readings["G_ALPHA_Y"] = toDegrees(g_alpha.y());
     readings["G_ALPHA_Z"] = toDegrees(g_alpha.z());
 
-    quat = IMU_BAS_G.getQuat();
-    g_beta = quat.toEuler();
     readings["G_BETA_X"] = toDegrees(g_beta.x());
     readings["G_BETA_Y"] = toDegrees(g_beta.y());
     readings["G_BETA_Z"] = toDegrees(g_beta.z());
 
-    quat = IMU_HAUT_D.getQuat();
-    d_alpha = quat.toEuler();
     readings["D_ALPHA_X"] = toDegrees(d_alpha.x());
     readings["D_ALPHA_Y"] = toDegrees(d_alpha.y());
     readings["D_ALPHA_Z"] = toDegrees(d_alpha.z());
 
-    quat = IMU_BAS_D.getQuat();
-    d_beta = quat.toEuler();
     readings["D_BETA_X"] = toDegrees(d_beta.x());
     readings["D_BETA_Y"] = toDegrees(d_beta.y());
     readings["D_BETA_Z"] = toDegrees(d_beta.z());
 
-    quat = IMU_DOS.getQuat();
-    SPLINE = quat.toEuler();
     readings["SPINE_X"] = toDegrees(SPLINE.x());
     readings["SPINE_Y"] = toDegrees(SPLINE.y());
     readings["SPINE_Z"] = toDegrees(SPLINE.z());
@@ -124,7 +175,7 @@ String IMU::getAngles()
 }
 
 // Initialize WiFi
-void IMU::initWiFi()
+void Imu::initWiFi()
 {
 
     // Connect to Wifi.
@@ -166,9 +217,9 @@ void IMU::initWiFi()
     Serial.println("Hello World, I'm connected to the internets!!");
 }
 
-void IMU::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+void Imu::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
-    IMU imu;
+    Imu imu;
 
     if (type == WS_EVT_CONNECT)
     {
@@ -186,7 +237,7 @@ void IMU::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEve
     {
         if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
         {
-            String angles = imu.getAngles();
+            String angles = imu.writeJson();
             Serial.println(angles);
             globalClient->text(angles);
         }
