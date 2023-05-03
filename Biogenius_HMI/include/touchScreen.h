@@ -13,7 +13,7 @@ using namespace std;
 
 
 #define neutral 0
-#define auto 1
+#define autobbb 1
 #define manuel 2
 
 #define RX_HMI 16
