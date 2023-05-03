@@ -31,7 +31,7 @@ void setup()
   delay(10000);
 
   Serial.println("Ini motor exo----------");
-  while(!imu01.IMUSetup());
+  imu01.IMUSetup();
 }
 
 void loop()

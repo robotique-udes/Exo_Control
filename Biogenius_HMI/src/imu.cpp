@@ -55,42 +55,42 @@ bool Imu::IMUSetup()
     BUS_I2C_1.begin(I2C_SDA1, I2C_SCL1);
     BUS_I2C_2.begin(I2C_SDA2, I2C_SCL2);
     BUS_I2C_3.begin(I2C_SDA3, I2C_SCL3);
-
+    Serial.println("-------1");
     /* Initialise the sensor */
     if (!IMU_HAUT_G.begin())
     {
         /* There was a problem detecting the BNO055 ... check your connections */
         Serial.println("Ooops, no BNO055_1 detected ... Check your wiring or I2C ADDR!");
         
-        return false;
+        // return false;
     }
-
+    Serial.println("-------2");
     if (!IMU_BAS_G.begin())
     {
         /* There was a problem detecting the BNO055 ... check your connections */
         Serial.println("Ooops, no BNO055_2 detected ... Check your wiring or I2C ADDR!");
-        return false;
+        // return false;
     }
-
+    Serial.println("-------3");
     if (!IMU_HAUT_D.begin())
     {
-        /* There was a problem detecting the BNO055 ... check your connections */
+        //There was a problem detecting the BNO055 ... check your connections 
         Serial.println("Ooops, no BNO055_3 detected ... Check your wiring or I2C ADDR!");
-        return false;
+        // return false;
     }
-
+    Serial.println("-------4");
     if (!IMU_BAS_D.begin())
     {
-        /* There was a problem detecting the BNO055 ... check your connections */
+        // There was a problem detecting the BNO055 ... check your connections 
         Serial.println("Ooops, no BNO055_4 detected ... Check your wiring or I2C ADDR!");
-        return false;
+        // return false;
     }
-
+    Serial.println("-------5");
     if (!IMU_DOS.begin())
     {
-        /* There was a problem detecting the BNO055 ... check your connections */
+        //There was a problem detecting the BNO055 ... check your connections 
         Serial.println("Ooops, no BNO055_5 detected ... Check your wiring or I2C ADDR!");
-        return false;
+        // return false;
     }
 
     Serial.println("Setup done");
