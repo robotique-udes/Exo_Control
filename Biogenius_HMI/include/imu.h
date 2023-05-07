@@ -34,10 +34,10 @@ private:
     sensors_event_t event;
     imu::Quaternion quat;
     imu::Quaternion quat2;
-    imu::Vector<3> g_alpha;
-    imu::Vector<3> g_beta;
-    imu::Vector<3> d_alpha;
-    imu::Vector<3> d_beta;
+    imu::Vector<3> angleHipL;
+    imu::Vector<3> angleKneeL;
+    imu::Vector<3> angleHipR;
+    imu::Vector<3> angleKneeR;
     imu::Vector<3> SPLINE;
 
 public:

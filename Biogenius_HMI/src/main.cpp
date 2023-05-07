@@ -37,6 +37,7 @@ void setup()
 void loop()
 {
   imu01.printAngles();
+  delay(200);
   //motor.testMotor();
   //motor.testRelais();
 

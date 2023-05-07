@@ -59,7 +59,7 @@ bool Imu::IMUSetup()
     /* Initialise the sensor */
     if (!IMU_HAUT_G.begin())
     {
-        /* There was a problem detecting the BNO055 ... check your connections */
+        //There was a problem detecting the BNO055 ... check your connections 
         Serial.println("Ooops, no BNO055_1 detected ... Check your wiring or I2C ADDR!");
         
         // return false;
@@ -67,7 +67,7 @@ bool Imu::IMUSetup()
     Serial.println("-------2");
     if (!IMU_BAS_G.begin())
     {
-        /* There was a problem detecting the BNO055 ... check your connections */
+        //There was a problem detecting the BNO055 ... check your connections 
         Serial.println("Ooops, no BNO055_2 detected ... Check your wiring or I2C ADDR!");
         // return false;
     }
@@ -86,12 +86,12 @@ bool Imu::IMUSetup()
         // return false;
     }
     Serial.println("-------5");
-    if (!IMU_DOS.begin())
+    /*if (!IMU_DOS.begin())
     {
         //There was a problem detecting the BNO055 ... check your connections 
         Serial.println("Ooops, no BNO055_5 detected ... Check your wiring or I2C ADDR!");
         // return false;
-    }
+    }*/
 
     Serial.println("Setup done");
     /* Use external crystal for better accuracy */
@@ -99,7 +99,7 @@ bool Imu::IMUSetup()
     IMU_BAS_G.setExtCrystalUse(true);
     IMU_HAUT_D.setExtCrystalUse(true);
     IMU_BAS_D.setExtCrystalUse(true);
-    IMU_DOS.setExtCrystalUse(true);
+    //IMU_DOS.setExtCrystalUse(true);
     return true;
 }
 
@@ -113,62 +113,66 @@ void Imu::getAngles()
 {
 
     quat = IMU_HAUT_G.getQuat();
-    g_alpha = quat.toEuler();
+    angleHipL = quat.toEuler();
+    angleHipL.y()=angleHipL.y()+PI/2;
 
     quat = IMU_BAS_G.getQuat();
-    g_beta = quat.toEuler();
+    angleKneeL = quat.toEuler();
+    angleKneeL.y()=abs((angleKneeL.y()-angleHipL.y())+PI/2);
 
     quat = IMU_HAUT_D.getQuat();
-    d_alpha = quat.toEuler();
+    angleHipR = quat.toEuler();
+    angleHipR.y()=angleHipR.y()+PI/2;
 
     quat = IMU_BAS_D.getQuat();
-    d_beta = quat.toEuler();
+    angleKneeR = quat.toEuler();
+    angleKneeR.y()=abs((angleKneeR.y()-angleHipR.y())+PI/2);
 
-    quat = IMU_DOS.getQuat();
-    SPLINE = quat.toEuler();
+    //quat = IMU_DOS.getQuat();
+    //SPLINE = quat.toEuler();
 }
 
 void Imu::printAngles()
 {
     getAngles();
-    Serial.print("g_alpha: ");
-    Serial.println(g_alpha.x());
+    Serial.print("angleHipL Y: ");
+    Serial.print(toDegrees(angleHipL.y()));
 
-    Serial.print("g_beta: ");
-    Serial.println(g_beta.x());
+    Serial.print("  angleKneeL Y: ");
+    Serial.print(toDegrees(angleKneeL.y()));
 
-    Serial.print("d_alpha: ");
-    Serial.println(d_alpha.x());
+    Serial.print("  angleHipR Y: ");
+    Serial.print(toDegrees((angleHipR.y())));
 
-    Serial.print("d_beta: ");
-    Serial.println(d_beta.x());
+    Serial.print("  angleKneeR Y: ");
+    Serial.println(toDegrees(angleKneeR.y()));
 
-    Serial.print("SPLINE: ");
-    Serial.println(SPLINE.x());
+    //Serial.print("SPLINE: ");
+    //Serial.println(SPLINE.x());
 }
 
 String Imu::writeJson()
 {
     getAngles();
-    readings["G_ALPHA_X"] = toDegrees(g_alpha.x());
-    readings["G_ALPHA_Y"] = toDegrees(g_alpha.y());
-    readings["G_ALPHA_Z"] = toDegrees(g_alpha.z());
+    readings["G_ALPHA_X"] = toDegrees(angleHipL.x());
+    readings["G_ALPHA_Y"] = toDegrees(angleHipL.y());
+    readings["G_ALPHA_Z"] = toDegrees(angleHipL.z());
 
-    readings["G_BETA_X"] = toDegrees(g_beta.x());
-    readings["G_BETA_Y"] = toDegrees(g_beta.y());
-    readings["G_BETA_Z"] = toDegrees(g_beta.z());
+    readings["G_BETA_X"] = toDegrees(angleKneeL.x());
+    readings["G_BETA_Y"] = toDegrees(angleKneeL.y());
+    readings["G_BETA_Z"] = toDegrees(angleKneeL.z());
 
-    readings["D_ALPHA_X"] = toDegrees(d_alpha.x());
-    readings["D_ALPHA_Y"] = toDegrees(d_alpha.y());
-    readings["D_ALPHA_Z"] = toDegrees(d_alpha.z());
+    readings["D_ALPHA_X"] = toDegrees(angleHipR.x());
+    readings["D_ALPHA_Y"] = toDegrees(angleHipR.y());
+    readings["D_ALPHA_Z"] = toDegrees(angleHipR.z());
 
-    readings["D_BETA_X"] = toDegrees(d_beta.x());
-    readings["D_BETA_Y"] = toDegrees(d_beta.y());
-    readings["D_BETA_Z"] = toDegrees(d_beta.z());
+    readings["D_BETA_X"] = toDegrees(angleKneeR.x());
+    readings["D_BETA_Y"] = toDegrees(angleKneeR.y());
+    readings["D_BETA_Z"] = toDegrees(angleKneeR.z());
 
-    readings["SPINE_X"] = toDegrees(SPLINE.x());
-    readings["SPINE_Y"] = toDegrees(SPLINE.y());
-    readings["SPINE_Z"] = toDegrees(SPLINE.z());
+    //readings["SPINE_X"] = toDegrees(SPLINE.x());
+    //readings["SPINE_Y"] = toDegrees(SPLINE.y());
+    //readings["SPINE_Z"] = toDegrees(SPLINE.z());
 
     String jsonString = JSON.stringify(readings);
     return jsonString;
