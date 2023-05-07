@@ -1,8 +1,5 @@
 #include "imu.h"
 
-const char *ssid = "BioGenius";
-const char *password = "biogenius!";
-long last_sent_millis = 0;
 
 // Create AsyncWebServer object on port 80
 // WebServer server(80);
@@ -252,7 +249,7 @@ void Imu::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEve
     }
 }
 
-void initSPIFFS()
+void Imu::initSPIFFS()
 {
     if (!SPIFFS.begin(true))
     {

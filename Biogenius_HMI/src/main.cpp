@@ -31,12 +31,13 @@ void setup()
   delay(10000);
 
   Serial.println("Ini motor exo----------");
-  imu01.IMUSetup();
+  // imu01.IMUSetup();
+  imu01.wifiSetup();
 }
 
 void loop()
 {
-  imu01.printAngles();
+  // imu01.printAngles();
   delay(200);
   //motor.testMotor();
   //motor.testRelais();

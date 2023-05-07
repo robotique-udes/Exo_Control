@@ -40,6 +40,11 @@ private:
     imu::Vector<3> angleKneeR;
     imu::Vector<3> SPLINE;
 
+    const char *ssid = "BioGenius";
+    const char *password = "biogenius!";
+    long last_sent_millis = 0;
+
+
 public:
     Imu();
     ~Imu();
