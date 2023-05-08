@@ -16,6 +16,8 @@ Motor::~Motor()
 
 TgSol = (((cos(angleGenoux)*LF) - 0.5*LH*cos(angleHanche))*Fgh) + (0.5*LF*cos(angleGenoux)*Fgf);
 TgVide = (cos(angleGenoux)*Fgt*LG)/2;
+
+
 ThSol = (0.5*LH*cos(angleHanche)*Fgh);
 ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*LG)/2)*Fgt;
 */
@@ -24,7 +26,7 @@ ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*
 void Motor::setPins()
 {
   // PINS MOTEURS
-  pinMode(D1_IN1_A, OUTPUT);
+  //pinMode(D1_IN1_A, OUTPUT);
   pinMode(D1_IN2_A, OUTPUT);
   pinMode(D1_EN_A, OUTPUT);
   pinMode(D1_CT_A, INPUT);
@@ -95,7 +97,7 @@ void Motor::motorSetSpeed(int ID, int val)
   analogWrite(EN, val);
 }
 
-float Motor::ReadCurrent(int ID)
+void Motor::ReadCurrent()
 {
   int CT;
 
@@ -115,20 +117,6 @@ float Motor::ReadCurrent(int ID)
   return current;
 }
 
-void Motor::setAngle(long Count_pulses)
-{
-  angle = Count_pulses * 2 * PI / PULSE_PAR_TOUR;
-  if (angle > 2 * PI)
-  {
-    Count_pulses -= PULSE_PAR_TOUR;
-    angle = Count_pulses * 2 * PI / PULSE_PAR_TOUR;
-  }
-  else if (angle < 0)
-  {
-    Count_pulses += PULSE_PAR_TOUR;
-    angle = Count_pulses * 2 * PI / PULSE_PAR_TOUR;
-  }
-}
 
 void Motor::CapperFloat(float &val, float max)
 {
@@ -140,12 +128,22 @@ void Motor::CapperFloat(float &val, float max)
 
 void Motor::neededTorque()
 {
-  // Trouver valeur du courant pour gravité
-  T_gravite = DIST_CM * MASSE * 9.81 * sin(angle);
-  CourantSouhaite = T_gravite / TORQUE2CURRENT * 1000;
+  //Is the right leg touching the ground or not?
+
+  if (RightSonarState == 1)
+  {
+
+    TorqueRightKnee = ((cos(90-RightHipAngle))/2.0)*(MF*G);
+    
+  }
+
+    
+
+  //CourantSouhaite = T_gravite / TORQUE2CURRENT * 1000;
+  TorqueHancheGauche = 43456;
 }
 
-float Motor::neededCurrent()
+float Motor::PIDCurrent()
 {
   // PID for current
   e = CourantSouhaite - ReadCurrent(MOTEUR_GENOU_DROIT);
@@ -173,14 +171,14 @@ void Motor::printData(long Count_pulses)
   // Serial.print(" derivate: ");
   // Serial.print(derivative);
   Serial.print(" Courant actuel: ");
-  Serial.print(ReadCurrent(MOTEUR_GENOU_DROIT));
+  //Serial.print(ReadCurrent(MOTEUR_GENOU_DROIT));
   // Serial.print(" Count_pulses: ");
   // Serial.print(Count_pulses);
   Serial.print(" PWM: ");
   Serial.println(PWM);
 }
 
-bool Motor::sonarRead(int ID)
+void Motor::sonarRead()
 {
   int trigPin;
   int echoPin;
@@ -240,16 +238,6 @@ bool Motor::sonarRead(int ID)
     return false;
   }
 
-  // Serial.print(inches);
-
-  // Serial.print("in, ");
-  //  Serial.print("Dist: ");
-  // Serial.println(state);
-  //  Serial.println(cm);
-
-  // Serial.print("cm");
-  // Serial.println();
-  // delay(200);
 }
 
 void Motor::setRelais(int ID, bool state)

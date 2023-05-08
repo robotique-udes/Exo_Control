@@ -65,8 +65,8 @@
 #define MOTEUR_GENOU_DROIT 1
 #define MOTEUR_HANCHE_GAUCHE 2
 #define MOTEUR_HANCHE_DROITE 3
-#define SONAR_GAUCHE 0
-#define SONAR_DROIT 1
+//#define SONAR_GAUCHE 0
+//#define SONAR_DROIT 1
 
 #define RELAIS_GENOU_GAUCHE 0
 #define RELAIS_GENOU_DROIT 1
@@ -95,6 +95,17 @@ private:
     float previous_error = 0.0;
     float PWM = 0.0;
 
+    bool RightSonarState = 0;
+    bool LeftSonarState = 0;
+    float TorqueLeftHip = 0.0;
+    float TorqueRightHip = 0.0;
+    float TorqueLeftKnee = 0.0;
+    float TorqueRightKnee = 0.0;
+    float RightHipAngle = 0.0;
+    float RightKneeAngle = 0.0;
+    float LeftHipAngle = 0.0;
+    float LeftKneeAngle = 0.0;
+
     // control sonar
     long duration;
     double cm, inches;
@@ -109,13 +120,13 @@ public:
     void setPins();
     void beginInterrupt();
     void motorSetSpeed(int ID, int val);
-    float ReadCurrent(int ID);
+    void ReadCurrent();
     void setAngle(long Count_pulses);
     void CapperFloat(float &val, float max);
     void neededTorque();
-    float neededCurrent();
+    float PIDCurrent();
     void printData(long Count_pulses);
-    bool sonarRead(int ID); // return true if grounded, false if not
+    void sonarRead(); // return true if grounded, false if not
     void setRelais(int ID, bool state);
     void testRelais();
     void testMotor();
