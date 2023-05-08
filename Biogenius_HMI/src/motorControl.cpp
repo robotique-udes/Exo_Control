@@ -24,7 +24,7 @@ ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*
 void Motor::setPins()
 {
   // PINS MOTEURS
-  pinMode(D1_IN1_A, OUTPUT);
+  //pinMode(D1_IN1_A, OUTPUT);
   pinMode(D1_IN2_A, OUTPUT);
   pinMode(D1_EN_A, OUTPUT);
   pinMode(D1_CT_A, INPUT);

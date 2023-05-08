@@ -11,88 +11,77 @@
 #include "motorControl.h"
 using namespace std;
 
-
-#define neutral 0
-#define auto 1
-#define manuel 2
-
 #define RX_HMI 16
 #define TX_HMI 17
 
-// Nextion TX to pin 2 and RX to pin 3 of Arduino
+
 
 class Screen
 {
     private:
 
+        
+
         static Motor moteur01;
         //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
-        static NexButton bON; // STATE ON
-        static NexButton bOFF; // STATE OFF
+        static NexButton bNeutral; // Neutral (Clutch ON)
+        static NexButton bAuto;    // Automatic 
 
-        static NexButton bLeft_Hip_UP; // Left Hip UP
-        static NexButton bLeft_Hip_DOWN; // Left Hip Down
-        static NexButton bRight_Hip_UP; // Right Hip UP
-        static NexButton bRight_Hip_DOWN; // Right Hip Down
+        static NexButton bStand; // Standing Button
+        static NexButton bSquat; // Squatting Button
 
-        static NexButton bLeft_Knee_RETRACT; // Left Hip UP
-        static NexButton bLeft_Knee_EXTRACT ; // Left Hip Down 
-        static NexButton bRight_Knee_RETRACT; // Right Hip UP
-        static NexButton bRight_Knee_EXTRACT; // Right Hip Down
+        static NexButton bAutoCalib; // Autocalibrating Button
+        static NexButton b4f ; // GOOSE
+        static NexButton b5f8;
+        static NexButton b5f10;
+        static NexButton b6f ;  
 
-        static NexButton bMAIN_page; //Page 0
-        static NexButton bROBOT_page; //Page 1
-        static NexButton bSETTINGS_page; //Page 2
-        static NexButton bGOOSE_page; //Page 3
+        static NexButton bPID0;
+        static NexButton bPID1;
+        static NexButton bPID2;
+        static NexButton bSavePID;
+
+        static NexSlider Pslider;
+        static NexNumber Pindicator;
+        static NexSlider Islider;
+        static NexNumber Iindicator;
+        static NexSlider Dslider;
+        static NexNumber Dindicator;
 
 
-        //---------------------------------------TEXTES--------------------------------------------
-        static NexText t0; //TEXTE STATE
         //---------------------------------------FONCTIONS-----------------------------------------
-        static void StateON(void *ptr);
+        static void StateNEUTRAL(void *ptr);
 
-//STATE NEUTRAL (0)
-        static void StateOFF(void *ptr);
+        static void StateAUTOMATIC(void *ptr);
 
-        //---------------------------------------HIPS--------------------------------------------
-        //Left
-        static void LeftHip_UP(void *ptr);
+        //---------------------------------------TESTS--------------------------------------------
+        static void TestStand(void *ptr);
 
-        static void LeftHip_DOWN(void *ptr);
+        static void TestSquat(void *ptr);
 
-        static void LeftHip_NEUTRAL(void *ptr);
+        static void TestNeutral(void *ptr);
 
-        //Right
-        static void RightHip_UP(void *ptr);
+        //---------------------------------------CALIBRATION--------------------------------------------
+        static void AutoCalibration(void *ptr);
 
-        static void RightHip_DOWN(void *ptr);
+        static void Quack(void *ptr);
 
-        static void RightHip_NEUTRAL(void *ptr);
+        static void Calib_5f8(void *ptr);
 
-        //---------------------------------------KNEES--------------------------------------------
-        //Left
-        static void LeftKnee_RETRACT(void *ptr);
+        static void Calib_5f10(void *ptr);
 
-        static void LeftKnee_EXTRACT(void *ptr);
+        static void Calib_6f(void *ptr);
 
-        static void LeftKnee_NEUTRAL(void *ptr);
+        //---------------------------------------PID--------------------------------------------
+        static void PID(void *ptr);
 
-        //Right
-        static void RightKnee_RETRACT(void *ptr);
+        static void SavePID(void *ptr);
 
-        static void RightKnee_EXTRACT(void *ptr);
+        static void Pvalue(void *ptr);
 
-        static void RightKnee_NEURAL(void *ptr);
+        static void Ivalue(void *ptr);
 
-        //---------------------------------------PAGES--------------------------------------------
-        static void MainPage(void *ptr);
-        static void RobotPage(void *ptr);
-
-        static void SettingsPage(void *ptr);
-
-        static void GoosePage(void *ptr);
-
-
+        static void Dvalue(void *ptr);
 
         static NexTouch *nex_listen_list[];
 
@@ -100,10 +89,11 @@ class Screen
     
         Screen();
         ~Screen();
-
         static void nextLoop();
-        static int mode;
+
 
 };
+
+
 
 #endif 
