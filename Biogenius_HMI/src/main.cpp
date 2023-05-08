@@ -6,29 +6,34 @@
 // #include "touchScreen.h"
 #include <HardwareSerial.h>
 #include "imu.h" 
+#include "touchScreen.h"
+#include <SPI.h>
+//#include <SoftwareSerial.h>
+#include <SD.h>
+#include "imu.h" //jesus was here
 
-HardwareSerial SerialPort(2);
+#include <Nextion.h>
+#include <string.h>
+#include <HardwareSerial.h>
 
-#define neutral 0
-#define auto 1
-#define manuel 2
-
-// Screen ecran;
 Motor motor;
 Test test01;
 Imu imu01;
+Screen ecran;
 
+HardwareSerial SerialPort(2);
 
+  //===============================================================================================================
+  //===================================================(SETUP)=====================================================
+  //===============================================================================================================
 
 void setup()
 {
-
+  nexInit();
   Serial.begin(9600);
-  // Serial2.begin(9600, SERIAL_8N1, RX_HMI, TX_HMI);
-  // nexInit();
+  Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
   motor.setPins();
-  delay(10000);
 
   Serial.println("Ini motor exo----------");
   imu01.IMUSetup();
@@ -39,15 +44,15 @@ void loop()
 {
   imu01.printAngles();
   delay(200);
+  //nexLoop(nex_listen_list);
+  ecran.nextLoop();
+  //imu01.printAngles();
   //motor.testMotor();
   //motor.testRelais();
-
-  // ecran.nextLoop();
-
   // Set PWM
-  /*motor.setAngle(Count_pulses);
-  motor.neededTorque();
-  motor.motorSetSpeed(motor.neededCurrent());
-  motor.printData(Count_pulses);*/
-  // delay(5);
+  //motor.setAngle(Count_pulses);
+  //motor.neededTorque();
+  //motor.motorSetSpeed(motor.neededCurrent());
+  //motor.printData(Count_pulses);
+  delay(5);
 }
