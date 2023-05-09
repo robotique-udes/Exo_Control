@@ -97,24 +97,19 @@ void Motor::motorSetSpeed(int ID, int val)
   analogWrite(EN, val);
 }
 
-void Motor::ReadCurrent()
+
+void Motor::readCurrent()
 {
-  int CT;
+  int CTLeftKnee = D1_CT_A;;
+  int CTRightKnee = D2_CT_A;
+  float CTRightKneeValue = 0.0;
+  float CTLeftKneeValue = 0.0;
 
-  if (ID == MOTEUR_GENOU_GAUCHE)
-    CT = D1_CT_A;
-  else if (ID == MOTEUR_GENOU_DROIT)
-    CT = D2_CT_A;
-  // else if(ID == MOTEUR_HANCHE_GAUCHE)
-  //   CT = D1_CT_B;
-  // else if(ID == MOTEUR_HANCHE_DROITE)
-  //   CT = D2_CT_B;
+  CTRightKneeValue = analogRead(CTRightKnee);
+  CTLeftKneeValue = analogRead(CTLeftKnee);
 
-  CTval = analogRead(CT);
-  current = ((CTval * 27.0) / 1023.0) * 1000.0;
-  // FilteredCurrent.Filter(current);
-  // return FilteredCurrent.Current()*Rotation;
-  return current;
+  RightKneeMeasuredCurrent = ((CTRightKneeValue * 27.0) / 1023.0) * 1000.0;
+  LeftKneeMeasuredCurrent = ((CTLeftKneeValue * 27.0) / 1023.0) * 1000.0; 
 }
 
 
@@ -128,19 +123,38 @@ void Motor::CapperFloat(float &val, float max)
 
 void Motor::neededTorque()
 {
-  //Is the right leg touching the ground or not?
+  //Right knee torque values calculated (varies depending on SonarSate)(The sign of the value has to be verified here (so that the motor turns in the right direction))
 
   if (RightSonarState == 1)
   {
-
-    TorqueRightKnee = ((cos(90-RightHipAngle))/2.0)*(MF*G);
-    
+    RightKneeTorque = ((cos(90-RightHipAngle)*LF)/2.0)*(MF*G);
   }
 
-    
+    if (RightSonarState == 0)
+  {
+    RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G);  
+  }
 
-  //CourantSouhaite = T_gravite / TORQUE2CURRENT * 1000;
-  TorqueHancheGauche = 43456;
+//Left knee torque values calculated (varies depending on SonarSate)()
+
+if (LeftSonarState == 1)
+  {
+    LeftKneeTorque = ((cos(90-LeftHipAngle)*LF)/2.0)*(MF*G); 
+  }
+
+    if (LeftSonarState == 0)
+  {
+    LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G); 
+  }
+}
+
+void Motor::neededCurrent()
+{
+  //neededCurrent = SideKneeTorque / TORQUE2CURRENT * 1000;
+
+RightKneeNeededCurrent = (RightKneeTorque/TORQUE2CURRENT)*1000;
+LeftKneeNeededCurrent = (RightKneeTorque/TORQUE2CURRENT)*1000;
+
 }
 
 float Motor::PIDCurrent()
@@ -180,54 +194,78 @@ void Motor::printData(long Count_pulses)
 
 void Motor::sonarRead()
 {
-  int trigPin;
-  int echoPin;
+  int RightTrigPin = TRIG_PIN_DROIT;
+  int LeftTrigPin = TRIG_PIN_GAUCHE;
+  int RightEchoPin = ECHO_PIN_DROIT;
+  int LeftEchoPin = ECHO_PIN_GAUCHE;
 
-  if (ID == SONAR_GAUCHE)
-  {
-    trigPin = TRIG_PIN_GAUCHE;
-    echoPin = ECHO_PIN_GAUCHE;
-  }
-  else if (ID == SONAR_DROIT)
-  {
-    trigPin = TRIG_PIN_DROIT;
-    echoPin = ECHO_PIN_DROIT;
-  }
-
-  digitalWrite(trigPin, LOW);
+  digitalWrite(RightTrigPin, LOW);
+  digitalWrite(LeftTrigPin, LOW);
   delayMicroseconds(5);
-  digitalWrite(trigPin, HIGH);
+  digitalWrite(RightTrigPin, HIGH);
+  digitalWrite(LeftTrigPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  digitalWrite(RightTrigPin, LOW);
+  digitalWrite(LeftTrigPin, LOW);
+  
 
-  float erreur = 0;
-  duration = pulseIn(echoPin, HIGH);
+  float errorRight = 0;
+  float errorLeft = 0;
 
-  cm = (duration / 2) / 29.1;
+  RightDuration = pulseIn(RightEchoPin, HIGH);
+  LeftDuration = pulseIn(LeftEchoPin, HIGH);
+
+
+  RightCm = (RightDuration / 2) / 29.1;
+  LeftCm = (LeftDuration / 2) / 29.1;
 
   // Serial.print("Dist: ");
   // Serial.println(cm);
 
-  inches = (duration / 2) / 74;
-  if (state == false)
+//Determining the current SonarState for each sensor
+
+//Here, right sensor is examined 
+  if (RightSonarState == false)
   {
     for (int i = 0; i < iteration; i++)
-      if (cm < height)
-        erreur += 1;
-    erreur = erreur / iteration;
-    if (erreur <= 0.2)
-      state = true;
+      if (RightCm < height)
+        errorRight += 1;
+    errorRight = errorRight / iteration;
+    if (errorRight <= 0.2)
+      RightSonarState = true;
   }
   else
   {
     for (int i = 0; i < iteration; i++)
-      if (cm > height)
-        erreur += 1;
-    erreur = erreur / iteration;
-    if (erreur <= 0.2)
-      state = false;
+      if (RightCm > height)
+        errorRight += 1;
+    errorRight = errorRight / iteration;
+    if (errorRight <= 0.2)
+      RightSonarState = false;
   }
-  if (state == false)
+
+//Here, left sensor is examined
+   if (LeftSonarState == false)
+  {
+    for (int i = 0; i < iteration; i++)
+      if (LeftCm < height)
+        errorLeft += 1;
+    errorLeft = errorLeft / iteration;
+    if (errorLeft <= 0.2)
+      LeftSonarState = true;
+  }
+  else
+  {
+    for (int i = 0; i < iteration; i++)
+      if (LeftCm > height)
+        errorLeft += 1;
+    errorLeft = errorLeft / iteration;
+    if (errorLeft <= 0.2)
+      LeftSonarState = false;
+  }
+
+
+  /*if (state == false) //If the result of state is false we just turn it to true and the other way around?
   {
     // Serial.println("Sol");
     return true;
@@ -237,7 +275,7 @@ void Motor::sonarRead()
     // Serial.println("      Air");
     return false;
   }
-
+*/
 }
 
 void Motor::setRelais(int ID, bool state)

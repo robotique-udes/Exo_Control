@@ -50,13 +50,10 @@
 #define LH 0.5        // longueur haut du corps
 #define LF 0.3        // longueur femur
 #define LT 0.2        // longueur tibia
-#define LHCM = LH / 2 // longueur haut du corps
-#define LFCM = LF / 2 // longueur femur
-#define LTCM = LT / 2 // longueur tibia
-#define G = 9.81      // gravité
-#define MH = 25       // Masse haut du corps/2
-#define MF = 30       // Masse femur
-#define MT = 15       // Masse tibia
+#define G 9.81      // gravité
+#define MH 25       // Masse haut du corps/2
+#define MF 30       // Masse femur
+#define MT 15       // Masse tibia
 
 #define ClockWise 1
 #define CounterClockWise -1
@@ -85,31 +82,31 @@ private:
     float Acurrent;
     float current = 0.0;
     int Rotation = 1;
-    float T_ressort = 0.0;
-    float T_gravite = 0.0;
-    float CourantSouhaite = 0.0;
     float e = 0.0;
-    float angle = 0.0;
     float integral = 0.0;
     float derivative = 0.0;
     float previous_error = 0.0;
     float PWM = 0.0;
 
-    bool RightSonarState = 0;
-    bool LeftSonarState = 0;
-    float TorqueLeftHip = 0.0;
-    float TorqueRightHip = 0.0;
-    float TorqueLeftKnee = 0.0;
-    float TorqueRightKnee = 0.0;
+    
+    float LeftHipTorque = 0.0;
+    float RightHipTorque = 0.0;
+    float LeftKneeTorque = 0.0;
+    float RightKneeTorque = 0.0;
     float RightHipAngle = 0.0;
     float RightKneeAngle = 0.0;
     float LeftHipAngle = 0.0;
     float LeftKneeAngle = 0.0;
+    float RightKneeNeededCurrent = 0.0;
+    float LeftKneeNeededCurrent = 0.0;
+    float RightKneeMeasuredCurrent = 0.0;
+    float LeftKneeMeasuredCurrent = 0.0;
 
     // control sonar
-    long duration;
-    double cm, inches;
-    bool state = false;
+    long RightDuration;
+    long LeftDuration;
+    double RightCm, LeftCm;
+    bool RightSonarState, LeftSonarState = false;
     double height = 40;
     int iteration = 20;
 
@@ -120,10 +117,11 @@ public:
     void setPins();
     void beginInterrupt();
     void motorSetSpeed(int ID, int val);
-    void ReadCurrent();
+    void readCurrent();
     void setAngle(long Count_pulses);
     void CapperFloat(float &val, float max);
     void neededTorque();
+    void neededCurrent();
     float PIDCurrent();
     void printData(long Count_pulses);
     void sonarRead(); // return true if grounded, false if not
