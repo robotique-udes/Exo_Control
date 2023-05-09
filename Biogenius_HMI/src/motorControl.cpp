@@ -157,26 +157,43 @@ LeftKneeNeededCurrent = (RightKneeTorque/TORQUE2CURRENT)*1000;
 
 }
 
-float Motor::PIDCurrent()
+void Motor::PIDCurrent()
 {
-  // PID for current
-  e = CourantSouhaite - ReadCurrent(MOTEUR_GENOU_DROIT);
+//Set error values on measured current compared to needed current determined by torque
+  ErrorCurrentRightKnee = RightKneeNeededCurrent - RightKneeMeasuredCurrent;
+  ErrorCurrentLeftKnee = LeftKneeNeededCurrent - LeftKneeMeasuredCurrent;
 
-  integral = integral + e;
-  derivative = e - previous_error;
-  CapperFloat(e, 5);
+//Update integral values depending on calculated errors
+  IntegralRightKnee += ErrorCurrentRightKnee;
+  IntegralLeftKnee += ErrorCurrentLeftKnee;
+
+//Update derivative values depending on the rate of change of the calculated errors 
+  DerivativeRightKnee = ErrorCurrentRightKnee - PreviousErrorRightKnee;
+  DerivativeLeftKnee = ErrorCurrentLeftKnee - PreviousErrorLeftKnee;
+
+//Capping the error values
+  CapperFloat(ErrorCurrentRightKnee, 5);
+  CapperFloat(ErrorCurrentLeftKnee, 5);
+
   // CapperFloat(derivative, 50);
-  PWM += KP * e + KI * integral + KD * derivative;
-  previous_error = e;
+//Setting both PWM values 
+  PWMRightKnee += KP * ErrorCurrentRightKnee + KI * IntegralRightKnee + KD * DerivativeRightKnee;
+  PWMLeftKnee += KP * ErrorCurrentLeftKnee + KI * IntegralLeftKnee + KD * DerivativeLeftKnee;
 
-  CapperFloat(PWM, 255);
-  if (angle < 0.2 || angle > (2 * PI - 0.2))
-    PWM = 0;
+//Setting the previous errors for both motors
+  PreviousErrorRightKnee = ErrorCurrentRightKnee;
+  PreviousErrorLeftKnee = ErrorCurrentLeftKnee;
 
-  return PWM;
+//Capping the PWM values for both motors
+  CapperFloat(PWMRightKnee, 255);
+  CapperFloat(PWMLeftKnee, 255);
+
+  /*if (angle < 0.2 || angle > (2 * PI - 0.2))
+    PWM = 0;*/
+
 }
 
-void Motor::printData(long Count_pulses)
+/*void Motor::printData(long Count_pulses)
 {
   // Serial.print(" Angle: ");
   // Serial.print(angle);
@@ -190,7 +207,7 @@ void Motor::printData(long Count_pulses)
   // Serial.print(Count_pulses);
   Serial.print(" PWM: ");
   Serial.println(PWM);
-}
+}*/
 
 void Motor::sonarRead()
 {

@@ -82,11 +82,16 @@ private:
     float Acurrent;
     float current = 0.0;
     int Rotation = 1;
-    float e = 0.0;
-    float integral = 0.0;
-    float derivative = 0.0;
-    float previous_error = 0.0;
-    float PWM = 0.0;
+    float ErrorCurrentRightKnee = 0.0;
+    float ErrorCurrentLeftKnee = 0.0;
+    float IntegralRightKnee = 0.0;
+    float IntegralLeftKnee = 0.0;
+    float DerivativeRightKnee = 0.0;
+    float DerivativeLeftKnee = 0.0;
+    float PreviousErrorRightKnee = 0.0;
+    float PreviousErrorLeftKnee = 0.0;
+    float PWMRightKnee = 0.0;
+    float PWMLeftKnee = 0.0;
 
     
     float LeftHipTorque = 0.0;
@@ -122,7 +127,7 @@ public:
     void CapperFloat(float &val, float max);
     void neededTorque();
     void neededCurrent();
-    float PIDCurrent();
+    void PIDCurrent();
     void printData(long Count_pulses);
     void sonarRead(); // return true if grounded, false if not
     void setRelais(int ID, bool state);

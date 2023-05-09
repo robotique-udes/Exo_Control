@@ -57,6 +57,7 @@ public:
     void initSPIFFS();
     bool IMUSetup();
     void wifiSetup();
+    
 };
 
 #endif
