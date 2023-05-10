@@ -16,12 +16,16 @@
 #include <string.h>
 #include <HardwareSerial.h>
 
+#include "enum.h"
+
 Motor motor;
 Test test01;
 Imu imu01;
 Screen ecran;
 
 HardwareSerial SerialPort(2);
+
+void updateAngles();
 
   //===============================================================================================================
   //===================================================(SETUP)=====================================================
@@ -42,10 +46,12 @@ void setup()
 
 void loop()
 {
+
   imu01.printAngles();
   delay(200);
   //nexLoop(nex_listen_list);
   ecran.nextLoop();
+  updateAngles();
   //imu01.printAngles();
   //motor.testMotor();
   //motor.testRelais();
@@ -55,4 +61,12 @@ void loop()
   //motor.motorSetSpeed(motor.neededCurrent());
   //motor.printData(Count_pulses);
   delay(5);
+}
+
+void updateAngles()
+{
+  motor.setAngle(enumIMU::HipR,imu01.getValAngle(enumIMU::HipR));
+  motor.setAngle(enumIMU::HipL,imu01.getValAngle(enumIMU::HipL));
+  motor.setAngle(enumIMU::KneeR,imu01.getValAngle(enumIMU::KneeR));
+  motor.setAngle(enumIMU::KneeL,imu01.getValAngle(enumIMU::KneeL));
 }

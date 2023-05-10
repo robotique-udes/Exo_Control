@@ -369,3 +369,24 @@ void Motor::testMotor()
   motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
   delay(1000);
 }
+
+void Motor::setAngle(enumIMU imuType, float val)
+{
+  switch (imuType)
+  {
+    case enumIMU::HipL:
+        RightHipAngle = val;
+        break;
+    case enumIMU::KneeL:
+        RightKneeAngle = val;
+        break;
+    case enumIMU::HipR:
+        LeftHipAngle = val;
+        break;
+    case enumIMU::KneeR:
+        LeftKneeAngle = val;
+        break;
+    default:
+        break;
+  }
+}

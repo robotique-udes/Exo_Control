@@ -1,6 +1,7 @@
 #ifndef MOTORCONTROL_H
 #define MOTORCONTROL_H
 #include <Arduino.h>
+#include "enum.h"
 // #include <MegunoLink.h>
 // #include <filter.h>
 // #include <CommandHandler.h>
@@ -123,7 +124,6 @@ public:
     void beginInterrupt();
     void motorSetSpeed(int ID, int val);
     void readCurrent();
-    void setAngle(long Count_pulses);
     void CapperFloat(float &val, float max);
     void neededTorque();
     void neededCurrent();
@@ -133,6 +133,7 @@ public:
     void setRelais(int ID, bool state);
     void testRelais();
     void testMotor();
+    void setAngle(enumIMU enumType, float val);
 };
 
 #endif

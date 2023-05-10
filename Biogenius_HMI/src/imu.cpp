@@ -260,3 +260,25 @@ void Imu::initSPIFFS()
         Serial.println("SPIFFS mounted successfully");
     }
 }
+
+double Imu::getValAngle(enumIMU imuType)
+{
+    switch (imuType)
+    {
+    case enumIMU::HipL:
+        return toDegrees(angleHipL.y());
+        break;
+    case enumIMU::KneeL:
+        return toDegrees(angleKneeL.y());
+        break;
+    case enumIMU::HipR:
+        return toDegrees(angleHipR.y());
+        break;
+    case enumIMU::KneeR:
+        return toDegrees(angleKneeR.y());
+        break;
+    default:
+        return 0;
+        break;
+    }
+}

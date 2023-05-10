@@ -13,6 +13,7 @@
 #include "SPIFFS.h"
 #include <Arduino_JSON.h>
 #include <string>
+#include "enum.h"
 
 #define I2C_SDA1 26
 #define I2C_SCL1 27
@@ -57,6 +58,7 @@ public:
     void initSPIFFS();
     bool IMUSetup();
     void wifiSetup();
+    double getValAngle(enumIMU imuType);
     
 };
 
