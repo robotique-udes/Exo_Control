@@ -10,7 +10,7 @@
 #include <SPI.h>
 //#include <SoftwareSerial.h>
 #include <SD.h>
-#include "imu.h" //jesus was here
+#include "imu.h" 
 
 #include <Nextion.h>
 #include <string.h>
@@ -35,6 +35,7 @@ void setup()
 {
   nexInit();
   Serial.begin(9600);
+  delay(8000);
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
   motor.setPins();
@@ -52,6 +53,13 @@ void loop()
   //nexLoop(nex_listen_list);
   ecran.nextLoop();
   updateAngles();
+  motor.sonarRead();
+  motor.neededTorque();
+  motor.neededCurrent();
+  motor.readCurrent();
+  motor.PIDCurrent();
+  //motor.motorSetSpeed(MOTEUR_GENOU_DROIT,motor.PWMRightKnee);
+  //motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE,motor.PWMLeftKnee);
   //imu01.printAngles();
   //motor.testMotor();
   //motor.testRelais();
@@ -65,6 +73,8 @@ void loop()
 
 void updateAngles()
 {
+
+  imu01.getAngles();
   motor.setAngle(enumIMU::HipR,imu01.getValAngle(enumIMU::HipR));
   motor.setAngle(enumIMU::HipL,imu01.getValAngle(enumIMU::HipL));
   motor.setAngle(enumIMU::KneeR,imu01.getValAngle(enumIMU::KneeR));

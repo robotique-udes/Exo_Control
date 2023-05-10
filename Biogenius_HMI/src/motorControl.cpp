@@ -146,6 +146,21 @@ if (LeftSonarState == 1)
   {
     LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G); 
   }
+
+  Serial.print("  RightHipAngle: ");
+  Serial.print(RightHipAngle);
+  Serial.print("  LeftHipAngle: ");
+  Serial.print(LeftHipAngle);
+
+  Serial.print("  RightKneeAngle: ");
+  Serial.print(RightKneeAngle);
+  Serial.print("  LeftKneeAngle: ");
+  Serial.print(LeftKneeAngle);
+
+  Serial.print("  NeededTorqueL: ");
+  Serial.print(LeftKneeTorque);
+  Serial.print("  NeededTorqueR: ");
+  Serial.println(RightKneeTorque);
 }
 
 void Motor::neededCurrent()
@@ -211,33 +226,29 @@ void Motor::PIDCurrent()
 
 void Motor::sonarRead()
 {
-  int RightTrigPin = TRIG_PIN_DROIT;
-  int LeftTrigPin = TRIG_PIN_GAUCHE;
-  int RightEchoPin = ECHO_PIN_DROIT;
-  int LeftEchoPin = ECHO_PIN_GAUCHE;
 
-  digitalWrite(RightTrigPin, LOW);
-  digitalWrite(LeftTrigPin, LOW);
+//Signal acquisition from right sonar
+  digitalWrite(TRIG_PIN_DROIT, LOW);
   delayMicroseconds(5);
-  digitalWrite(RightTrigPin, HIGH);
-  digitalWrite(LeftTrigPin, HIGH);
+  digitalWrite(TRIG_PIN_DROIT, HIGH);
   delayMicroseconds(10);
-  digitalWrite(RightTrigPin, LOW);
-  digitalWrite(LeftTrigPin, LOW);
+  digitalWrite(TRIG_PIN_DROIT, LOW);
+  RightDuration = pulseIn(ECHO_PIN_DROIT, HIGH);
   
+//Signal acquisition from left sonar
+  digitalWrite(TRIG_PIN_GAUCHE, LOW);
+  delayMicroseconds(5);
+  digitalWrite(TRIG_PIN_GAUCHE, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN_GAUCHE, LOW);
+  LeftDuration = pulseIn(ECHO_PIN_GAUCHE, HIGH);
 
   float errorRight = 0;
   float errorLeft = 0;
 
-  RightDuration = pulseIn(RightEchoPin, HIGH);
-  LeftDuration = pulseIn(LeftEchoPin, HIGH);
-
-
   RightCm = (RightDuration / 2) / 29.1;
   LeftCm = (LeftDuration / 2) / 29.1;
 
-  // Serial.print("Dist: ");
-  // Serial.println(cm);
 
 //Determining the current SonarState for each sensor
 
@@ -280,19 +291,19 @@ void Motor::sonarRead()
     if (errorLeft <= 0.2)
       LeftSonarState = false;
   }
+  
+  LeftSonarState = !LeftSonarState;
+  RightSonarState = !RightSonarState;
+
+  Serial.print(" SonarL: ");
+  Serial.print(LeftSonarState);
+  Serial.print(" SonarR: ");
+  Serial.print(RightSonarState);
 
 
-  /*if (state == false) //If the result of state is false we just turn it to true and the other way around?
-  {
-    // Serial.println("Sol");
-    return true;
-  }
-  else
-  {
-    // Serial.println("      Air");
-    return false;
-  }
-*/
+
+  
+
 }
 
 void Motor::setRelais(int ID, bool state)
@@ -374,16 +385,16 @@ void Motor::setAngle(enumIMU imuType, float val)
 {
   switch (imuType)
   {
-    case enumIMU::HipL:
+    case enumIMU::HipR:
         RightHipAngle = val;
         break;
-    case enumIMU::KneeL:
+    case enumIMU::KneeR:
         RightKneeAngle = val;
         break;
-    case enumIMU::HipR:
+    case enumIMU::HipL:
         LeftHipAngle = val;
         break;
-    case enumIMU::KneeR:
+    case enumIMU::KneeL:
         LeftKneeAngle = val;
         break;
     default:

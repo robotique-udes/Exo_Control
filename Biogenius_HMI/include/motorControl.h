@@ -53,8 +53,8 @@
 #define LT 0.2        // longueur tibia
 #define G 9.81      // gravité
 #define MH 25       // Masse haut du corps/2
-#define MF 30       // Masse femur
-#define MT 15       // Masse tibia
+#define MF 1      // Masse femur
+#define MT 1      // Masse tibia
 
 #define ClockWise 1
 #define CounterClockWise -1
@@ -90,11 +90,7 @@ private:
     float DerivativeRightKnee = 0.0;
     float DerivativeLeftKnee = 0.0;
     float PreviousErrorRightKnee = 0.0;
-    float PreviousErrorLeftKnee = 0.0;
-    float PWMRightKnee = 0.0;
-    float PWMLeftKnee = 0.0;
-
-    
+    float PreviousErrorLeftKnee = 0.0;    
     float LeftHipTorque = 0.0;
     float RightHipTorque = 0.0;
     float LeftKneeTorque = 0.0;
@@ -119,6 +115,8 @@ private:
 public:
     Motor();
     ~Motor();
+    float PWMRightKnee = 0.0;
+    float PWMLeftKnee = 0.0;
 
     void setPins();
     void beginInterrupt();
