@@ -27,13 +27,13 @@ void Motor::setPins()
 {
   // PINS MOTEURS
   //pinMode(D1_IN1_A, OUTPUT);
-  pinMode(D1_IN2_A, OUTPUT);
-  pinMode(D1_EN_A, OUTPUT);
-  pinMode(D1_CT_A, INPUT);
-  pinMode(D2_IN1_A, OUTPUT);
-  pinMode(D2_IN2_A, OUTPUT);
-  pinMode(D2_EN_A, OUTPUT);
-  pinMode(D2_CT_A, INPUT);
+  // pinMode(D1_IN2_A, OUTPUT);
+  // pinMode(D1_EN_A, OUTPUT);
+  // pinMode(D1_CT_A, INPUT);
+  // pinMode(D2_IN1_A, OUTPUT);
+  // pinMode(D2_IN2_A, OUTPUT);
+  // pinMode(D2_EN_A, OUTPUT);
+  // pinMode(D2_CT_A, INPUT);
 
   // PINS RELAIS
   pinMode(RELAIS_PIN_GENOU_GAUCHE, OUTPUT);
@@ -127,35 +127,35 @@ void Motor::neededTorque()
 
   if (RightSonarState == 1)
   {
-    RightKneeTorque = ((sin(RightHipAngle)*LF)/2.0)*(MF*G);
+    RightKneeTorque = ((sin(RightKneeAngle)*LF)/2.0)*(MF*G) + ((sin(RightKneeAngle)*LF))*(MH*G);
   }
 
-    if (RightSonarState == 0)
+  else if (RightSonarState == 0)
   {
-    RightKneeTorque = -((sin(RightKneeAngle))*LT)/2.0)*(MT*G);  
+    RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G);  
   }
 
 //Left knee torque values calculated (varies depending on SonarSate)()
 
 if (LeftSonarState == 1)
   {
-    LeftKneeTorque = ((sin(LeftHipAngle)*LF)/2.0)*(MF*G);
+    LeftKneeTorque = ((sin(LeftKneeAngle)*LF)/2.0)*(MF*G) + ((sin(LeftKneeAngle)*LF))*(MH*G);
   }
 
-    if (LeftSonarState == 0)
+   else if (LeftSonarState == 0)
   {
-    LeftKneeTorque = -((sin(LeftKneeAngle))*LT)/2.0)*(MT*G); 
+    LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G); 
   }
 
   Serial.print("  RightHipAngle: ");
-  Serial.print(RightHipAngle);
+  Serial.print(toDegrees(RightHipAngle));
   Serial.print("  LeftHipAngle: ");
-  Serial.print(LeftHipAngle);
+  Serial.print(toDegrees(LeftHipAngle));
 
   Serial.print("  RightKneeAngle: ");
-  Serial.print(RightKneeAngle);
+  Serial.print(toDegrees(RightKneeAngle));
   Serial.print("  LeftKneeAngle: ");
-  Serial.print(LeftKneeAngle);
+  Serial.print(toDegrees(LeftKneeAngle));
 
   Serial.print("  NeededTorqueL: ");
   Serial.print(LeftKneeTorque);
@@ -295,47 +295,49 @@ void Motor::sonarRead()
   LeftSonarState = !LeftSonarState;
   RightSonarState = !RightSonarState;
 
-  Serial.print(" SonarL: ");
+  Serial.print(" SL: ");
   Serial.print(LeftSonarState);
-  Serial.print(" SonarR: ");
+  Serial.print(" SR: ");
   Serial.print(RightSonarState);
-
-
-
-  
-
 }
 
 void Motor::setRelais(int ID, bool state)
 {
   if (ID == RELAIS_GENOU_GAUCHE)
   {
-    if (state == true)
+    if (state != ON)
       digitalWrite(RELAIS_PIN_GENOU_GAUCHE, HIGH);
     else
       digitalWrite(RELAIS_PIN_GENOU_GAUCHE, LOW);
   }
   else if (ID == RELAIS_GENOU_DROIT)
   {
-    if (state == true)
+    if (state != ON)
       digitalWrite(RELAIS_PIN_GENOU_DROIT, HIGH);
     else
       digitalWrite(RELAIS_PIN_GENOU_DROIT, LOW);
   }
   else if (ID == RELAIS_HANCHE_GAUCHE)
   {
-    if (state == true)
+    if (state != ON)
       digitalWrite(RELAIS_PIN_HANCHE_GAUCHE, HIGH);
     else
       digitalWrite(RELAIS_PIN_HANCHE_GAUCHE, LOW);
   }
   else if (ID == RELAIS_HANCHE_DROITE)
   {
-    if (state == true)
+    if (state != ON)
       digitalWrite(RELAIS_PIN_HANCHE_DROITE, HIGH);
     else
       digitalWrite(RELAIS_PIN_HANCHE_DROITE, LOW);
   }
+}
+void Motor::setAllRelais(bool state)
+{
+   setRelais(RELAIS_GENOU_GAUCHE, state);
+   setRelais(RELAIS_GENOU_DROIT,state);
+   setRelais(RELAIS_HANCHE_DROITE,state);
+   setRelais(RELAIS_HANCHE_GAUCHE,state);
 }
 
 void Motor::testRelais()
@@ -400,4 +402,9 @@ void Motor::setAngle(enumIMU imuType, float val)
     default:
         break;
   }
+}
+
+float Motor::toDegrees(float radians)
+{
+    return radians * 180 / PI;
 }

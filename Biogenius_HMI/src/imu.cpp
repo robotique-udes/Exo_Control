@@ -207,7 +207,7 @@ void Imu::initWiFi()
             Serial.println(password);
             Serial.println();
         }
-        // delay(500);
+         delay(10);
     }
 
     Serial.println("");
@@ -266,16 +266,16 @@ double Imu::getValAngle(enumIMU imuType)
     switch (imuType)
     {
     case enumIMU::HipL:
-        return toDegrees(angleHipL.y());
+        return (angleHipL.y());
         break;
     case enumIMU::KneeL:
-        return toDegrees(angleKneeL.y());
+        return (angleKneeL.y());
         break;
     case enumIMU::HipR:
-        return toDegrees(angleHipR.y());
+        return (angleHipR.y());
         break;
     case enumIMU::KneeR:
-        return toDegrees(angleKneeR.y());
+        return (angleKneeR.y());
         break;
     default:
         return 0;

@@ -35,40 +35,39 @@ void setup()
 {
   nexInit();
   Serial.begin(9600);
-  delay(8000);
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
   motor.setPins();
 
   Serial.println("Ini motor exo----------");
   imu01.IMUSetup();
+  motor.setAllRelais(OFF);
   //imu01.wifiSetup();
 }
 
 void loop()
 {
 
-  imu01.printAngles();
+  //imu01.printAngles();
   delay(200);
   //nexLoop(nex_listen_list);
   ecran.nextLoop();
   updateAngles();
   motor.sonarRead();
+  //motor.testRelais();
   motor.neededTorque();
-  motor.neededCurrent();
-  motor.readCurrent();
-  motor.PIDCurrent();
+  // motor.neededCurrent();
+  // motor.readCurrent();
+  // motor.PIDCurrent();
   //motor.motorSetSpeed(MOTEUR_GENOU_DROIT,motor.PWMRightKnee);
   //motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE,motor.PWMLeftKnee);
   //imu01.printAngles();
   //motor.testMotor();
-  //motor.testRelais();
   // Set PWM
   //motor.setAngle(Count_pulses);
   //motor.neededTorque();
   //motor.motorSetSpeed(motor.neededCurrent());
   //motor.printData(Count_pulses);
-  delay(5);
 }
 
 void updateAngles()
