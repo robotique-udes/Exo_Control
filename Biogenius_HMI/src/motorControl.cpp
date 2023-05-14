@@ -127,24 +127,24 @@ void Motor::neededTorque()
 
   if (RightSonarState == 1)
   {
-    RightKneeTorque = ((cos(90-RightHipAngle)*LF)/2.0)*(MF*G);
+    RightKneeTorque = ((sin(RightHipAngle)*LF)/2.0)*(MF*G);
   }
 
     if (RightSonarState == 0)
   {
-    RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G);  
+    RightKneeTorque = -((sin(RightKneeAngle))*LT)/2.0)*(MT*G);  
   }
 
 //Left knee torque values calculated (varies depending on SonarSate)()
 
 if (LeftSonarState == 1)
   {
-    LeftKneeTorque = ((cos(90-LeftHipAngle)*LF)/2.0)*(MF*G); 
+    LeftKneeTorque = ((sin(LeftHipAngle)*LF)/2.0)*(MF*G);
   }
 
     if (LeftSonarState == 0)
   {
-    LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G); 
+    LeftKneeTorque = -((sin(LeftKneeAngle))*LT)/2.0)*(MT*G); 
   }
 
   Serial.print("  RightHipAngle: ");
