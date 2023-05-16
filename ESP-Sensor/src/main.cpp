@@ -47,32 +47,25 @@ void setup()
 
 void loop()
 {
-
-  //imu01.printAngles();
+  //--------------LOGIC BLOC---------------
   delay(200);
-  //nexLoop(nex_listen_list);
   ecran.nextLoop();
   updateAngles();
   motor.sonarRead();
-  //motor.testRelais();
   motor.neededTorque();
   // motor.neededCurrent();
   // motor.readCurrent();
   // motor.PIDCurrent();
-  //motor.motorSetSpeed(MOTEUR_GENOU_DROIT,motor.PWMRightKnee);
-  //motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE,motor.PWMLeftKnee);
-  //imu01.printAngles();
-  //motor.testMotor();
-  // Set PWM
-  //motor.setAngle(Count_pulses);
-  //motor.neededTorque();
-  //motor.motorSetSpeed(motor.neededCurrent());
-  //motor.printData(Count_pulses);
+
+  //--------------PRINTING BLOC-------------
+  motor.printSonar();
+  motor.printTorque();
+  imu01.printAngles();
+
 }
 
 void updateAngles()
 {
-
   imu01.getAngles();
   motor.setAngle(enumIMU::HipR,imu01.getValAngle(enumIMU::HipR));
   motor.setAngle(enumIMU::HipL,imu01.getValAngle(enumIMU::HipL));

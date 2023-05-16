@@ -134,6 +134,8 @@ public:
     void testMotor();
     void setAngle(enumIMU enumType, float val);
     float toDegrees(float radians);
+    void printSonar();
+    void printTorque();
 };
 
 #endif

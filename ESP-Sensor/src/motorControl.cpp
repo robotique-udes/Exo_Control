@@ -146,7 +146,10 @@ if (LeftSonarState == 1)
   {
     LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G); 
   }
+}
 
+void Motor::printTorque()
+{
   Serial.print("  RightHipAngle: ");
   Serial.print(toDegrees(RightHipAngle));
   Serial.print("  LeftHipAngle: ");
@@ -295,6 +298,10 @@ void Motor::sonarRead()
   LeftSonarState = !LeftSonarState;
   RightSonarState = !RightSonarState;
 
+
+}
+void Motor::printSonar()
+{
   Serial.print(" SL: ");
   Serial.print(LeftSonarState);
   Serial.print(" SR: ");

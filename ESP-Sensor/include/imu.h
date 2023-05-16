@@ -59,6 +59,7 @@ public:
     bool IMUSetup();
     void wifiSetup();
     double getValAngle(enumIMU imuType);
+    void printSonar();
     
 };
 
