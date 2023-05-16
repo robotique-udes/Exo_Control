@@ -2,27 +2,10 @@
 #define MOTORCONTROL_H
 #include <Arduino.h>
 #include "enum.h"
-// #include <MegunoLink.h>
-// #include <filter.h>
-// #include <CommandHandler.h>
-// #include <ArduinoTimer.h>
 
-// PINS MOTEURS
-#define D2_IN1_A 17
-#define D2_IN2_A 21
-#define D2_EN_A 22
 #define D2_CT_A A7
-#define D1_IN1_B 23 //Pour prochain PCB
-#define D1_IN2_B 25
-#define D1_EN_B 26
 #define D1_CT_B A0
-#define D1_IN1_A 13
-#define D1_IN2_A 14
-#define D1_EN_A 16
 #define D1_CT_A A6
-#define D2_IN1_B 27 //Pour prochain PCB
-#define D2_IN2_B 32
-#define D2_EN_B 33
 #define D2_CT_B A3
 
 // PINS RELAIS
@@ -117,15 +100,17 @@ public:
     ~Motor();
     float PWMRightKnee = 0.0;
     float PWMLeftKnee = 0.0;
+    float PWMRightHip = 0.0;
+    float PWMLeftHip = 0.0;
 
     void setPins();
     void beginInterrupt();
-    void motorSetSpeed(int ID, int val);
     void readCurrent();
     void CapperFloat(float &val, float max);
     void neededTorque();
     void neededCurrent();
     void PIDCurrent();
+    void PIDCurrentPrealable();
     void printData(long Count_pulses);
     void sonarRead(); // return true if grounded, false if not
     void setRelais(int ID, bool state);
@@ -136,6 +121,7 @@ public:
     float toDegrees(float radians);
     void printSonar();
     void printTorque();
+
 };
 
 #endif

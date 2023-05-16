@@ -23,9 +23,11 @@ Test test01;
 Imu imu01;
 Screen ecran;
 
+HardwareSerial ESP32Serial1(1);
 HardwareSerial SerialPort(2);
 
 void updateAngles();
+void sendPWM();
 
   //===============================================================================================================
   //===================================================(SETUP)=====================================================
@@ -35,7 +37,9 @@ void setup()
 {
   nexInit();
   Serial.begin(9600);
+  ESP32Serial1.begin(9600, SERIAL_8N1, 18, 19);
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
+
 
   motor.setPins();
 
@@ -53,14 +57,16 @@ void loop()
   updateAngles();
   motor.sonarRead();
   motor.neededTorque();
-  // motor.neededCurrent();
+  motor.neededCurrent();
   // motor.readCurrent();
-  // motor.PIDCurrent();
+  motor.PIDCurrentPrealable();
+  sendPWM();
 
   //--------------PRINTING BLOC-------------
   motor.printSonar();
   motor.printTorque();
   imu01.printAngles();
+  
 
 }
 
@@ -71,4 +77,47 @@ void updateAngles()
   motor.setAngle(enumIMU::HipL,imu01.getValAngle(enumIMU::HipL));
   motor.setAngle(enumIMU::KneeR,imu01.getValAngle(enumIMU::KneeR));
   motor.setAngle(enumIMU::KneeL,imu01.getValAngle(enumIMU::KneeL));
+}
+
+void sendPWM()
+{
+  if (motor.PWMRightKnee > 0)
+    motor.PWMRightKnee += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMRightKnee = -motor.PWMRightKnee;
+    motor.PWMRightKnee += 110000; //Rien-In1-In2-EN
+  }
+
+  if (motor.PWMLeftKnee > 0)
+    motor.PWMLeftKnee += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMLeftKnee = -motor.PWMLeftKnee;
+    motor.PWMLeftKnee += 110000; //Rien-In1-In2-EN
+  }
+
+  if (motor.PWMRightHip > 0)
+    motor.PWMRightHip += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMRightHip = -motor.PWMRightHip;
+    motor.PWMRightHip += 110000; //Rien-In1-In2-EN
+  }
+
+  if (motor.PWMLeftHip > 0)
+    motor.PWMLeftHip += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMLeftHip = -motor.PWMLeftHip;
+    motor.PWMLeftHip += 110000; //Rien-In1-In2-EN
+  }
+
+  std::string msg = std::to_string(motor.PWMRightKnee);
+  std::string msg2 = std::to_string(motor.PWMLeftKnee);
+  std::string msg3 = std::to_string(motor.PWMRightHip);
+  std::string msg4 = std::to_string(motor.PWMLeftHip);
+  std::string msg5 = msg + msg2 + msg3 + msg4 + "\n";
+  ESP32Serial1.write(msg5.c_str());
+
 }

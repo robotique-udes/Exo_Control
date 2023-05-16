@@ -48,55 +48,6 @@ void Motor::setPins()
   pinMode(ECHO_PIN_DROIT, INPUT);
 }
 
-void Motor::motorSetSpeed(int ID, int val)
-{
-
-  int IN1;
-  int IN2;
-  int EN;
-
-  if (ID == MOTEUR_GENOU_GAUCHE)
-  {
-    IN1 = D1_IN1_A;
-    IN2 = D1_IN2_A;
-    EN = D1_EN_A;
-  }
-  else if (ID == MOTEUR_GENOU_DROIT)
-  {
-    IN1 = D2_IN1_A;
-    IN2 = D2_IN2_A;
-    EN = D2_EN_A;
-  }
-  // else if(ID == MOTEUR_HANCHE_GAUCHE)
-  // {
-  //   IN1 = D1_IN1_B;
-  //   IN2 = D1_IN2_B;
-  //   EN = D1_EN_B;
-  // }
-  // else if(ID == MOTEUR_HANCHE_DROITE)
-  // {
-  //   IN1 = D2_IN1_B;
-  //   IN2 = D2_IN2_B;
-  //   EN = D2_EN_B;
-  // }
-
-  if (val >= 0)
-  {
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN1, LOW);
-    Rotation = ClockWise;
-  }
-  else if (val < 0)
-  {
-    digitalWrite(IN2, LOW);
-    digitalWrite(IN1, HIGH);
-    Rotation = CounterClockWise;
-    val = -val;
-  }
-
-  analogWrite(EN, val);
-}
-
 
 void Motor::readCurrent()
 {
@@ -171,7 +122,7 @@ void Motor::neededCurrent()
   //neededCurrent = SideKneeTorque / TORQUE2CURRENT * 1000;
 
 RightKneeNeededCurrent = (RightKneeTorque/TORQUE2CURRENT)*1000;
-LeftKneeNeededCurrent = (RightKneeTorque/TORQUE2CURRENT)*1000;
+LeftKneeNeededCurrent = (LeftKneeTorque/TORQUE2CURRENT)*1000;
 
 }
 
@@ -208,6 +159,17 @@ void Motor::PIDCurrent()
 
   /*if (angle < 0.2 || angle > (2 * PI - 0.2))
     PWM = 0;*/
+
+}
+
+void Motor::PIDCurrentPrealable()
+{
+
+//Setting  PWM values 
+  PWMRightKnee = map(RightKneeTorque, -100, 100, -255, 255);
+  PWMLeftKnee = map(LeftKneeTorque, -100, 100, -255, 255);
+  PWMRightHip = map(RightHipTorque, -100, 100, -255, 255);
+  PWMLeftHip = map(LeftHipTorque, -100, 100, -255, 255);
 
 }
 
@@ -415,3 +377,4 @@ float Motor::toDegrees(float radians)
 {
     return radians * 180 / PI;
 }
+
