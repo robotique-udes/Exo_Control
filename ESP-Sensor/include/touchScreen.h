@@ -19,10 +19,6 @@ using namespace std;
 class Screen
 {
     private:
-
-        
-
-        static Motor moteur01;
         //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
         static NexButton bNeutral; // Neutral (Clutch ON)
         static NexButton bAuto;    // Automatic 
@@ -85,8 +81,10 @@ class Screen
 
         static NexTouch *nex_listen_list[];
 
+        void setHeight(double h);
+
     public:
-    
+        static Motor *motor;
         Screen();
         ~Screen();
         static void nextLoop();

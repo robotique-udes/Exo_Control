@@ -1,5 +1,5 @@
 #include "motorControl.h"
-
+double height = 40;
 // ExponentialFilter<float> FilteredCurrent(7, 0);
 
 Motor::Motor()
@@ -48,55 +48,6 @@ void Motor::setPins()
   pinMode(ECHO_PIN_DROIT, INPUT);
 }
 
-void Motor::motorSetSpeed(int ID, int val)
-{
-
-  int IN1;
-  int IN2;
-  int EN;
-
-  if (ID == MOTEUR_GENOU_GAUCHE)
-  {
-    IN1 = D1_IN1_A;
-    IN2 = D1_IN2_A;
-    EN = D1_EN_A;
-  }
-  else if (ID == MOTEUR_GENOU_DROIT)
-  {
-    IN1 = D2_IN1_A;
-    IN2 = D2_IN2_A;
-    EN = D2_EN_A;
-  }
-  // else if(ID == MOTEUR_HANCHE_GAUCHE)
-  // {
-  //   IN1 = D1_IN1_B;
-  //   IN2 = D1_IN2_B;
-  //   EN = D1_EN_B;
-  // }
-  // else if(ID == MOTEUR_HANCHE_DROITE)
-  // {
-  //   IN1 = D2_IN1_B;
-  //   IN2 = D2_IN2_B;
-  //   EN = D2_EN_B;
-  // }
-
-  if (val >= 0)
-  {
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN1, LOW);
-    Rotation = ClockWise;
-  }
-  else if (val < 0)
-  {
-    digitalWrite(IN2, LOW);
-    digitalWrite(IN1, HIGH);
-    Rotation = CounterClockWise;
-    val = -val;
-  }
-
-  analogWrite(EN, val);
-}
-
 
 void Motor::readCurrent()
 {
@@ -114,6 +65,14 @@ void Motor::readCurrent()
 
 
 void Motor::CapperFloat(float &val, float max)
+{
+  if (val > max)
+    val = max;
+  else if (val < -max)
+    val = -max;
+}
+
+void Motor::CapperInt(int &val, int max)
 {
   if (val > max)
     val = max;
@@ -171,7 +130,7 @@ void Motor::neededCurrent()
   //neededCurrent = SideKneeTorque / TORQUE2CURRENT * 1000;
 
 RightKneeNeededCurrent = (RightKneeTorque/TORQUE2CURRENT)*1000;
-LeftKneeNeededCurrent = (RightKneeTorque/TORQUE2CURRENT)*1000;
+LeftKneeNeededCurrent = (LeftKneeTorque/TORQUE2CURRENT)*1000;
 
 }
 
@@ -203,11 +162,22 @@ void Motor::PIDCurrent()
   PreviousErrorLeftKnee = ErrorCurrentLeftKnee;
 
 //Capping the PWM values for both motors
-  CapperFloat(PWMRightKnee, 255);
-  CapperFloat(PWMLeftKnee, 255);
+  CapperInt(PWMRightKnee, 255);
+  CapperInt(PWMLeftKnee, 255);
 
   /*if (angle < 0.2 || angle > (2 * PI - 0.2))
     PWM = 0;*/
+
+}
+
+void Motor::PIDCurrentPrealable()
+{
+
+//Setting  PWM values 
+  PWMRightKnee = map(RightKneeTorque, -100, 100, -255, 255);
+  PWMLeftKnee = map(LeftKneeTorque, -100, 100, -255, 255);
+  PWMRightHip = map(RightHipTorque, -100, 100, -255, 255);
+  PWMLeftHip = map(LeftHipTorque, -100, 100, -255, 255);
 
 }
 
@@ -226,31 +196,36 @@ void Motor::PIDCurrent()
   Serial.print(" PWM: ");
   Serial.println(PWM);
 }*/
-
-void Motor::sonarRead()
+double Motor::sonarScanL()
 {
-
-//Signal acquisition from right sonar
-  digitalWrite(TRIG_PIN_DROIT, LOW);
-  delayMicroseconds(5);
-  digitalWrite(TRIG_PIN_DROIT, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_DROIT, LOW);
-  RightDuration = pulseIn(ECHO_PIN_DROIT, HIGH);
-  
-//Signal acquisition from left sonar
+  //Signal acquisition from left sonar
   digitalWrite(TRIG_PIN_GAUCHE, LOW);
   delayMicroseconds(5);
   digitalWrite(TRIG_PIN_GAUCHE, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN_GAUCHE, LOW);
-  LeftDuration = pulseIn(ECHO_PIN_GAUCHE, HIGH);
+  double LeftDuration = pulseIn(ECHO_PIN_GAUCHE, HIGH);
+  return (LeftDuration / 2) / 29.1;
+
+}
+
+double Motor::sonarScanR()
+{
+  //Signal acquisition from right sonar
+  digitalWrite(TRIG_PIN_DROIT, LOW);
+  delayMicroseconds(5);
+  digitalWrite(TRIG_PIN_DROIT, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN_DROIT, LOW);
+  double RightDuration = pulseIn(ECHO_PIN_DROIT, HIGH);
+
+  return (RightDuration / 2) / 29.1;
+}
+void Motor::sonarRead()
+{
 
   float errorRight = 0;
   float errorLeft = 0;
-
-  RightCm = (RightDuration / 2) / 29.1;
-  LeftCm = (LeftDuration / 2) / 29.1;
 
 
 //Determining the current SonarState for each sensor
@@ -259,7 +234,7 @@ void Motor::sonarRead()
   if (RightSonarState == false)
   {
     for (int i = 0; i < iteration; i++)
-      if (RightCm < height)
+      if (sonarScanR() < height)
         errorRight += 1;
     errorRight = errorRight / iteration;
     if (errorRight <= 0.2)
@@ -268,7 +243,7 @@ void Motor::sonarRead()
   else
   {
     for (int i = 0; i < iteration; i++)
-      if (RightCm > height)
+      if (sonarScanL() > height)
         errorRight += 1;
     errorRight = errorRight / iteration;
     if (errorRight <= 0.2)
@@ -279,7 +254,7 @@ void Motor::sonarRead()
    if (LeftSonarState == false)
   {
     for (int i = 0; i < iteration; i++)
-      if (LeftCm < height)
+      if (sonarScanL() < height)
         errorLeft += 1;
     errorLeft = errorLeft / iteration;
     if (errorLeft <= 0.2)
@@ -288,7 +263,7 @@ void Motor::sonarRead()
   else
   {
     for (int i = 0; i < iteration; i++)
-      if (LeftCm > height)
+      if (sonarScanL() > height)
         errorLeft += 1;
     errorLeft = errorLeft / iteration;
     if (errorLeft <= 0.2)
@@ -367,29 +342,6 @@ void Motor::testRelais()
   delay(1000);
   setRelais(RELAIS_HANCHE_DROITE, OFF);
 }
-void Motor::testMotor()
-{
-  // Test Motor
-  Serial.println("Test Motor Gauche----------");
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
-  delay(1000);
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, -100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
-  delay(1000);
-  Serial.println("Test Motor Droit----------");
-  motorSetSpeed(MOTEUR_GENOU_DROIT, 100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
-  delay(1000);
-  motorSetSpeed(MOTEUR_GENOU_DROIT, -100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
-  delay(1000);
-}
-
 void Motor::setAngle(enumIMU imuType, float val)
 {
   switch (imuType)
@@ -414,4 +366,16 @@ void Motor::setAngle(enumIMU imuType, float val)
 float Motor::toDegrees(float radians)
 {
     return radians * 180 / PI;
+}
+
+void Motor::setHeight(double h)
+{
+  height = h;
+  Serial.print("Height set to: ");
+  Serial.println(h);
+}
+
+double Motor::getHeight()
+{
+  return height;
 }

@@ -39,7 +39,8 @@ uint32_t Dtemp;
 
 Screen::Screen(){
   Serial.print("BONJOUR");
-
+  //Motor* Screen::motor = m;
+  //motor = m;
   //          PUSH -> ACTIVE QUAND TU PRESS               POP -> ACTIVE QUAND TU RELACHE
   //bLeft_Hip_UP.attachPush(LeftHip_UP, &bLeft_Hip_UP); //Press
   //main
@@ -113,11 +114,23 @@ void Screen::TestNeutral(void *ptr){
 //Left
 void Screen::AutoCalibration(void *ptr){
   Serial.print("\nCalibrating...");
-  delay(1500);
   bAutoCalib.Set_background_color_bco(40689);
-  bAutoCalib.setText("CALIBRATED!");
+
+  bAutoCalib.setText("Calibrating...");
   //Calibration distance mesured = distance of calibration
+  int iteration = 500;
+  double rightTotal=0;
+  double leftTotal=0;
+  double height;
+  for(int i=0;i<iteration;i++)
+  {
+    rightTotal+= motor->sonarScanR();
+    leftTotal+= motor->sonarScanL();
+  }
+  height=((rightTotal+leftTotal)/(iteration*2));
+  motor->setHeight(height);
   Serial.print("\nCalibrated!");
+  bAutoCalib.setText("CALIBRATED!");
 }
 
 void Screen::Quack(void *ptr){
@@ -126,15 +139,23 @@ void Screen::Quack(void *ptr){
 
 void Screen::Calib_5f8(void *ptr){
   Serial.print("\nCALIBRATED AT 5' 8\"");
+  motor->setHeight(40);
 }
 
 //Right
 void Screen::Calib_5f10(void *ptr){
   Serial.print("\nCALIBRATED AT 5' 10\"");
+  motor->setHeight(45);
 }
 
 void Screen::Calib_6f(void *ptr){
   Serial.print("\nCALIBRATED AT 6'");
+  motor->setHeight(50);
+}
+
+void Screen::setHeight(double h)
+{
+  motor->setHeight(h+5);
 }
 
 
