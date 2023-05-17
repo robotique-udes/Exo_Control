@@ -1,5 +1,6 @@
 #include "motorControl.h"
 double height = 40;
+bool motorMode = ON;
 // ExponentialFilter<float> FilteredCurrent(7, 0);
 
 Motor::Motor()
@@ -93,7 +94,7 @@ void Motor::neededTorque()
   {
     RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G);  
   }
-
+  RightKneeTorque = RightKneeTorque*motorMode;
 //Left knee torque values calculated (varies depending on SonarSate)()
 
 if (LeftSonarState == 1)
@@ -105,6 +106,7 @@ if (LeftSonarState == 1)
   {
     LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G); 
   }
+  LeftKneeTorque = LeftKneeTorque*motorMode;
 }
 
 void Motor::printTorque()
@@ -320,6 +322,7 @@ void Motor::setAllRelais(bool state)
    setRelais(RELAIS_GENOU_DROIT,state);
    setRelais(RELAIS_HANCHE_DROITE,state);
    setRelais(RELAIS_HANCHE_GAUCHE,state);
+   motorMode = state; 
 }
 
 void Motor::testRelais()

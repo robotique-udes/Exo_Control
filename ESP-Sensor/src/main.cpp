@@ -58,27 +58,29 @@ void loop()
   //--------------Test BLOC----------------
   delay(500);
 
-  sendPWM();
-  /*
+  //sendPWM();
+  
 
 
 
   //--------------LOGIC BLOC---------------
   delay(200);
   ecran.nextLoop();
-  updateAngles();
-  motor.sonarRead();
-  motor.neededTorque();
-  motor.neededCurrent();
+  Serial.print("Sonar height: ");
+  Serial.println(motor.getHeight());
+  // updateAngles();
+  // motor.sonarRead();
+  // motor.neededTorque();
+  // motor.neededCurrent();
   // motor.readCurrent();
-  motor.PIDCurrentPrealable();
-  sendPWM();
+  // motor.PIDCurrentPrealable();
+  // sendPWM();
 
   //--------------PRINTING BLOC-------------
-  motor.printSonar();
-  motor.printTorque();
-  imu01.printAngles();
-  */
+  // motor.printSonar();
+  // motor.printTorque();
+  // imu01.printAngles();
+  
 
 }
 

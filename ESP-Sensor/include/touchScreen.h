@@ -81,8 +81,6 @@ class Screen
 
         static NexTouch *nex_listen_list[];
 
-        void setHeight(double h);
-
     public:
         static Motor *motor;
         Screen();

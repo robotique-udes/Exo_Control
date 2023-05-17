@@ -86,12 +86,14 @@ Screen::~Screen(){
 void Screen::StateNEUTRAL(void *ptr)
 { 
   Serial.print("\nNEUTRAL");
+  motor->setAllRelais(OFF);
 }
 
 //STATE NEUTRAL (0)
 void Screen::StateAUTOMATIC(void *ptr)
 {
   Serial.print("\nAUTO");
+  motor->setAllRelais(ON);
 }
 
 //---------------------------------------TEST--------------------------------------------
@@ -118,17 +120,18 @@ void Screen::AutoCalibration(void *ptr){
 
   bAutoCalib.setText("Calibrating...");
   //Calibration distance mesured = distance of calibration
-  int iteration = 500;
+  int iteration = 50;
   double rightTotal=0;
   double leftTotal=0;
   double height;
   for(int i=0;i<iteration;i++)
   {
+    Serial.println(i);
     rightTotal+= motor->sonarScanR();
     leftTotal+= motor->sonarScanL();
   }
   height=((rightTotal+leftTotal)/(iteration*2));
-  motor->setHeight(height);
+  motor->setHeight(height+5);
   Serial.print("\nCalibrated!");
   bAutoCalib.setText("CALIBRATED!");
 }
@@ -151,11 +154,6 @@ void Screen::Calib_5f10(void *ptr){
 void Screen::Calib_6f(void *ptr){
   Serial.print("\nCALIBRATED AT 6'");
   motor->setHeight(50);
-}
-
-void Screen::setHeight(double h)
-{
-  motor->setHeight(h+5);
 }
 
 
