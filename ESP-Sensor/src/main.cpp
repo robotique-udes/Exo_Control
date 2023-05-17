@@ -23,9 +23,11 @@ Imu imu01;
 Screen ecran;
 Motor* Screen::motor = motor;
 
+HardwareSerial ESP32Serial1(1);
 HardwareSerial SerialPort(2);
 
 void updateAngles();
+void sendPWM();
 
   //===============================================================================================================
   //===================================================(SETUP)=====================================================
@@ -35,34 +37,48 @@ void setup()
 {
   nexInit();
   Serial.begin(9600);
+  ESP32Serial1.begin(9600, SERIAL_8N1, 18, 19);
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
-  motor.setPins();
 
   Serial.println("Ini motor exo----------");
   //imu01.IMUSetup();
   motor.setAllRelais(OFF);
+  // motor.setPins();
+
+  // Serial.println("Ini motor exo----------");
+  // imu01.IMUSetup();
+  // motor.setAllRelais(OFF);
+
   //imu01.wifiSetup();
 }
 
 void loop()
 {
+  //--------------Test BLOC----------------
+  delay(500);
+
+  sendPWM();
+  /*
+
+
+
   //--------------LOGIC BLOC---------------
   delay(200);
   ecran.nextLoop();
-   Serial.print("Height set to: ");
-  Serial.println(motor.getHeight());
-  //updateAngles();
-  //motor.sonarRead();
-  //motor.neededTorque();
-  // motor.neededCurrent();
+  updateAngles();
+  motor.sonarRead();
+  motor.neededTorque();
+  motor.neededCurrent();
   // motor.readCurrent();
-  // motor.PIDCurrent();
+  motor.PIDCurrentPrealable();
+  sendPWM();
 
   //--------------PRINTING BLOC-------------
-  // motor.printSonar();
-  // motor.printTorque();
-  // imu01.printAngles();
+  motor.printSonar();
+  motor.printTorque();
+  imu01.printAngles();
+  */
 
 }
 
@@ -73,4 +89,53 @@ void updateAngles()
   motor.setAngle(enumIMU::HipL,imu01.getValAngle(enumIMU::HipL));
   motor.setAngle(enumIMU::KneeR,imu01.getValAngle(enumIMU::KneeR));
   motor.setAngle(enumIMU::KneeL,imu01.getValAngle(enumIMU::KneeL));
+}
+
+void sendPWM()
+{
+  if (motor.PWMRightKnee > 0)
+    motor.PWMRightKnee += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMRightKnee = -motor.PWMRightKnee;
+    motor.PWMRightKnee += 110127; //Rien-In1-In2-EN
+  }
+
+  if (motor.PWMLeftKnee > 0)
+    motor.PWMLeftKnee += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMLeftKnee = -motor.PWMLeftKnee;
+    motor.PWMLeftKnee += 110127; //Rien-In1-In2-EN
+  }
+
+  if (motor.PWMRightHip > 0)
+    motor.PWMRightHip += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMRightHip = -motor.PWMRightHip;
+    motor.PWMRightHip += 110127; //Rien-In1-In2-EN
+  }
+
+  if (motor.PWMLeftHip > 0)
+    motor.PWMLeftHip += 101000; //Rien-In1-In2-EN
+  else
+  {
+    motor.PWMLeftHip = -motor.PWMLeftHip;
+    motor.PWMLeftHip += 110127; //Rien-In1-In2-EN
+  }
+
+  std::string msg = std::to_string(motor.PWMRightKnee);
+  std::string msg2 = std::to_string(motor.PWMLeftKnee);
+  std::string msg3 = std::to_string(motor.PWMRightHip);
+  std::string msg4 = std::to_string(motor.PWMLeftHip);
+  std::string msg5 = msg + msg2 + msg3 + msg4 + "\n";
+  ESP32Serial1.write(msg5.c_str());
+  Serial.println(msg5.c_str());
+  motor.PWMRightKnee = 0;
+  motor.PWMLeftKnee = 0;
+  motor.PWMRightHip = 0;
+  motor.PWMLeftHip = 0;
+
+
 }
