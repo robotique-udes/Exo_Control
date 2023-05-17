@@ -3,7 +3,6 @@
 // #include <MegunoLink.h>
 #include "motorControl.h"
 #include "test.h"
-// #include "touchScreen.h"
 #include <HardwareSerial.h>
 #include "imu.h" 
 #include "touchScreen.h"
@@ -22,6 +21,7 @@ Motor motor;
 Test test01;
 Imu imu01;
 Screen ecran;
+Motor* Screen::motor = motor;
 
 HardwareSerial SerialPort(2);
 
@@ -40,7 +40,7 @@ void setup()
   motor.setPins();
 
   Serial.println("Ini motor exo----------");
-  imu01.IMUSetup();
+  //imu01.IMUSetup();
   motor.setAllRelais(OFF);
   //imu01.wifiSetup();
 }
@@ -50,17 +50,19 @@ void loop()
   //--------------LOGIC BLOC---------------
   delay(200);
   ecran.nextLoop();
-  updateAngles();
-  motor.sonarRead();
-  motor.neededTorque();
+   Serial.print("Height set to: ");
+  Serial.println(motor.getHeight());
+  //updateAngles();
+  //motor.sonarRead();
+  //motor.neededTorque();
   // motor.neededCurrent();
   // motor.readCurrent();
   // motor.PIDCurrent();
 
   //--------------PRINTING BLOC-------------
-  motor.printSonar();
-  motor.printTorque();
-  imu01.printAngles();
+  // motor.printSonar();
+  // motor.printTorque();
+  // imu01.printAngles();
 
 }
 

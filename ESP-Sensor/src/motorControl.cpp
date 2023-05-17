@@ -1,5 +1,5 @@
 #include "motorControl.h"
-
+double height = 40;
 // ExponentialFilter<float> FilteredCurrent(7, 0);
 
 Motor::Motor()
@@ -226,31 +226,36 @@ void Motor::PIDCurrent()
   Serial.print(" PWM: ");
   Serial.println(PWM);
 }*/
-
-void Motor::sonarRead()
+double Motor::sonarScanL()
 {
-
-//Signal acquisition from right sonar
-  digitalWrite(TRIG_PIN_DROIT, LOW);
-  delayMicroseconds(5);
-  digitalWrite(TRIG_PIN_DROIT, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_DROIT, LOW);
-  RightDuration = pulseIn(ECHO_PIN_DROIT, HIGH);
-  
-//Signal acquisition from left sonar
+  //Signal acquisition from left sonar
   digitalWrite(TRIG_PIN_GAUCHE, LOW);
   delayMicroseconds(5);
   digitalWrite(TRIG_PIN_GAUCHE, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN_GAUCHE, LOW);
-  LeftDuration = pulseIn(ECHO_PIN_GAUCHE, HIGH);
+  double LeftDuration = pulseIn(ECHO_PIN_GAUCHE, HIGH);
+  return (LeftDuration / 2) / 29.1;
+
+}
+
+double Motor::sonarScanR()
+{
+  //Signal acquisition from right sonar
+  digitalWrite(TRIG_PIN_DROIT, LOW);
+  delayMicroseconds(5);
+  digitalWrite(TRIG_PIN_DROIT, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN_DROIT, LOW);
+  double RightDuration = pulseIn(ECHO_PIN_DROIT, HIGH);
+
+  return (RightDuration / 2) / 29.1;
+}
+void Motor::sonarRead()
+{
 
   float errorRight = 0;
   float errorLeft = 0;
-
-  RightCm = (RightDuration / 2) / 29.1;
-  LeftCm = (LeftDuration / 2) / 29.1;
 
 
 //Determining the current SonarState for each sensor
@@ -259,7 +264,7 @@ void Motor::sonarRead()
   if (RightSonarState == false)
   {
     for (int i = 0; i < iteration; i++)
-      if (RightCm < height)
+      if (sonarScanR() < height)
         errorRight += 1;
     errorRight = errorRight / iteration;
     if (errorRight <= 0.2)
@@ -268,7 +273,7 @@ void Motor::sonarRead()
   else
   {
     for (int i = 0; i < iteration; i++)
-      if (RightCm > height)
+      if (sonarScanL() > height)
         errorRight += 1;
     errorRight = errorRight / iteration;
     if (errorRight <= 0.2)
@@ -279,7 +284,7 @@ void Motor::sonarRead()
    if (LeftSonarState == false)
   {
     for (int i = 0; i < iteration; i++)
-      if (LeftCm < height)
+      if (sonarScanL() < height)
         errorLeft += 1;
     errorLeft = errorLeft / iteration;
     if (errorLeft <= 0.2)
@@ -288,7 +293,7 @@ void Motor::sonarRead()
   else
   {
     for (int i = 0; i < iteration; i++)
-      if (LeftCm > height)
+      if (sonarScanL() > height)
         errorLeft += 1;
     errorLeft = errorLeft / iteration;
     if (errorLeft <= 0.2)
@@ -414,4 +419,16 @@ void Motor::setAngle(enumIMU imuType, float val)
 float Motor::toDegrees(float radians)
 {
     return radians * 180 / PI;
+}
+
+void Motor::setHeight(double h)
+{
+  height = h;
+  Serial.print("Height set to: ");
+  Serial.println(h);
+}
+
+double Motor::getHeight()
+{
+  return height;
 }

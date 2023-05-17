@@ -105,11 +105,7 @@ private:
     float LeftKneeMeasuredCurrent = 0.0;
 
     // control sonar
-    long RightDuration;
-    long LeftDuration;
-    double RightCm, LeftCm;
     bool RightSonarState, LeftSonarState = false;
-    double height = 40;
     int iteration = 20;
 
 public:
@@ -136,6 +132,10 @@ public:
     float toDegrees(float radians);
     void printSonar();
     void printTorque();
+    void setHeight(double h);
+    double getHeight();
+    double sonarScanR();
+    double sonarScanL();
 };
 
 #endif

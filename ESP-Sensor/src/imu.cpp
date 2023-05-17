@@ -7,6 +7,8 @@ IPAddress local_ip(192, 168, 4, 1);
 IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
 
+//double height;
+
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient *globalClient = NULL;
