@@ -100,7 +100,7 @@ void sendPWM()
   else
   {
     motor.PWMRightKnee = -motor.PWMRightKnee;
-    motor.PWMRightKnee += 110127; //Rien-In1-In2-EN
+    motor.PWMRightKnee += 110000; //Rien-In1-In2-EN
   }
 
   if (motor.PWMLeftKnee > 0)
@@ -108,7 +108,7 @@ void sendPWM()
   else
   {
     motor.PWMLeftKnee = -motor.PWMLeftKnee;
-    motor.PWMLeftKnee += 110127; //Rien-In1-In2-EN
+    motor.PWMLeftKnee += 110000; //Rien-In1-In2-EN
   }
 
   if (motor.PWMRightHip > 0)
@@ -116,7 +116,7 @@ void sendPWM()
   else
   {
     motor.PWMRightHip = -motor.PWMRightHip;
-    motor.PWMRightHip += 110127; //Rien-In1-In2-EN
+    motor.PWMRightHip += 110000; //Rien-In1-In2-EN
   }
 
   if (motor.PWMLeftHip > 0)
@@ -124,7 +124,7 @@ void sendPWM()
   else
   {
     motor.PWMLeftHip = -motor.PWMLeftHip;
-    motor.PWMLeftHip += 110127; //Rien-In1-In2-EN
+    motor.PWMLeftHip += 110000; //Rien-In1-In2-EN
   }
 
   std::string msg = std::to_string(motor.PWMRightKnee);
