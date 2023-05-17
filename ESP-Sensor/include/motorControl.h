@@ -98,15 +98,16 @@ private:
 public:
     Motor();
     ~Motor();
-    float PWMRightKnee = 0.0;
-    float PWMLeftKnee = 0.0;
-    float PWMRightHip = 0.0;
-    float PWMLeftHip = 0.0;
+    int PWMRightKnee = 0;
+    int PWMLeftKnee = 0;
+    int PWMRightHip = 0;
+    int PWMLeftHip = 0;
 
     void setPins();
     void beginInterrupt();
     void readCurrent();
     void CapperFloat(float &val, float max);
+    void CapperInt(int &val, int max);
     void neededTorque();
     void neededCurrent();
     void PIDCurrent();

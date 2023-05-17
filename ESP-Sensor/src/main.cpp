@@ -41,16 +41,25 @@ void setup()
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
 
-  motor.setPins();
+  // motor.setPins();
 
-  Serial.println("Ini motor exo----------");
-  imu01.IMUSetup();
-  motor.setAllRelais(OFF);
+  // Serial.println("Ini motor exo----------");
+  // imu01.IMUSetup();
+  // motor.setAllRelais(OFF);
+
   //imu01.wifiSetup();
 }
 
 void loop()
 {
+  //--------------Test BLOC----------------
+  delay(500);
+
+  sendPWM();
+  /*
+
+
+
   //--------------LOGIC BLOC---------------
   delay(200);
   ecran.nextLoop();
@@ -66,7 +75,7 @@ void loop()
   motor.printSonar();
   motor.printTorque();
   imu01.printAngles();
-  
+  */
 
 }
 
@@ -86,7 +95,7 @@ void sendPWM()
   else
   {
     motor.PWMRightKnee = -motor.PWMRightKnee;
-    motor.PWMRightKnee += 110000; //Rien-In1-In2-EN
+    motor.PWMRightKnee += 110127; //Rien-In1-In2-EN
   }
 
   if (motor.PWMLeftKnee > 0)
@@ -94,7 +103,7 @@ void sendPWM()
   else
   {
     motor.PWMLeftKnee = -motor.PWMLeftKnee;
-    motor.PWMLeftKnee += 110000; //Rien-In1-In2-EN
+    motor.PWMLeftKnee += 110127; //Rien-In1-In2-EN
   }
 
   if (motor.PWMRightHip > 0)
@@ -102,7 +111,7 @@ void sendPWM()
   else
   {
     motor.PWMRightHip = -motor.PWMRightHip;
-    motor.PWMRightHip += 110000; //Rien-In1-In2-EN
+    motor.PWMRightHip += 110127; //Rien-In1-In2-EN
   }
 
   if (motor.PWMLeftHip > 0)
@@ -110,7 +119,7 @@ void sendPWM()
   else
   {
     motor.PWMLeftHip = -motor.PWMLeftHip;
-    motor.PWMLeftHip += 110000; //Rien-In1-In2-EN
+    motor.PWMLeftHip += 110127; //Rien-In1-In2-EN
   }
 
   std::string msg = std::to_string(motor.PWMRightKnee);
@@ -119,5 +128,11 @@ void sendPWM()
   std::string msg4 = std::to_string(motor.PWMLeftHip);
   std::string msg5 = msg + msg2 + msg3 + msg4 + "\n";
   ESP32Serial1.write(msg5.c_str());
+  Serial.println(msg5.c_str());
+  motor.PWMRightKnee = 0;
+  motor.PWMLeftKnee = 0;
+  motor.PWMRightHip = 0;
+  motor.PWMLeftHip = 0;
+
 
 }

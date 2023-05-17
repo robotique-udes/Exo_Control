@@ -72,6 +72,14 @@ void Motor::CapperFloat(float &val, float max)
     val = -max;
 }
 
+void Motor::CapperInt(int &val, int max)
+{
+  if (val > max)
+    val = max;
+  else if (val < -max)
+    val = -max;
+}
+
 void Motor::neededTorque()
 {
   //Right knee torque values calculated (varies depending on SonarSate)(The sign of the value has to be verified here (so that the motor turns in the right direction))
@@ -154,8 +162,8 @@ void Motor::PIDCurrent()
   PreviousErrorLeftKnee = ErrorCurrentLeftKnee;
 
 //Capping the PWM values for both motors
-  CapperFloat(PWMRightKnee, 255);
-  CapperFloat(PWMLeftKnee, 255);
+  CapperInt(PWMRightKnee, 255);
+  CapperInt(PWMLeftKnee, 255);
 
   /*if (angle < 0.2 || angle > (2 * PI - 0.2))
     PWM = 0;*/
@@ -329,29 +337,6 @@ void Motor::testRelais()
   delay(1000);
   setRelais(RELAIS_HANCHE_DROITE, OFF);
 }
-void Motor::testMotor()
-{
-  // Test Motor
-  Serial.println("Test Motor Gauche----------");
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
-  delay(1000);
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, -100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
-  delay(1000);
-  Serial.println("Test Motor Droit----------");
-  motorSetSpeed(MOTEUR_GENOU_DROIT, 100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
-  delay(1000);
-  motorSetSpeed(MOTEUR_GENOU_DROIT, -100);
-  delay(300);
-  motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
-  delay(1000);
-}
-
 void Motor::setAngle(enumIMU imuType, float val)
 {
   switch (imuType)
