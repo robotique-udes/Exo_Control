@@ -37,7 +37,7 @@ void setup()
 {
   nexInit();
   Serial.begin(9600);
-  ESP32Serial1.begin(9600, SERIAL_8N1, 18, 19);
+  ESP32Serial1.begin(9600, SERIAL_8N1, 19, 18);
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
 
