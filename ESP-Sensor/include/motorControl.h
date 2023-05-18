@@ -89,7 +89,7 @@ private:
 
     // control sonar
     bool RightSonarState, LeftSonarState = false;
-    int iteration = 20;
+    int iteration = 10;
 
 public:
     Motor();

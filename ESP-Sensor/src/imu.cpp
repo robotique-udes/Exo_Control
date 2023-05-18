@@ -144,7 +144,7 @@ void Imu::printAngles()
     Serial.print(toDegrees((angleHipR.y())));
 
     Serial.print("  angleKneeR Y: ");
-    Serial.println(toDegrees(angleKneeR.y()));
+    Serial.print(toDegrees(angleKneeR.y()));
 
     //Serial.print("SPLINE: ");
     //Serial.println(SPLINE.x());

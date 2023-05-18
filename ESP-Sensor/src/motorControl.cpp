@@ -124,7 +124,7 @@ void Motor::printTorque()
   Serial.print("  NeededTorqueL: ");
   Serial.print(LeftKneeTorque);
   Serial.print("  NeededTorqueR: ");
-  Serial.println(RightKneeTorque);
+  Serial.print(RightKneeTorque);
 }
 
 void Motor::neededCurrent()
@@ -239,16 +239,16 @@ void Motor::sonarRead()
       if (sonarScanR() < height)
         errorRight += 1;
     errorRight = errorRight / iteration;
-    if (errorRight <= 0.2)
+    if (errorRight <= 0.1)
       RightSonarState = true;
   }
   else
   {
     for (int i = 0; i < iteration; i++)
-      if (sonarScanL() > height)
+      if (sonarScanR() > height)
         errorRight += 1;
     errorRight = errorRight / iteration;
-    if (errorRight <= 0.2)
+    if (errorRight <= 0.1)
       RightSonarState = false;
   }
 
@@ -259,7 +259,7 @@ void Motor::sonarRead()
       if (sonarScanL() < height)
         errorLeft += 1;
     errorLeft = errorLeft / iteration;
-    if (errorLeft <= 0.2)
+    if (errorLeft <= 0.1)
       LeftSonarState = true;
   }
   else
@@ -268,7 +268,7 @@ void Motor::sonarRead()
       if (sonarScanL() > height)
         errorLeft += 1;
     errorLeft = errorLeft / iteration;
-    if (errorLeft <= 0.2)
+    if (errorLeft <= 0.1)
       LeftSonarState = false;
   }
   
@@ -318,6 +318,8 @@ void Motor::setRelais(int ID, bool state)
 }
 void Motor::setAllRelais(bool state)
 {
+  Serial.print("switching all relay to: ");
+  Serial.println(state);
    setRelais(RELAIS_GENOU_GAUCHE, state);
    setRelais(RELAIS_GENOU_DROIT,state);
    setRelais(RELAIS_HANCHE_DROITE,state);

@@ -43,43 +43,38 @@ void setup()
 
   Serial.println("Ini motor exo----------");
   //imu01.IMUSetup();
-  motor.setAllRelais(OFF);
-  // motor.setPins();
 
-  // Serial.println("Ini motor exo----------");
-  // imu01.IMUSetup();
-  // motor.setAllRelais(OFF);
+  motor.setPins();
+  imu01.IMUSetup();
+  motor.setAllRelais(ON);
 
   //imu01.wifiSetup();
 }
-
 void loop()
 {
   //--------------Test BLOC----------------
-  delay(500);
-
-  //sendPWM();
-  
+  //delay(500);
 
 
 
   //--------------LOGIC BLOC---------------
-  delay(200);
+  //delay(100);
   ecran.nextLoop();
-  Serial.print("Sonar height: ");
-  Serial.println(motor.getHeight());
-  // updateAngles();
-  // motor.sonarRead();
-  // motor.neededTorque();
-  // motor.neededCurrent();
+  //Serial.print("Sonar height: ");
+   updateAngles();
+   motor.sonarRead();
+   motor.neededTorque();
+   motor.neededCurrent();
   // motor.readCurrent();
   // motor.PIDCurrentPrealable();
-  // sendPWM();
+  //sendPWM();
 
   //--------------PRINTING BLOC-------------
-  // motor.printSonar();
-  // motor.printTorque();
-  // imu01.printAngles();
+   //motor.printSonar();
+   motor.printTorque();
+   //imu01.printAngles();
+   Serial.println("");
+
   
 
 }
