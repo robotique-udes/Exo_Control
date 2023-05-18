@@ -45,10 +45,10 @@ void setup()
   //imu01.IMUSetup();
 
   motor.setPins();
-  imu01.IMUSetup();
-  motor.setAllRelais(ON);
+  //imu01.IMUSetup();
+  //motor.setAllRelais(ON);
 
-  //imu01.wifiSetup();
+  imu01.wifiSetup();
 }
 void loop()
 {
@@ -62,7 +62,7 @@ void loop()
   ecran.nextLoop();
   //Serial.print("Sonar height: ");
    updateAngles();
-   motor.sonarRead();
+   //motor.sonarRead();
    motor.neededTorque();
    motor.neededCurrent();
   // motor.readCurrent();

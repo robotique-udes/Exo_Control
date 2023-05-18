@@ -87,27 +87,67 @@ void Motor::neededTorque()
   if(!motorMode){
     // Right Hip Torque Equation
     if (RightSonarState)
-      RightHipTorque = (0.5*LH*cos(RightHipAngle)*G*MH);
+    {
+      if(RightHipAngle>0)
+        RightHipTorque = (0.5*LH*cos(RightHipAngle)*G*MH);
+      else
+        RightHipTorque =0;
+    }
     else
-      RightHipTorque = -(cos(RightHipAngle)*LF*G*MF)/2 - (cos(RightHipAngle)*LF + (cos(RightKneeAngle)*LT)/2)*G*MT;  
+    {
+      if(RightHipAngle<110)
+        RightHipTorque = -(cos(RightHipAngle)*LF*G*MF)/2 - (cos(RightHipAngle)*LF + (cos(RightKneeAngle)*LT)/2)*G*MT;  
+      else
+        RightHipTorque = 0;
+    }
 
     // Left Hip Torque Equation
     if (LeftSonarState)
-      LeftHipTorque = (0.5*LH*cos(LeftHipAngle)*G*MH);
+    {
+      if(LeftHipAngle>0)
+        LeftHipTorque = (0.5*LH*cos(LeftHipAngle)*G*MH);
+      else
+        LeftHipTorque = 0;
+    }
     else
-      LeftHipTorque = -(cos(LeftHipAngle)*LF*G*MF)/2 - (cos(LeftHipAngle)*LF + (cos(LeftKneeAngle)*LT)/2)*G*MT;    
+    {
+      if(LeftHipAngle<110)
+        LeftHipTorque = -(cos(LeftHipAngle)*LF*G*MF)/2 - (cos(LeftHipAngle)*LF + (cos(LeftKneeAngle)*LT)/2)*G*MT;  
+      else
+        LeftHipTorque = 0;
+    }  
 
     // Right Knee Torque Equation
     if (RightSonarState)
-      RightKneeTorque = ((sin(RightKneeAngle)*LF)/2.0)*(MF*G) + ((sin(RightKneeAngle)*LF))*(MH*G);
+    {
+      if(RightKneeAngle>0)
+        RightKneeTorque = ((sin(RightKneeAngle)*LF)/2.0)*(MF*G) + ((sin(RightKneeAngle)*LF))*(MH*G);
+      else
+        RightKneeAngle = 0;
+    }
     else
-      RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G);  
+    {
+      if(RightKneeAngle<110)
+        RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G); 
+      else
+        RightKneeTorque = 0;
+    } 
       
     // Left Knee Torque Equation
     if (LeftSonarState)
-      LeftKneeTorque = ((sin(LeftKneeAngle)*LF)/2.0)*(MF*G) + ((sin(LeftKneeAngle)*LF))*(MH*G);
+    {
+      if(LeftKneeAngle>0)
+        LeftKneeTorque = ((sin(LeftKneeAngle)*LF)/2.0)*(MF*G) + ((sin(LeftKneeAngle)*LF))*(MH*G);
+      else
+        LeftKneeTorque = 0;
+    }
     else
-      LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G);
+    {
+      if(LeftKneeAngle<110)
+        LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G);
+      else
+        LeftKneeTorque = 0;
+    }
   }
   else
   {
