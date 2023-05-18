@@ -66,14 +66,14 @@ void loop()
    motor.neededTorque();
    motor.neededCurrent();
   // motor.readCurrent();
-  // motor.PIDCurrentPrealable();
+  //motor.PIDCurrentPrealable();
   //sendPWM();
 
   //--------------PRINTING BLOC-------------
    //motor.printSonar();
-   motor.printTorque();
+   //motor.printTorque();
    //imu01.printAngles();
-   Serial.println("");
+   //Serial.println("");
 
   
 

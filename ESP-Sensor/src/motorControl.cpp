@@ -83,30 +83,40 @@ void Motor::CapperInt(int &val, int max)
 
 void Motor::neededTorque()
 {
-  //Right knee torque values calculated (varies depending on SonarSate)(The sign of the value has to be verified here (so that the motor turns in the right direction))
+  //If clutch are on automatic, calculate torque needed
+  if(!motorMode){
+    // Right Hip Torque Equation
+    if (RightSonarState)
+      RightHipTorque = (0.5*LH*cos(RightHipAngle)*G*MH);
+    else
+      RightHipTorque = -(cos(RightHipAngle)*LF*G*MF)/2 - (cos(RightHipAngle)*LF + (cos(RightKneeAngle)*LT)/2)*G*MT;  
 
-  if (RightSonarState == 1)
+    // Left Hip Torque Equation
+    if (LeftSonarState)
+      LeftHipTorque = (0.5*LH*cos(LeftHipAngle)*G*MH);
+    else
+      LeftHipTorque = -(cos(LeftHipAngle)*LF*G*MF)/2 - (cos(LeftHipAngle)*LF + (cos(LeftKneeAngle)*LT)/2)*G*MT;    
+
+    // Right Knee Torque Equation
+    if (RightSonarState)
+      RightKneeTorque = ((sin(RightKneeAngle)*LF)/2.0)*(MF*G) + ((sin(RightKneeAngle)*LF))*(MH*G);
+    else
+      RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G);  
+      
+    // Left Knee Torque Equation
+    if (LeftSonarState)
+      LeftKneeTorque = ((sin(LeftKneeAngle)*LF)/2.0)*(MF*G) + ((sin(LeftKneeAngle)*LF))*(MH*G);
+    else
+      LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G);
+  }
+  else
   {
-    RightKneeTorque = ((sin(RightKneeAngle)*LF)/2.0)*(MF*G) + ((sin(RightKneeAngle)*LF))*(MH*G);
+    LeftHipTorque = 0;
+    RightHipTorque = 0;
+    LeftKneeTorque = 0;
+    RightKneeTorque = 0;
   }
 
-  else if (RightSonarState == 0)
-  {
-    RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G);  
-  }
-  RightKneeTorque = RightKneeTorque*motorMode;
-//Left knee torque values calculated (varies depending on SonarSate)()
-
-if (LeftSonarState == 1)
-  {
-    LeftKneeTorque = ((sin(LeftKneeAngle)*LF)/2.0)*(MF*G) + ((sin(LeftKneeAngle)*LF))*(MH*G);
-  }
-
-   else if (LeftSonarState == 0)
-  {
-    LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G); 
-  }
-  LeftKneeTorque = LeftKneeTorque*motorMode;
 }
 
 void Motor::printTorque()
@@ -233,13 +243,13 @@ void Motor::sonarRead()
 //Determining the current SonarState for each sensor
 
 //Here, right sensor is examined 
-  if (RightSonarState == false)
+  if (!RightSonarState)
   {
     for (int i = 0; i < iteration; i++)
       if (sonarScanR() < height)
         errorRight += 1;
-    errorRight = errorRight / iteration;
-    if (errorRight <= 0.1)
+    errorRight /= iteration;
+    if (errorRight <= UNCERTAINTY)
       RightSonarState = true;
   }
   else
@@ -247,19 +257,19 @@ void Motor::sonarRead()
     for (int i = 0; i < iteration; i++)
       if (sonarScanR() > height)
         errorRight += 1;
-    errorRight = errorRight / iteration;
-    if (errorRight <= 0.1)
+    errorRight /= iteration;
+    if (errorRight <= UNCERTAINTY)
       RightSonarState = false;
   }
 
 //Here, left sensor is examined
-   if (LeftSonarState == false)
+   if (!LeftSonarState)
   {
     for (int i = 0; i < iteration; i++)
       if (sonarScanL() < height)
         errorLeft += 1;
-    errorLeft = errorLeft / iteration;
-    if (errorLeft <= 0.1)
+    errorLeft /= iteration;
+    if (errorLeft <= UNCERTAINTY)
       LeftSonarState = true;
   }
   else
@@ -267,8 +277,8 @@ void Motor::sonarRead()
     for (int i = 0; i < iteration; i++)
       if (sonarScanL() > height)
         errorLeft += 1;
-    errorLeft = errorLeft / iteration;
-    if (errorLeft <= 0.1)
+    errorLeft /= iteration;
+    if (errorLeft <= UNCERTAINTY)
       LeftSonarState = false;
   }
   

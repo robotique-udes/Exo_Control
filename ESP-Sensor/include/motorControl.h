@@ -57,6 +57,8 @@
 #define ON 1
 #define OFF 0
 
+#define UNCERTAINTY 0.1
+
 class Motor
 {
 private:
