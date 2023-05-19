@@ -84,35 +84,27 @@ void Motor::CapperInt(int &val, int max)
 void Motor::neededTorque()
 {
   //If clutch are on automatic, calculate torque needed
-  if(!motorMode){
+  if(motorMode){
     // Right Hip Torque Equation
     if (RightSonarState)
-    {
-      if(RightHipAngle>0)
-        RightHipTorque = (0.5*LH*cos(RightHipAngle)*G*MH);
-      else
-        RightHipTorque =0;
-    }
+      RightHipTorque =0;
     else
     {
-      if(RightHipAngle<110)
-        RightHipTorque = -(cos(RightHipAngle)*LF*G*MF)/2 - (cos(RightHipAngle)*LF + (cos(RightKneeAngle)*LT)/2)*G*MT;  
+      if(toDegrees(RightHipAngle)<110)
+      {
+        RightHipTorque = -(sin(RightHipAngle)*(LF/2.0)*(MF*G));
+      }
       else
         RightHipTorque = 0;
     }
 
     // Left Hip Torque Equation
     if (LeftSonarState)
-    {
-      if(LeftHipAngle>0)
-        LeftHipTorque = (0.5*LH*cos(LeftHipAngle)*G*MH);
-      else
         LeftHipTorque = 0;
-    }
     else
     {
-      if(LeftHipAngle<110)
-        LeftHipTorque = -(cos(LeftHipAngle)*LF*G*MF)/2 - (cos(LeftHipAngle)*LF + (cos(LeftKneeAngle)*LT)/2)*G*MT;  
+      if(toDegrees(LeftHipAngle)<110)
+        LeftHipTorque = -(sin(LeftHipAngle)*(LF/2.0)*(MF*G));  
       else
         LeftHipTorque = 0;
     }  
@@ -120,15 +112,15 @@ void Motor::neededTorque()
     // Right Knee Torque Equation
     if (RightSonarState)
     {
-      if(RightKneeAngle>0)
-        RightKneeTorque = ((sin(RightKneeAngle)*LF)/2.0)*(MF*G) + ((sin(RightKneeAngle)*LF))*(MH*G);
+      if(toDegrees(RightKneeAngle)>0)
+        RightKneeTorque = (sin(RightHipAngle)*(LF/2)*(MF*G)) + ((sin(RightHipAngle)*LF))*(G*MH);
       else
         RightKneeAngle = 0;
     }
     else
     {
-      if(RightKneeAngle<110)
-        RightKneeTorque = -((sin(RightKneeAngle)*LT)/2.0)*(MT*G); 
+      if(toDegrees(RightKneeAngle)<110)
+        RightKneeTorque = -(sin(RightKneeAngle - RightHipAngle)*(LT/2.0)*(MT*G)); 
       else
         RightKneeTorque = 0;
     } 
@@ -136,15 +128,15 @@ void Motor::neededTorque()
     // Left Knee Torque Equation
     if (LeftSonarState)
     {
-      if(LeftKneeAngle>0)
-        LeftKneeTorque = ((sin(LeftKneeAngle)*LF)/2.0)*(MF*G) + ((sin(LeftKneeAngle)*LF))*(MH*G);
+      if(toDegrees(LeftKneeAngle)>0)
+        LeftKneeTorque = (sin(LeftHipAngle)*(LF/2)*(MF*G)) + ((sin(LeftHipAngle)*LF))*(G*MH);
       else
         LeftKneeTorque = 0;
     }
     else
     {
-      if(LeftKneeAngle<110)
-        LeftKneeTorque = -((sin(LeftKneeAngle)*LT)/2.0)*(MT*G);
+      if(toDegrees(LeftKneeAngle)<110)
+        LeftKneeTorque = -(sin(LeftKneeAngle - LeftHipAngle)*(LT/2.0)*(MT*G));
       else
         LeftKneeTorque = 0;
     }
@@ -161,19 +153,13 @@ void Motor::neededTorque()
 
 void Motor::printTorque()
 {
-  Serial.print("  RightHipAngle: ");
-  Serial.print(toDegrees(RightHipAngle));
-  Serial.print("  LeftHipAngle: ");
-  Serial.print(toDegrees(LeftHipAngle));
-
-  Serial.print("  RightKneeAngle: ");
-  Serial.print(toDegrees(RightKneeAngle));
-  Serial.print("  LeftKneeAngle: ");
-  Serial.print(toDegrees(LeftKneeAngle));
-
-  Serial.print("  NeededTorqueL: ");
+  Serial.print("  NeededTorqueHL: ");
+  Serial.print(LeftHipTorque);
+  Serial.print("  NeededTorqueRH: ");
+  Serial.print(RightHipTorque);
+  Serial.print("  NeededTorqueLK: ");
   Serial.print(LeftKneeTorque);
-  Serial.print("  NeededTorqueR: ");
+  Serial.print("  NeededTorqueRK: ");
   Serial.print(RightKneeTorque);
 }
 
@@ -333,6 +319,8 @@ void Motor::printSonar()
   Serial.print(LeftSonarState);
   Serial.print(" SR: ");
   Serial.print(RightSonarState);
+  Serial.print(" MM: ");
+  Serial.print(motorMode);
 }
 
 void Motor::setRelais(int ID, bool state)

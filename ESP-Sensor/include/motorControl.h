@@ -90,8 +90,9 @@ private:
     float LeftKneeMeasuredCurrent = 0.0;
 
     // control sonar
-    bool RightSonarState, LeftSonarState = false;
-    int iteration = 10;
+    bool RightSonarState = true; 
+    bool LeftSonarState = true;
+    int iteration = 1;
 
 public:
     Motor();
@@ -100,6 +101,7 @@ public:
     int PWMLeftKnee = 0;
     int PWMRightHip = 0;
     int PWMLeftHip = 0;
+    
 
     void setPins();
     void beginInterrupt();
