@@ -212,10 +212,10 @@ void Motor::PIDCurrentPrealable()
 {
 
 //Setting  PWM values 
-  PWMRightKnee = map(RightKneeTorque, -100, 100, -255, 255);
-  PWMLeftKnee = map(LeftKneeTorque, -100, 100, -255, 255);
-  PWMRightHip = map(RightHipTorque, -100, 100, -255, 255);
-  PWMLeftHip = map(LeftHipTorque, -100, 100, -255, 255);
+  PWMRightKnee = map(RightKneeTorque, -100, 100, -175, 175);
+  PWMLeftKnee = map(LeftKneeTorque, -100, 100, -175, 175);
+  PWMRightHip = map(RightHipTorque, -100, 100, -175, 175);
+  PWMLeftHip = map(LeftHipTorque, -100, 100, -175, 175);
 
 }
 

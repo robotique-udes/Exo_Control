@@ -46,7 +46,7 @@ void setup()
   imu01.IMUSetup();
   motor.setAllRelais(OFF);
 
-  // imu01.wifiSetup();
+  imu01.wifiSetup();
 }
 void loop()
 {
@@ -68,13 +68,12 @@ void loop()
   sendPWM();
 
   //--------------PRINTING BLOC-------------
-   motor.printSonar();
-   motor.printTorque();
-   imu01.printAngles();
-   Serial.println("");
+  //  motor.printSonar();
+  //  motor.printTorque();
+  //  imu01.printAngles();
+  //  Serial.println("");
 
   
-
 }
 
 void updateAngles()
@@ -89,19 +88,19 @@ void updateAngles()
 void sendPWM()
 {
   if (motor.PWMRightKnee > 0)
-    motor.PWMRightKnee += 101000; //Rien-In1-In2-EN
+    motor.PWMRightKnee += 110000; //Rien-In1-In2-EN
   else
   {
     motor.PWMRightKnee = -motor.PWMRightKnee;
-    motor.PWMRightKnee += 110000; //Rien-In1-In2-EN
+    motor.PWMRightKnee += 101000; //Rien-In1-In2-EN
   }
 
   if (motor.PWMLeftKnee > 0)
-    motor.PWMLeftKnee += 101000; //Rien-In1-In2-EN
+    motor.PWMLeftKnee += 110000; //Rien-In1-In2-EN
   else
   {
     motor.PWMLeftKnee = -motor.PWMLeftKnee;
-    motor.PWMLeftKnee += 110000; //Rien-In1-In2-EN
+    motor.PWMLeftKnee += 101000; //Rien-In1-In2-EN
   }
 
   if (motor.PWMRightHip > 0)
@@ -124,9 +123,12 @@ void sendPWM()
   std::string msg2 = std::to_string(motor.PWMLeftKnee);
   std::string msg3 = std::to_string(motor.PWMRightHip);
   std::string msg4 = std::to_string(motor.PWMLeftHip);
+
+  
+  
   std::string msg5 = msg + msg2 + msg3 + msg4 + "\n";
   ESP32Serial1.write(msg5.c_str());
-  Serial.println(msg5.c_str());
+  // Serial.println(msg5.c_str());
   motor.PWMRightKnee = 0;
   motor.PWMLeftKnee = 0;
   motor.PWMRightHip = 0;
