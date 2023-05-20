@@ -1,6 +1,9 @@
 #include "motorControl.h"
 double height = 40;
-bool motorMode = ON;
+bool motorMode = OFF;
+bool RightSonarState = true; 
+bool LeftSonarState = true;
+double power=175;
 // ExponentialFilter<float> FilteredCurrent(7, 0);
 
 Motor::Motor()
@@ -49,7 +52,11 @@ void Motor::setPins()
   pinMode(ECHO_PIN_DROIT, INPUT);
 }
 
-
+void Motor::setSonarState(bool state)
+{
+  RightSonarState = state;
+  LeftSonarState = state;
+}
 void Motor::readCurrent()
 {
   int CTLeftKnee = D1_CT_A;;
@@ -92,7 +99,7 @@ void Motor::neededTorque()
     {
       if(toDegrees(RightHipAngle)<110)
       {
-        RightHipTorque = -(sin(RightHipAngle)*(LF/2.0)*(MF*G));
+        RightHipTorque = -(sin(RightHipAngle)*(LF/2.0)*(MF*G))*8;
       }
       else
         RightHipTorque = 0;
@@ -104,7 +111,7 @@ void Motor::neededTorque()
     else
     {
       if(toDegrees(LeftHipAngle)<110)
-        LeftHipTorque = -(sin(LeftHipAngle)*(LF/2.0)*(MF*G));  
+        LeftHipTorque = -(sin(LeftHipAngle)*(LF/2.0)*(MF*G))*8;  
       else
         LeftHipTorque = 0;
     }  
@@ -113,14 +120,14 @@ void Motor::neededTorque()
     if (RightSonarState)
     {
       if(toDegrees(RightKneeAngle)>0)
-        RightKneeTorque = (sin(RightHipAngle)*(LF/2)*(MF*G)) + ((sin(RightHipAngle)*LF))*(G*MH);
+        RightKneeTorque = ((sin(RightHipAngle)*(LF/2)*(MF*G)) + ((sin(RightHipAngle)*LF))*(G*MH))*0.5;
       else
         RightKneeAngle = 0;
     }
     else
     {
       if(toDegrees(RightKneeAngle)<110)
-        RightKneeTorque = -(sin(RightKneeAngle - RightHipAngle)*(LT/2.0)*(MT*G)); 
+        RightKneeTorque = -(sin(RightKneeAngle - RightHipAngle)*(LT/2.0)*(MT*G)) *8 ; //*4 ajoute pour augmenter force necessaire
       else
         RightKneeTorque = 0;
     } 
@@ -129,14 +136,14 @@ void Motor::neededTorque()
     if (LeftSonarState)
     {
       if(toDegrees(LeftKneeAngle)>0)
-        LeftKneeTorque = (sin(LeftHipAngle)*(LF/2)*(MF*G)) + ((sin(LeftHipAngle)*LF))*(G*MH);
+        LeftKneeTorque = ((sin(LeftHipAngle)*(LF/2)*(MF*G)) + ((sin(LeftHipAngle)*LF))*(G*MH))*0.5;
       else
         LeftKneeTorque = 0;
     }
     else
     {
       if(toDegrees(LeftKneeAngle)<110)
-        LeftKneeTorque = -(sin(LeftKneeAngle - LeftHipAngle)*(LT/2.0)*(MT*G));
+        LeftKneeTorque = -(sin(LeftKneeAngle - LeftHipAngle)*(LT/2.0)*(MT*G))*8 ; //*4 ajoute pour augmenter force necessaire
       else
         LeftKneeTorque = 0;
     }
@@ -212,28 +219,13 @@ void Motor::PIDCurrentPrealable()
 {
 
 //Setting  PWM values 
-  PWMRightKnee = map(RightKneeTorque, -100, 100, -175, 175);
-  PWMLeftKnee = map(LeftKneeTorque, -100, 100, -175, 175);
-  PWMRightHip = map(RightHipTorque, -100, 100, -175, 175);
-  PWMLeftHip = map(LeftHipTorque, -100, 100, -175, 175);
+  PWMRightKnee = map(RightKneeTorque, -100, 100, -power, power);
+  PWMLeftKnee = map(LeftKneeTorque, -100, 100, -power, power);
+  PWMRightHip = map(RightHipTorque, -100, 100, -power, power);
+  PWMLeftHip = map(LeftHipTorque, -100, 100, -power, power);
 
 }
 
-/*void Motor::printData(long Count_pulses)
-{
-  // Serial.print(" Angle: ");
-  // Serial.print(angle);
-  Serial.print(" Courant GRAVITE: ");
-  Serial.print(CourantSouhaite);
-  // Serial.print(" derivate: ");
-  // Serial.print(derivative);
-  Serial.print(" Courant actuel: ");
-  //Serial.print(ReadCurrent(MOTEUR_GENOU_DROIT));
-  // Serial.print(" Count_pulses: ");
-  // Serial.print(Count_pulses);
-  Serial.print(" PWM: ");
-  Serial.println(PWM);
-}*/
 double Motor::sonarScanL()
 {
   //Signal acquisition from left sonar
@@ -267,7 +259,10 @@ void Motor::sonarRead()
 
 
 //Determining the current SonarState for each sensor
-
+Serial.print("Sonar height R: ");
+Serial.print(sonarScanR());
+Serial.print(" Sonar height L: ");
+Serial.print(sonarScanL());
 //Here, right sensor is examined 
   if (!RightSonarState)
   {
@@ -315,6 +310,7 @@ void Motor::sonarRead()
 }
 void Motor::printSonar()
 {
+  
   Serial.print(" SL: ");
   Serial.print(LeftSonarState);
   Serial.print(" SR: ");
@@ -362,8 +358,18 @@ void Motor::setAllRelais(bool state)
    setRelais(RELAIS_GENOU_DROIT,state);
    setRelais(RELAIS_HANCHE_DROITE,state);
    setRelais(RELAIS_HANCHE_GAUCHE,state);
-   motorMode = state; 
+   
 }
+
+void Motor::setMotorMode(bool state)
+{
+   motorMode = state;
+}
+
+void Motor::setPower(double p)
+{power = p;}
+double Motor::getPower()
+{return power;}
 
 void Motor::testRelais()
 {

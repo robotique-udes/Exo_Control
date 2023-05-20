@@ -90,9 +90,8 @@ private:
     float LeftKneeMeasuredCurrent = 0.0;
 
     // control sonar
-    bool RightSonarState = true; 
-    bool LeftSonarState = true;
-    int iteration = 1;
+
+    int iteration = 40;
 
 public:
     Motor();
@@ -116,6 +115,10 @@ public:
     void sonarRead(); // return true if grounded, false if not
     void setRelais(int ID, bool state);
     void setAllRelais(bool state);
+    void setMotorMode(bool state);
+    void setPower(double p);
+    double getPower();
+
     void testRelais();
     void testMotor();
     void setAngle(enumIMU enumType, float val);
@@ -126,6 +129,7 @@ public:
     double getHeight();
     double sonarScanR();
     double sonarScanL();
+    void setSonarState(bool state);
 };
 
 #endif

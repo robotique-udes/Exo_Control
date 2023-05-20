@@ -20,10 +20,11 @@ class Screen
 {
     private:
         //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
-        static NexButton bNeutral; // Neutral (Clutch ON)
-        static NexButton bAuto;    // Automatic 
+        static NexButton bDISARMED; // Disarmed
+        static NexButton bARMED;    // Armed
+        static NexButton bMOTORISED;// Motorised
 
-        static NexButton bStand; // Standing Button
+        static NexButton bWalk; // Standing Button
         static NexButton bSquat; // Squatting Button
 
         static NexButton bAutoCalib; // Autocalibrating Button
@@ -39,19 +40,17 @@ class Screen
 
         static NexSlider Pslider;
         static NexNumber Pindicator;
-        static NexSlider Islider;
-        static NexNumber Iindicator;
-        static NexSlider Dslider;
-        static NexNumber Dindicator;
 
 
         //---------------------------------------FONCTIONS-----------------------------------------
-        static void StateNEUTRAL(void *ptr);
+        static void Disarmed(void *ptr);
 
-        static void StateAUTOMATIC(void *ptr);
+        static void Armed(void *ptr);
+
+        static void Motorised(void *ptr);
 
         //---------------------------------------TESTS--------------------------------------------
-        static void TestStand(void *ptr);
+        static void TestWalk(void *ptr);
 
         static void TestSquat(void *ptr);
 
@@ -74,10 +73,6 @@ class Screen
         static void SavePID(void *ptr);
 
         static void Pvalue(void *ptr);
-
-        static void Ivalue(void *ptr);
-
-        static void Dvalue(void *ptr);
 
         static NexTouch *nex_listen_list[];
 

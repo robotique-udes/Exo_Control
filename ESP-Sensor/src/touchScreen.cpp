@@ -3,11 +3,12 @@
 // Nextion TX to pin 2 and RX to pin 3 of Arduino
 //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
 //main
-NexButton Screen::bNeutral = NexButton(0, 6, "bNeutral"); //Clutch ON
-NexButton Screen::bAuto = NexButton(0, 7, "bAuto"); //Clutch OFF    (Motor Control ON)
+NexButton Screen::bDISARMED = NexButton(0, 6, "bDISARMED"); //DISARMED
+NexButton Screen::bARMED = NexButton(0, 8, "bARMED"); //Clutch ON   ( ARMED)
+NexButton Screen::bMOTORISED = NexButton(0, 7, "bMOTORISED");// CLUTCH ON + MOTOR ON 
 
 //test
-NexButton Screen::bStand = NexButton(1, 6, "bStand"); //test standing straight
+NexButton Screen::bWalk = NexButton(1, 6, "bStand"); //test standing straight
 NexButton Screen::bSquat = NexButton(1, 7, "bSquat"); //test squat
 
 //calibration
@@ -23,19 +24,11 @@ NexButton Screen::bPID1 = NexButton(1, 4, "bPID");
 NexButton Screen::bPID2 = NexButton(2, 4, "bPID");
 NexButton Screen::bSavePID = NexButton(4, 4, "bSavePID");
 
-NexSlider Screen::Pslider = NexSlider(4, 6, "Pslider");   //P slider
-NexNumber Screen::Pindicator = NexNumber(4, 12, "Pindic");       //P Float
-NexSlider Screen::Islider = NexSlider(4, 10, "Islider");  //I Slider
-NexNumber Screen::Iindicator = NexNumber(4, 13, "Iindic");       //I Float
-NexSlider Screen::Dslider = NexSlider(4, 11, "Dslider");  //D Slider
-NexNumber Screen::Dindicator = NexNumber(4, 14, "Dindic");       //D Float
+NexSlider Screen::Pslider = NexSlider(4, 6, "Pslider");   //Power motor slider
+NexNumber Screen::Pindicator = NexNumber(4, 12, "Pindic");//Power motor indicator
 
-uint32_t P;
+uint32_t P= 175;
 uint32_t Ptemp;
-uint32_t I;
-uint32_t Itemp;
-uint32_t D;
-uint32_t Dtemp;
 
 Screen::Screen(){
   Serial.print("BONJOUR");
@@ -44,11 +37,12 @@ Screen::Screen(){
   //          PUSH -> ACTIVE QUAND TU PRESS               POP -> ACTIVE QUAND TU RELACHE
   //bLeft_Hip_UP.attachPush(LeftHip_UP, &bLeft_Hip_UP); //Press
   //main
-  bNeutral.attachPush(StateNEUTRAL, &bNeutral); //mode neutral
-  bAuto.attachPush(StateAUTOMATIC, &bAuto); //mode auto
+  bDISARMED.attachPush(Disarmed, &bDISARMED);
+  bARMED.attachPush(Armed, &bARMED);
+  bMOTORISED.attachPush(Motorised, &bMOTORISED);
   //test
-  bStand.attachPush(TestStand, &bStand); //test stand 
-  bStand.attachPop(TestNeutral, &bStand);  //stopping test
+  bWalk.attachPush(TestWalk, &bWalk); //test stand 
+  bWalk.attachPop(TestNeutral, &bWalk);  //stopping test
   bSquat.attachPush(TestSquat, &bSquat); //test squat
   bSquat.attachPop(TestNeutral, &bSquat);  //stopping test 
   //calibration
@@ -65,15 +59,9 @@ Screen::Screen(){
 
   Pslider.attachPop(Pvalue, &Pslider);
   Pslider.attachPush(Pvalue, &Pslider);
-  Islider.attachPop(Ivalue, &Islider);
-  Islider.attachPush(Ivalue, &Islider);
-  Dslider.attachPop(Dvalue, &Dslider);
-  Dslider.attachPush(Dvalue, &Dslider);
 
 
   Pslider.setValue(50);
-  Islider.setValue(50);
-  Dslider.setValue(50);
 }
 
 Screen::~Screen(){
@@ -82,29 +70,41 @@ Screen::~Screen(){
 
 
 //---------------------------------------STATE--------------------------------------------
-//STATE AUTO (1)
-void Screen::StateNEUTRAL(void *ptr)
+//DISARMED
+void Screen::Disarmed(void *ptr)
 { 
-  Serial.print("\nNEUTRAL");
+  Serial.print("\nDisarmed");
   motor->setAllRelais(OFF);
+  motor->setMotorMode(OFF);
 }
 
-//STATE NEUTRAL (0)
-void Screen::StateAUTOMATIC(void *ptr)
+//ARMED
+void Screen::Armed(void *ptr)
 {
-  Serial.print("\nAUTO");
+  Serial.print("\nArmed");
   motor->setAllRelais(ON);
+  motor->setMotorMode(OFF);
+}
+
+//MOTORISED
+void Screen::Motorised(void *ptr)
+{
+  Serial.print("\nMotorised");
+  motor->setAllRelais(ON);
+  motor->setMotorMode(ON);
 }
 
 //---------------------------------------TEST--------------------------------------------
 //Left
-void Screen::TestStand(void *ptr)
+void Screen::TestWalk(void *ptr) //TEST WALKING
 {
-  Serial.print("\nTEST STANDING");  
+  Serial.print("\nTEST WALKING"); 
+  motor->setSonarState(OFF);
 }
 
-void Screen::TestSquat(void *ptr){
+void Screen::TestSquat(void *ptr){//TEST SQUATTING
   Serial.print("\nTEST SQUATTING");
+  motor->setSonarState(ON);
 }
 
 void Screen::TestNeutral(void *ptr){
@@ -131,7 +131,7 @@ void Screen::AutoCalibration(void *ptr){
     leftTotal+= motor->sonarScanL();
   }
   height=((rightTotal+leftTotal)/(iteration*2));
-  motor->setHeight(height+5);
+  motor->setHeight(height+10);
   Serial.print("\nCalibrated!");
   bAutoCalib.setText("CALIBRATED!");
 }
@@ -161,18 +161,13 @@ void Screen::Calib_6f(void *ptr){
 void Screen::PID(void *ptr){
   bSavePID.Set_background_color_bco(40689);
   Pslider.setValue(P); 
-  Pindicator.setValue(P);
-  Islider.setValue(I);
-  Iindicator.setValue(I);
-  Dslider.setValue(D);
-  Dindicator.setValue(D);
+  Serial.print(Pslider.getValue(&Ptemp));
 }
 
 void Screen::SavePID(void *ptr){
   P = Ptemp;
-  I = Itemp;
-  D = Dtemp; 
   bSavePID.Set_background_color_bco(40689);
+  motor->setPower(P);
 }
 
 //SETTING P VALUE
@@ -182,28 +177,16 @@ void Screen::Pvalue(void *ptr){
   bSavePID.Set_background_color_bco(65520);
 }
 
-//SETTING I VALUE
-void Screen::Ivalue(void *ptr){
-  Islider.getValue(&Itemp);
-  Iindicator.setValue(Itemp);
-  bSavePID.Set_background_color_bco(65520);
-}
-
-//SETTING D VALUE
-void Screen::Dvalue(void *ptr){
-  Dslider.getValue(&Dtemp);
-  Dindicator.setValue(Dtemp);
-  bSavePID.Set_background_color_bco(65520);
-}
 
 void Screen::nextLoop(){
   nexLoop(nex_listen_list);
 }
 
 NexTouch *Screen::nex_listen_list[] = { //notif quand appele
-        &bNeutral,
-        &bAuto,
-        &bStand,
+        &bDISARMED,
+        &bARMED,
+        &bMOTORISED,
+        &bWalk,
         &bSquat,
         &bAutoCalib,
         &b4f,
@@ -216,9 +199,5 @@ NexTouch *Screen::nex_listen_list[] = { //notif quand appele
         &bSavePID,
         &Pslider,
         &Pindicator,
-        &Islider,
-        &Iindicator,
-        &Dslider,
-        &Dindicator,
         NULL
 };
