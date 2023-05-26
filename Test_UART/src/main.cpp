@@ -37,6 +37,20 @@ void setup()
   pinMode(D2_IN1_A, OUTPUT);
   pinMode(D2_IN1_A, OUTPUT);
   pinMode(D2_IN1_A, OUTPUT);
+  pinMode(D1_IN1_B, OUTPUT);
+  pinMode(D1_IN2_B, OUTPUT);
+  pinMode(D1_EN_B, OUTPUT);
+  pinMode(D2_IN1_B, OUTPUT);
+  pinMode(D2_IN1_B, OUTPUT);
+  pinMode(D2_IN1_B, OUTPUT);
+  
+
+
+
+
+
+
+
   Serial.println("setup done");
 
 }
@@ -45,7 +59,7 @@ void setup()
 
 void loop()
 {
-  while (SerialPort.available())
+  if (SerialPort.available())
   {
     bitOfMessage = char(SerialPort.read());
     if (bitOfMessage != '\n'){
@@ -85,6 +99,8 @@ void loop()
       Serial.print(MHDin1Val);
       Serial.print(MHDin2Val);
       Serial.println(MHDpwmMotor);
+
+      message = " ";
     
     }
   }
