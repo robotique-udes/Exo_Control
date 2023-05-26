@@ -241,7 +241,7 @@ void Imu::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEve
         if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
         {
             String angles = imu.writeJson();
-            Serial.println(angles);
+            // Serial.println(angles);
             globalClient->text(angles);
         }
         else
