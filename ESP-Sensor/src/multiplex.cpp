@@ -1,6 +1,9 @@
 #include "multiplex.h"
 
-Multiplex::Multiplex(){
+Multiplex::Multiplex(){}
+
+Multiplex::Multiplex(TwoWire* wireUsed){
+    this->monWire = wireUsed;
     currentChannel = 0;
     selectChannel(0);
 }
@@ -10,9 +13,9 @@ bool Multiplex::selectChannel(uint8_t channel){
         return false;
     }
 
-    Wire.beginTransmission(0x70);
-    Wire.write(1 << channel);
-    Wire.endTransmission();
+    monWire->beginTransmission(0x70);
+    monWire->write(1 << channel);
+    monWire->endTransmission();
 
     this->currentChannel = channel;
 
@@ -22,5 +25,4 @@ bool Multiplex::selectChannel(uint8_t channel){
 int Multiplex::getCurrentChannel(){
     return currentChannel;
 }
-
 

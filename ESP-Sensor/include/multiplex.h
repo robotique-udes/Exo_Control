@@ -1,13 +1,15 @@
-#ifndef MULTIPLEX_H
-#define MULTIPLEX_H
+#ifndef MULTIPLEX_H_
+#define MULTIPLEX_H_
 
 #include <Wire.h>
 
 class Multiplex{
 
 public:
-    // Default constructor
+
     Multiplex();
+    // Default constructor
+    Multiplex(TwoWire* wireUsed);
     // Selects the channel
     bool selectChannel(uint8_t channel);
     // Returns the current active port
@@ -16,7 +18,7 @@ public:
 private:
     
     TwoWire* monWire;
-    int currentChannel;
+    uint8_t currentChannel;
 };
 
 #endif
