@@ -57,20 +57,20 @@ void loop()
 
   //--------------LOGIC BLOC---------------
   //delay(100);
-  ecran.nextLoop();
+  //ecran.nextLoop();
 
-  updateAngles(); 
+  //updateAngles(); 
   // motor.sonarRead(); Ne pas décommenter, remplace par HMI
-  motor.neededTorque();
+  //motor.neededTorque();
   // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor.readCurrent(); Ne pas décommenter, pas utile sans PID
-  motor.PIDCurrentPrealable();
-  sendPWM();
+  //motor.PIDCurrentPrealable();
+  //sendPWM();
 
   //--------------PRINTING BLOC-------------
-  Serial.print(motor.getPower());
-  // motor.printSonar();
-  motor.printTorque();
+  //Serial.print(motor.getPower());
+  //motor.printSonar();
+  //motor.printTorque();
   imu01.printAngles();
   Serial.println("");
 }

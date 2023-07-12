@@ -18,15 +18,13 @@ AsyncEventSource events("/events");
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
-TwoWire BUS_I2C_1 = TwoWire(0);
-TwoWire BUS_I2C_2 = TwoWire(1);
-TwoWire BUS_I2C_3 = TwoWire(2);
+// TwoWire BUS_I2C_1 = TwoWire(0);
+// TwoWire BUS_I2C_2 = TwoWire(1);
+// TwoWire BUS_I2C_3 = TwoWire(2);
 
-Adafruit_BNO055 IMU_HAUT_G = Adafruit_BNO055(55, 0x29, &BUS_I2C_1);
-Adafruit_BNO055 IMU_BAS_G = Adafruit_BNO055(55, 0x28, &BUS_I2C_1);
-Adafruit_BNO055 IMU_HAUT_D = Adafruit_BNO055(55, 0x29, &BUS_I2C_2);
-Adafruit_BNO055 IMU_BAS_D = Adafruit_BNO055(55, 0x28, &BUS_I2C_2);
-Adafruit_BNO055 IMU_DOS = Adafruit_BNO055(55, 0x28, &BUS_I2C_3);
+// Adafruit_BNO055 IMU_HAUT_D = Adafruit_BNO055(55, 0x29, &BUS_I2C_2);
+// Adafruit_BNO055 IMU_BAS_D = Adafruit_BNO055(55, 0x28, &BUS_I2C_2);
+// Adafruit_BNO055 IMU_DOS = Adafruit_BNO055(55, 0x28, &BUS_I2C_3);
 
 Imu::Imu()
 {
@@ -48,14 +46,19 @@ void Imu::wifiSetup()
 
 bool Imu::IMUSetup()
 {
+    multiplex.selectChannel(0);
+    IMU_HAUT_G = Adafruit_BNO055(55, 0x28, &Wire);
+    multiplex.selectChannel(1);
+    IMU_BAS_G = Adafruit_BNO055(55, 0x29, &Wire);
 
     Serial.println("Orientation Sensor Test");
     Serial.println("");
-    BUS_I2C_1.begin(I2C_SDA1, I2C_SCL1);
-    BUS_I2C_2.begin(I2C_SDA2, I2C_SCL2);
-    BUS_I2C_3.begin(I2C_SDA3, I2C_SCL3);
+    Wire.begin(I2C_SDA1, I2C_SCL1);
+    // BUS_I2C_2.begin(I2C_SDA2, I2C_SCL2);
+    // BUS_I2C_3.begin(I2C_SDA3, I2C_SCL3);
     Serial.println("-------1");
     /* Initialise the sensor */
+    multiplex.selectChannel(0);
     if (!IMU_HAUT_G.begin())
     {
         //There was a problem detecting the BNO055 ... check your connections 
@@ -64,26 +67,27 @@ bool Imu::IMUSetup()
         // return false;
     }
     Serial.println("-------2");
+    multiplex.selectChannel(1);
     if (!IMU_BAS_G.begin())
     {
         //There was a problem detecting the BNO055 ... check your connections 
         Serial.println("Ooops, no BNO055_2 detected ... Check your wiring or I2C ADDR!");
         // return false;
     }
-    Serial.println("-------3");
-    if (!IMU_HAUT_D.begin())
-    {
-        //There was a problem detecting the BNO055 ... check your connections 
-        Serial.println("Ooops, no BNO055_3 detected ... Check your wiring or I2C ADDR!");
-        // return false;
-    }
-    Serial.println("-------4");
-    if (!IMU_BAS_D.begin())
-    {
-        // There was a problem detecting the BNO055 ... check your connections 
-        Serial.println("Ooops, no BNO055_4 detected ... Check your wiring or I2C ADDR!");
-        // return false;
-    }
+    // Serial.println("-------3");
+    // if (!IMU_HAUT_D.begin())
+    // {
+    //     //There was a problem detecting the BNO055 ... check your connections 
+    //     Serial.println("Ooops, no BNO055_3 detected ... Check your wiring or I2C ADDR!");
+    //     // return false;
+    // }
+    // Serial.println("-------4");
+    // if (!IMU_BAS_D.begin())
+    // {
+    //     // There was a problem detecting the BNO055 ... check your connections 
+    //     Serial.println("Ooops, no BNO055_4 detected ... Check your wiring or I2C ADDR!");
+    //     // return false;
+    // }
     Serial.println("-------5");
     /*if (!IMU_DOS.begin())
     {
@@ -95,9 +99,9 @@ bool Imu::IMUSetup()
     Serial.println("Setup done");
     /* Use external crystal for better accuracy */
     IMU_HAUT_G.setExtCrystalUse(true);
-    IMU_BAS_G.setExtCrystalUse(true);
-    IMU_HAUT_D.setExtCrystalUse(true);
-    IMU_BAS_D.setExtCrystalUse(true);
+    // IMU_BAS_G.setExtCrystalUse(true);
+    //IMU_HAUT_D.setExtCrystalUse(true);
+    //IMU_BAS_D.setExtCrystalUse(true);
     //IMU_DOS.setExtCrystalUse(true);
     return true;
 }
@@ -111,21 +115,20 @@ float Imu::toDegrees(float radians)
 void Imu::getAngles()
 {
 
-    quat = IMU_HAUT_G.getQuat();
-    angleHipL = quat.toEuler();
+    angleHipL = ImuAngle(&IMU_HAUT_G, 0);
     angleHipL.y()=angleHipL.y()+PI/2;
 
-    quat = IMU_BAS_G.getQuat();
-    angleKneeL = quat.toEuler();
+    angleKneeL = ImuAngle(&IMU_BAS_G,1);
     angleKneeL.y()=abs((angleKneeL.y()-angleHipL.y())+PI/2);
 
-    quat = IMU_HAUT_D.getQuat();
-    angleHipR = quat.toEuler();
-    angleHipR.y()=angleHipR.y()+PI/2;
 
-    quat = IMU_BAS_D.getQuat();
-    angleKneeR = quat.toEuler();
-    angleKneeR.y()=abs((angleKneeR.y()-angleHipR.y())+PI/2);
+    //quat = IMU_HAUT_D.getQuat();
+    //angleHipR = quat.toEuler();
+    //angleHipR.y()=angleHipR.y()+PI/2;
+
+    //quat = IMU_BAS_D.getQuat();
+    //angleKneeR = quat.toEuler();
+    //angleKneeR.y()=abs((angleKneeR.y()-angleHipR.y())+PI/2);
 
     //quat = IMU_DOS.getQuat();
     //SPLINE = quat.toEuler();
@@ -140,11 +143,11 @@ void Imu::printAngles()
     Serial.print("  angleKneeL Y: ");
     Serial.print(toDegrees(angleKneeL.y()));
 
-    Serial.print("  angleHipR Y: ");
-    Serial.print(toDegrees((angleHipR.y())));
+    //Serial.print("  angleHipR Y: ");
+    //Serial.print(toDegrees((angleHipR.y())));
 
-    Serial.print("  angleKneeR Y: ");
-    Serial.print(toDegrees(angleKneeR.y()));
+    //Serial.print("  angleKneeR Y: ");
+    //Serial.print(toDegrees(angleKneeR.y()));
 
     //Serial.print("SPLINE: ");
     //Serial.println(SPLINE.x());
@@ -284,3 +287,12 @@ double Imu::getValAngle(enumIMU imuType)
         break;
     }
 }
+imu::Vector<3> Imu::ImuAngle(Adafruit_BNO055 *imuCourant, uint8_t chan)
+{
+    multiplex.selectChannel(chan);
+    quat = imuCourant->getQuat();
+    multiplex.selectChannel(0);
+    return quat.toEuler();
+
+}
+
