@@ -14,7 +14,7 @@
 #include <Arduino_JSON.h>
 #include <string>
 #include "enum.h"
-#include "multiplex.h"
+#include "bnoMultiplex.h"
 
 #define I2C_SDA1 26
 #define I2C_SCL1 27
@@ -42,10 +42,8 @@ private:
     imu::Vector<3> angleKneeR;
     imu::Vector<3> SPLINE;
 
-    Adafruit_BNO055 IMU_HAUT_G;
-    Adafruit_BNO055 IMU_BAS_G;
-
-    Multiplex multiplex;
+    BNOMultiplex IMU_HAUT_G =  BNOMultiplex(55, 0x28, &Wire, 0);
+    BNOMultiplex IMU_BAS_G = BNOMultiplex(55, 0x29, &Wire, 1);
 
     const char *ssid = "BioGenius";
     const char *password = "biogenius!";
@@ -57,7 +55,6 @@ public:
     ~Imu();
     float toDegrees(float radians);
     void getAngles();
-    imu::Vector<3> ImuAngle(Adafruit_BNO055 *imu, uint8_t chan);
     String writeJson(); 
     void initWiFi();
     void printAngles();
