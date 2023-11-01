@@ -3,12 +3,9 @@
 
 #include <Arduino.h>
 #include <Nextion.h>
-#include <SPI.h>
-//#include <SoftwareSerial.h>
-#include <HardwareSerial.h>
-#include <SD.h>
-#include <string.h>
-#include "motorControl.h"
+
+#include "enumScreenCallbacks.h"
+
 using namespace std;
 
 #define RX_HMI 16
@@ -16,73 +13,39 @@ using namespace std;
 
 
 
-class Screen
+class TouchScreen
 {
     private:
         //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
-        static NexButton bDISARMED; // Disarmed
-        static NexButton bARMED;    // Armed
-        static NexButton bMOTORISED;// Motorised
+        NexButton bDISARMED; // Disarmed
+        NexButton bARMED;    // Armed
+        NexButton bMOTORISED;// Motorised
 
-        static NexButton bWalk; // Standing Button
-        static NexButton bSquat; // Squatting Button
+        NexButton bWalk; // Standing Button
+        NexButton bSquat; // Squatting Button
 
-        static NexButton bAutoCalib; // Autocalibrating Button
-        static NexButton b4f ; // GOOSE
-        static NexButton b5f8;
-        static NexButton b5f10;
-        static NexButton b6f ;  
+        NexButton bAutoCalib; // Autocalibrating Button
+        NexButton b4f ; // GOOSE
+        NexButton b5f8;
+        NexButton b5f10;
+        NexButton b6f ;  
 
-        static NexButton bPID0;
-        static NexButton bPID1;
-        static NexButton bPID2;
-        static NexButton bSavePID;
+        NexButton bPID0;
+        NexButton bPID1;
+        NexButton bPID2;
+        NexButton bSavePID;
 
-        static NexSlider Pslider;
-        static NexNumber Pindicator;
-
-
-        //---------------------------------------FONCTIONS-----------------------------------------
-        static void Disarmed(void *ptr);
-
-        static void Armed(void *ptr);
-
-        static void Motorised(void *ptr);
-
-        //---------------------------------------TESTS--------------------------------------------
-        static void TestWalk(void *ptr);
-
-        static void TestSquat(void *ptr);
-
-        static void TestNeutral(void *ptr);
-
-        //---------------------------------------CALIBRATION--------------------------------------------
-        static void AutoCalibration(void *ptr);
-
-        static void Quack(void *ptr);
-
-        static void Calib_5f8(void *ptr);
-
-        static void Calib_5f10(void *ptr);
-
-        static void Calib_6f(void *ptr);
-
-        //---------------------------------------PID--------------------------------------------
-        static void PID(void *ptr);
-
-        static void SavePID(void *ptr);
-
-        static void Pvalue(void *ptr);
-
-        static NexTouch *nex_listen_list[];
+        NexSlider Pslider;
+        NexNumber Pindicator;
 
     public:
-        static Motor *motor;
-        Screen();
-        ~Screen();
-        static void nextLoop();
+        
+        TouchScreen();
+        ~TouchScreen();
 
-
+        void init();
+        void update();
+        void setCallback(EnumScreenCallback callback, void (*callbackFunction)());
 };
 
 
