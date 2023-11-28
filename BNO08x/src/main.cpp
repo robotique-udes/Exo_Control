@@ -11,6 +11,17 @@
 #define BNO08X_CS 10
 #define BNO08X_INT 9
 
+// Setting I2C pins
+#define SDA_1 21
+#define SCL_1 22
+
+#define SDA_2 26
+#define SCL_2 27
+
+TwoWire I2Cone = TwoWire(0);
+TwoWire I2Ctwo = TwoWire(1);
+
+
 
 // #define FAST_MODE
 
@@ -25,10 +36,8 @@ struct euler_t {
   float roll;
 } ypr;
 
-TwoWire BUS_I2C_1 = TwoWire(0);
-
 Adafruit_BNO08x  bno08x(BNO08X_RESET);
-Adafruit_BNO08x  bno08x2(27);
+Adafruit_BNO08x  bno08x2(BNO08X_RESET);
 sh2_SensorValue_t sensorValue;
 
 #ifdef FAST_MODE
@@ -50,29 +59,25 @@ void setReports(sh2_SensorId_t reportType, long report_interval) {
 void setup(void) {
 
   Serial.begin(115200);
-  //pinMode(26, INPUT_PULLUP);
-  BUS_I2C_1.begin(21,22);
-
   while (!Serial) delay(10);     // will pause Zero, Leonardo, etc until serial console opens
 
   Serial.println("Adafruit BNO08x test!");
 
+  I2Cone.begin(SDA_1, SCL_1, 100000); 
+  I2Ctwo.begin(SDA_2, SCL_2, 100000);
+
   // Try to initialize!
-  if (!bno08x.begin_I2C(0x4a, &BUS_I2C_1, 0)) {
-  //if (!bno08x.begin_UART(&Serial1)) {  // Requires a device with > 300 byte UART buffer!
-  //if (!bno08x.begin_SPI(BNO08X_CS, BNO08X_INT)) {
+  if (!bno08x.begin_I2C(0x4b, &I2Cone)) {
     Serial.println("Failed to find BNO08x chip");
     while (1) { delay(10); }
   }
   Serial.println("BNO08x numero uno Found!");
 
-  if (!bno08x2.begin_I2C(0x4b, &BUS_I2C_1, 1)) {
-  //if (!bno08x.begin_UART(&Serial1)) {  // Requires a device with > 300 byte UART buffer!
-  //if (!bno08x.begin_SPI(BNO08X_CS, BNO08X_INT)) {
-    Serial.println("Failed to find BNO08x number too chip");
+  if (!bno08x2.begin_I2C(0x4a, &I2Ctwo)) {
+    Serial.println("Failed to find BNO08x chip");
     while (1) { delay(10); }
   }
-  Serial.println("BNO08x numero dos Found!");
+  Serial.println("BNO08x numero two Found!");
 
 
   setReports(reportType, reportIntervalUs);
@@ -108,6 +113,7 @@ void quaternionToEulerGI(sh2_GyroIntegratedRV_t* rotational_vector, euler_t* ypr
 }
 
 void loop() {
+  delay(5000);
 
   if (bno08x.wasReset()) {
     Serial.print("sensor 1 was reset ");
