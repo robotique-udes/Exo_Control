@@ -1723,6 +1723,7 @@ int sh2_open(sh2_Hal_t *pHal,
     pSh2->pShtp = shtp_open(pSh2->pHal);
     if (pSh2->pShtp == 0) {
         // Error opening SHTP
+
         return SH2_ERR;
     }
 

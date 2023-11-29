@@ -71,10 +71,10 @@ void setup(void) {
     Serial.println("Failed to find BNO08x chip");
     while (1) { delay(10); }
   }
-  Serial.println("BNO08x numero uno Found!");
+  Serial.println("BNO08x numero uno Found!"); 
 
   if (!bno08x2.begin_I2C(0x4a, &I2Ctwo)) {
-    Serial.println("Failed to find BNO08x chip");
+    Serial.println("Failed to find BNO08x chip 2");
     while (1) { delay(10); }
   }
   Serial.println("BNO08x numero two Found!");
@@ -113,7 +113,7 @@ void quaternionToEulerGI(sh2_GyroIntegratedRV_t* rotational_vector, euler_t* ypr
 }
 
 void loop() {
-  delay(5000);
+  delay(1000);
 
   if (bno08x.wasReset()) {
     Serial.print("sensor 1 was reset ");

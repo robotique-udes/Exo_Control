@@ -199,6 +199,7 @@ bool Adafruit_BNO08x::_init(int32_t sensor_id) {
 
   // Open SH2 interface (also registers non-sensor event handler.)
   status = sh2_open(&_HAL, hal_callback, NULL);
+  Serial.print("Status: "), Serial.println(status);
   Serial.println("w have status");
   if (status != SH2_OK) {
     Serial.println("status failed");
