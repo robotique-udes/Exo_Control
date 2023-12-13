@@ -73,12 +73,13 @@ void setup(void) {
   }
   Serial.println("BNO08x numero uno Found!"); 
 
+/*
   if (!bno08x2.begin_I2C(0x4a, &I2Ctwo)) {
     Serial.println("Failed to find BNO08x chip 2");
     while (1) { delay(10); }
   }
   Serial.println("BNO08x numero two Found!");
-
+*/
 
   setReports(reportType, reportIntervalUs);
 
