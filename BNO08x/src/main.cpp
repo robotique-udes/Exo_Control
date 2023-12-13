@@ -1,145 +1,105 @@
-
-
 #include <Arduino.h>
-// This demo explores two reports (SH2_ARVR_STABILIZED_RV and SH2_GYRO_INTEGRATED_RV) both can be used to give 
-// quartenion and euler (yaw, pitch roll) angles.  Toggle the FAST_MODE define to see other report.  
-// Note sensorValue.status gives calibration accuracy (which improves over time)
 #include <Adafruit_BNO08x.h>
 #include <Wire.h>
 
-// For SPI mode, we need a CS pin
-#define BNO08X_CS 10
-#define BNO08X_INT 9
 
-// Setting I2C pins
-#define SDA_1 21
-#define SCL_1 22
-
+// This is where the multiplexer is connected
 #define SDA_2 26
 #define SCL_2 27
+#define PCAADDR 0x70
 
-TwoWire I2Cone = TwoWire(0);
-TwoWire I2Ctwo = TwoWire(1);
-
-
-
-// #define FAST_MODE
-
-// For SPI mode, we also need a RESET 
-//#define BNO08X_RESET 5
-// but not for I2C or UART
+// IMU data
 #define BNO08X_RESET -1
 
-struct euler_t {
-  float yaw;
-  float pitch;
-  float roll;
-} ypr;
+#define BNO_ONE_MULTIPLEXER_PORT 0
+#define BNO_ONE_I2C_ADDRESS 0x4B
+#define BNO_TWO_MULTIPLEXER_PORT 1
+#define BNO_Two_I2C_ADDRESS 0x4A
 
 Adafruit_BNO08x  bno08x(BNO08X_RESET);
-Adafruit_BNO08x  bno08x2(BNO08X_RESET);
 sh2_SensorValue_t sensorValue;
 
-#ifdef FAST_MODE
-  // Top frequency is reported to be 1000Hz (but freq is somewhat variable)
-  sh2_SensorId_t reportType = SH2_GYRO_INTEGRATED_RV;
-  long reportIntervalUs = 2000;
-#else
-  // Top frequency is about 250Hz but this report is more accurate
-  sh2_SensorId_t reportType = SH2_ARVR_STABILIZED_RV;
-  long reportIntervalUs = 5000;
-#endif
-void setReports(sh2_SensorId_t reportType, long report_interval) {
+// Top frequency is about 250Hz but this report is more accurate
+sh2_SensorId_t reportType = SH2_GAME_ROTATION_VECTOR;
+long reportIntervalUs = 5000; // Frequency can be set here, ideally we never go past 200Hz
+
+// Here is where you define the sensor outputs you want to receive
+void setReports(void) {
   Serial.println("Setting desired reports");
-  if (! bno08x.enableReport(reportType, report_interval)) {
-    Serial.println("Could not enable stabilized remote vector");
+  if (! bno08x.enableReport(reportType, reportIntervalUs)) {
+    Serial.println("Could not enable reporting with the given type. Check your desired report type and interval.");
   }
 }
 
-void setup(void) {
+// This will select the given port on the multiplexer
+void PCA_Select(uint8_t port) {
+  if (port > 7) return;
+ 
+  Wire.beginTransmission(PCAADDR);
+  Wire.write(1 << port);
+  Wire.endTransmission();  
+}
 
+void setup(void) {
   Serial.begin(115200);
   while (!Serial) delay(10);     // will pause Zero, Leonardo, etc until serial console opens
 
-  Serial.println("Adafruit BNO08x test!");
+  Serial.println("Adafruit BNO08x test through PCA9548A Multiplexer!");
 
-  I2Cone.begin(SDA_1, SCL_1, 100000); 
-  I2Ctwo.begin(SDA_2, SCL_2, 100000);
+  // Initialize the multiplexer
+  Wire.begin(SDA_2, SCL_2);
+
+  // Testing the connection to the multiplexer
+  Wire.beginTransmission(PCAADDR);
+  if (Wire.endTransmission() == 0) {
+    Serial.println("PCA9548A Multiplexer found!");
+  } else {
+    Serial.println("PCA9548A Multiplexer not found!");
+    while (1) { delay(100); };
+  }
+
+  // First test, only one IMU
+  Wire.beginTransmission(PCAADDR);
+  Wire.write(1 << BNO_ONE_MULTIPLEXER_PORT);
+  Wire.endTransmission();
 
   // Try to initialize!
-  if (!bno08x.begin_I2C(0x4b, &I2Cone)) {
+  if (!bno08x.begin_I2C(BNO_ONE_I2C_ADDRESS)) {
     Serial.println("Failed to find BNO08x chip");
-    while (1) { delay(10); }
+    while (1) { delay(100); }
   }
-  Serial.println("BNO08x numero uno Found!"); 
+  Serial.println("BNO_ONE Found!");
 
-/*
-  if (!bno08x2.begin_I2C(0x4a, &I2Ctwo)) {
-    Serial.println("Failed to find BNO08x chip 2");
-    while (1) { delay(10); }
-  }
-  Serial.println("BNO08x numero two Found!");
-*/
-
-  setReports(reportType, reportIntervalUs);
+  setReports();
 
   Serial.println("Reading events");
   delay(100);
 }
 
-void quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees = false) {
-
-    float sqr = sq(qr);
-    float sqi = sq(qi);
-    float sqj = sq(qj);
-    float sqk = sq(qk);
-
-    ypr->yaw = atan2(2.0 * (qi * qj + qk * qr), (sqi - sqj - sqk + sqr));
-    ypr->pitch = asin(-2.0 * (qi * qk - qj * qr) / (sqi + sqj + sqk + sqr));
-    ypr->roll = atan2(2.0 * (qj * qk + qi * qr), (-sqi - sqj + sqk + sqr));
-
-    if (degrees) {
-      ypr->yaw *= RAD_TO_DEG;
-      ypr->pitch *= RAD_TO_DEG;
-      ypr->roll *= RAD_TO_DEG;
-    }
-}
-
-void quaternionToEulerRV(sh2_RotationVectorWAcc_t* rotational_vector, euler_t* ypr, bool degrees = false) {
-    quaternionToEuler(rotational_vector->real, rotational_vector->i, rotational_vector->j, rotational_vector->k, ypr, degrees);
-}
-
-void quaternionToEulerGI(sh2_GyroIntegratedRV_t* rotational_vector, euler_t* ypr, bool degrees = false) {
-    quaternionToEuler(rotational_vector->real, rotational_vector->i, rotational_vector->j, rotational_vector->k, ypr, degrees);
-}
-
 void loop() {
-  delay(1000);
+  delay(10);
 
   if (bno08x.wasReset()) {
-    Serial.print("sensor 1 was reset ");
-    setReports(reportType, reportIntervalUs);
+    Serial.print("sensor was reset ");
+    setReports();
   }
   
-  if (bno08x.getSensorEvent(&sensorValue)) {
-    // in this demo only one report type will be received depending on FAST_MODE define (above)
-    switch (sensorValue.sensorId) {
-      case SH2_ARVR_STABILIZED_RV:
-        quaternionToEulerRV(&sensorValue.un.arvrStabilizedRV, &ypr, true);
-      case SH2_GYRO_INTEGRATED_RV:
-        // faster (more noise?)
-        quaternionToEulerGI(&sensorValue.un.gyroIntegratedRV, &ypr, true);
-        break;
-    }
-    static long last = 0;
-    long now = micros();
-    Serial.print("IMU");                Serial.print("\t");
-    Serial.print(now - last);             Serial.print("\t");
-    last = now;
-    Serial.print(sensorValue.status);     Serial.print("\t");  // This is accuracy in the range of 0 to 3
-    Serial.print(ypr.yaw);                Serial.print("\t");
-    Serial.print(ypr.pitch);              Serial.print("\t");
-    Serial.println(ypr.roll);
+  if (! bno08x.getSensorEvent(&sensorValue)) {
+    return;
+  }
+  
+  switch (sensorValue.sensorId) {
+    
+    case SH2_GAME_ROTATION_VECTOR:
+      Serial.print("Game Rotation Vector - r: ");
+      Serial.print(sensorValue.un.gameRotationVector.real);
+      Serial.print(" i: ");
+      Serial.print(sensorValue.un.gameRotationVector.i);
+      Serial.print(" j: ");
+      Serial.print(sensorValue.un.gameRotationVector.j);
+      Serial.print(" k: ");
+      Serial.println(sensorValue.un.gameRotationVector.k);
+      break;
   }
 
 }
