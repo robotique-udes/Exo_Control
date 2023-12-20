@@ -1,10 +1,10 @@
 #include "SensorOPT3101.h"
 
 // Date constructor
-SensorOPT3101::SensorOPT3101(int FrameTiming)
+SensorOPT3101::SensorOPT3101(int FrameTiming, int sda, int scl)
 {
-    Wire.begin();
-
+    Wire.begin(sda, scl);
+    Serial.println("before core init");
     CoreSensor.init();
 
     if(CoreSensor.getLastError()) {
@@ -32,12 +32,12 @@ void SensorOPT3101::printData(){
     Serial.println(CoreSensor.ambient); //niveau de lumière ambiante dans le dernier sample 
     Serial.print('amplitude:');
     Serial.println(CoreSensor.amplitude); //Intensité de la lumière refléchie 
-    Serial.print('distanceMillimeters:');
+    Serial.print("distanceMillimeters:");
     Serial.println(CoreSensor.distanceMillimeters); //Distance en millimètres 
 
 }
 void SensorOPT3101::printDistance(){
-    Serial.print('distanceMillimeters:');
+    Serial.print("distanceMillimeters:");
     Serial.println(CoreSensor.distanceMillimeters); //Distance en millimètres 
 }
 

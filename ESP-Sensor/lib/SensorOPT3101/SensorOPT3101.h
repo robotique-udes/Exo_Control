@@ -15,7 +15,7 @@ private:
     int TriggerDistance = 0;
 
 public:
-    SensorOPT3101(int FrameTiming=128);
+    SensorOPT3101(int FrameTiming=128, int sda=26, int scl=27);
 
     int GetMinDistance();
     bool IsOnTheGround();
