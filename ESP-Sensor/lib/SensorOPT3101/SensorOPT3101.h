@@ -5,7 +5,7 @@
 #include <Wire.h>
 #include <Arduino.h>
 
-#define GROUND_DISTANCE_RANGE 20
+#define GROUND_DISTANCE_RANGE 60
 
 class SensorOPT3101
 {
@@ -13,6 +13,7 @@ private:
     OPT3101 CoreSensor;
     bool OnTheGround= false;
     int TriggerDistance = 0;
+    int minimumDistance = 0;
 
 public:
     SensorOPT3101(int FrameTiming=128, int sda=26, int scl=27);

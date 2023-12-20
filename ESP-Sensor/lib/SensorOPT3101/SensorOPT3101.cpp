@@ -33,25 +33,34 @@ void SensorOPT3101::printData(){
     Serial.print('amplitude:');
     Serial.println(CoreSensor.amplitude); //Intensité de la lumière refléchie 
     Serial.print("distanceMillimeters:");
-    Serial.println(CoreSensor.distanceMillimeters); //Distance en millimètres 
+    Serial.println(minimumDistance); //Distance en millimètres 
 
 }
 void SensorOPT3101::printDistance(){
     Serial.print("distanceMillimeters:");
-    Serial.println(CoreSensor.distanceMillimeters); //Distance en millimètres 
+    Serial.println(minimumDistance); //Distance en millimètres 
 }
 
 int SensorOPT3101::GetMinDistance(){
     CoreSensor.sample();
-    int min= CoreSensor.distanceMillimeters;
+    int16_t min= CoreSensor.distanceMillimeters;
+    Serial.println();
+    Serial.print("0: ");
+    Serial.println(CoreSensor.distanceMillimeters);
 
-    for (int i=1; i<=2; i++){
+    for (int i=0; i<2; i++){
         CoreSensor.nextChannel();
         CoreSensor.sample();
+        Serial.print(i+1);
+        Serial.print(": ");
+        int16_t temp_dist = CoreSensor.distanceMillimeters;
+        Serial.println(temp_dist);
         if (CoreSensor.distanceMillimeters<min){
             min=CoreSensor.distanceMillimeters;
         }
     }
+    CoreSensor.nextChannel();
+    minimumDistance = min;
     return min;
 }
 

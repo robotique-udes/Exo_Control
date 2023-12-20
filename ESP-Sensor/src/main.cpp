@@ -1,4 +1,7 @@
-//test commit
+//PROBLEM:
+// Il y a un 3000 de trop dans les lectures en mm
+// Parfois quand on se baisse trop il arrete de faire les lectures
+// Se baisser necessite aussi enormement de courrant pour une raison inconnu
 
 #include <Arduino.h>
 // #include <Servo.h>
