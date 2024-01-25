@@ -2,6 +2,7 @@
 #define MOTORCONTROL_H
 #include <Arduino.h>
 #include "enum.h"
+#include "sonar.h"
 
 #define D2_CT_A A7
 #define D1_CT_B A0
@@ -13,12 +14,6 @@
 #define RELAIS_PIN_GENOU_DROIT 22
 #define RELAIS_PIN_HANCHE_GAUCHE 13
 #define RELAIS_PIN_HANCHE_DROITE 4
-
-// PINS SONAR
-#define TRIG_PIN_GAUCHE 15
-#define ECHO_PIN_GAUCHE 39
-#define TRIG_PIN_DROIT 23
-#define ECHO_PIN_DROIT 35
 
 // CONSTANTES
 #define K_RESSORT 0.25
@@ -57,8 +52,6 @@
 #define ON 1
 #define OFF 0
 
-#define UNCERTAINTY 0.1
-
 class Motor
 {
 private:
@@ -75,23 +68,28 @@ private:
     float DerivativeRightKnee = 0.0;
     float DerivativeLeftKnee = 0.0;
     float PreviousErrorRightKnee = 0.0;
-    float PreviousErrorLeftKnee = 0.0;    
+    float PreviousErrorLeftKnee = 0.0;   
+
+    //Torques 
     float LeftHipTorque = 0.0;
     float RightHipTorque = 0.0;
     float LeftKneeTorque = 0.0;
     float RightKneeTorque = 0.0;
+    //IMU angles
     float RightHipAngle = 0.0;
     float RightKneeAngle = 0.0;
     float LeftHipAngle = 0.0;
     float LeftKneeAngle = 0.0;
+
+    //Currents
     float RightKneeNeededCurrent = 0.0;
     float LeftKneeNeededCurrent = 0.0;
     float RightKneeMeasuredCurrent = 0.0;
     float LeftKneeMeasuredCurrent = 0.0;
 
     // control sonar
+    Sonar sonar;
 
-    int iteration = 40;
 
 public:
     Motor();
@@ -125,11 +123,6 @@ public:
     float toDegrees(float radians);
     void printSonar();
     void printTorque();
-    void setHeight(double h);
-    double getHeight();
-    double sonarScanR();
-    double sonarScanL();
-    void setSonarState(bool state);
 };
 
 #endif

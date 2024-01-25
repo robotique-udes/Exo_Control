@@ -1,22 +1,16 @@
-//test commit
 
 #include <Arduino.h>
-// #include <Servo.h>
-// #include <MegunoLink.h>
 #include "motorControl.h"
 #include "test.h"
 #include <HardwareSerial.h>
 #include "imu.h" 
 #include "touchScreen.h"
 #include <SPI.h>
-//#include <SoftwareSerial.h>
 #include <SD.h>
 #include "imu.h" 
-
 #include <Nextion.h>
 #include <string.h>
 #include <HardwareSerial.h>
-
 #include "enum.h"
 
 Motor motor;

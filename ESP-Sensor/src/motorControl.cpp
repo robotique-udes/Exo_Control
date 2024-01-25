@@ -1,8 +1,5 @@
 #include "motorControl.h"
-double height = 40;
 bool motorMode = OFF;
-bool RightSonarState = true; 
-bool LeftSonarState = true;
 double power=175;
 // ExponentialFilter<float> FilteredCurrent(7, 0);
 
@@ -14,48 +11,17 @@ Motor::~Motor()
 {
 }
 
-// Servo MonServo;
-
-/*Fonctions de torque a integrer
-
-TgSol = (((cos(angleGenoux)*LF) - 0.5*LH*cos(angleHanche))*Fgh) + (0.5*LF*cos(angleGenoux)*Fgf);
-TgVide = (cos(angleGenoux)*Fgt*LG)/2;
-
-
-ThSol = (0.5*LH*cos(angleHanche)*Fgh);
-ThVide = (cos(angleHanche)*LH*Fgf)/2 + (cos(angleHanche)*LF + (cos(angleGenoux)*LG)/2)*Fgt;
-*/
-
-
 void Motor::setPins()
 {
   // PINS MOTEURS
-  //pinMode(D1_IN1_A, OUTPUT);
-  // pinMode(D1_IN2_A, OUTPUT);
-  // pinMode(D1_EN_A, OUTPUT);
-  // pinMode(D1_CT_A, INPUT);
-  // pinMode(D2_IN1_A, OUTPUT);
-  // pinMode(D2_IN2_A, OUTPUT);
-  // pinMode(D2_EN_A, OUTPUT);
-  // pinMode(D2_CT_A, INPUT);
+  pinMode(D1_CT_A, INPUT);
+  pinMode(D2_CT_A, INPUT);
 
   // PINS RELAIS
   pinMode(RELAIS_PIN_GENOU_GAUCHE, OUTPUT);
   pinMode(RELAIS_PIN_GENOU_DROIT, OUTPUT);
   pinMode(RELAIS_PIN_HANCHE_GAUCHE, OUTPUT);
   pinMode(RELAIS_PIN_HANCHE_DROITE, OUTPUT);
-
-  // PINS SONAR
-  pinMode(TRIG_PIN_GAUCHE, OUTPUT);
-  pinMode(ECHO_PIN_GAUCHE, INPUT);
-  pinMode(TRIG_PIN_DROIT, OUTPUT);
-  pinMode(ECHO_PIN_DROIT, INPUT);
-}
-
-void Motor::setSonarState(bool state)
-{
-  RightSonarState = state;
-  LeftSonarState = state;
 }
 void Motor::readCurrent()
 {
@@ -93,7 +59,7 @@ void Motor::neededTorque()
   //If clutch are on automatic, calculate torque needed
   if(motorMode){
     // Right Hip Torque Equation
-    if (RightSonarState)
+    if (sonar.getSonarStateR())
       RightHipTorque =0;
     else
     {
@@ -106,7 +72,7 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (LeftSonarState)
+    if (sonar.getSonarStateL())
         LeftHipTorque = 0;
     else
     {
@@ -117,7 +83,7 @@ void Motor::neededTorque()
     }  
 
     // Right Knee Torque Equation
-    if (RightSonarState)
+    if (sonar.getSonarStateR())
     {
       if(toDegrees(RightKneeAngle)>0)
         RightKneeTorque = ((sin(RightHipAngle)*(LF/2)*(MF*G)) + ((sin(RightHipAngle)*LF))*(G*MH))*0.5;
@@ -133,7 +99,7 @@ void Motor::neededTorque()
     } 
       
     // Left Knee Torque Equation
-    if (LeftSonarState)
+    if (sonar.getSonarStateL())
     {
       if(toDegrees(LeftKneeAngle)>0)
         LeftKneeTorque = ((sin(LeftHipAngle)*(LF/2)*(MF*G)) + ((sin(LeftHipAngle)*LF))*(G*MH))*0.5;
@@ -226,129 +192,23 @@ void Motor::PIDCurrentPrealable()
 
 }
 
-double Motor::sonarScanL()
-{
-  //Signal acquisition from left sonar
-  digitalWrite(TRIG_PIN_GAUCHE, LOW);
-  delayMicroseconds(5);
-  digitalWrite(TRIG_PIN_GAUCHE, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_GAUCHE, LOW);
-  double LeftDuration = pulseIn(ECHO_PIN_GAUCHE, HIGH);
-  return (LeftDuration / 2) / 29.1;
-
-}
-
-double Motor::sonarScanR()
-{
-  //Signal acquisition from right sonar
-  digitalWrite(TRIG_PIN_DROIT, LOW);
-  delayMicroseconds(5);
-  digitalWrite(TRIG_PIN_DROIT, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_DROIT, LOW);
-  double RightDuration = pulseIn(ECHO_PIN_DROIT, HIGH);
-
-  return (RightDuration / 2) / 29.1;
-}
-void Motor::sonarRead()
-{
-
-  float errorRight = 0;
-  float errorLeft = 0;
-
-
-//Determining the current SonarState for each sensor
-Serial.print("Sonar height R: ");
-Serial.print(sonarScanR());
-Serial.print(" Sonar height L: ");
-Serial.print(sonarScanL());
-//Here, right sensor is examined 
-  if (!RightSonarState)
-  {
-    for (int i = 0; i < iteration; i++)
-      if (sonarScanR() < height)
-        errorRight += 1;
-    errorRight /= iteration;
-    if (errorRight <= UNCERTAINTY)
-      RightSonarState = true;
-  }
-  else
-  {
-    for (int i = 0; i < iteration; i++)
-      if (sonarScanR() > height)
-        errorRight += 1;
-    errorRight /= iteration;
-    if (errorRight <= UNCERTAINTY)
-      RightSonarState = false;
-  }
-
-//Here, left sensor is examined
-   if (!LeftSonarState)
-  {
-    for (int i = 0; i < iteration; i++)
-      if (sonarScanL() < height)
-        errorLeft += 1;
-    errorLeft /= iteration;
-    if (errorLeft <= UNCERTAINTY)
-      LeftSonarState = true;
-  }
-  else
-  {
-    for (int i = 0; i < iteration; i++)
-      if (sonarScanL() > height)
-        errorLeft += 1;
-    errorLeft /= iteration;
-    if (errorLeft <= UNCERTAINTY)
-      LeftSonarState = false;
-  }
-  
-  LeftSonarState = !LeftSonarState;
-  RightSonarState = !RightSonarState;
-
-
-}
 void Motor::printSonar()
 {
   
   Serial.print(" SL: ");
-  Serial.print(LeftSonarState);
+  Serial.print(sonar.getSonarStateL());
   Serial.print(" SR: ");
-  Serial.print(RightSonarState);
+  Serial.print(sonar.getSonarStateR());
   Serial.print(" MM: ");
   Serial.print(motorMode);
 }
 
-void Motor::setRelais(int ID, bool state)
+void Motor::setRelais(int ID_Relais, bool state)
 {
-  if (ID == RELAIS_GENOU_GAUCHE)
-  {
-    if (state != ON)
-      digitalWrite(RELAIS_PIN_GENOU_GAUCHE, HIGH);
-    else
-      digitalWrite(RELAIS_PIN_GENOU_GAUCHE, LOW);
-  }
-  else if (ID == RELAIS_GENOU_DROIT)
-  {
-    if (state != ON)
-      digitalWrite(RELAIS_PIN_GENOU_DROIT, HIGH);
-    else
-      digitalWrite(RELAIS_PIN_GENOU_DROIT, LOW);
-  }
-  else if (ID == RELAIS_HANCHE_GAUCHE)
-  {
-    if (state != ON)
-      digitalWrite(RELAIS_PIN_HANCHE_GAUCHE, HIGH);
-    else
-      digitalWrite(RELAIS_PIN_HANCHE_GAUCHE, LOW);
-  }
-  else if (ID == RELAIS_HANCHE_DROITE)
-  {
-    if (state != ON)
-      digitalWrite(RELAIS_PIN_HANCHE_DROITE, HIGH);
-    else
-      digitalWrite(RELAIS_PIN_HANCHE_DROITE, LOW);
-  }
+  if (state != ON)
+    digitalWrite(ID_Relais, HIGH);
+  else
+    digitalWrite(ID_Relais, LOW); 
 }
 void Motor::setAllRelais(bool state)
 {
@@ -417,14 +277,5 @@ float Motor::toDegrees(float radians)
     return radians * 180 / PI;
 }
 
-void Motor::setHeight(double h)
-{
-  height = h;
-  Serial.print("Height set to: ");
-  Serial.println(h);
-}
 
-double Motor::getHeight()
-{
-  return height;
-}
+
