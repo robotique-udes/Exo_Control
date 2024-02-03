@@ -19,11 +19,11 @@
 #include <Arduino.h>
 
 #define BNOs        2           // number of BNO08x breakouts connected via TCA9548 mux
-#define pinRST      A3          // output pin to BNO RST
+#define pinRST      A3          // output pin to BNO RST // UNUSED FOR NOW
+#define MUX_SDA     26          // SDA pin for TCA9548 mux
+#define MUX_SCL     27          // SCL pin for TCA9548 mux
 
 #define MUX_ADDR    0x70        // I2C address of TCA9548 multiplexer
-#define SDA_PIN 26                // I2C SDA pin for TCA9548 multiplexer
-#define SCL_PIN 27                // I2C SCL pin for TCA9548 multiplexer
 #define BNO_ADDR    0x4B        // I2C address of BNO085 sensor (0x4A if SA0=0, 0x4B if SA0=1)
 #define I2C_CLOCK   400000L     // I2C clock rate
 #define SERIAL_BAUD 115200L     // serial port baud rate
@@ -94,17 +94,10 @@ void uart_b64(int32_t i)        // output 18-bit integer as compact 3-digit base
 
 static void output_data(uint8_t bno)
 {
-  /* Original scale units, not sure what they represent
   float kACC = 1/9.80665/256 * 131072/10.0;     // scale units for my project
   float kGYR =  180/M_PI/512 * 131072/4000.0;
   float kMAG =       0.01/16 * 131072/1.0;
   float kLAC = 1/9.80665/256 * 131072/10.0;
-  */
-
-  float kACC = 1; 
-  float kGYR = 1; 
-  float kMAG = 1; 
-  float kLAC = 1; 
 
   pbuf = obuf;                        // pointer into output buffer
   *pbuf++ = 'k';  *pbuf++ = 'q'+bno;  // string header "kq" is BNO0, "kr" is BNO1, "ks" is BNO2, etc
@@ -284,15 +277,9 @@ void setup()
   Serial.begin(SERIAL_BAUD);            // initialize serial
   Serial.println("\nRunning...");
 
-  pinMode(pinRST,OUTPUT);               // reset all BNOs
-  digitalWrite(pinRST,LOW);
-  delay(1);
-  digitalWrite(pinRST,HIGH);
-  delay(300);
-
-  Wire.setPins(SDA_PIN, SCL_PIN);
+  Wire.setPins(MUX_SDA, MUX_SCL);
   Wire.begin();                         // initialize I2C
-  Wire.setClock(I2C_CLOCK);
+  Wire.setClock(I2C_CLOCK);             // set I2C clock rate
 
   for (uint8_t bno=0; bno<BNOs; bno++)  // request desired reports
     request_reports(bno);
@@ -305,9 +292,6 @@ void setup()
 
 void loop()
 {
-  delay(2000);
-
-  for (uint8_t bno=0; bno<BNOs; bno++) {
+  for (uint8_t bno=0; bno<BNOs; bno++)  // check for reports from all BNOs
     check_report(bno);
-  }
 }
