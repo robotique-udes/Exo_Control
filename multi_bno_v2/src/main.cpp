@@ -18,7 +18,7 @@
 #include <Wire.h>
 #include <Arduino.h>
 
-#define BNOs        2           // number of BNO08x breakouts connected via TCA9548 mux
+#define BNOs        1           // number of BNO08x breakouts connected via TCA9548 mux
 #define pinRST      A3          // output pin to BNO RST // UNUSED FOR NOW
 #define MUX_SDA     26          // SDA pin for TCA9548 mux
 #define MUX_SCL     27          // SCL pin for TCA9548 mux
@@ -94,10 +94,10 @@ void uart_b64(int32_t i)        // output 18-bit integer as compact 3-digit base
 
 static void output_data(uint8_t bno)
 {
-  float kACC = 1/9.80665/256 * 131072/10.0;     // scale units for my project
-  float kGYR =  180/M_PI/512 * 131072/4000.0;
-  float kMAG =       0.01/16 * 131072/1.0;
-  float kLAC = 1/9.80665/256 * 131072/10.0;
+  float kACC = 1/9.80665/256;     // scale units for my project
+  float kGYR =  180/M_PI/512;
+  float kMAG =       0.01/16;
+  float kLAC = 1/9.80665/256;
 
   pbuf = obuf;                        // pointer into output buffer
   *pbuf++ = 'k';  *pbuf++ = 'q'+bno;  // string header "kq" is BNO0, "kr" is BNO1, "ks" is BNO2, etc
@@ -167,7 +167,8 @@ static void check_report(uint8_t bno)
     uint16_t n = 0;                     // index into report buffer
 
     ensure_read_available(length);
-    buf[n++] = printbyte(Wire.read());  // first byte of report
+
+    buf[n++] = Wire.read();  // first byte of report
     length--;
 
     // known reports
@@ -176,10 +177,10 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<5; n++)       // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
-      if (DEBUG) {Serial.println(" Time");}
+      //if (DEBUG) {Serial.println(" Time");}
       continue;
     }
     if (channel==3 && buf[0]==ACC_REPORT && length >= 10-1)
@@ -187,13 +188,13 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       iax[bno] = *(int16_t*)&buf[4];
       iay[bno] = *(int16_t*)&buf[6];
       iaz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Acc");}
+      //if (DEBUG) {Serial.println(" Acc");}
       continue;
     }
     if (channel==3 && buf[0]==GYRO_REPORT && length >= 10-1)
@@ -201,13 +202,22 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       igx[bno] = *(int16_t*)&buf[4];
       igy[bno] = *(int16_t*)&buf[6];
       igz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Gyro");}
+
+      Serial.print("  X-axis: ");
+      Serial.print(igx[bno]);
+
+      Serial.print("  Y-axis: ");
+      Serial.print(igy[bno]);
+
+      Serial.print("  Z-axis: ");
+      Serial.print(igz[bno]);
+      //if (DEBUG) {Serial.println(" Gyro");}
       continue;
     }
     if (channel==3 && buf[0]==MAG_REPORT && length >= 10-1)
@@ -215,13 +225,13 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       imx[bno] = *(int16_t*)&buf[4];
       imy[bno] = *(int16_t*)&buf[6];
       imz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Mag");}
+      //if (DEBUG) {Serial.println(" Mag");}
       output_data(bno);                 // magneto seems to be last report of burst, so use it to trigger data output
       continue;
     }
@@ -230,13 +240,13 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       ilx[bno] = *(int16_t*)&buf[4];
       ily[bno] = *(int16_t*)&buf[6];
       ilz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Lac");}
+      //if (DEBUG) {Serial.println(" Lac");}
       continue;
     }
     if (channel==3 && buf[0]==QUAT_REPORT && length >= 14-1)
@@ -244,14 +254,14 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<14; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       iqw[bno] = *(int16_t*)&buf[10];
       iqx[bno] = *(int16_t*)&buf[4];
       iqy[bno] = *(int16_t*)&buf[6];
       iqz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Quat");}
+      //if (DEBUG) {Serial.println(" Quat");}
       continue;
     }
 
