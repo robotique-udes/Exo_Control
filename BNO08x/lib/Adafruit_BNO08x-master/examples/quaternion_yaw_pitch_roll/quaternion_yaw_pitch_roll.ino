@@ -114,7 +114,12 @@ void loop() {
     Serial.print(sensorValue.status);     Serial.print("\t");  // This is accuracy in the range of 0 to 3
     Serial.print(ypr.yaw);                Serial.print("\t");
     Serial.print(ypr.pitch);              Serial.print("\t");
-    Serial.println(ypr.roll);
+    Serial.print(ypr.roll);               Serial.print("\t");
+    Serial.print("____ \t");
+    Serial.print(sensorValue.un.arvrStabilizedRV.real); Serial.print("\t");
+    Serial.print(sensorValue.un.arvrStabilizedRV.i);    Serial.print("\t");
+    Serial.print(sensorValue.un.arvrStabilizedRV.j);    Serial.print("\t");
+    Serial.print(sensorValue.un.arvrStabilizedRV.k);    Serial.print("\t");
   }
 
 }

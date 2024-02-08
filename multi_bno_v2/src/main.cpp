@@ -42,6 +42,13 @@
 #define QUAT_REPORT  0x05   // quaternion report, see 6.5.18
 #define TIME_REPORT  0xFB   // time report, see 7.2.1
 
+#define DEBUG_ACC   false
+#define DEBUG_GYRO  false
+#define DEBUG_MAG   false
+#define DEBUG_LAC   false
+#define DEBUG_QUAT  true
+#define DEBUG_TIME  false
+
 static void request_reports(uint8_t bno)
 {
   Wire.beginTransmission(MUX_ADDR);     // select BNO
@@ -90,6 +97,30 @@ void uart_b64(int32_t i)        // output 18-bit integer as compact 3-digit base
     uint8_t c = (i >> n) & 63;
     *pbuf++ = (char)(c<26 ? 'A'+c : c<52 ? 'a'-26+c : c<62 ? '0'-52+c : c==62 ? '+' : '/');
   }
+}
+
+struct euler_t {
+  float yaw;
+  float pitch;
+  float roll;
+} ypr;
+
+void quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees = false) {
+
+    float sqr = sq(qr);
+    float sqi = sq(qi);
+    float sqj = sq(qj);
+    float sqk = sq(qk);
+
+    ypr->yaw = atan2(2.0 * (qi * qj + qk * qr), (sqi - sqj - sqk + sqr));
+    ypr->pitch = asin(-2.0 * (qi * qk - qj * qr) / (sqi + sqj + sqk + sqr));
+    ypr->roll = atan2(2.0 * (qj * qk + qi * qr), (-sqi - sqj + sqk + sqr));
+
+    if (degrees) {
+      ypr->yaw *= RAD_TO_DEG;
+      ypr->pitch *= RAD_TO_DEG;
+      ypr->roll *= RAD_TO_DEG;
+    }
 }
 
 static void output_data(uint8_t bno)
@@ -147,19 +178,32 @@ static void check_report(uint8_t bno)
   Wire.endTransmission();
 
   Wire.requestFrom(BNO_ADDR,4+1);       // read 4-byte SHTP header and first byte of cargo
+  /*
   if (DEBUG) {Serial.print("SHTP");}
   length  = printbyte(Wire.read());     // length LSB
   length |= printbyte((Wire.read() & 0x7F) << 8);  // length MSB (ignore continuation flag)
   channel = printbyte(Wire.read());     // channel number
   seqnum  = printbyte(Wire.read());     // sequence number (ignore)
   length -= 4;                          // done reading SHTP Header
-  if (length <= 0 || length > 1000)     // if null/bad/degenerate SHTP header
+  if (length <= 0 || length > 1000)     // if null/bad/degeneratje SHTP header
   {
     if (DEBUG) {Serial.println(" What?");}
     return;
   }
   if (DEBUG) {Serial.print(" L=");  Serial.print(length,HEX);}
   if (DEBUG) {Serial.print(" C=");  Serial.println(channel,HEX);}
+  */
+
+  // Rewrite header without Serial printing
+  length  = Wire.read();     // length LSB
+  length |= (Wire.read() & 0x7F) << 8;  // length MSB (ignore continuation flag)
+  channel = Wire.read();     // channel number
+  seqnum  = Wire.read();     // sequence number (ignore)
+  length -= 4;                          // done reading SHTP Header
+  if (length <= 0 || length > 1000)     // if null/bad/degeneratje SHTP header
+  {
+    return;
+  }
 
   while (length)                        // while more reports in cargo
   {
@@ -180,7 +224,7 @@ static void check_report(uint8_t bno)
         buf[n] = Wire.read();
         length--;
       }
-      //if (DEBUG) {Serial.println(" Time");}
+      if (DEBUG && DEBUG_TIME) {Serial.println(" Time");}
       continue;
     }
     if (channel==3 && buf[0]==ACC_REPORT && length >= 10-1)
@@ -209,15 +253,17 @@ static void check_report(uint8_t bno)
       igy[bno] = *(int16_t*)&buf[6];
       igz[bno] = *(int16_t*)&buf[8];
 
-      Serial.print("  X-axis: ");
-      Serial.print(igx[bno]);
+      if (DEBUG && DEBUG_GYRO) {
+        Serial.print("  X-axis: ");
+        Serial.print(igx[bno]);
 
-      Serial.print("  Y-axis: ");
-      Serial.print(igy[bno]);
+        Serial.print("  Y-axis: ");
+        Serial.print(igy[bno]);
 
-      Serial.print("  Z-axis: ");
-      Serial.print(igz[bno]);
-      //if (DEBUG) {Serial.println(" Gyro");}
+        Serial.print("  Z-axis: ");
+        Serial.print(igz[bno]);
+        Serial.println(" Gyro");
+      }
       continue;
     }
     if (channel==3 && buf[0]==MAG_REPORT && length >= 10-1)
@@ -232,7 +278,7 @@ static void check_report(uint8_t bno)
       imy[bno] = *(int16_t*)&buf[6];
       imz[bno] = *(int16_t*)&buf[8];
       //if (DEBUG) {Serial.println(" Mag");}
-      output_data(bno);                 // magneto seems to be last report of burst, so use it to trigger data output
+      //output_data(bno);                 // magneto seems to be last report of burst, so use it to trigger data output
       continue;
     }
     if (channel==3 && buf[0]==LAC_REPORT && length >= 10-1)
@@ -261,7 +307,22 @@ static void check_report(uint8_t bno)
       iqx[bno] = *(int16_t*)&buf[4];
       iqy[bno] = *(int16_t*)&buf[6];
       iqz[bno] = *(int16_t*)&buf[8];
-      //if (DEBUG) {Serial.println(" Quat");}
+      if (DEBUG && DEBUG_QUAT) {
+        Serial.print("IMU "); Serial.print(bno); Serial.print("\t"); 
+        Serial.print("Quat:   ");
+        Serial.print(iqw[bno]);     Serial.print("\t");
+        Serial.print(iqx[bno]);     Serial.print("\t");
+        Serial.print(iqy[bno]);     Serial.print("\t");
+        Serial.print(iqz[bno]);     Serial.print("\t");
+
+        quaternionToEuler(iqw[bno], iqx[bno], iqy[bno], iqz[bno], &ypr, true);
+
+        Serial.print("Euler:  ");   Serial.print("\t");
+        Serial.print(ypr.yaw);                Serial.print("\t");
+        Serial.print(ypr.pitch);              Serial.print("\t");
+        Serial.print(ypr.roll);               Serial.print("\t");
+        Serial.println();
+      }
       continue;
     }
 
@@ -269,7 +330,8 @@ static void check_report(uint8_t bno)
     while (length)                      // discard remainder of cargo (shouldn't happen very often)
     {
       ensure_read_available(length);
-      printbyte(Wire.read());
+      //printbyte(Wire.read());
+      Wire.read();
       length--;
     }
     if (DEBUG) {Serial.println(" Unknown");}
@@ -302,6 +364,8 @@ void setup()
 
 void loop()
 {
-  for (uint8_t bno=0; bno<BNOs; bno++)  // check for reports from all BNOs
+  delay(125);
+  for (uint8_t bno=0; bno<BNOs; bno++) {  // check for reports from all BNOs
     check_report(bno);
+  }
 }
