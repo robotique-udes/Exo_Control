@@ -25,6 +25,7 @@ double Sonar::getHeight()
   return height;
 }
 
+//RETURN DISTANCE READING FROM RIGHT SONAR
 double Sonar::sonarScanR()
 {
   //Signal acquisition from right sonar
@@ -38,6 +39,7 @@ double Sonar::sonarScanR()
   return (RightDuration / 2) / 29.1;
 }
 
+//RETURN DISTANCE READING FROM LEFT SONAR
 double Sonar::sonarScanL()
 {
   //Signal acquisition from left sonar

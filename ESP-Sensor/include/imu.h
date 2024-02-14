@@ -15,18 +15,7 @@
 #include <string>
 #include "enum.h"
 #include "bnoMultiplex.h"
-
-#define I2C_SDA1 26
-#define I2C_SCL1 27
-#define I2C_SDA2 33
-#define I2C_SCL2 32
-#define I2C_SDA3 25
-#define I2C_SCL3 14
-
-
-
-/* Set the delay between fresh samples */
-#define BNO055_SAMPLERATE_DELAY_MS (800)
+#include "define.h"
 
 class Imu
 {
@@ -42,8 +31,8 @@ private:
     imu::Vector<3> angleKneeR;
     imu::Vector<3> SPLINE;
 
-    BNOMultiplex IMU_HAUT_G =  BNOMultiplex(55, 0x28, &Wire, 0);
-    BNOMultiplex IMU_BAS_G = BNOMultiplex(55, 0x29, &Wire, 1);
+    //BNOMultiplex IMU_HAUT_G =  BNOMultiplex(55, 0x28, &Wire, 0);
+    //BNOMultiplex IMU_BAS_G = BNOMultiplex(55, 0x29, &Wire, 1);
 
     const char *ssid = "BioGenius";
     const char *password = "biogenius!";

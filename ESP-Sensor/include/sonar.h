@@ -2,17 +2,7 @@
 #define SONAR_H
 
 #include <Arduino.h>
-
-// PINS SONAR
-#define TRIG_PIN_GAUCHE 15
-#define ECHO_PIN_GAUCHE 39
-#define TRIG_PIN_DROIT 23
-#define ECHO_PIN_DROIT 35
-
-#define UNCERTAINTY 0.1
-
-#define LOW               0x0
-#define HIGH              0x1
+#include "define.h"
 
 
 class Sonar

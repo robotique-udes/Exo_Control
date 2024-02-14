@@ -13,8 +13,9 @@
 #include <HardwareSerial.h>
 #include "enum.h"
 
+Test tester;
+Relay relais;
 Motor motor;
-Test test01;
 Imu imu01;
 Screen ecran;
 Motor* Screen::motor = motor;
@@ -31,6 +32,7 @@ void sendPWM();
 
 void setup()
 {
+  relais.setPins();
   nexInit();
   Serial.begin(9600);
   ESP32Serial1.begin(9600, SERIAL_8N1, 19, 18);
@@ -39,9 +41,9 @@ void setup()
 
   Serial.println("Ini motor exo----------");
   motor.setPins();
-  imu01.IMUSetup();
-  motor.setAllRelais(OFF);
 
+  relais.setAllRelais(OFF);
+  imu01.IMUSetup();
   // imu01.wifiSetup();
 }
 void loop()
@@ -52,11 +54,9 @@ void loop()
 
 
   //--------------LOGIC BLOC---------------
-  //delay(100);
   //ecran.nextLoop();
-
   //updateAngles(); 
-  // motor.sonarRead(); Ne pas décommenter, remplace par HMI
+  //motor.sonarRead(); //Ne pas décommenter, remplace par HMI
   //motor.neededTorque();
   // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor.readCurrent(); Ne pas décommenter, pas utile sans PID
@@ -67,7 +67,7 @@ void loop()
   //Serial.print(motor.getPower());
   //motor.printSonar();
   //motor.printTorque();
-  imu01.printAngles();
+  //imu01.printAngles();
   Serial.println("");
 }
 
@@ -119,12 +119,11 @@ void sendPWM()
   std::string msg2 = std::to_string(motor.PWMLeftKnee);
   std::string msg3 = std::to_string(motor.PWMRightHip);
   std::string msg4 = std::to_string(motor.PWMLeftHip);
-
   
   
   std::string msg5 = msg + msg2 + msg3 + msg4 + "\n";
   ESP32Serial1.write(msg5.c_str());
-  // Serial.print(msg5.c_str());
+  Serial.print(msg5.c_str());
   motor.PWMRightKnee = 0;
   motor.PWMLeftKnee = 0;
   motor.PWMRightHip = 0;

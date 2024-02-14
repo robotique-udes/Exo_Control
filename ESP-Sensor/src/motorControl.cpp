@@ -1,7 +1,6 @@
 #include "motorControl.h"
 bool motorMode = OFF;
 double power=175;
-// ExponentialFilter<float> FilteredCurrent(7, 0);
 
 Motor::Motor()
 {
@@ -16,12 +15,6 @@ void Motor::setPins()
   // PINS MOTEURS
   pinMode(D1_CT_A, INPUT);
   pinMode(D2_CT_A, INPUT);
-
-  // PINS RELAIS
-  pinMode(RELAIS_PIN_GENOU_GAUCHE, OUTPUT);
-  pinMode(RELAIS_PIN_GENOU_DROIT, OUTPUT);
-  pinMode(RELAIS_PIN_HANCHE_GAUCHE, OUTPUT);
-  pinMode(RELAIS_PIN_HANCHE_DROITE, OUTPUT);
 }
 void Motor::readCurrent()
 {
@@ -203,24 +196,6 @@ void Motor::printSonar()
   Serial.print(motorMode);
 }
 
-void Motor::setRelais(int ID_Relais, bool state)
-{
-  if (state != ON)
-    digitalWrite(ID_Relais, HIGH);
-  else
-    digitalWrite(ID_Relais, LOW); 
-}
-void Motor::setAllRelais(bool state)
-{
-  Serial.print("switching all relay to: ");
-  Serial.println(state);
-   setRelais(RELAIS_GENOU_GAUCHE, state);
-   setRelais(RELAIS_GENOU_DROIT,state);
-   setRelais(RELAIS_HANCHE_DROITE,state);
-   setRelais(RELAIS_HANCHE_GAUCHE,state);
-   
-}
-
 void Motor::setMotorMode(bool state)
 {
    motorMode = state;
@@ -231,26 +206,7 @@ void Motor::setPower(double p)
 double Motor::getPower()
 {return power;}
 
-void Motor::testRelais()
-{
-  // Test Relais
-  Serial.print("Relais 1: ");
-  setRelais(RELAIS_GENOU_GAUCHE, ON);
-  delay(1000);
-  setRelais(RELAIS_GENOU_GAUCHE, OFF);
-  Serial.print("Relais 2: ");
-  setRelais(RELAIS_GENOU_DROIT, ON);
-  delay(1000);
-  setRelais(RELAIS_GENOU_DROIT, OFF);
-  Serial.print("Relais 3: ");
-  setRelais(RELAIS_HANCHE_GAUCHE, ON);
-  delay(1000);
-  setRelais(RELAIS_HANCHE_GAUCHE, OFF);
-  Serial.print("Relais 4: ");
-  setRelais(RELAIS_HANCHE_DROITE, ON);
-  delay(1000);
-  setRelais(RELAIS_HANCHE_DROITE, OFF);
-}
+
 void Motor::setAngle(enumIMU imuType, float val)
 {
   switch (imuType)
@@ -276,6 +232,12 @@ float Motor::toDegrees(float radians)
 {
     return radians * 180 / PI;
 }
+
+void Motor::setSonarState(bool state){ sonar.setSonarState(state); }
+void Motor::setHeight(double h){ sonar.setHeight(h); }
+double Motor::sonarScanR(){ return sonar.sonarScanR(); }
+double Motor::sonarScanL(){ return sonarScanL(); }
+void Motor::sonarRead(){ sonar.sonarRead();}
 
 
 
