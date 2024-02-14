@@ -41,3 +41,28 @@ void Test::testSonar()
     //delay(200);
 
 }
+
+void Test::testRelay()
+{
+    relais.setAllRelais(ON);
+    delay(500);
+    relais.setAllRelais(OFF);
+    delay(500);
+    Serial.println("Relais 1 ");
+    relais.setRelais(RELAIS_HANCHE_GAUCHE, ON);
+    delay(500);
+    relais.setRelais(RELAIS_HANCHE_GAUCHE, OFF);
+    Serial.println("Relais 2 ");
+    relais.setRelais(RELAIS_HANCHE_DROITE, ON);
+    delay(500);
+    relais.setRelais(RELAIS_HANCHE_DROITE, OFF);
+    Serial.println("Relais 3 ");
+    relais.setRelais(RELAIS_GENOU_GAUCHE, ON);
+    delay(500);
+    relais.setRelais(RELAIS_GENOU_GAUCHE, OFF);
+    Serial.println("Relais 4 ");
+    relais.setRelais(RELAIS_GENOU_DROIT, ON);
+    delay(500);
+    relais.setRelais(RELAIS_GENOU_DROIT, OFF);
+
+}

@@ -18,12 +18,14 @@ AsyncEventSource events("/events");
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
-// TwoWire BUS_I2C_1 = TwoWire(0);
-// TwoWire BUS_I2C_2 = TwoWire(1);
+TwoWire BUS_I2C_1 = TwoWire(0);
+TwoWire BUS_I2C_2 = TwoWire(1);
 // TwoWire BUS_I2C_3 = TwoWire(2);
 
-// Adafruit_BNO055 IMU_HAUT_D = Adafruit_BNO055(55, 0x29, &BUS_I2C_2);
-// Adafruit_BNO055 IMU_BAS_D = Adafruit_BNO055(55, 0x28, &BUS_I2C_2);
+Adafruit_BNO055 IMU_HAUT_G = Adafruit_BNO055(55, 0x28, &BUS_I2C_1);
+Adafruit_BNO055 IMU_BAS_G = Adafruit_BNO055(55, 0x29, &BUS_I2C_1);
+Adafruit_BNO055 IMU_HAUT_D = Adafruit_BNO055(55, 0x29, &BUS_I2C_2);
+Adafruit_BNO055 IMU_BAS_D = Adafruit_BNO055(55, 0x28, &BUS_I2C_2);
 // Adafruit_BNO055 IMU_DOS = Adafruit_BNO055(55, 0x28, &BUS_I2C_3);
 
 Imu::Imu()
@@ -49,9 +51,9 @@ bool Imu::IMUSetup()
 
     Serial.println("Orientation Sensor Test");
     Serial.println("");
-    Wire.begin(I2C_SDA1, I2C_SCL1);
-    // BUS_I2C_2.begin(I2C_SDA2, I2C_SCL2);
-    // BUS_I2C_3.begin(I2C_SDA3, I2C_SCL3);
+    //Wire.begin(I2C_SDA1, I2C_SCL1);
+    BUS_I2C_1.begin(I2C_SDA1, I2C_SCL1);
+    BUS_I2C_2.begin(I2C_SDA2, I2C_SCL2);
     Serial.println("-------1");
     /* Initialise the sensor */
     if (!IMU_HAUT_G.begin())
@@ -68,20 +70,20 @@ bool Imu::IMUSetup()
         Serial.println("Ooops, no BNO055_2 detected ... Check your wiring or I2C ADDR!");
         // return false;
     }
-    // Serial.println("-------3");
-    // if (!IMU_HAUT_D.begin())
-    // {
-    //     //There was a problem detecting the BNO055 ... check your connections 
-    //     Serial.println("Ooops, no BNO055_3 detected ... Check your wiring or I2C ADDR!");
-    //     // return false;
-    // }
-    // Serial.println("-------4");
-    // if (!IMU_BAS_D.begin())
-    // {
-    //     // There was a problem detecting the BNO055 ... check your connections 
-    //     Serial.println("Ooops, no BNO055_4 detected ... Check your wiring or I2C ADDR!");
-    //     // return false;
-    // }
+    Serial.println("-------3");
+    if (!IMU_HAUT_D.begin())
+    {
+        //There was a problem detecting the BNO055 ... check your connections 
+        Serial.println("Ooops, no BNO055_3 detected ... Check your wiring or I2C ADDR!");
+        // return false;
+    }
+    Serial.println("-------4");
+    if (!IMU_BAS_D.begin())
+    {
+        // There was a problem detecting the BNO055 ... check your connections 
+        Serial.println("Ooops, no BNO055_4 detected ... Check your wiring or I2C ADDR!");
+        // return false;
+    }
     Serial.println("-------5");
     /*if (!IMU_DOS.begin())
     {
@@ -94,8 +96,8 @@ bool Imu::IMUSetup()
     /* Use external crystal for better accuracy */
     IMU_HAUT_G.setExtCrystalUse(true);
     IMU_BAS_G.setExtCrystalUse(true);
-    //IMU_HAUT_D.setExtCrystalUse(true);
-    //IMU_BAS_D.setExtCrystalUse(true);
+    IMU_HAUT_D.setExtCrystalUse(true);
+    IMU_BAS_D.setExtCrystalUse(true);
     //IMU_DOS.setExtCrystalUse(true);
     return true;
 }
@@ -118,13 +120,13 @@ void Imu::getAngles()
     angleKneeL.y()=abs((angleKneeL.y()-angleHipL.y())+PI/2);
 
 
-    //quat = IMU_HAUT_D.getQuat();
-    //angleHipR = quat.toEuler();
-    //angleHipR.y()=angleHipR.y()+PI/2;
+    quat = IMU_HAUT_D.getQuat();
+    angleHipR = quat.toEuler();
+    angleHipR.y()=angleHipR.y()+PI/2;
 
-    //quat = IMU_BAS_D.getQuat();
-    //angleKneeR = quat.toEuler();
-    //angleKneeR.y()=abs((angleKneeR.y()-angleHipR.y())+PI/2);
+    quat = IMU_BAS_D.getQuat();
+    angleKneeR = quat.toEuler();
+    angleKneeR.y()=abs((angleKneeR.y()-angleHipR.y())+PI/2);
 
     //quat = IMU_DOS.getQuat();
     //SPLINE = quat.toEuler();
@@ -139,11 +141,11 @@ void Imu::printAngles()
     Serial.print("  angleKneeL Y: ");
     Serial.print(toDegrees(angleKneeL.y()));
 
-    //Serial.print("  angleHipR Y: ");
-    //Serial.print(toDegrees((angleHipR.y())));
+    Serial.print("  angleHipR Y: ");
+    Serial.print(toDegrees((angleHipR.y())));
 
-    //Serial.print("  angleKneeR Y: ");
-    //Serial.print(toDegrees(angleKneeR.y()));
+    Serial.print("  angleKneeR Y: ");
+    Serial.print(toDegrees(angleKneeR.y()));
 
     //Serial.print("SPLINE: ");
     //Serial.println(SPLINE.x());

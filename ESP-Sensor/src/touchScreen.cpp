@@ -74,7 +74,7 @@ Screen::~Screen(){
 void Screen::Disarmed(void *ptr)
 { 
   Serial.print("\nDisarmed");
-  motor->setAllRelais(OFF);
+  //relais.setAllRelais(OFF);
   motor->setMotorMode(OFF);
 }
 
@@ -82,7 +82,7 @@ void Screen::Disarmed(void *ptr)
 void Screen::Armed(void *ptr)
 {
   Serial.print("\nArmed");
-  motor->setAllRelais(ON);
+  //relais.setAllRelais(ON);
   motor->setMotorMode(OFF);
 }
 
@@ -90,7 +90,7 @@ void Screen::Armed(void *ptr)
 void Screen::Motorised(void *ptr)
 {
   Serial.print("\nMotorised");
-  motor->setAllRelais(ON);
+  //relais.setAllRelais(ON);
   motor->setMotorMode(ON);
 }
 
