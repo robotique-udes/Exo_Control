@@ -2,12 +2,16 @@
 #define TEST_H
 
 #include <Arduino.h>
+#include "relay.h"
+#include "define.h"
 
 class Test
 {
 public:
     void testSonar();
+    void testRelay();
 private:
+    Relay relais;
     long duration;
     double cm, inches;
     int trigPin = 26;  // Trigger

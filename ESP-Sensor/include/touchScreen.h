@@ -9,10 +9,9 @@
 #include <SD.h>
 #include <string.h>
 #include "motorControl.h"
+#include "define.h"
+#include "relay.h"
 using namespace std;
-
-#define RX_HMI 16
-#define TX_HMI 17
 
 
 
@@ -78,6 +77,8 @@ class Screen
 
     public:
         static Motor *motor;
+        Relay relais;
+
         Screen();
         ~Screen();
         static void nextLoop();
