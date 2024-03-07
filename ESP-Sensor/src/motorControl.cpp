@@ -1,5 +1,5 @@
 #include "motorControl.h"
-bool motorMode = OFF;
+bool motorMode = OFF; //mutliplie le torque demandé au moteur, lorsque a 0, les moteur sont effectivement à Off, contrôlé avec le HMI ou hardcode pour test
 double power=175;
 
 Motor::Motor()
