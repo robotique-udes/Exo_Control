@@ -27,6 +27,7 @@ Our system comprises the following key hardware components:
 - **Microcontroller**: ESP32
 - **Inertial Measurement Units**: BNO085
 - **Motor Drives**: DBH-15
+- **Motor**: Servocity 638326
 
 ## Getting Started
 
@@ -42,17 +43,17 @@ Getting started with our project is a straightforward process. Simply clone the 
     - Printing bloc is for debugging, keep commented otherwise
   - Setup starts IMUs and their wifi functions, comment either of those lines if not needed when testing
 - motorControl:
-  - This class orchestrates most of the operation in the exo and use the info it receive from various sensors to calculate the needed current the motors need
+  - This class orchestrates most of the operation in the exo and use the info it receive from various sensors to calculate the needed current for the motors
   - Most of the class is either mathematics or fetching info from other classes
   - Most other classes are called by this one
 - imu:
   - BNO055 logic class, used to fetch information from our IMUs, converting it to angles, and sending it to motorControl
   - We use mainly the adafruit bno055 library here
 - multiplex:
-  - MUX control class composed of simple functions used to switch MUX chanels
+  - multiplexer control class composed of simple functions used to switch multiplexer chanels
 - bnoMultiplex:
   - Bridge between the imu and multiplex classes
-  - Used to associate any IMUs to an ID from it's constructor and switch MUX channel automatically when using IMU's basic functions
+  - Used to associate any IMUs to an ID from it's constructor and switch multiplexer channel automatically when using IMU's basic functions
 - sonar:
   - Sonar logic class, used to read distance from ground and determine whether or not the foot of the user is grounded
 - relay:
@@ -78,6 +79,6 @@ We invite you to explore the [Robotique UdeS website](https://robotiqueudes.ca/)
 
 The masterminds behind the Exo_Control project are:
 
-- Édouard Moffet
-- Dannick Bilodeau
-- Jorand Gagnon
+- Édouard Moffet, robot 67
+- Dannick Bilodeau,  info 68
+- Jorand Gagnon,  elec 69
