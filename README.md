@@ -52,7 +52,7 @@ Getting started with our project is a straightforward process. Simply clone the 
   - MUX control class composed of simple functions used to switch MUX chanels
 - bnoMultiplex:
   - Bridge between the imu and multiplex classes
-  - Used to associate any IMUs to an ID from it's constructor and switch MUX channel automaticaly when using IMU's basic functions
+  - Used to associate any IMUs to an ID from it's constructor and switch MUX channel automatically when using IMU's basic functions
 - sonar:
   - Sonar logic class, used to read distance from ground and determine whether or not the foot of the user is grounded
 - relay:
@@ -80,4 +80,4 @@ The masterminds behind the Exo_Control project are:
 
 - Édouard Moffet
 - Dannick Bilodeau
-- Feel free to add your name on your first commit!
+- Jorand Gagnon
