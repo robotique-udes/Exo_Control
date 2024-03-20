@@ -88,10 +88,10 @@ void loop()
   distanceSensor.SetTriggerDistance();
 
   while (true){
-    Serial.print("on the ground: ");
-    Serial.println(distanceSensor.IsOnTheGround());
-    distanceSensor.printDistance();
-    Serial.println("");
+    int dist = distanceSensor.GetMinDistance(); // Lib internally prints all 3 sensors
+    Serial.print("\tMinimum disatance : ");
+    Serial.println(dist);
+    delay(250);
   }
   
 }

@@ -44,17 +44,23 @@ void SensorOPT3101::printDistance(){
 int SensorOPT3101::GetMinDistance(){
     CoreSensor.sample();
     int16_t min= CoreSensor.distanceMillimeters;
-    Serial.println();
-    Serial.print("0: ");
-    Serial.println(CoreSensor.distanceMillimeters);
+    Serial.print("Left: \t");
+    Serial.print(CoreSensor.distanceMillimeters);
+    Serial.print("\t");
 
+    // TODO redo this code it is horrible for the eyes
     for (int i=0; i<2; i++){
         CoreSensor.nextChannel();
         CoreSensor.sample();
-        Serial.print(i+1);
-        Serial.print(": ");
+        if (i == 1) {
+            Serial.print("Right: \t");
+        } else {
+            Serial.print("Center: \t");
+        }
+
         int16_t temp_dist = CoreSensor.distanceMillimeters;
-        Serial.println(temp_dist);
+        Serial.print(temp_dist);
+        Serial.print('\t');
         if (CoreSensor.distanceMillimeters<min){
             min=CoreSensor.distanceMillimeters;
         }
