@@ -34,9 +34,16 @@ class TouchScreen{
 
         NexTouch *listenList[17];
 
+        TouchScreen();
+
     public:
         
-        TouchScreen();
+        static TouchScreen *instance;
+        static TouchScreen& getInstance();
+
+        TouchScreen(const TouchScreen&) = delete;
+        TouchScreen& operator=(const TouchScreen&) = delete;
+        
 
         void update();
         void setCallback(EnumScreenCallback callback, void (*callbackFunction)(void *ptr));

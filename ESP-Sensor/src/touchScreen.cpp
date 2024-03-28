@@ -1,5 +1,7 @@
 #include "touchScreen.h"
 
+TouchScreen *TouchScreen::instance;
+
 TouchScreen::TouchScreen(){
 
     bDISARMED = new NexButton(0, 6, "bDISARMED");
@@ -98,4 +100,11 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
         break;
         default:break;
     }
+}
+
+TouchScreen& TouchScreen::getInstance(){
+    if(instance == NULL){
+        instance = new TouchScreen();
+    }
+    return *instance;
 }
