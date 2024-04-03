@@ -21,9 +21,10 @@ public:
     int GetMinDistance();
     bool IsOnTheGround();
     int GetTriggerDistance();
-    int getChannel();
-    void printData();
-    void printDistance();
+    int GetChannel();
+    void SetChannel(int c);
+    void PrintData();
+    void PrintDistance();
     void SetFrameTiming(int FrameTiming);
     void SetTriggerDistance();
     

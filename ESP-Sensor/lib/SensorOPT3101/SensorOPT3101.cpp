@@ -4,86 +4,94 @@
 SensorOPT3101::SensorOPT3101(int FrameTiming, int sda, int scl)
 {
     Wire.begin(sda, scl);
-    Serial.println("before core init");
     CoreSensor.init();
 
-    if(CoreSensor.getLastError()) {
+    if (CoreSensor.getLastError())
+    {
         Serial.println("Failed to init OPT3101 CoreSensor: error");
         Serial.println(CoreSensor.getLastError());
     }
 
-    CoreSensor.setFrameTiming(FrameTiming); //FrameTiming need to be power of 2  and between 1 & 4096 (each sample is 0.25ms long)
+    CoreSensor.setFrameTiming(FrameTiming); // FrameTiming need to be power of 2  and between 1 & 4096 (each sample is 0.25ms long)
 
     CoreSensor.setChannel(0);
 
     CoreSensor.setBrightness(OPT3101Brightness::Adaptive);
 }
 
-int SensorOPT3101::getChannel() { 
+int SensorOPT3101::GetChannel()
+{
     return CoreSensor.channelUsed;
 }
 
-void SensorOPT3101::printData(){
+void SensorOPT3101::SetChannel(int c)
+{
+    if (c >= 0 and c < 3)
+    {
+        CoreSensor.setChannel(c);
+    }
+    else
+    {
+        Serial.println("Invalid chanel");
+    }
+}
+
+void SensorOPT3101::PrintData()
+{
     Serial.print('channelUsed:');
     Serial.println(CoreSensor.channelUsed);
     Serial.print('brightnessUsed:');
     Serial.println((uint8_t)CoreSensor.brightnessUsed);
     Serial.print('ambient:');
-    Serial.println(CoreSensor.ambient); //niveau de lumière ambiante dans le dernier sample 
+    Serial.println(CoreSensor.ambient); // niveau de lumière ambiante dans le dernier sample
     Serial.print('amplitude:');
-    Serial.println(CoreSensor.amplitude); //Intensité de la lumière refléchie 
+    Serial.println(CoreSensor.amplitude); // Intensité de la lumière refléchie
     Serial.print("distanceMillimeters:");
-    Serial.println(minimumDistance); //Distance en millimètres 
-
+    Serial.println(minimumDistance); // Distance en millimètres
 }
-void SensorOPT3101::printDistance(){
+void SensorOPT3101::PrintDistance()
+{
     Serial.print("distanceMillimeters:");
-    Serial.println(minimumDistance); //Distance en millimètres 
+    Serial.println(minimumDistance); // Distance en millimètres
 }
 
-int SensorOPT3101::GetMinDistance(){
-    CoreSensor.sample();
-    int16_t min= CoreSensor.distanceMillimeters;
-    Serial.print("Left: \t");
-    Serial.print(CoreSensor.distanceMillimeters);
-    Serial.print("\t");
-
-    // TODO redo this code it is horrible for the eyes
-    for (int i=0; i<2; i++){
-        CoreSensor.nextChannel();
+int SensorOPT3101::GetMinDistance()
+{
+    int16_t min = -1;
+    //Itère dans chaque channel pour faire une lecture et remplace min si elle est plus petite que la précédante
+    for (int i = 0; i < 3; i++)
+    {
+        CoreSensor.setChannel(i);
         CoreSensor.sample();
-        if (i == 1) {
-            Serial.print("Right: \t");
-        } else {
-            Serial.print("Center: \t");
-        }
 
-        int16_t temp_dist = CoreSensor.distanceMillimeters;
-        Serial.print(temp_dist);
-        Serial.print('\t');
-        if (CoreSensor.distanceMillimeters<min){
-            min=CoreSensor.distanceMillimeters;
+        int16_t dist = CoreSensor.distanceMillimeters;
+        if (dist < min || min == -1)
+        {
+            min = dist;
         }
     }
-    CoreSensor.nextChannel();
+    CoreSensor.setChannel(0);
     minimumDistance = min;
     return min;
 }
 
-void SensorOPT3101::SetFrameTiming(int FrameTiming){
+void SensorOPT3101::SetFrameTiming(int FrameTiming)
+{
     CoreSensor.setFrameTiming(FrameTiming);
-    
 }
 
-bool SensorOPT3101::IsOnTheGround(){
+bool SensorOPT3101::IsOnTheGround()
+{
     int dist = GetMinDistance();
-    return dist<TriggerDistance;
+    return (dist < TriggerDistance);
 }
 
-void SensorOPT3101::SetTriggerDistance(){
-    TriggerDistance=GetMinDistance() + GROUND_DISTANCE_RANGE;
+void SensorOPT3101::SetTriggerDistance()
+{
+    TriggerDistance = GetMinDistance() + GROUND_DISTANCE_RANGE;
 }
 
-int SensorOPT3101::GetTriggerDistance(){
+int SensorOPT3101::GetTriggerDistance()
+{
     return TriggerDistance;
 }

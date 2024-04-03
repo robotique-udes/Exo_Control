@@ -84,14 +84,15 @@ void loop()
   //motor.printTorque();
   // Serial.println();
   // imu01.printAngles();
-  SensorOPT3101 distanceSensor(256,26,27);
+  SensorOPT3101 distanceSensor(8,26,27);
   distanceSensor.SetTriggerDistance();
 
   while (true){
     int dist = distanceSensor.GetMinDistance(); // Lib internally prints all 3 sensors
     Serial.print("\tMinimum disatance : ");
-    Serial.println(dist);
-    delay(250);
+    Serial.print(dist);
+    Serial.print("  Is on ground : ");
+    Serial.println(distanceSensor.IsOnTheGround());
   }
   
 }
