@@ -17,13 +17,14 @@ void Relay::setRelais(int ID_Relais, bool state)
   else
     digitalWrite(ID_Relais, LOW); 
 }
+
 void Relay::setAllRelais(bool state)
 {
   Serial.print("switching all relay to: ");
   Serial.println(state);
-   setRelais(RELAIS_GENOU_GAUCHE, state);
-   setRelais(RELAIS_GENOU_DROIT,state);
-   setRelais(RELAIS_HANCHE_DROITE,state);
-   setRelais(RELAIS_HANCHE_GAUCHE,state);
+  setRelais(RELAIS_GENOU_GAUCHE, state);
+  setRelais(RELAIS_GENOU_DROIT,state);
+  setRelais(RELAIS_HANCHE_DROITE,state);
+  setRelais(RELAIS_HANCHE_GAUCHE,state);
    
 }
