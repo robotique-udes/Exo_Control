@@ -1,7 +1,7 @@
-#include "SensorOPT3101.h"
+#include "ProxiSensor.h"
 
 // Date constructor
-SensorOPT3101::SensorOPT3101(int FrameTiming, int sda, int scl)
+ProxiSensor::ProxiSensor(int FrameTiming, int sda, int scl)
 {
     Wire.begin(sda, scl);
     CoreSensor.init();
@@ -19,12 +19,12 @@ SensorOPT3101::SensorOPT3101(int FrameTiming, int sda, int scl)
     CoreSensor.setBrightness(OPT3101Brightness::Adaptive);
 }
 
-int SensorOPT3101::GetChannel()
+int ProxiSensor::GetChannel()
 {
     return CoreSensor.channelUsed;
 }
 
-void SensorOPT3101::SetChannel(int c)
+void ProxiSensor::SetChannel(int c)
 {
     if (c >= 0 and c < 3)
     {
@@ -36,7 +36,7 @@ void SensorOPT3101::SetChannel(int c)
     }
 }
 
-void SensorOPT3101::PrintData()
+void ProxiSensor::PrintData()
 {
     Serial.print('channelUsed:');
     Serial.println(CoreSensor.channelUsed);
@@ -49,13 +49,13 @@ void SensorOPT3101::PrintData()
     Serial.print("distanceMillimeters:");
     Serial.println(minimumDistance); // Distance en millimètres
 }
-void SensorOPT3101::PrintDistance()
+void ProxiSensor::PrintDistance()
 {
     Serial.print("distanceMillimeters:");
     Serial.println(minimumDistance); // Distance en millimètres
 }
 
-int SensorOPT3101::GetMinDistance()
+int ProxiSensor::GetMinDistance()
 {
     int16_t min = -1;
     //Itère dans chaque channel pour faire une lecture et remplace min si elle est plus petite que la précédante
@@ -75,23 +75,23 @@ int SensorOPT3101::GetMinDistance()
     return min;
 }
 
-void SensorOPT3101::SetFrameTiming(int FrameTiming)
+void ProxiSensor::SetFrameTiming(int FrameTiming)
 {
     CoreSensor.setFrameTiming(FrameTiming);
 }
 
-bool SensorOPT3101::IsOnTheGround()
+bool ProxiSensor::IsOnTheGround()
 {
     int dist = GetMinDistance();
     return (dist < TriggerDistance);
 }
 
-void SensorOPT3101::SetTriggerDistance()
+void ProxiSensor::SetTriggerDistance()
 {
     TriggerDistance = GetMinDistance() + GROUND_DISTANCE_RANGE;
 }
 
-int SensorOPT3101::GetTriggerDistance()
+int ProxiSensor::GetTriggerDistance()
 {
     return TriggerDistance;
 }

@@ -7,7 +7,7 @@
 
 #define GROUND_DISTANCE_RANGE 60
 
-class SensorOPT3101
+class ProxiSensor
 {
 private:
     OPT3101 CoreSensor;
@@ -16,7 +16,7 @@ private:
     int minimumDistance = 0;
 
 public:
-    SensorOPT3101(int FrameTiming=128, int sda=26, int scl=27);
+    ProxiSensor(int FrameTiming=128, int sda=26, int scl=27);
 
     int GetMinDistance();
     bool IsOnTheGround();
