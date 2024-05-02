@@ -26,3 +26,7 @@ int Multiplex::getCurrentChannel(){
     return currentChannel;
 }
 
+Wire* Multiplex::getWire(){
+    return monWire;
+}
+

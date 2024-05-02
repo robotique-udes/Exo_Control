@@ -14,9 +14,9 @@ public:
     bool selectChannel(uint8_t channel);
     // Returns the current active port
     int getCurrentChannel();
+    TwoWire* getWire();
 
 private:
-    
     TwoWire* monWire;
     uint8_t currentChannel;
 };

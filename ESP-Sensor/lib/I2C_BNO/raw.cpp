@@ -1,4 +1,4 @@
-// SOURCE : https://forums.adafruit.com/viewtopic.php?t=175744&start=30
+// Source : https://forums.adafruit.com/viewtopic.php?t=175744&start=30
 
 // Talks to multiple BNO085 sensors through a TCA9548 multiplexer.
 //
@@ -16,17 +16,20 @@
 // To program Adafruit Metro Mini 2590:  select "Adafruit Metro", COMxx, "AVRISP mkII". This CPU is slower try fewer reports, or increase SENSOR_US, or reduce BNOs.
 
 #include <Wire.h>
+#include <Arduino.h>
 
-#define BNOs        3           // number of BNO08x breakouts connected via TCA9548 mux
-#define pinRST      A3          // output pin to BNO RST
+#define BNOs        1           // number of BNO08x breakouts connected via TCA9548 mux
+#define pinRST      A3          // output pin to BNO RST // UNUSED FOR NOW
+#define MUX_SDA     26          // SDA pin for TCA9548 mux
+#define MUX_SCL     27          // SCL pin for TCA9548 mux
 
 #define MUX_ADDR    0x70        // I2C address of TCA9548 multiplexer
-#define BNO_ADDR    0x4A        // I2C address of BNO085 sensor (0x4A if SA0=0, 0x4B if SA0=1)
+#define BNO_ADDR    0x4B        // I2C address of BNO085 sensor (0x4A if SA0=0, 0x4B if SA0=1)
 #define I2C_CLOCK   400000L     // I2C clock rate
-#define SERIAL_BAUD 230400L     // serial port baud rate
+#define SERIAL_BAUD 115200L     // serial port baud rate
 #define SENSOR_US   10000L      // time between sensor reports, microseconds, 10000L is 100 Hz, 20000L is 50 Hz
 
-#define DEBUG       0           // output extra info: 0 off, 1 on. Beware this causes too much output data at low baud rates and/or high sensor rates.
+#define DEBUG       1           // output extra info: 0 off, 1 on. Beware this causes too much output data at low baud rates and/or high sensor rates.
 
 // *******************************
 // **  Request desired reports  **
@@ -38,6 +41,13 @@
 #define LAC_REPORT   0x04   // linear accel report, see 6.5.10
 #define QUAT_REPORT  0x05   // quaternion report, see 6.5.18
 #define TIME_REPORT  0xFB   // time report, see 7.2.1
+
+#define DEBUG_ACC   false
+#define DEBUG_GYRO  false
+#define DEBUG_MAG   false
+#define DEBUG_LAC   false
+#define DEBUG_QUAT  true
+#define DEBUG_TIME  false
 
 static void request_reports(uint8_t bno)
 {
@@ -89,12 +99,35 @@ void uart_b64(int32_t i)        // output 18-bit integer as compact 3-digit base
   }
 }
 
+struct euler_t {
+  float yaw;
+  float pitch;
+  float roll;
+} ypr;
+
+void quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees = false) {
+    float sqr = sq(qr);
+    float sqi = sq(qi);
+    float sqj = sq(qj);
+    float sqk = sq(qk);
+
+    ypr->yaw = atan2(2.0 * (qi * qj + qk * qr), (sqi - sqj - sqk + sqr));
+    ypr->pitch = asin(-2.0 * (qi * qk - qj * qr) / (sqi + sqj + sqk + sqr));
+    ypr->roll = atan2(2.0 * (qj * qk + qi * qr), (-sqi - sqj + sqk + sqr));
+
+    if (degrees) {
+      ypr->yaw *= RAD_TO_DEG;
+      ypr->pitch *= RAD_TO_DEG;
+      ypr->roll *= RAD_TO_DEG;
+    }
+}
+
 static void output_data(uint8_t bno)
 {
-  float kACC = 1/9.80665/256 * 131072/10.0;     // scale units for my project
-  float kGYR =  180/M_PI/512 * 131072/4000.0;
-  float kMAG =       0.01/16 * 131072/1.0;
-  float kLAC = 1/9.80665/256 * 131072/10.0;
+  float kACC = 1/9.80665/256;     // scale units for my project
+  float kGYR =  180/M_PI/512;
+  float kMAG =       0.01/16;
+  float kLAC = 1/9.80665/256;
 
   pbuf = obuf;                        // pointer into output buffer
   *pbuf++ = 'k';  *pbuf++ = 'q'+bno;  // string header "kq" is BNO0, "kr" is BNO1, "ks" is BNO2, etc
@@ -144,19 +177,32 @@ static void check_report(uint8_t bno)
   Wire.endTransmission();
 
   Wire.requestFrom(BNO_ADDR,4+1);       // read 4-byte SHTP header and first byte of cargo
+  /*
   if (DEBUG) {Serial.print("SHTP");}
   length  = printbyte(Wire.read());     // length LSB
   length |= printbyte((Wire.read() & 0x7F) << 8);  // length MSB (ignore continuation flag)
   channel = printbyte(Wire.read());     // channel number
   seqnum  = printbyte(Wire.read());     // sequence number (ignore)
   length -= 4;                          // done reading SHTP Header
-  if (length <= 0 || length > 1000)     // if null/bad/degenerate SHTP header
+  if (length <= 0 || length > 1000)     // if null/bad/degeneratje SHTP header
   {
     if (DEBUG) {Serial.println(" What?");}
     return;
   }
   if (DEBUG) {Serial.print(" L=");  Serial.print(length,HEX);}
   if (DEBUG) {Serial.print(" C=");  Serial.println(channel,HEX);}
+  */
+
+  // Rewrite header without Serial printing
+  length  = Wire.read();     // length LSB
+  length |= (Wire.read() & 0x7F) << 8;  // length MSB (ignore continuation flag)
+  channel = Wire.read();     // channel number
+  seqnum  = Wire.read();     // sequence number (ignore)
+  length -= 4;                          // done reading SHTP Header
+  if (length <= 0 || length > 1000)     // if null/bad/degeneratje SHTP header
+  {
+    return;
+  }
 
   while (length)                        // while more reports in cargo
   {
@@ -164,7 +210,8 @@ static void check_report(uint8_t bno)
     uint16_t n = 0;                     // index into report buffer
 
     ensure_read_available(length);
-    buf[n++] = printbyte(Wire.read());  // first byte of report
+
+    buf[n++] = Wire.read();  // first byte of report
     length--;
 
     // known reports
@@ -173,10 +220,10 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<5; n++)       // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
-      if (DEBUG) {Serial.println(" Time");}
+      if (DEBUG && DEBUG_TIME) {Serial.println(" Time");}
       continue;
     }
     if (channel==3 && buf[0]==ACC_REPORT && length >= 10-1)
@@ -184,13 +231,13 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       iax[bno] = *(int16_t*)&buf[4];
       iay[bno] = *(int16_t*)&buf[6];
       iaz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Acc");}
+      //if (DEBUG) {Serial.println(" Acc");}
       continue;
     }
     if (channel==3 && buf[0]==GYRO_REPORT && length >= 10-1)
@@ -198,13 +245,24 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       igx[bno] = *(int16_t*)&buf[4];
       igy[bno] = *(int16_t*)&buf[6];
       igz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Gyro");}
+
+      if (DEBUG && DEBUG_GYRO) {
+        Serial.print("  X-axis: ");
+        Serial.print(igx[bno]);
+
+        Serial.print("  Y-axis: ");
+        Serial.print(igy[bno]);
+
+        Serial.print("  Z-axis: ");
+        Serial.print(igz[bno]);
+        Serial.println(" Gyro");
+      }
       continue;
     }
     if (channel==3 && buf[0]==MAG_REPORT && length >= 10-1)
@@ -212,14 +270,14 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       imx[bno] = *(int16_t*)&buf[4];
       imy[bno] = *(int16_t*)&buf[6];
       imz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Mag");}
-      output_data(bno);                 // magneto seems to be last report of burst, so use it to trigger data output
+      //if (DEBUG) {Serial.println(" Mag");}
+      //output_data(bno);                 // magneto seems to be last report of burst, so use it to trigger data output
       continue;
     }
     if (channel==3 && buf[0]==LAC_REPORT && length >= 10-1)
@@ -227,13 +285,13 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<10; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       ilx[bno] = *(int16_t*)&buf[4];
       ily[bno] = *(int16_t*)&buf[6];
       ilz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Lac");}
+      //if (DEBUG) {Serial.println(" Lac");}
       continue;
     }
     if (channel==3 && buf[0]==QUAT_REPORT && length >= 14-1)
@@ -241,14 +299,29 @@ static void check_report(uint8_t bno)
       for (uint8_t n=1; n<14; n++)      // read remainder of report
       {
         ensure_read_available(length);
-        buf[n] = printbyte(Wire.read());
+        buf[n] = Wire.read();
         length--;
       }
       iqw[bno] = *(int16_t*)&buf[10];
       iqx[bno] = *(int16_t*)&buf[4];
       iqy[bno] = *(int16_t*)&buf[6];
       iqz[bno] = *(int16_t*)&buf[8];
-      if (DEBUG) {Serial.println(" Quat");}
+      if (DEBUG && DEBUG_QUAT) {
+        Serial.print("IMU "); Serial.print(bno); Serial.print("\t"); 
+        Serial.print("Quat:   ");
+        Serial.print(iqw[bno]);     Serial.print("\t");
+        Serial.print(iqx[bno]);     Serial.print("\t");
+        Serial.print(iqy[bno]);     Serial.print("\t");
+        Serial.print(iqz[bno]);     Serial.print("\t");
+
+        quaternionToEuler(iqw[bno], iqx[bno], iqy[bno], iqz[bno], &ypr, true);
+
+        Serial.print("Euler:  ");   Serial.print("\t");
+        Serial.print(ypr.yaw);                Serial.print("\t");
+        Serial.print(ypr.pitch);              Serial.print("\t");
+        Serial.print(ypr.roll);               Serial.print("\t");
+        Serial.println();
+      }
       continue;
     }
 
@@ -256,7 +329,8 @@ static void check_report(uint8_t bno)
     while (length)                      // discard remainder of cargo (shouldn't happen very often)
     {
       ensure_read_available(length);
-      printbyte(Wire.read());
+      //printbyte(Wire.read());
+      Wire.read();
       length--;
     }
     if (DEBUG) {Serial.println(" Unknown");}
@@ -274,14 +348,9 @@ void setup()
   Serial.begin(SERIAL_BAUD);            // initialize serial
   Serial.println("\nRunning...");
 
-  pinMode(pinRST,OUTPUT);               // reset all BNOs
-  digitalWrite(pinRST,LOW);
-  delay(1);
-  digitalWrite(pinRST,HIGH);
-  delay(300);
-
+  Wire.setPins(MUX_SDA, MUX_SCL);
   Wire.begin();                         // initialize I2C
-  Wire.setClock(I2C_CLOCK);
+  Wire.setClock(I2C_CLOCK);             // set I2C clock rate
 
   for (uint8_t bno=0; bno<BNOs; bno++)  // request desired reports
     request_reports(bno);
@@ -294,6 +363,8 @@ void setup()
 
 void loop()
 {
-  for (uint8_t bno=0; bno<BNOs; bno++)  // check for reports from all BNOs
+  delay(125);
+  for (uint8_t bno=0; bno<BNOs; bno++) {  // check for reports from all BNOs
     check_report(bno);
+  }
 }
