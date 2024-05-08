@@ -5,7 +5,8 @@ enum class enumIMU
     HipL    =   0,
     KneeL   =   1,
     HipR    =   2,
-    KneeR   =   3
+    KneeR   =   3,
+    Back    =   4    
 };
 
 #endif

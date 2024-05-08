@@ -6,6 +6,7 @@
 class Multiplex{
 
 public:
+    const static uint8_t MUX_ADDR = 0x70;
 
     Multiplex();
     // Default constructor

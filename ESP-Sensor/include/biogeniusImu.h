@@ -5,9 +5,10 @@
 #include "enum.h"
 #include <vector>
 
+// Class storing all the IMU classes and the multiplexer that they use
 class IMU {
-    private: 
-        std::vector<BNO> BNOs;
+    private:
+        std::vector<BNO *> BNOs;
         Multiplex mux;
         long last_update = 0;
 

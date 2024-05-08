@@ -13,7 +13,7 @@ bool Multiplex::selectChannel(uint8_t channel){
         return false;
     }
 
-    monWire->beginTransmission(0x70);
+    monWire->beginTransmission(this->MUX_ADDR);
     monWire->write(1 << channel);
     monWire->endTransmission();
 
