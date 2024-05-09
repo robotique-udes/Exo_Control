@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "define.h"
+#include "PinExtender.h"
 
 class Relay
 {
