@@ -6,20 +6,11 @@
 #include "define.h"
 #include <PinExtender.h>
 
-
-
-
-
-
 class Motor
 {
 private:
-    float CTval = 0.0;
-    int Bouton1 = digitalRead(31);
-    int Bouton2 = digitalRead(34);
-    float Acurrent;
-    float current = 0.0;
-    int Rotation = 1;
+
+    // PID variables
     float ErrorCurrentRightKnee = 0.0;
     float ErrorCurrentLeftKnee = 0.0;
     float IntegralRightKnee = 0.0;
@@ -27,22 +18,25 @@ private:
     float DerivativeRightKnee = 0.0;
     float DerivativeLeftKnee = 0.0;
     float PreviousErrorRightKnee = 0.0;
-    float PreviousErrorLeftKnee = 0.0;   
+    float PreviousErrorLeftKnee = 0.0;
 
-    //Torques 
+    // Torques
     float LeftHipTorque = 0.0;
     float RightHipTorque = 0.0;
     float LeftKneeTorque = 0.0;
     float RightKneeTorque = 0.0;
-    //IMU angles
+
+    // IMU angles
     float RightHipAngle = 0.0;
     float RightKneeAngle = 0.0;
     float LeftHipAngle = 0.0;
     float LeftKneeAngle = 0.0;
 
-    //Currents
+    // Currents
     float RightKneeNeededCurrent = 0.0;
     float LeftKneeNeededCurrent = 0.0;
+    float RightHipNeededCurrent = 0.0;
+    float LeftHipNeededCurrent = 0.0;
     float RightKneeMeasuredCurrent = 0.0;
     float LeftKneeMeasuredCurrent = 0.0;
     float RightHipMeasuredCurrent = 0.0;
@@ -51,16 +45,15 @@ private:
     // control sonar
     Sonar sonar;
 
-
 public:
     Motor();
     ~Motor();
-    
+
     int PWMRightKnee = 0;
     int PWMLeftKnee = 0;
     int PWMRightHip = 0;
     int PWMLeftHip = 0;
-    
+
     void sonarRead();
     void setPins();
     void readCurrent();
@@ -85,7 +78,7 @@ public:
     double sonarScanR();
     double sonarScanL();
 
-    void motorSetSpeed(int ID, int in1, int in2, int val);
+    void motorSetSpeed(int ID, int val);
 };
 
 #endif

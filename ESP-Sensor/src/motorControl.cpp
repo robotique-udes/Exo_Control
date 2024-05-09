@@ -12,48 +12,31 @@ Motor::~Motor()
 
 void Motor::setPins()
 {
+  pinMode(PIN_MD_HAN_GAU_CT, INPUT);
+  pinMode(PIN_MD_HAN_DRO_CT, INPUT);
+  pinMode(PIN_MD_GEN_GAU_CT, INPUT);
+  pinMode(PIN_MD_GEN_DRO_CT, INPUT);
 
-  pinExtender.pinMode(D1_CT_A, INPUT);
-  pinExtender.pinMode(D2_CT_A, INPUT);
-  pinExtender.pinMode(D1_CT_B, INPUT);
-  pinExtender.pinMode(D2_CT_B, INPUT);
+  pinExtender.pinMode(PIN_MD_GEN_GAU_EN, OUTPUT);
+  pinExtender.pinMode(PIN_MD_GEN_DRO_EN, OUTPUT);
+  pinExtender.pinMode(PIN_MD_HAN_GAU_EN, OUTPUT);
+  pinExtender.pinMode(PIN_MD_HAN_DRO_EN, OUTPUT);
 
-  pinExtender.pinMode(D1_IN1_A, OUTPUT);
-  pinExtender.pinMode(D1_IN2_A, OUTPUT);
-  pinExtender.pinMode(D2_IN1_A, OUTPUT);
-  pinExtender.pinMode(D2_IN2_A, OUTPUT);
-  pinExtender.pinMode(D1_IN1_B, OUTPUT);
-  pinExtender.pinMode(D1_IN2_B, OUTPUT);
-  pinExtender.pinMode(D2_IN1_B, OUTPUT);
-  pinExtender.pinMode(D2_IN2_B, OUTPUT);
-
-  // TODO : put in pin extender when pwm pin extender is working
-  pinMode(D1_EN_A, OUTPUT);
-  pinMode(D2_EN_A, OUTPUT);
-  pinMode(D1_EN_B, OUTPUT);
-  pinMode(D2_EN_B, OUTPUT);
-
+  // pwmPinExtender.pinMode(PIN_MD_HAN_DRO_INB, OUTPUT);
+  // pwmPinExtender.pinMode(PIN_MD_HAN_DRO_INA, OUTPUT);
+  // pwmPinExtender.pinMode(PIN_MD_HAN_GAU_INB, OUTPUT);
+  // pwmPinExtender.pinMode(PIN_MD_HAN_GAU_INA, OUTPUT);
+  // pwmPinExtender.pinMode(PIN_MD_GEN_DRO_INB, OUTPUT);
+  // pwmPinExtender.pinMode(PIN_MD_GEN_DRO_INA, OUTPUT);
+  // pwmPinExtender.pinMode(PIN_MD_GEN_GAU_INB, OUTPUT);
+  // pwmPinExtender.pinMode(PIN_MD_GEN_GAU_INA, OUTPUT);
 }
 void Motor::readCurrent()
 {
-  int CTLeftKnee = D1_CT_A;
-  int CTRightKnee = D2_CT_A;
-  int CTLeftHip = D1_CT_B;
-  int CTRightHip = D2_CT_B;
-  float CTRightKneeValue = 0.0;
-  float CTLeftKneeValue = 0.0;
-  float CTRightHipValue = 0.0;
-  float CTLeftHipValue = 0.0;
-
-  CTRightKneeValue = analogRead(CTRightKnee); // TODO : put in pin extender when pwm pin extender is working
-  CTLeftKneeValue = analogRead(CTLeftKnee);   // TODO : put in pin extender when pwm pin extender is working
-  CTRightHipValue = analogRead(CTRightHip);   // TODO : put in pin extender when pwm pin extender is working
-  CTLeftHipValue = analogRead(CTLeftHip);     // TODO : put in pin extender when pwm pin extender is working
-
-  RightKneeMeasuredCurrent = ((CTRightKneeValue * 27.0) / 1023.0) * 1000.0;
-  LeftKneeMeasuredCurrent = ((CTLeftKneeValue * 27.0) / 1023.0) * 1000.0;
-  RightHipMeasuredCurrent = ((CTRightHipValue * 27.0) / 1023.0) * 1000.0;
-  LeftHipMeasuredCurrent = ((CTLeftHipValue * 27.0) / 1023.0) * 1000.0;
+  RightKneeMeasuredCurrent = ((analogRead(PIN_MD_GEN_DRO_CT) * 27.0) / 1023.0) * 1000.0;
+  LeftKneeMeasuredCurrent = ((analogRead(PIN_MD_GEN_GAU_CT) * 27.0) / 1023.0) * 1000.0;
+  RightHipMeasuredCurrent = ((analogRead(PIN_MD_HAN_DRO_CT) * 27.0) / 1023.0) * 1000.0;
+  LeftHipMeasuredCurrent = ((analogRead(PIN_MD_HAN_GAU_CT) * 27.0) / 1023.0) * 1000.0;
 }
 
 void Motor::LimitMinMaxFloat(float &val, float max)
@@ -156,10 +139,10 @@ void Motor::printTorque()
 
 void Motor::neededCurrent()
 {
-  // neededCurrent = SideKneeTorque / TORQUE2CURRENT * 1000;
-
   RightKneeNeededCurrent = (RightKneeTorque / TORQUE2CURRENT) * 1000;
   LeftKneeNeededCurrent = (LeftKneeTorque / TORQUE2CURRENT) * 1000;
+  RightHipNeededCurrent = (RightHipTorque / TORQUE2CURRENT) * 1000;
+  LeftHipNeededCurrent = (LeftHipTorque / TORQUE2CURRENT) * 1000;
 }
 
 void Motor::PIDCurrent()
@@ -205,17 +188,15 @@ void Motor::PIDCurrent()
 
 void Motor::PIDCurrentPrealable()
 {
-
   // Setting  PWM values
-  PWMRightKnee = map(RightKneeTorque, -100, 100, -power, power);
-  PWMLeftKnee = map(LeftKneeTorque, -100, 100, -power, power);
-  PWMRightHip = map(RightHipTorque, -100, 100, -power, power);
-  PWMLeftHip = map(LeftHipTorque, -100, 100, -power, power);
+  PWMRightKnee = map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
+  PWMLeftKnee = map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
+  PWMRightHip = map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
+  PWMLeftHip = map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
 }
 
 void Motor::printSonar()
 {
-
   Serial.print(" SL: ");
   Serial.print(sonar.getSonarStateL());
   Serial.print(" SR: ");
@@ -271,50 +252,65 @@ double Motor::sonarScanR() { return sonar.sonarScanR(); }
 double Motor::sonarScanL() { return sonarScanL(); }
 void Motor::sonarRead() { sonar.sonarRead(); }
 
-void Motor::motorSetSpeed(int ID, int in1, int in2, int val)
+void Motor::motorSetSpeed(int ID, int val)
 {
-  int IN1;
-  int IN2;
-  int EN;
+  int PIN_IN1;
+  int PIN_IN2;
+  int PIN_EN;
 
   if (ID == MOTEUR_GENOU_GAUCHE)
   {
-    IN1 = D1_IN1_A;
-    IN2 = D1_IN2_A;
-    EN = D1_EN_A;
+    PIN_IN1 = PIN_MD_GEN_GAU_INA;
+    PIN_IN2 = PIN_MD_GEN_GAU_INB;
+    PIN_EN = PIN_MD_GEN_GAU_EN;
   }
   else if (ID == MOTEUR_HANCHE_GAUCHE)
   {
-    IN1 = D2_IN1_A;
-    IN2 = D2_IN2_A;
-    EN = D2_EN_A;
+    PIN_IN1 = PIN_MD_HAN_GAU_INA;
+    PIN_IN2 = PIN_MD_HAN_GAU_INB;
+    PIN_EN = PIN_MD_HAN_GAU_EN;
   }
   else if (ID == MOTEUR_GENOU_DROIT)
   {
-    IN1 = D1_IN1_B;
-    IN2 = D1_IN2_B;
-    EN = D1_EN_B;
+    PIN_IN1 = PIN_MD_GEN_DRO_INA;
+    PIN_IN2 = PIN_MD_GEN_DRO_INB;
+    PIN_EN = PIN_MD_GEN_DRO_EN;
   }
   else if (ID == MOTEUR_HANCHE_DROITE)
   {
-    IN1 = D2_IN1_B;
-    IN2 = D2_IN2_B;
-    EN = D2_EN_B;
+    PIN_IN1 = PIN_MD_HAN_DRO_INA;
+    PIN_IN2 = PIN_MD_HAN_DRO_INB;
+    PIN_EN = PIN_MD_HAN_DRO_EN;
   }
   else
   {
     Serial.println("ERROR : ID MOTEUR INCORRECT");
   }
 
-  pinExtender.digitalWrite(IN1, in1);
-  pinExtender.digitalWrite(IN2, in2);
-  pinExtender.digitalWrite(EN, val); // TODO : analogWrite instead of digitalWrite when pwm pin extender is working
+  if (val > 0)
+  {
+    pwmPinExtender.setChannelPWM(PIN_IN1, val);
+    pwmPinExtender.setChannelPWM(PIN_IN2, OFF);
+    pinExtender.digitalWrite(PIN_EN, ON);
+  }
+  else if (val < 0)
+  {
+    pwmPinExtender.setChannelPWM(PIN_IN1, OFF);
+    pwmPinExtender.setChannelPWM(PIN_IN2, val);
+    pinExtender.digitalWrite(PIN_EN, ON);
+  }
+  else
+  {
+    pwmPinExtender.setChannelPWM(PIN_IN1, OFF);
+    pwmPinExtender.setChannelPWM(PIN_IN2, OFF);
+    pinExtender.digitalWrite(PIN_EN, OFF);
+  }
 }
 
 void Motor::sendCommand()
 {
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, PWMLeftKnee < 0 ? 0 : 1, PWMLeftKnee < 0 ? 1 : 0, PWMLeftKnee);
-  motorSetSpeed(MOTEUR_GENOU_DROIT, PWMRightKnee < 0 ? 0 : 1, PWMRightKnee < 0 ? 1 : 0, PWMRightKnee);
-  motorSetSpeed(MOTEUR_HANCHE_GAUCHE, PWMLeftHip < 0 ? 0 : 1, PWMLeftHip < 0 ? 1 : 0, PWMLeftHip);
-  motorSetSpeed(MOTEUR_HANCHE_DROITE, PWMRightHip < 0 ? 0 : 1, PWMRightHip < 0 ? 1 : 0, PWMRightHip);
+  motorSetSpeed(MOTEUR_GENOU_GAUCHE, PWMLeftKnee);
+  motorSetSpeed(MOTEUR_GENOU_DROIT, PWMRightKnee);
+  motorSetSpeed(MOTEUR_HANCHE_GAUCHE, PWMLeftHip);
+  motorSetSpeed(MOTEUR_HANCHE_DROITE, PWMRightHip);
 }
