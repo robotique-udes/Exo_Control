@@ -9,8 +9,8 @@
 #include "Wire.h"
 
 #define PCAADDR 0x70
-#define SDA_2 26
-#define SCL_2 27
+#define SDA_2 21
+#define SCL_2 22
 
 void pcaselect(uint8_t i) {
   if (i > 7) return;
@@ -30,9 +30,28 @@ void setup()
   delay(1000);
   Wire.setPins(SDA_2, SCL_2);
   Wire.begin();
-  
-  
-  Serial.println("\nPCAScanner ready!");
+
+
+  Serial.println("Scanning for Onboard I2C devices...");
+  Wire.beginTransmission(0x20);
+  if (!Wire.endTransmission()) {
+    Serial.println("Extra GPIO Found I2C @ 0x20");
+  }
+
+  Wire.beginTransmission(0x7C);
+  if (!Wire.endTransmission()) {
+    Serial.println("PWM Found I2C @ 0x7C");
+  }
+
+  Wire.beginTransmission(0x7C);
+  if (!Wire.endTransmission()) {
+    Serial.println("Found I2C Multiplexer @ 0x70");
+  }
+
+  delay(2000);
+}
+
+void tryStuff() {
   
   for (uint8_t t=0; t<8; t++) {
     pcaselect(t);
@@ -40,6 +59,8 @@ void setup()
 
     for (uint8_t addr = 0; addr<=127; addr++) {
       if (addr == PCAADDR) continue;
+      if (addr == 0x20) continue;
+      if (addr == 0x7C) continue;
 
       Wire.beginTransmission(addr);
       if (!Wire.endTransmission()) {
@@ -47,9 +68,11 @@ void setup()
       }
     }
   }
-  Serial.println("\ndone");
+
 }
 
 void loop() 
 {
+  tryStuff();
+  delay(5000);
 }
