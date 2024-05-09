@@ -10,7 +10,7 @@
 #define HIGH              0x1
 
 
-// ------ MOTOR -------
+// ------------ MOTOR -------------
 #define K_RESSORT 0.25
 #define DIST_CM 0.245
 #define MASSE 0.366
@@ -23,6 +23,28 @@
 #define D1_CT_B A0
 #define D1_CT_A A6
 #define D2_CT_B A3
+
+#define MOTEUR_GENOU_GAUCHE 0
+#define MOTEUR_GENOU_DROIT 1
+#define MOTEUR_HANCHE_GAUCHE 2
+#define MOTEUR_HANCHE_DROITE 3
+
+#define D2_IN1_A 17
+#define D2_IN2_A 21
+#define D1_IN1_B 23
+#define D1_IN2_B 25
+#define D1_IN1_A 13
+#define D1_IN2_A 14
+#define D2_IN1_B 27
+#define D2_IN2_B 32
+
+// Pin on GPIO extender
+#define D2_EN_A 22
+#define D1_EN_B 26
+#define D1_EN_A 16
+#define D2_EN_B 33
+
+
 // LONGUEURS
 #define LH 0.5        // longueur haut du corps
 #define LF 0.4        // longueur femur
@@ -66,3 +88,4 @@
 //------ TOUCH SCREEN ------
 #define RX_HMI 16
 #define TX_HMI 17
+

@@ -33,13 +33,13 @@ void setup()
   Serial.begin(115200);
   Wire.begin();
 
-  Serial.println("PinExtender.begin();");
-  PinExtender.begin(); //  Default address 0x20
+  Serial.println("pinExtender.begin();");
+  pinExtender.begin(); //  Default address 0x20
 
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
   pwmPinExtender.setPWMFrequency(200); 
-  Serial.println("PinExtender.end();");
+  Serial.println("pinExtender.end();");
 
   relais.setPins();
   motor.setPins();
@@ -49,9 +49,9 @@ void setup()
   Serial.println("Ini motor exo----------");
 
   //--------------Test BLOC----------------
-  PinExtender.pinMode(0, OUTPUT);
-  PinExtender.pinMode(1, OUTPUT);
-  PinExtender.pinMode(2, OUTPUT);
+  pinExtender.pinMode(0, OUTPUT);
+  pinExtender.pinMode(1, OUTPUT);
+  pinExtender.pinMode(2, OUTPUT);
 }
 
 void loop()
@@ -60,33 +60,10 @@ void loop()
   delay(1000);
   // Set the pin to the opposite state to test GPIO extender
   // Is working correctly
-  PinExtender.digitalWrite(0, PinExtender.digitalRead(0) ? LOW : HIGH);
-  PinExtender.digitalWrite(1, PinExtender.digitalRead(1) ? LOW : HIGH);
-  PinExtender.digitalWrite(2, PinExtender.digitalRead(2) ? LOW : HIGH);
+  pinExtender.digitalWrite(0, pinExtender.digitalRead(0) ? LOW : HIGH);
+  pinExtender.digitalWrite(1, pinExtender.digitalRead(1) ? LOW : HIGH);
+  pinExtender.digitalWrite(2, pinExtender.digitalRead(2) ? LOW : HIGH);
 
-  // Set the PWM to on state to test PWM extender
-  // Not working correctly
-  pwmPinExtender.setChannelPWM(0, 2048);
-  pwmPinExtender.setChannelPWM(1, 4096);
-  pwmPinExtender.setChannelPWM(2, 1024);
-  Serial.print("PWM 0 : ");
-  Serial.println(pwmPinExtender.getChannelPWM(0));
-  Serial.print("PWM 1 : ");
-  Serial.println(pwmPinExtender.getChannelPWM(1));
-  Serial.print("PWM 2 : ");
-  Serial.println(pwmPinExtender.getChannelPWM(2));
-
-  // Set the PWM to off state to test PWM extender
-  delay(1000);
-  pwmPinExtender.setChannelPWM(0, 0);
-  pwmPinExtender.setChannelPWM(1, 0);
-  pwmPinExtender.setChannelPWM(2, 0);
-  Serial.print("PWM 0 : ");
-  Serial.println(pwmPinExtender.getChannelPWM(0));
-  Serial.print("PWM 1 : ");
-  Serial.println(pwmPinExtender.getChannelPWM(1));
-  Serial.print("PWM 2 : ");
-  Serial.println(pwmPinExtender.getChannelPWM(2));
 
 
 

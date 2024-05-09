@@ -13,19 +13,19 @@ Motor::~Motor()
 void Motor::setPins()
 {
 
-  PinExtender.pinMode(D1_CT_A, INPUT);
-  PinExtender.pinMode(D2_CT_A, INPUT);
-  PinExtender.pinMode(D1_CT_B, INPUT);
-  PinExtender.pinMode(D2_CT_B, INPUT);
+  pinExtender.pinMode(D1_CT_A, INPUT);
+  pinExtender.pinMode(D2_CT_A, INPUT);
+  pinExtender.pinMode(D1_CT_B, INPUT);
+  pinExtender.pinMode(D2_CT_B, INPUT);
 
-  PinExtender.pinMode(D1_IN1_A, OUTPUT);
-  PinExtender.pinMode(D1_IN2_A, OUTPUT);
-  PinExtender.pinMode(D2_IN1_A, OUTPUT);
-  PinExtender.pinMode(D2_IN2_A, OUTPUT);
-  PinExtender.pinMode(D1_IN1_B, OUTPUT);
-  PinExtender.pinMode(D1_IN2_B, OUTPUT);
-  PinExtender.pinMode(D2_IN1_B, OUTPUT);
-  PinExtender.pinMode(D2_IN2_B, OUTPUT);
+  pinExtender.pinMode(D1_IN1_A, OUTPUT);
+  pinExtender.pinMode(D1_IN2_A, OUTPUT);
+  pinExtender.pinMode(D2_IN1_A, OUTPUT);
+  pinExtender.pinMode(D2_IN2_A, OUTPUT);
+  pinExtender.pinMode(D1_IN1_B, OUTPUT);
+  pinExtender.pinMode(D1_IN2_B, OUTPUT);
+  pinExtender.pinMode(D2_IN1_B, OUTPUT);
+  pinExtender.pinMode(D2_IN2_B, OUTPUT);
 
   // TODO : put in pin extender when pwm pin extender is working
   pinMode(D1_EN_A, OUTPUT);
@@ -306,9 +306,9 @@ void Motor::motorSetSpeed(int ID, int in1, int in2, int val)
     Serial.println("ERROR : ID MOTEUR INCORRECT");
   }
 
-  PinExtender.digitalWrite(IN1, in1);
-  PinExtender.digitalWrite(IN2, in2);
-  PinExtender.digitalWrite(EN, val); // TODO : analogWrite instead of digitalWrite when pwm pin extender is working
+  pinExtender.digitalWrite(IN1, in1);
+  pinExtender.digitalWrite(IN2, in2);
+  pinExtender.digitalWrite(EN, val); // TODO : analogWrite instead of digitalWrite when pwm pin extender is working
 }
 
 void Motor::sendCommand()
