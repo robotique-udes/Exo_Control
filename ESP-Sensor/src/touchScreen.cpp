@@ -102,9 +102,14 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
     }
 }
 
+NexNumber* TouchScreen::getIndicator(){
+    return Pindicator;
+}
+
 TouchScreen& TouchScreen::getInstance(){
     if(instance == NULL){
         instance = new TouchScreen();
     }
     return *instance;
 }
+

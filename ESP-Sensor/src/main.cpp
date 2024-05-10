@@ -1,24 +1,24 @@
 
 #include <Arduino.h>
-#include "motorControl.h"
-#include "test.h"
 #include <HardwareSerial.h>
-#include "imu.h" 
-#include "touchScreen.h"
 #include <SPI.h>
 #include <SD.h>
-#include "imu.h" 
 #include <Nextion.h>
 #include <string.h>
 #include <HardwareSerial.h>
+#include "motorControl.h"
+#include "test.h"
+#include "imu.h" 
+#include "touchScreen.h"
+#include "callbackSetup.h"
+#include "imu.h" 
 #include "enum.h"
 
 Test tester;
 Relay relais;
 Motor motor;
 Imu imu01;
-Screen ecran;
-Motor* Screen::motor = motor;
+TouchScreen& screen = TouchScreen::getInstance();
 
 HardwareSerial ESP32Serial1(1);
 HardwareSerial SerialPort(2);
@@ -45,6 +45,11 @@ void setup()
   relais.setAllRelais(OFF);
   imu01.IMUSetup();
   // imu01.wifiSetup();
+
+
+  // Setup HMI
+  nexInit();
+  setupCallbacks();
 }
 void loop()
 {
@@ -69,6 +74,9 @@ void loop()
   //motor.printTorque();
   //imu01.printAngles();
   Serial.println("");
+
+  // Obligatoire pour le HMI
+  screen.update();
 }
 
 void updateAngles()
