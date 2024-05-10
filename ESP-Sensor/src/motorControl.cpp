@@ -21,15 +21,6 @@ void Motor::setPins()
   pinExtender.pinMode(PIN_MD_GEN_DRO_EN, OUTPUT);
   pinExtender.pinMode(PIN_MD_HAN_GAU_EN, OUTPUT);
   pinExtender.pinMode(PIN_MD_HAN_DRO_EN, OUTPUT);
-
-  // pwmPinExtender.pinMode(PIN_MD_HAN_DRO_INB, OUTPUT);
-  // pwmPinExtender.pinMode(PIN_MD_HAN_DRO_INA, OUTPUT);
-  // pwmPinExtender.pinMode(PIN_MD_HAN_GAU_INB, OUTPUT);
-  // pwmPinExtender.pinMode(PIN_MD_HAN_GAU_INA, OUTPUT);
-  // pwmPinExtender.pinMode(PIN_MD_GEN_DRO_INB, OUTPUT);
-  // pwmPinExtender.pinMode(PIN_MD_GEN_DRO_INA, OUTPUT);
-  // pwmPinExtender.pinMode(PIN_MD_GEN_GAU_INB, OUTPUT);
-  // pwmPinExtender.pinMode(PIN_MD_GEN_GAU_INA, OUTPUT);
 }
 void Motor::readCurrent()
 {

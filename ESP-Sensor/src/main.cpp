@@ -12,7 +12,7 @@
 #include <HardwareSerial.h>
 #include "enum.h"
 #include <PinExtender.h>
-//#include "Wire.h"
+// #include "Wire.h"
 
 Test tester;
 Relay relais;
@@ -33,19 +33,15 @@ void setup()
   Serial.begin(115200);
   Wire.begin();
 
-  Serial.println("pinExtender.begin();");
-  pinExtender.begin(); //  Default address 0x20
-
+  pinExtender.begin();
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
-  pwmPinExtender.setPWMFrequency(200); 
-  Serial.println("pinExtender.end();");
 
   relais.setPins();
   motor.setPins();
   relais.setAllRelais(OFF);
-  //imu01.IMUSetup();
-  // imu01.wifiSetup();
+  // imu01.IMUSetup();
+  //  imu01.wifiSetup();
   Serial.println("Ini motor exo----------");
 
   //--------------Test BLOC----------------
@@ -57,21 +53,7 @@ void setup()
 void loop()
 {
   //--------------Test BLOC----------------
-  delay(1000);
-  // Set the pin to the opposite state to test GPIO extender
-  // Is working correctly
-  pinExtender.digitalWrite(0, pinExtender.digitalRead(0) ? LOW : HIGH);
-  pinExtender.digitalWrite(1, pinExtender.digitalRead(1) ? LOW : HIGH);
-  pinExtender.digitalWrite(2, pinExtender.digitalRead(2) ? LOW : HIGH);
-
-  pwmPinExtender.setChannelPWM(0, 2048);
-  pwmPinExtender.setChannelPWM(1, 2048);
-  pwmPinExtender.setChannelPWM(2, 2048);
-  pwmPinExtender.setChannelPWM(3, 2048);
-  motor.testFuncSetPwnHigh();
-
-
-
+  // delay(1000);
 
   //--------------LOGIC BLOC---------------
   // ecran.nextLoop();
