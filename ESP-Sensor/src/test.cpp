@@ -64,5 +64,4 @@ void Test::testRelay()
     relais.setRelais(RELAIS_GENOU_DROIT, ON);
     delay(500);
     relais.setRelais(RELAIS_GENOU_DROIT, OFF);
-
 }
