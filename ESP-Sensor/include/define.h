@@ -39,10 +39,10 @@
 #define PIN_MD_HAN_GAU_EN 12 // Pin EN pour le moteur de la hanche gauche
 #define PIN_MD_HAN_DRO_EN 15 // Pin EN pour le moteur de la hanche droite
 
-#define PIN_MD_HAN_GAU_CT 3 // Pin de current sensing pour le moteur de la hanche gauche
-#define PIN_MD_HAN_DRO_CT 4 // Pin de current sensing pour le moteur de la hanche droite
-#define PIN_MD_GEN_GAU_CT 5 // Pin de current sensing pour le moteur du genou gauche
-#define PIN_MD_GEN_DRO_CT 6 // Pin de current sensing pour le moteur du genou droit
+#define PIN_MD_HAN_GAU_CT 36 // Pin de current sensing pour le moteur de la hanche gauche
+#define PIN_MD_HAN_DRO_CT 39 // Pin de current sensing pour le moteur de la hanche droite
+#define PIN_MD_GEN_GAU_CT 34 // Pin de current sensing pour le moteur du genou gauche
+#define PIN_MD_GEN_DRO_CT 35 // Pin de current sensing pour le moteur du genou droit
 
 // LONGUEURS
 #define LH 0.5  // longueur haut du corps

@@ -64,6 +64,12 @@ void loop()
   pinExtender.digitalWrite(1, pinExtender.digitalRead(1) ? LOW : HIGH);
   pinExtender.digitalWrite(2, pinExtender.digitalRead(2) ? LOW : HIGH);
 
+  pwmPinExtender.setChannelPWM(0, 2048);
+  pwmPinExtender.setChannelPWM(1, 2048);
+  pwmPinExtender.setChannelPWM(2, 2048);
+  pwmPinExtender.setChannelPWM(3, 2048);
+  motor.testFuncSetPwnHigh();
+
 
 
 

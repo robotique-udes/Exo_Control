@@ -314,3 +314,11 @@ void Motor::sendCommand()
   motorSetSpeed(MOTEUR_HANCHE_GAUCHE, PWMLeftHip);
   motorSetSpeed(MOTEUR_HANCHE_DROITE, PWMRightHip);
 }
+
+void Motor::testFuncSetPwnHigh()
+{
+  pwmPinExtender.setChannelPWM(4, 2048);
+  pwmPinExtender.setChannelPWM(5, 2048);
+  pwmPinExtender.setChannelPWM(6, 2048);
+  pwmPinExtender.setChannelPWM(7, 2048);
+}

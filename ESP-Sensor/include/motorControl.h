@@ -79,6 +79,8 @@ public:
     double sonarScanL();
 
     void motorSetSpeed(int ID, int val);
+
+    void testFuncSetPwnHigh();
 };
 
 #endif
