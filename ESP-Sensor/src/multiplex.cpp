@@ -1,6 +1,11 @@
 #include "multiplex.h"
+#include <Wire.h>
 
-Multiplex::Multiplex(){}
+Multiplex::Multiplex(){
+    this->monWire = &Wire;
+    currentChannel = 0;
+    selectChannel(0);
+}
 
 Multiplex::Multiplex(TwoWire* wireUsed){
     this->monWire = wireUsed;
@@ -26,7 +31,7 @@ int Multiplex::getCurrentChannel(){
     return currentChannel;
 }
 
-Wire* Multiplex::getWire(){
+TwoWire* Multiplex::getWire(){
     return monWire;
 }
 

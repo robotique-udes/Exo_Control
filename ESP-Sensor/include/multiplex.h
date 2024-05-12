@@ -1,6 +1,5 @@
 #ifndef MULTIPLEX_H_
 #define MULTIPLEX_H_
-
 #include <Wire.h>
 
 class Multiplex{

@@ -1,4 +1,6 @@
 #include "biogeniusBno.h"
+#include "Arduino.h"
+using namespace std;
 
 BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
     this->position = position;
@@ -13,62 +15,62 @@ BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr) {
     this->muxPtr = muxPtr;
 }
 
-BNO::ensureReadAvailable(int16_t length)
+void BNO::ensureReadAvailable(int16_t length)
 {
     // Ensure a read byte is available, if necessary reread and discard 4-byte SHTP header, then read as much length as possible
-    if (!this->MUXWire->available()) {
-        this->MUXWire->requestFrom(this->i2cAddress,4+length),
-            this->MUXWire.read(),
-            this->MUXWire.read(),
-            this->MUXWire.read(),
-            this->MUXWire.read();
+    if (!this->MUXWire()->available()) {
+        this->MUXWire()->requestFrom(this->i2cAddress,4+length),
+            this->MUXWire()->read(),
+            this->MUXWire()->read(),
+            this->MUXWire()->read(),
+            this->MUXWire()->read();
     }
 }
 
-BNO::MUXWire() {
+TwoWire* BNO::MUXWire() {
     return this->muxPtr->getWire();
 }
 
-BNO::getQuat() {
+vector<int16_t> BNO::getQuat() {
     return this->data.quat;
 }
 
-BNO::getAcceleration() {
+vector<int16_t> BNO::getAcceleration() {
     return this->data.acceleration;
 }
 
-BNO::getGyro() {
+vector<int16_t> BNO::getGyro() {
     return this->data.gyro;
 }
 
-BNO::getMag() {
+vector<int16_t> BNO::getMag() {
     return this->data.mag;
 }
 
-BNO::getLinAcceleration() {
+vector<int16_t> BNO::getLinAcceleration() {
     return this->data.lin_acceleration;
 }
 
-BNO::getTime() {
+int BNO::getTime() {
     return this->data.time;
 }
 
-BNO::getEuler(bool degrees = false) {
+vector<int16_t> BNO::getEuler(bool degrees) {
     // TODO - Check if values need to be converted depending on BNO placement
-    return this->data.euler * (degrees ? RAD_TO_DEG : 1.0)
+    return this->data.euler * (degrees ? RAD_TO_DEG : 1.0);
 }
 
 BNO::~BNO() {};
 
-BNO::beginTransmission(int reportType) {
+void BNO::beginTransmission(int reportType) {
     // Manual write to start report of given type
     static const uint8_t cmd_acc[]  = {21, 0, 2, 0, 0xFD, reportType,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
-    this->MUXWire->beginTransmission(this->i2cAddress);
-    this->MUXWire->write(cmd_acc, sizeof(cmd_acc));
-    this->MUXWire->endTransmission();
+    this->MUXWire()->beginTransmission(this->i2cAddress);
+    this->MUXWire()->write(cmd_acc, sizeof(cmd_acc));
+    this->MUXWire()->endTransmission();
 }
 
-BNO::begin() {
+bool BNO::beginTracking() {
     if (this->muxPtr->getCurrentChannel() != this->muxAddress) {
         this->muxPtr->selectChannel(this->muxAddress);
     }
@@ -95,7 +97,7 @@ BNO::begin() {
     return status;
 }
 
-BNO::updateEuler() {
+void BNO::updateEuler() {
     float sqw = sq(this->data.quat[0]);
     float sqx = sq(this->data.quat[1]);
     float sqy = sq(this->data.quat[2]);
@@ -117,7 +119,7 @@ BNO::updateEuler() {
         (-sqx - sqy + sqz + sqw));
 }
 
-BNO::requestData() {
+bool BNO::requestData() {
     int16_t length;
     uint8_t channel __attribute__((unused));
     uint8_t seqnum  __attribute__((unused));
@@ -127,12 +129,12 @@ BNO::requestData() {
     }
 
     // Parse SHTP header
-    this->MUXWire->requestFrom(this->i2cAddress,4+1);       // read 4-byte SHTP header and first byte of cargo
+    this->MUXWire()->requestFrom(this->i2cAddress,4+1);       // read 4-byte SHTP header and first byte of cargo
 
-    length  = this->MUXWire.read();     // length LSB
-    length |= (this->MUXWire.read() & 0x7F) << 8;  // length MSB (ignore continuation flag)
-    channel = this->MUXWire.read();     // channel number
-    seqnum  = this->MUXWire.read();     // sequence number (ignore)
+    length  = this->MUXWire().read();     // length LSB
+    length |= (this->MUXWire().read() & 0x7F) << 8;  // length MSB (ignore continuation flag)
+    channel = this->MUXWire().read();     // channel number
+    seqnum  = this->MUXWire().read();     // sequence number (ignore)
     length -= 4;                        // done reading SHTP Header
     if (length <= 0 || length > 1000)   // if null/bad/degeneratje SHTP header
     {
@@ -146,7 +148,7 @@ BNO::requestData() {
 
         this->ensureReadAvailable(length);
 
-        buf[n++] = this->MUXWire->read();  // first byte of report
+        buf[n++] = this->MUXWire()->read();  // first byte of report
         length--;
 
         // known reports
@@ -155,7 +157,7 @@ BNO::requestData() {
             for (uint8_t n=1; n<5; n++)       // read remainder of report
             {
                 this->ensureReadAvailable(length);
-                buf[n] = this->MUXWire->read();
+                buf[n] = this->MUXWire()->read();
                 length--;
             }
             continue;
@@ -166,7 +168,7 @@ BNO::requestData() {
             for (uint8_t n=1; n<10; n++)      // read remainder of report
             {
                 this->ensureReadAvailable(length);
-                buf[n] = this->MUXWire->read();
+                buf[n] = this->MUXWire()->read();
                 length--;
             }
             this->data.acceleration[0] = *(int16_t*)&buf[4]; // X
@@ -180,7 +182,7 @@ BNO::requestData() {
             for (uint8_t n=1; n<10; n++)      // read remainder of report
             {
                 this->ensureReadAvailable(length);
-                buf[n] = this->MUXWire->read();
+                buf[n] = this->MUXWire()->read();
                 length--;
             }
             this->data.gyro[0] = *(int16_t*)&buf[4]; // X
@@ -194,7 +196,7 @@ BNO::requestData() {
             for (uint8_t n=1; n<10; n++)      // read remainder of report
             {
                 this->ensureReadAvailable(length);
-                buf[n] = this->MUXWire->read();
+                buf[n] = this->MUXWire()->read();
                 length--;
             }
 
@@ -209,7 +211,7 @@ BNO::requestData() {
             for (uint8_t n=1; n<10; n++)      // read remainder of report
             {
                 this->ensureReadAvailable(length);
-                buf[n] = this->MUXWire->read();
+                buf[n] = this->MUXWire()->read();
                 length--;
             }
             this->data.lin_acceleration[0] = *(int16_t*)&buf[4]; // X
@@ -223,7 +225,7 @@ BNO::requestData() {
             for (uint8_t n=1; n<14; n++)      // read remainder of report
             {
                 this->ensureReadAvailable(length);
-                buf[n] = this->MUXWire->read();
+                buf[n] = this->MUXWire()->read();
                 length--;
             }
 
@@ -242,7 +244,7 @@ BNO::requestData() {
         while (length)                      // discard remainder of cargo (shouldn't happen very often)
         {
             this->ensureReadAvailable(length);
-            this->MUXWire->read();
+            this->MUXWire()->read();
             length--;
         }
         continue;
