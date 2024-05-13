@@ -1,5 +1,6 @@
 #include "biogeniusBno.h"
 #include "Arduino.h"
+#include <array>
 using namespace std;
 
 BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
@@ -31,33 +32,34 @@ TwoWire* BNO::MUXWire() {
     return this->muxPtr->getWire();
 }
 
-vector<int16_t> BNO::getQuat() {
+array<int16_t, 4> BNO::getQuat() {
     return this->data.quat;
 }
 
-vector<int16_t> BNO::getAcceleration() {
+array<int16_t, 3> BNO::getAcceleration() {
     return this->data.acceleration;
 }
 
-vector<int16_t> BNO::getGyro() {
+array<int16_t, 3> BNO::getGyro() {
     return this->data.gyro;
 }
 
-vector<int16_t> BNO::getMag() {
+array<int16_t, 3> BNO::getMag() {
     return this->data.mag;
 }
 
-vector<int16_t> BNO::getLinAcceleration() {
+array<int16_t, 3> BNO::getLinAcceleration() {
     return this->data.lin_acceleration;
 }
 
-int BNO::getTime() {
+int16_t BNO::getTime() {
     return this->data.time;
 }
 
-vector<int16_t> BNO::getEuler(bool degrees) {
+array<int16_t, 3> BNO::getEuler(bool degrees) {
     // TODO - Check if values need to be converted depending on BNO placement
-    return this->data.euler * (degrees ? RAD_TO_DEG : 1.0);
+    // TODO check to implement degrees return this->data.euler * (degrees ? RAD_TO_DEG : 1.0);
+    return this->data.euler;
 }
 
 BNO::~BNO() {};
@@ -94,7 +96,12 @@ bool BNO::beginTracking() {
         }
     } 
 
+    this->connected = status;
     return status;
+}
+
+BNOStruct BNO::getData() {
+    return this->data;
 }
 
 void BNO::updateEuler() {
@@ -104,17 +111,17 @@ void BNO::updateEuler() {
     float sqz = sq(this->data.quat[3]);
 
     // Yaw
-    this->data->euler[0] = atan2(2.0 * 
+    this->data.euler[0] = atan2(2.0 * 
         (this->data.quat[1] * this->data.quat[2] + this->data.quat[3] * this->data.quat[0]),
         (sqx - sqy - sqz + sqw));
 
     // Pitch
-    this->data->euler[1] = asin(-2.0 * 
+    this->data.euler[1] = asin(-2.0 * 
         (this->data.quat[1] * this->data.quat[3] - this->data.quat[2] * this->data.quat[0]) / 
         (sqx + sqy + sqz + sqw));
     
     // Roll
-    this->data->euler[2] = atan2(2.0 * 
+    this->data.euler[2] = atan2(2.0 * 
         (this->data.quat[2] * this->data.quat[3] + this->data.quat[1] * this->data.quat[0]),
         (-sqx - sqy + sqz + sqw));
 }
@@ -131,10 +138,10 @@ bool BNO::requestData() {
     // Parse SHTP header
     this->MUXWire()->requestFrom(this->i2cAddress,4+1);       // read 4-byte SHTP header and first byte of cargo
 
-    length  = this->MUXWire().read();     // length LSB
-    length |= (this->MUXWire().read() & 0x7F) << 8;  // length MSB (ignore continuation flag)
-    channel = this->MUXWire().read();     // channel number
-    seqnum  = this->MUXWire().read();     // sequence number (ignore)
+    length  = this->MUXWire()->read();     // length LSB
+    length |= (this->MUXWire()->read() & 0x7F) << 8;  // length MSB (ignore continuation flag)
+    channel = this->MUXWire()->read();     // channel number
+    seqnum  = this->MUXWire()->read();     // sequence number (ignore)
     length -= 4;                        // done reading SHTP Header
     if (length <= 0 || length > 1000)   // if null/bad/degeneratje SHTP header
     {

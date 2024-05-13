@@ -1,14 +1,14 @@
 using namespace std;
-#include <vector>
+#include <array>
 #include <stdint.h>
 
 struct BNOStruct
 {
-    vector<int16_t> quat{int16_t 4}; // Stored as W, X, Y, Z
-    vector<int16_t> euler{int16_t 3}; // Stored as yaw, pitch, roll as radians
-    vector<int16_t> acceleration{int16_t 3}; // Stored as X, Y, Z
-    vector<int16_t> gyro{int16_t 3}; // Stored as X, Y, Z
-    vector<int16_t> mag{int16_t 3}; // Stored as X, Y, Z
-    vector<int16_t> lin_acceleration(int16_t 3); // Stored as X, Y, Z
+    array<int16_t, 4> quat; // Stored as W, X, Y, Z
+    array<int16_t, 3> euler; // Stored as yaw, pitch, roll as radians
+    array<int16_t, 3> acceleration; // Stored as X, Y, Z
+    array<int16_t, 3> gyro; // Stored as X, Y, Z
+    array<int16_t, 3> mag; // Stored as X, Y, Z
+    array<int16_t, 3> lin_acceleration; // Stored as X, Y, Z
     int16_t time;
 };

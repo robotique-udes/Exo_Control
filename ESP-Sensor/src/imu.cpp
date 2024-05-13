@@ -268,16 +268,16 @@ double Imu::getValAngle(enumIMU imuType)
 {
     switch (imuType)
     {
-    case enumIMU::HipL:
+    case enumIMU::HIP_L:
         return (angleHipL.y());
         break;
-    case enumIMU::KneeL:
+    case enumIMU::KNEE_L:
         return (angleKneeL.y());
         break;
-    case enumIMU::HipR:
+    case enumIMU::HIP_R:
         return (angleHipR.y());
         break;
-    case enumIMU::KneeR:
+    case enumIMU::KNEE_R:
         return (angleKneeR.y());
         break;
     default:

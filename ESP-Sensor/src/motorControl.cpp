@@ -211,16 +211,16 @@ void Motor::setAngle(enumIMU imuType, float val)
 {
   switch (imuType)
   {
-    case enumIMU::HipR:
+    case enumIMU::HIP_R:
         RightHipAngle = val;
         break;
-    case enumIMU::KneeR:
+    case enumIMU::KNEE_R:
         RightKneeAngle = val;
         break;
-    case enumIMU::HipL:
+    case enumIMU::HIP_L:
         LeftHipAngle = val;
         break;
-    case enumIMU::KneeL:
+    case enumIMU::KNEE_L:
         LeftKneeAngle = val;
         break;
     default:

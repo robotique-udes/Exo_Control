@@ -2,11 +2,11 @@
 #define ENUM_H
 enum class enumIMU
 {
-    HipL    =   0,
-    KneeL   =   1,
-    HipR    =   2,
-    KneeR   =   3,
-    Back    =   4    
+    HIP_L    =   0,
+    KNEE_L   =   1,
+    HIP_R    =   2,
+    KNEE_R   =   3,
+    EXO_BACK =   4    
 };
 
 #endif
