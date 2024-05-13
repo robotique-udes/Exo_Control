@@ -12,6 +12,7 @@
 #include <HardwareSerial.h>
 #include "enum.h"
 #include <PinExtender.h>
+#include <QuadratureEncoder.h>
 // #include "Wire.h"
 
 Test tester;
@@ -20,6 +21,7 @@ Motor motor;
 Imu imu01;
 Screen ecran;
 Motor *Screen::motor = motor;
+QuadratureEncoder encoder;
 
 void updateAngles();
 
@@ -32,6 +34,7 @@ void setup()
   nexInit();
   Serial.begin(115200);
   Wire.begin();
+  encoder.begin();
 
   pinExtender.begin();
   pwmPinExtender.resetDevices();
@@ -45,15 +48,23 @@ void setup()
   Serial.println("Ini motor exo----------");
 
   //--------------Test BLOC----------------
-  pinExtender.pinMode(0, OUTPUT);
-  pinExtender.pinMode(1, OUTPUT);
-  pinExtender.pinMode(2, OUTPUT);
+  // pinExtender.pinMode(0, OUTPUT);
+  // pinExtender.pinMode(1, OUTPUT);
+  // pinExtender.pinMode(2, OUTPUT);
 }
 
 void loop()
 {
   //--------------Test BLOC----------------
   // delay(1000);
+  Serial.print("Position Hanche Droite: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
+  Serial.print("Position Hanche Gauche: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
+  Serial.print("Position Genou Droit: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
+  Serial.print("Position Genou Gauche: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
 
   //--------------LOGIC BLOC---------------
   // ecran.nextLoop();
