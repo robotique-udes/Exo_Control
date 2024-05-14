@@ -38,18 +38,15 @@ void setup()
   ESP32Serial1.begin(9600, SERIAL_8N1, 19, 18);
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
-
   Serial.println("Ini motor exo----------");
   motor.setPins();
 
   relais.setAllRelais(OFF);
-  imu01.IMUSetup();
-  // imu01.wifiSetup();
-
 
   // Setup HMI
-  nexInit();
   setupCallbacks();
+  imu01.IMUSetup(); // Comment if no IMU are in use
+  // imu01.wifiSetup(); // Comment if not using wifi com
 }
 void loop()
 {

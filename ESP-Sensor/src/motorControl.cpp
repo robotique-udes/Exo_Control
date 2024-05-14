@@ -4,6 +4,8 @@ double power=175;
 
 Motor::Motor()
 {
+  LeftProxim = new ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+  RightProxim = new ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
 }
 
 Motor::~Motor()
@@ -52,7 +54,7 @@ void Motor::neededTorque()
   //If clutch are on automatic, calculate torque needed
   if(motorMode){
     // Right Hip Torque Equation
-    if (sonar.getSonarStateR())
+    if (!RightProxim.IsOnTheGround())
       RightHipTorque =0;
     else
     {
@@ -65,7 +67,7 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (sonar.getSonarStateL())
+    if (!LeftProxim.IsOnTheGround())
         LeftHipTorque = 0;
     else
     {
@@ -76,7 +78,7 @@ void Motor::neededTorque()
     }  
 
     // Right Knee Torque Equation
-    if (sonar.getSonarStateR())
+    if (!RightProxim.IsOnTheGround())
     {
       if(toDegrees(RightKneeAngle)>0)
         RightKneeTorque = ((sin(RightHipAngle)*(LF/2)*(MF*G)) + ((sin(RightHipAngle)*LF))*(G*MH))*0.5;
@@ -92,7 +94,7 @@ void Motor::neededTorque()
     } 
       
     // Left Knee Torque Equation
-    if (sonar.getSonarStateL())
+    if (!LeftProxim.IsOnTheGround())
     {
       if(toDegrees(LeftKneeAngle)>0)
         LeftKneeTorque = ((sin(LeftHipAngle)*(LF/2)*(MF*G)) + ((sin(LeftHipAngle)*LF))*(G*MH))*0.5;
@@ -185,13 +187,13 @@ void Motor::PIDCurrentPrealable()
 
 }
 
-void Motor::printSonar()
+void Motor::printProxim()
 {
   
   Serial.print(" SL: ");
-  Serial.print(sonar.getSonarStateL());
+  Serial.print(LeftProxim.IsOnTheGround());
   Serial.print(" SR: ");
-  Serial.print(sonar.getSonarStateR());
+  Serial.print(RightProxim.IsOnTheGround());
   Serial.print(" MM: ");
   Serial.print(motorMode);
 }
