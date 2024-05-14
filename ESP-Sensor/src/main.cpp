@@ -43,8 +43,8 @@ void setup()
   motor.setPins();
 
   relais.setAllRelais(OFF);
-  imu01.IMUSetup();
-  // imu01.wifiSetup();
+  imu01.IMUSetup(); // Comment if no IMU are in use
+  // imu01.wifiSetup(); // Comment if not using wifi com
 }
 void loop()
 {

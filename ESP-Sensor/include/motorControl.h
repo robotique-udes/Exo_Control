@@ -67,7 +67,7 @@ public:
 
     void setAngle(enumIMU enumType, float val);
     float toDegrees(float radians);
-    void printSonar();
+    void printProxim();
     void printTorque();
 
     void setSonarState(bool state);
