@@ -81,4 +81,5 @@ The masterminds behind the Exo_Control project are:
 
 - Édouard Moffet, robot 67
 - Dannick Bilodeau,  info 68
+- Simon Trudeau,  info 68
 - Jorand Gagnon,  elec 69

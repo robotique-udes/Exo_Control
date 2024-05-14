@@ -1,24 +1,24 @@
 
 #include <Arduino.h>
-#include "motorControl.h"
-#include "test.h"
 #include <HardwareSerial.h>
-#include "imu.h" 
-#include "touchScreen.h"
 #include <SPI.h>
 #include <SD.h>
-#include "imu.h" 
 #include <Nextion.h>
 #include <string.h>
 #include <HardwareSerial.h>
+#include "motorControl.h"
+#include "test.h"
+#include "imu.h" 
+#include "touchScreen.h"
+#include "callbackSetup.h"
+#include "imu.h" 
 #include "enum.h"
 
 Test tester;
 Relay relais;
 Motor motor;
 Imu imu01;
-Screen ecran;
-Motor* Screen::motor = motor;
+TouchScreen& screen = TouchScreen::getInstance();
 
 HardwareSerial ESP32Serial1(1);
 HardwareSerial SerialPort(2);
@@ -38,11 +38,13 @@ void setup()
   ESP32Serial1.begin(9600, SERIAL_8N1, 19, 18);
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
-
   Serial.println("Ini motor exo----------");
   motor.setPins();
 
   relais.setAllRelais(OFF);
+
+  // Setup HMI
+  setupCallbacks();
   imu01.IMUSetup(); // Comment if no IMU are in use
   // imu01.wifiSetup(); // Comment if not using wifi com
 }
@@ -69,6 +71,9 @@ void loop()
   //motor.printTorque();
   //imu01.printAngles();
   Serial.println("");
+
+  // Obligatoire pour le HMI
+  screen.update();
 }
 
 void updateAngles()
