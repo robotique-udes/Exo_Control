@@ -4,8 +4,7 @@ ExoSettings *ExoSettings::instance;
 
 ExoSettings::ExoSettings(){
     currentState = EnumExoStates::DISARMED;
-    walk = false;
-    squat = false;
+    state = false;
 
     // 5 Pied 10
     height = 1.778;
@@ -26,12 +25,8 @@ EnumExoStates ExoSettings::getCurrentState(){
     return currentState;
 }
 
-bool ExoSettings::getWalk(){
-    return walk;
-}
-
-bool ExoSettings::getSquat(){
-    return squat;
+bool ExoSettings::getState(){
+    return state;
 }
 
 int ExoSettings::getHeight(){
@@ -46,12 +41,8 @@ void ExoSettings::setCurrentState(EnumExoStates newState){
     currentState = newState;
 }
 
-void ExoSettings::setWalk(bool setWalk){
-    walk = setWalk;
-}
-
-void ExoSettings::setSquat(bool setSquat){
-    squat = setSquat;
+void ExoSettings::setState(bool nState){
+    state = nState;
 }
 
 void ExoSettings::setHeight(int setHeight){

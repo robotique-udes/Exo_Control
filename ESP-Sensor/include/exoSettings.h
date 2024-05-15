@@ -16,8 +16,7 @@ class ExoSettings{
         EnumExoStates currentState;
         
         // Tests
-        bool walk;
-        bool squat;
+        bool state;
 
         // Calibrated height
         int height;
@@ -31,14 +30,12 @@ class ExoSettings{
     public:
         
         EnumExoStates getCurrentState();
-        bool getWalk();
-        bool getSquat();
+        bool getState();
         int getHeight();
         int getMotorPower();
 
         void setCurrentState(EnumExoStates newState);
-        void setWalk(bool setWalk);
-        void setSquat(bool setSquat);
+        void setState(bool setWalk);
         void setHeight(int setHeight);
         void setFutureMotorPower(double setMotoPower);
         void saveMotorPower();

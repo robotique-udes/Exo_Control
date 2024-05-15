@@ -45,8 +45,7 @@ void callbackButtonWalk(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setWalk(true); 
-    settings.setSquat(false);
+    settings.setState(false);
 }
 
 void callbackButtonSquat(void *ptr){
@@ -56,8 +55,7 @@ void callbackButtonSquat(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setWalk(false); 
-    settings.setSquat(true);
+    settings.setState(true);
 }
 
 void callbackAutocalib(void *ptr){

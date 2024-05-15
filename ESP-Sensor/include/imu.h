@@ -13,7 +13,7 @@
 #include "SPIFFS.h"
 #include <Arduino_JSON.h>
 #include <string>
-#include "enum.h"
+#include "enumIMU.h"
 #include "bnoMultiplex.h"
 #include "define.h"
 
@@ -52,8 +52,6 @@ public:
     bool IMUSetup();
     void wifiSetup();
     double getValAngle(enumIMU imuType);
-    void printSonar();
-
     
 };
 

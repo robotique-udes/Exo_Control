@@ -4,8 +4,7 @@ double power=175;
 
 Motor::Motor()
 {
-  LeftProxim = new ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
-  RightProxim = new ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+  
 }
 
 Motor::~Motor()
@@ -235,11 +234,13 @@ float Motor::toDegrees(float radians)
     return radians * 180 / PI;
 }
 
-void Motor::setSonarState(bool state){ sonar.setSonarState(state); }
-void Motor::setHeight(double h){ sonar.setHeight(h); }
-double Motor::sonarScanR(){ return sonar.sonarScanR(); }
-double Motor::sonarScanL(){ return sonarScanL(); }
-void Motor::sonarRead(){ sonar.sonarRead();}
+//A renommer correctement
+void Motor::setSonarState(bool state){ settings.setState(state); }
+void Motor::setHeight(double h){ settings.setHeight(h); }
+double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
+double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
+//Fpnction probablement obscelete, a revisiter
+void Motor::sonarRead(){ /*sonar.sonarRead();*/}
 
 
 
