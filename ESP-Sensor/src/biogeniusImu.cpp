@@ -4,6 +4,8 @@
 using namespace std;
 
 IMU::IMU(){
+    Serial.println("qqch");
+    // while(true){}
     this->mux = Multiplex();
     // Hips will use 0x4A, Knee will use 0x4B
     // Keep this order, position in vector is same as enum value

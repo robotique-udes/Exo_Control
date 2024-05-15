@@ -29,7 +29,7 @@ class BNO {
         enumIMU position; // Position of the BNO on the exo
         Multiplex* muxPtr; // Pointer to the multiplexer that the BNO is connected to
         int i2cAddress = 0x4B; // I2C address of the BNO
-        void beginTransmission(int reportType);
+        void beginTransmission(uint8_t reportType);
         bool connected = false;
         TwoWire* MUXWire();
         void ensureReadAvailable(int16_t length);

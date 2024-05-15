@@ -17,7 +17,7 @@
 Test tester;
 Relay relais;
 Motor motor;
-IMU imu01;
+IMU *imu01;
 Screen ecran;
 Motor* Screen::motor = motor;
 int gaming = 0;
@@ -36,17 +36,20 @@ void setup()
 {
   Serial.begin(115200);
 
-  imu01 = IMU();
+  Serial.println("Start");
 
-  imu01.begin();
+  imu01 = new IMU();
+  Serial.println("constructor end");
+  imu01->begin();
+  Serial.println("Setup end");
 
 }
 void loop()
 {
-  imu01.requestData();
+  imu01->requestData();
 
   if (gaming % 100) {
-    imu01.getValAngle(enumIMU::Back);
+    imu01->getValAngle(enumIMU::EXO_BACK);
   }
 
   //--------------Test BLOC----------------

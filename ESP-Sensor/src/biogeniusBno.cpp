@@ -64,9 +64,9 @@ array<int16_t, 3> BNO::getEuler(bool degrees) {
 
 BNO::~BNO() {};
 
-void BNO::beginTransmission(int reportType) {
+void BNO::beginTransmission(uint8_t reportType) {
     // Manual write to start report of given type
-    static const uint8_t cmd_acc[]  = {21, 0, 2, 0, 0xFD, reportType,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t cmd_acc[]  = {21, 0, 2, 0, 0xFD, reportType,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
     this->MUXWire()->beginTransmission(this->i2cAddress);
     this->MUXWire()->write(cmd_acc, sizeof(cmd_acc));
     this->MUXWire()->endTransmission();
