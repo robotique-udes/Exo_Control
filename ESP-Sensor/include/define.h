@@ -34,10 +34,10 @@
 #define PIN_MD_GEN_GAU_INB 6 // Pin INB pour le moteur du genou gauche
 #define PIN_MD_GEN_GAU_INA 7 // Pin INA pour le moteur du genou gauche
 
-#define PIN_MD_GEN_GAU_EN 3  // Pin EN pour le moteur du genou gauche
-#define PIN_MD_GEN_DRO_EN 7  // Pin EN pour le moteur du genou droit
-#define PIN_MD_HAN_GAU_EN 12 // Pin EN pour le moteur de la hanche gauche
-#define PIN_MD_HAN_DRO_EN 15 // Pin EN pour le moteur de la hanche droite
+#define PIN_MD_GEN_GAU_EN 0  // Pin EN pour le moteur du genou gauche
+#define PIN_MD_GEN_DRO_EN 3  // Pin EN pour le moteur du genou droit
+#define PIN_MD_HAN_GAU_EN 7 // Pin EN pour le moteur de la hanche gauche
+#define PIN_MD_HAN_DRO_EN 10 // Pin EN pour le moteur de la hanche droite
 
 #define PIN_MD_HAN_GAU_CT 36 // Pin de current sensing pour le moteur de la hanche gauche
 #define PIN_MD_HAN_DRO_CT 39 // Pin de current sensing pour le moteur de la hanche droite

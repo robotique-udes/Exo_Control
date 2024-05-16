@@ -12,21 +12,16 @@ QuadratureEncoder::QuadratureEncoder()
     pinMode(PIN_ENC_GEN_DRO_B, INPUT);
     pinMode(PIN_ENC_GEN_GAU_A, INPUT);
     pinMode(PIN_ENC_GEN_GAU_B, INPUT);
-
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_DRO_A), ISR_ENC_HAN_DRO, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_DRO_B), ISR_ENC_HAN_DRO, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_GAU_A), ISR_ENC_HAN_GAU, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_GAU_B), ISR_ENC_HAN_GAU, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_DRO_A), ISR_ENC_GEN_DRO, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_DRO_B), ISR_ENC_GEN_DRO, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_GAU_A), ISR_ENC_GEN_GAU, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_GAU_B), ISR_ENC_GEN_GAU, CHANGE);
-    this->pulsesPerRevolution = PULSES_PER_REVOLUTION;
-    instance = this;
 }
 
 void QuadratureEncoder::begin()
 {
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_DRO_A), ISR_ENC_HAN_DRO, RISING);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_GAU_A), ISR_ENC_HAN_GAU, RISING);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_DRO_A), ISR_ENC_GEN_DRO, RISING);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_GAU_A), ISR_ENC_GEN_GAU, RISING);
+    this->pulsesPerRevolution = PULSES_PER_REVOLUTION;
+    instance = this;
     pulses_han_dro = 0;
     pulses_han_gau = 0;
     pulses_gen_dro = 0;
@@ -35,6 +30,7 @@ void QuadratureEncoder::begin()
 
 long QuadratureEncoder::getPositionPulses(int motor)
 {
+    Serial.println("getPositionPulses");
     switch (motor)
     {
     case HAN_DRO:
@@ -77,32 +73,36 @@ float QuadratureEncoder::getPositionAngle(int motor)
 
 void QuadratureEncoder::ISR_ENC_HAN_DRO()
 {
+    Serial.println("ISR_ENC_HAN_DRO");
     if (instance != nullptr)
     {
-        instance->pulses_han_dro += (digitalRead(PIN_ENC_HAN_DRO_A) == digitalRead(PIN_ENC_HAN_DRO_B)) ? 1 : -1;
+        instance->pulses_han_dro += (digitalRead(PIN_ENC_HAN_DRO_B)) ? 1 : -1;
     }
 }
 
 void QuadratureEncoder::ISR_ENC_HAN_GAU()
 {
+    Serial.println("ISR_ENC_HAN_GAU");
     if (instance != nullptr)
     {
-        instance->pulses_han_gau += (digitalRead(PIN_ENC_HAN_GAU_A) == digitalRead(PIN_ENC_HAN_GAU_B)) ? 1 : -1;
+        instance->pulses_han_gau += (digitalRead(PIN_ENC_HAN_GAU_B)) ? 1 : -1;
     }
 }
 
 void QuadratureEncoder::ISR_ENC_GEN_DRO()
 {
+    Serial.println("ISR_ENC_GEN_DRO");
     if (instance != nullptr)
     {
-        instance->pulses_gen_dro += (digitalRead(PIN_ENC_GEN_DRO_A) == digitalRead(PIN_ENC_GEN_DRO_B)) ? 1 : -1;
+        instance->pulses_gen_dro += (digitalRead(PIN_ENC_GEN_DRO_B)) ? 1 : -1;
     }
 }
 
 void QuadratureEncoder::ISR_ENC_GEN_GAU()
 {
+    Serial.println("ISR_ENC_GEN_GAU");
     if (instance != nullptr)
     {
-        instance->pulses_gen_gau += (digitalRead(PIN_ENC_GEN_GAU_A) == digitalRead(PIN_ENC_GEN_GAU_B)) ? 1 : -1;
+        instance->pulses_gen_gau += (digitalRead(PIN_ENC_GEN_GAU_B)) ? 1 : -1;
     }
 }

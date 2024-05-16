@@ -245,6 +245,14 @@ void Motor::sonarRead() { sonar.sonarRead(); }
 
 void Motor::motorSetSpeed(int ID, int val)
 {
+  // ID 0 to 3
+  // val -4096 to 4096
+
+  if (val > 4000)
+    val = 4000; // Protection contre les valeurs trop élevées (drive limitée à 98%)
+  else if (val < -4000)
+    val = -4000;
+
   int PIN_IN1;
   int PIN_IN2;
   int PIN_EN;
@@ -287,7 +295,7 @@ void Motor::motorSetSpeed(int ID, int val)
   else if (val < 0)
   {
     pwmPinExtender.setChannelPWM(PIN_IN1, OFF);
-    pwmPinExtender.setChannelPWM(PIN_IN2, val);
+    pwmPinExtender.setChannelPWM(PIN_IN2, -val);
     pinExtender.digitalWrite(PIN_EN, ON);
   }
   else

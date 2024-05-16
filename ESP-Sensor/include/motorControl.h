@@ -78,7 +78,7 @@ public:
     double sonarScanR();
     double sonarScanL();
 
-    void motorSetSpeed(int ID, int val);
+    void motorSetSpeed(int ID, int val); // ID 0 to 3, val -4096 to 4096
 
     void testFuncSetPwnHigh();
 };
