@@ -75,7 +75,6 @@ float QuadratureEncoder::getPositionAngle(int motor)
 
 void QuadratureEncoder::ISR_ENC_HAN_DRO()
 {
-    Serial.println("ISR_ENC_HAN_DRO");
     if (instance != nullptr)
     {
         instance->pulses_han_dro += (digitalRead(PIN_ENC_HAN_DRO_B)) ? 1 : -1;
@@ -84,7 +83,6 @@ void QuadratureEncoder::ISR_ENC_HAN_DRO()
 
 void QuadratureEncoder::ISR_ENC_HAN_GAU()
 {
-    Serial.println("ISR_ENC_HAN_GAU");
     if (instance != nullptr)
     {
         instance->pulses_han_gau += (digitalRead(PIN_ENC_HAN_GAU_B)) ? 1 : -1;
@@ -93,7 +91,6 @@ void QuadratureEncoder::ISR_ENC_HAN_GAU()
 
 void QuadratureEncoder::ISR_ENC_GEN_DRO()
 {
-    Serial.println("ISR_ENC_GEN_DRO");
     if (instance != nullptr)
     {
         instance->pulses_gen_dro += (digitalRead(PIN_ENC_GEN_DRO_B)) ? 1 : -1;
@@ -102,7 +99,6 @@ void QuadratureEncoder::ISR_ENC_GEN_DRO()
 
 void QuadratureEncoder::ISR_ENC_GEN_GAU()
 {
-    Serial.println("ISR_ENC_GEN_GAU");
     if (instance != nullptr)
     {
         instance->pulses_gen_gau += (digitalRead(PIN_ENC_GEN_GAU_B)) ? 1 : -1;

@@ -34,11 +34,11 @@ void setup()
   nexInit();
   Serial.begin(115200);
   Wire.begin();
+  pinExtender.begin();
   QuadratureEncoder::begin();
 
-
-  //pwmPinExtender.resetDevices();
-  //pwmPinExtender.init();
+  pwmPinExtender.resetDevices();
+  pwmPinExtender.init();
 
   relais.setPins();
   motor.setPins();
@@ -56,20 +56,76 @@ void setup()
 void loop()
 {
   //--------------Test BLOC----------------
-   delay(400);
-  //Serial.print("Position Hanche Droite: ");
-  //Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
-  //Serial.print("Position Hanche Gauche: ");
-  //Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
-  //Serial.print("Position Genou Droit: ");
-  //Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
-  Serial.print("Position Genou Gauche: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
+  // delay(400);
+  // Serial.print("Position Hanche Droite: ");
+  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
+  // Serial.print("Position Hanche Gauche: ");
+  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
+  // Serial.print("Position Genou Droit: ");
+  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
+   Serial.print("Position Genou Gauche: ");
+   Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
 
-  //motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
-  //motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
-  //motor.motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
-  //motor.motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
+  // motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
+  // motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
+  // motor.motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
+  // motor.motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
+
+  // --------------TEST BLOC computer commands----------------
+  if (Serial.available() > 0)
+  {
+    // Read the incoming byte
+    char incomingByte = Serial.read();
+
+    // Check the value of the incoming byte and print the corresponding message
+    if (incomingByte == 'w')
+    {
+      Serial.println("1000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 1000);
+    }
+    else if (incomingByte == 's')
+    {
+      Serial.println("1000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, -1000);
+    }
+    else if (incomingByte == 'e')
+    {
+      Serial.println("2000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 2000);
+    }
+    else if (incomingByte == 'd')
+    {
+      Serial.println("2000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, -2000);
+    }
+    else if (incomingByte == 'r')
+    {
+      Serial.println("3000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 3000);
+    }
+    else if (incomingByte == 'f')
+    {
+      Serial.println("3000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, -3000);
+    }
+    else if (incomingByte == 't')
+    {
+      Serial.println("4000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
+    }
+    else if (incomingByte == 'g')
+    {
+      Serial.println("4000");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, -4000);
+    }
+    else if (incomingByte == ' ')
+    {
+      Serial.println("stop");
+      motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
+    }
+  }
+
+  
 
   //--------------LOGIC BLOC---------------
   // ecran.nextLoop();
@@ -86,7 +142,7 @@ void loop()
   // motor.printSonar();
   // motor.printTorque();
   // imu01.printAngles();
-  Serial.println("loop");
+  // Serial.println("loop");
 }
 
 void updateAngles()
@@ -96,6 +152,4 @@ void updateAngles()
   motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
   motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
   motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
-
-  
 }
