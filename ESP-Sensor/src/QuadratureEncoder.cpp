@@ -12,20 +12,22 @@ QuadratureEncoder::QuadratureEncoder()
     pinMode(PIN_ENC_GEN_DRO_B, INPUT);
     pinMode(PIN_ENC_GEN_GAU_A, INPUT);
     pinMode(PIN_ENC_GEN_GAU_B, INPUT);
-}
-
-void QuadratureEncoder::begin()
-{
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_DRO_A), ISR_ENC_HAN_DRO, RISING);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_GAU_A), ISR_ENC_HAN_GAU, RISING);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_DRO_A), ISR_ENC_GEN_DRO, RISING);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_GAU_A), ISR_ENC_GEN_GAU, RISING);
     this->pulsesPerRevolution = PULSES_PER_REVOLUTION;
     instance = this;
     pulses_han_dro = 0;
     pulses_han_gau = 0;
     pulses_gen_dro = 0;
     pulses_gen_gau = 0;
+
+}
+
+void QuadratureEncoder::begin()
+{
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_DRO_A), &QuadratureEncoder::ISR_ENC_HAN_DRO, RISING);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_HAN_GAU_A), &QuadratureEncoder::ISR_ENC_HAN_GAU, RISING);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_DRO_A), &QuadratureEncoder::ISR_ENC_GEN_DRO, RISING);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENC_GEN_GAU_A), &QuadratureEncoder::ISR_ENC_GEN_GAU, RISING);
+
 }
 
 long QuadratureEncoder::getPositionPulses(int motor)

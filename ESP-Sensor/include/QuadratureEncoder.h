@@ -8,7 +8,7 @@ class QuadratureEncoder
 {
 public:
     QuadratureEncoder();
-    void begin();
+    static void begin();
     long getPositionPulses(int motor);
     float getPositionAngle(int motor);
     static const int PIN_ENC_HAN_DRO_A = 32;
@@ -20,6 +20,8 @@ public:
     static const int PIN_ENC_GEN_GAU_A = 19;
     static const int PIN_ENC_GEN_GAU_B = 4;
     static const int PULSES_PER_REVOLUTION = 2442.96;
+
+
 
     enum motors
     {

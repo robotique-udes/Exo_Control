@@ -34,11 +34,11 @@ void setup()
   nexInit();
   Serial.begin(115200);
   Wire.begin();
-  // encoder.begin();
+  QuadratureEncoder::begin();
 
-  pinExtender.begin();
-  pwmPinExtender.resetDevices();
-  pwmPinExtender.init();
+
+  //pwmPinExtender.resetDevices();
+  //pwmPinExtender.init();
 
   relais.setPins();
   motor.setPins();
@@ -57,19 +57,19 @@ void loop()
 {
   //--------------Test BLOC----------------
    delay(400);
-  Serial.print("Position Hanche Droite: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
-  Serial.print("Position Hanche Gauche: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
-  Serial.print("Position Genou Droit: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
+  //Serial.print("Position Hanche Droite: ");
+  //Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
+  //Serial.print("Position Hanche Gauche: ");
+  //Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
+  //Serial.print("Position Genou Droit: ");
+  //Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
   Serial.print("Position Genou Gauche: ");
   Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
 
-  motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
-  motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
-  motor.motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
-  motor.motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
+  //motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
+  //motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
+  //motor.motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
+  //motor.motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
 
   //--------------LOGIC BLOC---------------
   // ecran.nextLoop();

@@ -64,5 +64,5 @@ void loop() {
     Serial.println(pulses_gen_gau);
     Serial.print("Pulse test: ");
     Serial.println(pulse_test);
-    delay(1000);
+    delay(100);
 }
