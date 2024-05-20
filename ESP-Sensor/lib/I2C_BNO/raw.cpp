@@ -24,7 +24,7 @@
 #define MUX_SCL     27          // SCL pin for TCA9548 mux
 
 #define MUX_ADDR    0x70        // I2C address of TCA9548 multiplexer
-#define BNO_ADDR    0x4B        // I2C address of BNO085 sensor (0x4A if SA0=0, 0x4B if SA0=1)
+#define BNO_ADDR    0x4A        // I2C address of BNO085 sensor (0x4A if SA0=0, 0x4B if SA0=1)
 #define I2C_CLOCK   400000L     // I2C clock rate
 #define SERIAL_BAUD 115200L     // serial port baud rate
 #define SENSOR_US   10000L      // time between sensor reports, microseconds, 10000L is 100 Hz, 20000L is 50 Hz

@@ -3,6 +3,7 @@
 #include "biogeniusBno.h"
 #include "multiplex.h"
 #include "enum.h"
+#include "define.h"
 #include <array>
 using namespace std;
 

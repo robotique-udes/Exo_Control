@@ -29,20 +29,23 @@ class BNO {
         enumIMU position; // Position of the BNO on the exo
         Multiplex* muxPtr; // Pointer to the multiplexer that the BNO is connected to
         int i2cAddress = 0x4B; // I2C address of the BNO
-        void beginTransmission(uint8_t reportType);
+        void beginTransmission(uint8_t reportType); // Generic implementation of request setup (see raw.cpp)
         bool connected = false;
         TwoWire* MUXWire();
         void ensureReadAvailable(int16_t length);
         void updateEuler();
+        void printName();
 
     public:
+        BNO(enumIMU position);
         BNO(enumIMU position, int muxAddress, Multiplex* muxPtr);
         BNO(enumIMU position, int muxAddress, Multiplex* muxPtr, int i2cAddress);
         ~BNO();
         bool requestData(); // Request data from BNO, stores values in data structure
         bool beginTracking();
+        bool isConnected();
         array<int16_t, 4> getQuat();
-        array<int16_t, 3> getEuler(bool degrees = false);
+        array<float, 3> getEuler(bool degrees = false);
         array<int16_t, 3> getAcceleration();
         array<int16_t, 3> getGyro();
         array<int16_t, 3> getMag();
