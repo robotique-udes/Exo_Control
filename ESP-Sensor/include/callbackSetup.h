@@ -15,7 +15,8 @@ void callbackButtonDisarmed(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setCurrentState(EnumExoStates::DISARMED); 
+    settings.setMotorState(EnumExoStates::DISARMED);
+    Serial.println("Motor state: DISARMED");
 }
 
 void callbackButtonArmed(void *ptr){
@@ -25,7 +26,8 @@ void callbackButtonArmed(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setCurrentState(EnumExoStates::ARMED); 
+    settings.setMotorState(EnumExoStates::ARMED); 
+    Serial.println("Motor state: ARMED");
 }
 
 void callbackButtonMotorised(void *ptr){
@@ -35,7 +37,8 @@ void callbackButtonMotorised(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setCurrentState(EnumExoStates::MOTORISED); 
+    settings.setMotorState(EnumExoStates::MOTORISED); 
+    Serial.println("Motor state: MOTORISED");
 }
 
 void callbackButtonWalk(void *ptr){
@@ -45,7 +48,7 @@ void callbackButtonWalk(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setState(false);
+    settings.setProximState(false);
 }
 
 void callbackButtonSquat(void *ptr){
@@ -55,7 +58,7 @@ void callbackButtonSquat(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setState(true);
+    settings.setProximState(true);
 }
 
 void callbackAutocalib(void *ptr){
@@ -141,7 +144,6 @@ void callbackP_SLIDER(void *ptr){
     sliderControl->getValue(&value);
 
     NexNumber* indicator = TouchScreen::getInstance().getIndicator();
-
     settings.setFutureMotorPower(value);
     indicator->setValue(value);
 }

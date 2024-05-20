@@ -21,11 +21,11 @@ ExoSettings& ExoSettings::getInstance(){
     return *instance;
 }
 
-EnumExoStates ExoSettings::getCurrentState(){
+EnumExoStates ExoSettings::getMotorState(){
     return currentState;
 }
 
-bool ExoSettings::getState(){
+bool ExoSettings::getProximState(){
     return state;
 }
 
@@ -37,20 +37,26 @@ int ExoSettings::getMotorPower(){
     return currentMotorPower;
 }
 
-void ExoSettings::setCurrentState(EnumExoStates newState){
+void ExoSettings::setMotorState(EnumExoStates newState){
     currentState = newState;
+    
 }
 
-void ExoSettings::setState(bool nState){
+void ExoSettings::setProximState(bool nState){
     state = nState;
+    Serial.print("Logic state: ");
+    Serial.println(state);
 }
 
 void ExoSettings::setHeight(int setHeight){
     height = setHeight;
+    Serial.print("Height: ");
+    Serial.println(height);
 }
 
 void ExoSettings::setFutureMotorPower(double setFutureMotoPower){
     futureMotorPower = setFutureMotoPower;
+    Serial.println(futureMotorPower);
 }
 
 void ExoSettings::saveMotorPower(){

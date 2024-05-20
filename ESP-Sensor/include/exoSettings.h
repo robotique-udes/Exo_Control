@@ -29,13 +29,13 @@ class ExoSettings{
 
     public:
         
-        EnumExoStates getCurrentState();
-        bool getState();
+        EnumExoStates getMotorState();
+        bool getProximState();
         int getHeight();
         int getMotorPower();
 
-        void setCurrentState(EnumExoStates newState);
-        void setState(bool setWalk);
+        void setMotorState(EnumExoStates newState);
+        void setProximState(bool setWalk);
         void setHeight(int setHeight);
         void setFutureMotorPower(double setMotoPower);
         void saveMotorPower();

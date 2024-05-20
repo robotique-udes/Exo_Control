@@ -235,7 +235,7 @@ float Motor::toDegrees(float radians)
 }
 
 //A renommer correctement
-void Motor::setSonarState(bool state){ settings.setState(state); }
+void Motor::setSonarState(bool state){ settings.setProximState(state); }
 void Motor::setHeight(double h){ settings.setHeight(h); }
 double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
 double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
