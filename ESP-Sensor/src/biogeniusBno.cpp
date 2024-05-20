@@ -18,13 +18,39 @@ BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr) {
     this->muxPtr = muxPtr;
 }
 
-BNO::BNO(enumIMU position) {
-    this->position = position;
-    // MUX not used in this version
+// Sets to 0 all structure values
+void BNO::resetDataValues() {
+    this->data.acceleration[0] = 0;
+    this->data.acceleration[1] = 0;
+    this->data.acceleration[2] = 0;
+
     this->data.quat[0] = 0;
     this->data.quat[1] = 0;
     this->data.quat[2] = 0;
     this->data.quat[3] = 0;
+
+    this->data.euler[0] = 0;
+    this->data.euler[1] = 0;
+    this->data.euler[2] = 0;
+
+    this->data.gyro[0] = 0;
+    this->data.gyro[1] = 0;
+    this->data.gyro[2] = 0;
+
+    this->data.lin_acceleration[0] = 0;
+    this->data.lin_acceleration[1] = 0;
+    this->data.lin_acceleration[2] = 0;
+    this->data.mag[0] = 0;
+    this->data.mag[1] = 0;
+    this->data.mag[2] = 0;
+
+    this->data.time = 0;
+}
+
+BNO::BNO(enumIMU position) {
+    this->position = position;
+    // MUX not used in this version
+    this->resetDataValues();
 
     this->i2cAddress = 0x4A;
 
@@ -49,7 +75,6 @@ void BNO::printName() {
     case enumIMU::KNEE_R:
         Serial.print("Knee Right");
         break;
-    
     default:
         Serial.print("Unknown");
         break;
@@ -66,10 +91,6 @@ void BNO::ensureReadAvailable(int16_t length)
             Wire.read(),
             Wire.read();
     }
-}
-
-TwoWire* BNO::MUXWire() {
-    return this->muxPtr->getWire();
 }
 
 array<int16_t, 4> BNO::getQuat() {
@@ -126,6 +147,8 @@ bool BNO::beginTracking() {
     this->printName();
     Serial.print(" w/address 0x");
     Serial.println(this->i2cAddress, HEX);
+
+    this->muxPtr->selectChannel(this->muxAddress);
         
     // request acc reports, see 6.5.4
     static const uint8_t cmd_acc[]  = {21, 0, 2, 0, 0xFD, ACC_REPORT,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -153,13 +176,7 @@ bool BNO::beginTracking() {
     // Number of tries is a magic number, may need to be increased
     bool status = false;
 
-    Serial.print("Quat before init: ");
-    Serial.print(this->data.quat[0]); Serial.print(" ");
-    Serial.print(this->data.quat[1]); Serial.print(" ");
-    Serial.print(this->data.quat[2]); Serial.print(" ");
-    Serial.println(this->data.quat[3]);
-
-    for (uint8_t i=0; i<50 && !status; i++) {
+    for (uint8_t i=0; i<20 && !status; i++) {
         requestData();
         if (!(!this->data.quat[0] && !this->data.quat[1] && !this->data.quat[2] && !this->data.quat[3])) {
             Serial.println("First data valid!");
@@ -211,6 +228,7 @@ bool BNO::requestData() {
     uint8_t seqnum  __attribute__((unused));
 
     // TODO add back change to multiplexer
+    this->muxPtr->selectChannel(this->muxAddress);
 
     Serial.println("\nInitial SHTP header");
     // Parse SHTP header
