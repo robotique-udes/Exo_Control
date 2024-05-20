@@ -29,12 +29,12 @@ double Sonar::getHeight()
 double Sonar::sonarScanR()
 {
   //Signal acquisition from right sonar
-  digitalWrite(TRIG_PIN_DROIT, LOW);
+  digitalWrite(SDA_PIN_DROIT, LOW);
   delayMicroseconds(5);
-  digitalWrite(TRIG_PIN_DROIT, HIGH);
+  digitalWrite(SDA_PIN_DROIT, HIGH);
   delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_DROIT, LOW);
-  double RightDuration = pulseIn(ECHO_PIN_DROIT, HIGH);
+  digitalWrite(SDA_PIN_DROIT, LOW);
+  double RightDuration = pulseIn(SCL_PIN_DROIT, HIGH);
 
   return (RightDuration / 2) / 29.1;
 }
@@ -43,12 +43,12 @@ double Sonar::sonarScanR()
 double Sonar::sonarScanL()
 {
   //Signal acquisition from left sonar
-  digitalWrite(TRIG_PIN_GAUCHE, LOW);
+  digitalWrite(SDA_PIN_GAUCHE, LOW);
   delayMicroseconds(5);
-  digitalWrite(TRIG_PIN_GAUCHE, HIGH);
+  digitalWrite(SDA_PIN_GAUCHE, HIGH);
   delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_GAUCHE, LOW);
-  double LeftDuration = pulseIn(ECHO_PIN_GAUCHE, HIGH);
+  digitalWrite(SDA_PIN_GAUCHE, LOW);
+  double LeftDuration = pulseIn(SCL_PIN_GAUCHE, HIGH);
   return (LeftDuration / 2) / 29.1;
 
 }

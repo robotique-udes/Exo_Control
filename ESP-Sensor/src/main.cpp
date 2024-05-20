@@ -1,27 +1,32 @@
 #include <Arduino.h>
-#include "motorControl.h"
-#include "test.h"
 #include <HardwareSerial.h>
+
 #include "imu.h"
-#include "touchScreen.h"
-#include <SPI.h>
-#include <SD.h>
-#include "imu.h"
-#include <Nextion.h>
-#include <string.h>
-#include <HardwareSerial.h>
 #include "enum.h"
 #include <PinExtender.h>
 #include <QuadratureEncoder.h>
-// #include "Wire.h"
+#include <SPI.h>
+#include <SD.h>
+#include <Nextion.h>
+#include <string.h>
+#include <HardwareSerial.h>
+#include "motorControl.h"
+#include "test.h"
+#include "imu.h" 
+#include "touchScreen.h"
+#include "callbackSetup.h"
+#include "imu.h" 
+#include "enumIMU.h"
 
 Test tester;
 Relay relais;
 Motor motor;
 Imu imu01;
-Screen ecran;
-Motor *Screen::motor = motor;
 QuadratureEncoder encoder;
+TouchScreen& screen = TouchScreen::getInstance();
+
+HardwareSerial ESP32Serial1(1);
+HardwareSerial SerialPort(2);
 
 void updateAngles();
 void keyboardCommand();
@@ -41,14 +46,18 @@ void setup()
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
 
-  relais.setPins();
   motor.setPins();
-  relais.setAllRelais(OFF);
-  // imu01.IMUSetup();
-  //  imu01.wifiSetup();
+  relais.setPins();
   Serial.println("Ini motor exo----------");
+ 
+  relais.setAllRelais(OFF);
 
   //--------------Test BLOC----------------
+
+  // Setup HMI
+  setupCallbacks();
+  //imu01.IMUSetup(); // Comment if no IMU are in use
+  // imu01.wifiSetup(); // Comment if not using wifi com
 }
 
 void loop()
@@ -88,6 +97,29 @@ void loop()
 // motor.printTorque();
 // imu01.printAngles();
 // Serial.println("loop");
+  //delay(500);
+
+
+
+  //--------------LOGIC BLOC---------------
+  //ecran.nextLoop();
+  //updateAngles(); 
+  //motor.sonarRead(); //Ne pas décommenter, remplace par HMI
+  //motor.neededTorque();
+  // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
+  // motor.readCurrent(); Ne pas décommenter, pas utile sans PID
+  //motor.PIDCurrentPrealable();
+  //sendPWM();
+
+  //--------------PRINTING BLOC-------------
+  //Serial.print(motor.getPower());
+  //motor.printSonar();
+  //motor.printTorque();
+  //imu01.printAngles();
+  Serial.println("");
+
+  // Obligatoire pour le HMI
+  screen.update();
 }
 
 void updateAngles()

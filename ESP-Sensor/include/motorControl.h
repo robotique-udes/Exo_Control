@@ -1,10 +1,12 @@
 #ifndef MOTORCONTROL_H
 #define MOTORCONTROL_H
 #include <Arduino.h>
-#include "enum.h"
+#include "enumIMU.h"
 #include "sonar.h"
 #include "define.h"
 #include <PinExtender.h>
+#include "exoSettings.h"
+#include "ProxiSensor.h"
 
 class Motor
 {
@@ -42,8 +44,11 @@ private:
     float RightHipMeasuredCurrent = 0.0;
     float LeftHipMeasuredCurrent = 0.0;
 
-    // control sonar
-    Sonar sonar;
+    // proximity sensor
+    ProxiSensor LeftProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+    ProxiSensor RightProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+    //settings
+    ExoSettings& settings = ExoSettings::getInstance();
 
 public:
     Motor();
@@ -70,7 +75,7 @@ public:
 
     void setAngle(enumIMU enumType, float val);
     float toDegrees(float radians);
-    void printSonar();
+    void printProxim();
     void printTorque();
 
     void setSonarState(bool state);

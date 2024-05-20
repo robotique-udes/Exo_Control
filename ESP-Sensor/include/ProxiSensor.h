@@ -16,7 +16,7 @@ private:
     int minimumDistance = 0;
 
 public:
-    ProxiSensor(int FrameTiming=128, int sda=26, int scl=27);
+    ProxiSensor(int FrameTiming, int sda, int scl);
 
     int GetMinDistance();
     bool IsOnTheGround();

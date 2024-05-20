@@ -1,10 +1,12 @@
 
 // PINS SONAR
-#define TRIG_PIN_GAUCHE 15
-#define ECHO_PIN_GAUCHE 39
-#define TRIG_PIN_DROIT 23
-#define ECHO_PIN_DROIT 35
-// constant SONAR
+
+//**********PAS LES BONNES PINS************
+#define SDA_PIN_GAUCHE 15
+#define SCL_PIN_GAUCHE 39
+#define SDA_PIN_DROIT 23
+#define SCL_PIN_DROIT 35
+//constant SONAR
 #define UNCERTAINTY 0.1
 #define LOW 0x0
 #define HIGH 0x1

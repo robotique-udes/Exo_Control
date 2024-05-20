@@ -4,6 +4,7 @@ double power = 175;
 
 Motor::Motor()
 {
+  
 }
 
 Motor::~Motor()
@@ -52,8 +53,8 @@ void Motor::neededTorque()
   if (motorMode)
   {
     // Right Hip Torque Equation
-    if (sonar.getSonarStateR())
-      RightHipTorque = 0;
+    if (!RightProxim.IsOnTheGround())
+      RightHipTorque =0;
     else
     {
       if (toDegrees(RightHipAngle) < 110)
@@ -65,8 +66,8 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (sonar.getSonarStateL())
-      LeftHipTorque = 0;
+    if (!LeftProxim.IsOnTheGround())
+        LeftHipTorque = 0;
     else
     {
       if (toDegrees(LeftHipAngle) < 110)
@@ -76,7 +77,7 @@ void Motor::neededTorque()
     }
 
     // Right Knee Torque Equation
-    if (sonar.getSonarStateR())
+    if (!RightProxim.IsOnTheGround())
     {
       if (toDegrees(RightKneeAngle) > 0)
         RightKneeTorque = ((sin(RightHipAngle) * (LF / 2) * (MF * G)) + ((sin(RightHipAngle) * LF)) * (G * MH)) * 0.5;
@@ -92,7 +93,7 @@ void Motor::neededTorque()
     }
 
     // Left Knee Torque Equation
-    if (sonar.getSonarStateL())
+    if (!LeftProxim.IsOnTheGround())
     {
       if (toDegrees(LeftKneeAngle) > 0)
         LeftKneeTorque = ((sin(LeftHipAngle) * (LF / 2) * (MF * G)) + ((sin(LeftHipAngle) * LF)) * (G * MH)) * 0.5;
@@ -186,12 +187,12 @@ void Motor::PIDCurrentPrealable()
   PWMLeftHip = map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
 }
 
-void Motor::printSonar()
+void Motor::printProxim()
 {
   Serial.print(" SL: ");
-  Serial.print(sonar.getSonarStateL());
+  Serial.print(LeftProxim.IsOnTheGround());
   Serial.print(" SR: ");
-  Serial.print(sonar.getSonarStateR());
+  Serial.print(RightProxim.IsOnTheGround());
   Serial.print(" MM: ");
   Serial.print(motorMode);
 }
@@ -237,12 +238,6 @@ float Motor::toDegrees(float radians)
   return radians * 180 / PI;
 }
 
-void Motor::setSonarState(bool state) { sonar.setSonarState(state); }
-void Motor::setHeight(double h) { sonar.setHeight(h); }
-double Motor::sonarScanR() { return sonar.sonarScanR(); }
-double Motor::sonarScanL() { return sonarScanL(); }
-void Motor::sonarRead() { sonar.sonarRead(); }
-
 void Motor::motorSetSpeed(int ID, int val)
 {
   // ID 0 to 3
@@ -256,6 +251,13 @@ void Motor::motorSetSpeed(int ID, int val)
   int PIN_IN1;
   int PIN_IN2;
   int PIN_EN;
+//A renommer correctement
+void Motor::setSonarState(bool state){ settings.setProximState(state); }
+void Motor::setHeight(double h){ settings.setHeight(h); }
+double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
+double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
+//Fpnction probablement obscelete, a revisiter
+void Motor::sonarRead(){ /*sonar.sonarRead();*/}
 
   if (ID == MOTEUR_GENOU_GAUCHE)
   {
