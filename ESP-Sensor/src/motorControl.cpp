@@ -251,13 +251,6 @@ void Motor::motorSetSpeed(int ID, int val)
   int PIN_IN1;
   int PIN_IN2;
   int PIN_EN;
-//A renommer correctement
-void Motor::setSonarState(bool state){ settings.setProximState(state); }
-void Motor::setHeight(double h){ settings.setHeight(h); }
-double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
-double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
-//Fpnction probablement obscelete, a revisiter
-void Motor::sonarRead(){ /*sonar.sonarRead();*/}
 
   if (ID == MOTEUR_GENOU_GAUCHE)
   {
@@ -323,3 +316,11 @@ void Motor::testFuncSetPwnHigh()
   pwmPinExtender.setChannelPWM(6, 2048);
   pwmPinExtender.setChannelPWM(7, 2048);
 }
+
+//A renommer correctement
+void Motor::setSonarState(bool state){ settings.setProximState(state); }
+void Motor::setHeight(double h){ settings.setHeight(h); }
+double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
+double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
+//Fpnction probablement obscelete, a revisiter
+void Motor::sonarRead(){ /*sonar.sonarRead();*/}

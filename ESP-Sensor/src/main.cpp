@@ -2,7 +2,7 @@
 #include <HardwareSerial.h>
 
 #include "imu.h"
-#include "enum.h"
+#include "enumIMU.h"
 #include <PinExtender.h>
 #include <QuadratureEncoder.h>
 #include <SPI.h>
@@ -16,7 +16,6 @@
 #include "touchScreen.h"
 #include "callbackSetup.h"
 #include "imu.h" 
-#include "enumIMU.h"
 
 Test tester;
 Relay relais;
@@ -39,6 +38,8 @@ void setup()
 {
   nexInit();
   Serial.begin(115200);
+  ESP32Serial1.begin(9600, SERIAL_8N1, 19, 18);
+  Serial2.begin(9600, SERIAL_8N1, 16, 17); 
   Wire.begin();
   pinExtender.begin();
   QuadratureEncoder::begin(); 

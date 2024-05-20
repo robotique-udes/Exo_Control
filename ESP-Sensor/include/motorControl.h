@@ -4,7 +4,7 @@
 #include "enumIMU.h"
 #include "sonar.h"
 #include "define.h"
-#include <PinExtender.h>
+#include "PinExtender.h"
 #include "exoSettings.h"
 #include "ProxiSensor.h"
 
