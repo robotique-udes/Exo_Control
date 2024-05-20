@@ -38,13 +38,13 @@ void ProxiSensor::SetChannel(int c)
 
 void ProxiSensor::PrintData()
 {
-    Serial.print('channelUsed:');
+    Serial.print("channelUsed:");
     Serial.println(CoreSensor.channelUsed);
-    Serial.print('brightnessUsed:');
+    Serial.print("brightnessUsed:");
     Serial.println((uint8_t)CoreSensor.brightnessUsed);
-    Serial.print('ambient:');
+    Serial.print("ambient:");
     Serial.println(CoreSensor.ambient); // niveau de lumière ambiante dans le dernier sample
-    Serial.print('amplitude:');
+    Serial.print("amplitude:");
     Serial.println(CoreSensor.amplitude); // Intensité de la lumière refléchie
     Serial.print("distanceMillimeters:");
     Serial.println(minimumDistance); // Distance en millimètres

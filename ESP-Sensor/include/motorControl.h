@@ -4,18 +4,15 @@
 #include "enumIMU.h"
 #include "sonar.h"
 #include "define.h"
+#include <PinExtender.h>
 #include "exoSettings.h"
 #include "ProxiSensor.h"
 
 class Motor
 {
 private:
-    float CTval = 0.0;
-    int Bouton1 = digitalRead(31);
-    int Bouton2 = digitalRead(34);
-    float Acurrent;
-    float current = 0.0;
-    int Rotation = 1;
+
+    // PID variables
     float ErrorCurrentRightKnee = 0.0;
     float ErrorCurrentLeftKnee = 0.0;
     float IntegralRightKnee = 0.0;
@@ -23,47 +20,55 @@ private:
     float DerivativeRightKnee = 0.0;
     float DerivativeLeftKnee = 0.0;
     float PreviousErrorRightKnee = 0.0;
-    float PreviousErrorLeftKnee = 0.0;   
+    float PreviousErrorLeftKnee = 0.0;
 
-    //Torques 
+    // Torques
     float LeftHipTorque = 0.0;
     float RightHipTorque = 0.0;
     float LeftKneeTorque = 0.0;
     float RightKneeTorque = 0.0;
-    //IMU angles
+
+    // IMU angles
     float RightHipAngle = 0.0;
     float RightKneeAngle = 0.0;
     float LeftHipAngle = 0.0;
     float LeftKneeAngle = 0.0;
 
-    //Currents
+    // Currents
     float RightKneeNeededCurrent = 0.0;
     float LeftKneeNeededCurrent = 0.0;
+    float RightHipNeededCurrent = 0.0;
+    float LeftHipNeededCurrent = 0.0;
     float RightKneeMeasuredCurrent = 0.0;
     float LeftKneeMeasuredCurrent = 0.0;
+    float RightHipMeasuredCurrent = 0.0;
+    float LeftHipMeasuredCurrent = 0.0;
 
     // proximity sensor
     ProxiSensor LeftProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
     ProxiSensor RightProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
     //settings
     ExoSettings& settings = ExoSettings::getInstance();
+
 public:
     Motor();
     ~Motor();
+
     int PWMRightKnee = 0;
     int PWMLeftKnee = 0;
     int PWMRightHip = 0;
     int PWMLeftHip = 0;
-    
+
     void sonarRead();
     void setPins();
     void readCurrent();
-    void CapperFloat(float &val, float max);
-    void CapperInt(int &val, int max);
+    void LimitMinMaxFloat(float &val, float max);
+    void LimitMinMaxInt(int &val, int max);
     void neededTorque();
     void neededCurrent();
     void PIDCurrent();
     void PIDCurrentPrealable();
+    void sendCommand();
     void setMotorMode(bool state);
     void setPower(double p);
     double getPower();
@@ -77,6 +82,10 @@ public:
     void setHeight(double h);
     double sonarScanR();
     double sonarScanL();
+
+    void motorSetSpeed(int ID, int val); // ID 0 to 3, val -4096 to 4096
+
+    void testFuncSetPwnHigh();
 };
 
 #endif

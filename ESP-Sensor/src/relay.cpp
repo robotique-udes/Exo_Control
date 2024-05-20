@@ -3,19 +3,19 @@
 
 void Relay::setPins()
 {
-  pinMode(RELAIS_GENOU_GAUCHE, OUTPUT);
-  pinMode(RELAIS_GENOU_DROIT, OUTPUT);
-  pinMode(RELAIS_HANCHE_GAUCHE, OUTPUT);
-  pinMode(RELAIS_HANCHE_DROITE, OUTPUT);
+  pinExtender.pinMode(RELAIS_GENOU_GAUCHE, OUTPUT);
+  pinExtender.pinMode(RELAIS_GENOU_DROIT, OUTPUT);
+  pinExtender.pinMode(RELAIS_HANCHE_GAUCHE, OUTPUT);
+  pinExtender.pinMode(RELAIS_HANCHE_DROITE, OUTPUT);
 }
 
 void Relay::setRelais(int ID_Relais, bool state)
 {
   Serial.println(ID_Relais);
   if (state != ON)
-    digitalWrite(ID_Relais, HIGH);
+    pinExtender.digitalWrite(ID_Relais, HIGH);
   else
-    digitalWrite(ID_Relais, LOW); 
+    pinExtender.digitalWrite(ID_Relais, LOW); 
 }
 
 void Relay::setAllRelais(bool state)
