@@ -10,12 +10,14 @@ BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
     this->muxAddress = muxAddress;
     this->muxPtr = muxPtr;
     this->i2cAddress = i2cAddress;
+    this->resetDataValues();
 }
 
 BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr) {
     this->position = position;
     this->muxAddress = muxAddress;
     this->muxPtr = muxPtr;
+    this->resetDataValues();
 }
 
 // Sets to 0 all structure values
@@ -45,15 +47,6 @@ void BNO::resetDataValues() {
     this->data.mag[2] = 0;
 
     this->data.time = 0;
-}
-
-BNO::BNO(enumIMU position) {
-    this->position = position;
-    // MUX not used in this version
-    this->resetDataValues();
-
-    this->i2cAddress = 0x4A;
-
 }
 
 void BNO::printName() {
@@ -149,26 +142,12 @@ bool BNO::beginTracking() {
     Serial.println(this->i2cAddress, HEX);
 
     this->muxPtr->selectChannel(this->muxAddress);
-        
-    // request acc reports, see 6.5.4
-    static const uint8_t cmd_acc[]  = {21, 0, 2, 0, 0xFD, ACC_REPORT,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
-    Wire.beginTransmission(this->i2cAddress);  Wire.write(cmd_acc, sizeof(cmd_acc));  Wire.endTransmission();
 
-    // request gyro reports, see 6.5.4
-    static const uint8_t cmd_gyro[] = {21, 0, 2, 0, 0xFD, GYRO_REPORT, 0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
-    Wire.beginTransmission(this->i2cAddress);  Wire.write(cmd_gyro, sizeof(cmd_gyro));  Wire.endTransmission();
-
-    // request magneto reports, see 6.5.4
-    static const uint8_t cmd_mag[]  = {21, 0, 2, 0, 0xFD, MAG_REPORT,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
-    Wire.beginTransmission(this->i2cAddress);  Wire.write(cmd_mag, sizeof(cmd_mag));  Wire.endTransmission();
-
-    // request linear acc reports, see 6.5.4
-    static const uint8_t cmd_lac[]  = {21, 0, 2, 0, 0xFD, LAC_REPORT,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
-    Wire.beginTransmission(this->i2cAddress);  Wire.write(cmd_lac, sizeof(cmd_lac));  Wire.endTransmission();
-
-    // request quaternion reports, see 6.5.4
-    static const uint8_t cmd_quat[] = {21, 0, 2, 0, 0xFD, QUAT_REPORT, 0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
-    Wire.beginTransmission(this->i2cAddress);  Wire.write(cmd_quat, sizeof(cmd_quat));  Wire.endTransmission();
+    this->beginTransmission(ACC_REPORT);
+    this->beginTransmission(GYRO_REPORT);
+    this->beginTransmission(MAG_REPORT);
+    this->beginTransmission(LAC_REPORT);
+    this->beginTransmission(QUAT_REPORT);
 
     Serial.println("Reports requested");
 
@@ -230,10 +209,8 @@ bool BNO::requestData() {
     // TODO add back change to multiplexer
     this->muxPtr->selectChannel(this->muxAddress);
 
-    Serial.println("\nInitial SHTP header");
     // Parse SHTP header
     Wire.requestFrom(this->i2cAddress,4+1);       // read 4-byte SHTP header and first byte of cargo
-    Serial.println("First requestFrom done");
 
     length  = Wire.read();     // length LSB
     length |= (Wire.read() & 0x7F) << 8;  // length MSB (ignore continuation flag)

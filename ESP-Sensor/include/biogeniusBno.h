@@ -37,7 +37,6 @@ class BNO {
         void printName();
 
     public:
-        BNO(enumIMU position);
         BNO(enumIMU position, int muxAddress, Multiplex* muxPtr);
         BNO(enumIMU position, int muxAddress, Multiplex* muxPtr, int i2cAddress);
         ~BNO();
