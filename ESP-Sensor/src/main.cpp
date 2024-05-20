@@ -24,6 +24,7 @@ Motor *Screen::motor = motor;
 QuadratureEncoder encoder;
 
 void updateAngles();
+void keyboardCommand();
 
 //===============================================================================================================
 //===================================================(SETUP)=====================================================
@@ -35,7 +36,7 @@ void setup()
   Serial.begin(115200);
   Wire.begin();
   pinExtender.begin();
-  QuadratureEncoder::begin();
+  QuadratureEncoder::begin(); 
 
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
@@ -48,23 +49,20 @@ void setup()
   Serial.println("Ini motor exo----------");
 
   //--------------Test BLOC----------------
-  // pinExtender.pinMode(0, OUTPUT);
-  // pinExtender.pinMode(1, OUTPUT);
-  // pinExtender.pinMode(2, OUTPUT);
 }
 
 void loop()
 {
   //--------------Test BLOC----------------
   // delay(400);
-  // Serial.print("Position Hanche Droite: ");
-  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
-  // Serial.print("Position Hanche Gauche: ");
-  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
-  // Serial.print("Position Genou Droit: ");
-  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
-   Serial.print("Position Genou Gauche: ");
-   Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
+  Serial.print("Position Hanche Droite: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
+  Serial.print("Position Hanche Gauche: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
+  Serial.print("Position Genou Droit: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
+  Serial.print("Position Genou Gauche: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
 
   // motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
   // motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
@@ -72,6 +70,37 @@ void loop()
   // motor.motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
 
   // --------------TEST BLOC computer commands----------------
+
+
+//--------------LOGIC BLOC---------------
+// ecran.nextLoop();
+// updateAngles();
+// motor.sonarRead(); //Ne pas décommenter, remplace par HMI
+// motor.neededTorque();
+// motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
+// motor.readCurrent(); Ne pas décommenter, pas utile sans PID
+// motor.PIDCurrentPrealable();
+// motor.sendCommand();
+
+//--------------PRINTING BLOC-------------
+// Serial.print(motor.getPower());
+// motor.printSonar();
+// motor.printTorque();
+// imu01.printAngles();
+// Serial.println("loop");
+}
+
+void updateAngles()
+{
+  imu01.getAngles();
+  motor.setAngle(enumIMU::HipR, imu01.getValAngle(enumIMU::HipR));
+  motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
+  motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
+  motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
+}
+
+void keyboardCommand()
+{
   if (Serial.available() > 0)
   {
     // Read the incoming byte
@@ -124,32 +153,4 @@ void loop()
       motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
     }
   }
-
-  
-
-  //--------------LOGIC BLOC---------------
-  // ecran.nextLoop();
-  // updateAngles();
-  // motor.sonarRead(); //Ne pas décommenter, remplace par HMI
-  // motor.neededTorque();
-  // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
-  // motor.readCurrent(); Ne pas décommenter, pas utile sans PID
-  // motor.PIDCurrentPrealable();
-  // motor.sendCommand();
-
-  //--------------PRINTING BLOC-------------
-  // Serial.print(motor.getPower());
-  // motor.printSonar();
-  // motor.printTorque();
-  // imu01.printAngles();
-  // Serial.println("loop");
-}
-
-void updateAngles()
-{
-  imu01.getAngles();
-  motor.setAngle(enumIMU::HipR, imu01.getValAngle(enumIMU::HipR));
-  motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
-  motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
-  motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
 }
