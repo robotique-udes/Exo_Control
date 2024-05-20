@@ -4,8 +4,7 @@ ExoSettings *ExoSettings::instance;
 
 ExoSettings::ExoSettings(){
     currentState = EnumExoStates::DISARMED;
-    walk = false;
-    squat = false;
+    state = false;
 
     // 5 Pied 10
     height = 1.778;
@@ -22,16 +21,12 @@ ExoSettings& ExoSettings::getInstance(){
     return *instance;
 }
 
-EnumExoStates ExoSettings::getCurrentState(){
+EnumExoStates ExoSettings::getMotorState(){
     return currentState;
 }
 
-bool ExoSettings::getWalk(){
-    return walk;
-}
-
-bool ExoSettings::getSquat(){
-    return squat;
+bool ExoSettings::getProximState(){
+    return state;
 }
 
 int ExoSettings::getHeight(){
@@ -42,24 +37,26 @@ int ExoSettings::getMotorPower(){
     return currentMotorPower;
 }
 
-void ExoSettings::setCurrentState(EnumExoStates newState){
+void ExoSettings::setMotorState(EnumExoStates newState){
     currentState = newState;
+    
 }
 
-void ExoSettings::setWalk(bool setWalk){
-    walk = setWalk;
-}
-
-void ExoSettings::setSquat(bool setSquat){
-    squat = setSquat;
+void ExoSettings::setProximState(bool nState){
+    state = nState;
+    Serial.print("Logic state: ");
+    Serial.println(state);
 }
 
 void ExoSettings::setHeight(int setHeight){
     height = setHeight;
+    Serial.print("Height: ");
+    Serial.println(height);
 }
 
 void ExoSettings::setFutureMotorPower(double setFutureMotoPower){
     futureMotorPower = setFutureMotoPower;
+    Serial.println(futureMotorPower);
 }
 
 void ExoSettings::saveMotorPower(){

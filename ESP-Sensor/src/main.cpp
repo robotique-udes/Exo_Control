@@ -12,7 +12,7 @@
 #include "touchScreen.h"
 #include "callbackSetup.h"
 #include "imu.h" 
-#include "enum.h"
+#include "enumIMU.h"
 
 Test tester;
 Relay relais;
