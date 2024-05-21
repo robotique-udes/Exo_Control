@@ -58,10 +58,10 @@ float QuadratureEncoder::getPositionAngle(int motor)
         pulses = pulses_han_dro;
         break;
     case HAN_GAU:
-        pulses = pulses_han_gau;
+        pulses = -pulses_han_gau;
         break;
     case GEN_DRO:
-        pulses = pulses_gen_dro;
+        pulses = -pulses_gen_dro;
         break;
     case GEN_GAU:
         pulses = pulses_gen_gau;

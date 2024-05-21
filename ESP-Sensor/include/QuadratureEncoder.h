@@ -20,7 +20,7 @@ public:
     static const int PIN_ENC_GEN_DRO_B = 12;
     static const int PIN_ENC_GEN_GAU_A = 19;
     static const int PIN_ENC_GEN_GAU_B = 4;
-    static const int PULSES_PER_REVOLUTION = 2442.96;
+    static const int PULSES_PER_REVOLUTION = 925; // 2442.96 pulses per revolution for 2.64:1 gear ratio
 
 
 

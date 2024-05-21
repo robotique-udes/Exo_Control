@@ -89,7 +89,7 @@ void loop()
   // motor.motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
 
   // --------------TEST BLOC computer commands----------------
-  // tester.keyboardCommand();
+  tester.keyboardCommand();
 
 //--------------LOGIC BLOC---------------
 // ecran.nextLoop();
