@@ -47,7 +47,7 @@ void Motor::LimitMinMaxInt(int &val, int max)
     val = -max;
 }
 
-void Motor::neededTorque()
+/*void Motor::neededTorque()
 {
   // If clutch are on automatic, calculate torque needed
   if (motorMode)
@@ -115,7 +115,7 @@ void Motor::neededTorque()
     LeftKneeTorque = 0;
     RightKneeTorque = 0;
   }
-}
+}*/
 
 void Motor::printTorque()
 {
@@ -187,15 +187,15 @@ void Motor::PIDCurrentPrealable()
   PWMLeftHip = map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
 }
 
-void Motor::printProxim()
-{
-  Serial.print(" SL: ");
-  Serial.print(LeftProxim.IsOnTheGround());
-  Serial.print(" SR: ");
-  Serial.print(RightProxim.IsOnTheGround());
-  Serial.print(" MM: ");
-  Serial.print(motorMode);
-}
+// void Motor::printProxim()
+// {
+  // Serial.print(" SL: ");
+  // Serial.print(LeftProxim.IsOnTheGround());
+  // Serial.print(" SR: ");
+  // Serial.print(RightProxim.IsOnTheGround());
+  // Serial.print(" MM: ");
+  // Serial.print(motorMode);
+// }
 
 void Motor::setMotorMode(bool state)
 {
@@ -320,7 +320,7 @@ void Motor::testFuncSetPwnHigh()
 //A renommer correctement
 void Motor::setSonarState(bool state){ settings.setProximState(state); }
 void Motor::setHeight(double h){ settings.setHeight(h); }
-double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
-double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
+// double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
+// double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
 //Fpnction probablement obscelete, a revisiter
 void Motor::sonarRead(){ /*sonar.sonarRead();*/}

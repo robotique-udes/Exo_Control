@@ -6,6 +6,7 @@
 
 #include "enumScreenCallbacks.h"
 #include "enumExoStates.h"
+#include "relay.h"
 
 using namespace std;
 
@@ -28,7 +29,7 @@ class ExoSettings{
         ExoSettings();
 
     public:
-        
+        Relay relais;
         EnumExoStates getMotorState();
         bool getProximState();
         int getHeight();

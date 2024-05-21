@@ -39,6 +39,17 @@ int ExoSettings::getMotorPower(){
 
 void ExoSettings::setMotorState(EnumExoStates newState){
     currentState = newState;
+    switch(newState)
+    {
+    case EnumExoStates::DISARMED:
+        relais.setAllRelais(OFF);
+        break;
+    case EnumExoStates::ARMED:
+        relais.setAllRelais(ON);
+        break;
+    default:
+        break;
+    }
     
 }
 

@@ -45,8 +45,8 @@ private:
     float LeftHipMeasuredCurrent = 0.0;
 
     // proximity sensor
-    ProxiSensor LeftProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
-    ProxiSensor RightProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+    // ProxiSensor LeftProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+    // ProxiSensor RightProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
     //settings
     ExoSettings& settings = ExoSettings::getInstance();
 

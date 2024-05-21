@@ -11,7 +11,6 @@ void Relay::setPins()
 
 void Relay::setRelais(int ID_Relais, bool state)
 {
-  Serial.println(ID_Relais);
   if (state != ON)
     pinExtender.digitalWrite(ID_Relais, HIGH);
   else
