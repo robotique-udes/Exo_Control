@@ -25,6 +25,8 @@ TouchScreen& screen = TouchScreen::getInstance();
 void updateAngles();
 void keyboardCommand();
 
+
+
 //===============================================================================================================
 //===================================================(SETUP)=====================================================
 //===============================================================================================================
@@ -40,6 +42,7 @@ void setup()
   pinExtender.begin();
   QuadratureEncoder::begin(); 
   tester.setMotor(&motor);
+  tester.setEncoder(&encoder);
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
 
@@ -60,14 +63,25 @@ void setup()
 void loop()
 {
   //--------------Test BLOC----------------
-  // Serial.print("Position Hanche Droite: ");
-  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
-  // Serial.print("Position Hanche Gauche: ");
-  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
-  // Serial.print("Position Genou Droit: ");
-  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
-  // Serial.print("Position Genou Gauche: ");
-  // Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
+  delay(500);
+  Serial.print("Position Hanche Droite: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
+  Serial.print("Position Hanche Gauche: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
+  Serial.print("Position Genou Droit: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
+  Serial.print("Position Genou Gauche: ");
+  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
+
+  Serial.print("Position Hanche Droite: ");
+  Serial.println(encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
+  Serial.print("Position Hanche Gauche: ");
+  Serial.println(encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
+  Serial.print("Position Genou Droit: ");
+  Serial.println(encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
+  Serial.print("Position Genou Gauche: ");
+  Serial.println(encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
+
 
   // motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
   // motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
@@ -75,7 +89,7 @@ void loop()
   // motor.motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
 
   // --------------TEST BLOC computer commands----------------
-  tester.keyboardCommand();
+  // tester.keyboardCommand();
 
 //--------------LOGIC BLOC---------------
 // ecran.nextLoop();

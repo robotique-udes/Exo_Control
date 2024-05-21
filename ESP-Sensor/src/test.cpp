@@ -6,6 +6,11 @@ void Test::setMotor(Motor *newMotor)
     motor = newMotor;
 }
 
+void Test::setEncoder(QuadratureEncoder *newEncoder)
+{
+    encoder = newEncoder;
+}
+
 void Test::testSonar()
 {
     float erreur = 0;
@@ -178,5 +183,26 @@ void Test::keyboardCommand()
       Serial.println("Relais ALL OFF");
       relais.setAllRelais(OFF);
     }
+    else if (incomingByte == 'z')
+    {
+      Serial.println("Reset Encoder Hanche Droite");
+      encoder->resetPosition(QuadratureEncoder::HAN_DRO);
+    }
+    else if (incomingByte == 'x')
+    {
+      Serial.println("Reset Encoder Hanche Gauche");
+      encoder->resetPosition(QuadratureEncoder::HAN_GAU);
+    }
+    else if (incomingByte == 'c')
+    {
+      Serial.println("Reset Encoder Genou Droit");
+      encoder->resetPosition(QuadratureEncoder::GEN_DRO);
+    }
+    else if (incomingByte == 'v')
+    {
+      Serial.println("Reset Encoder Genou Gauche");
+      encoder->resetPosition(QuadratureEncoder::GEN_GAU);
+    }
+    
   }
 }

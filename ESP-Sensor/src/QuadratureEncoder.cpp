@@ -104,3 +104,24 @@ void QuadratureEncoder::ISR_ENC_GEN_GAU()
         instance->pulses_gen_gau += (digitalRead(PIN_ENC_GEN_GAU_B)) ? 1 : -1;
     }
 }
+
+void QuadratureEncoder::resetPosition(int motor)
+{
+    switch (motor)
+    {
+    case HAN_DRO:
+        pulses_han_dro = 0;
+        break;
+    case HAN_GAU:
+        pulses_han_gau = 0;
+        break;
+    case GEN_DRO:
+        pulses_gen_dro = 0;
+        break;
+    case GEN_GAU:
+        pulses_gen_gau = 0;
+        break;
+    default:
+        Serial.println("Invalid motor");
+    }
+}
