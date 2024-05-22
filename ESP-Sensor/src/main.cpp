@@ -81,7 +81,8 @@ void loop()
   //--------------LOGIC BLOC---------------
   // ecran.nextLoop();
   updateAngles(FROM_IMU);
-  imuHandler->printBNOs();
+
+  imuHandler->printBNOs(0, 4);
   // motor.sonarRead(); //Ne pas décommenter, remplace par HMI
   //motor.neededTorque();
   // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID

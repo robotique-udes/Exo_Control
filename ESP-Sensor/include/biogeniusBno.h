@@ -44,7 +44,7 @@ class BNO {
         bool checkIfConnected();
         void printName();
         array<int16_t, 4> getQuat();
-        array<float, 3> getEuler(bool degrees = false);
+        array<float, 3> getEuler(bool radians = false);
         array<int16_t, 3> getAcceleration();
         array<int16_t, 3> getGyro();
         array<int16_t, 3> getMag();

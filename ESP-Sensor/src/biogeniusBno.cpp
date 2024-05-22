@@ -117,9 +117,9 @@ bool BNO::checkIfConnected() {
     return Wire.endTransmission() == 0;
 }
 
-array<float, 3> BNO::getEuler(bool degrees) {
-    // TODO - Check if values need to be converted depending on BNO placement
-    if (degrees) {
+// Returns the Euler angles of the BNO, in degrees by default
+array<float, 3> BNO::getEuler(bool radians) {
+    if (!radians) {
         return {(float)(this->data.euler[0] * RAD_TO_DEG),
                 (float)(this->data.euler[1] * RAD_TO_DEG),
                 (float)(this->data.euler[2] * RAD_TO_DEG)};
@@ -174,7 +174,7 @@ bool BNO::requestData() {
     this->muxPtr->selectChannel(this->muxAddress);
 
     if (!this->checkIfConnected()) {
-        // QUESTION If we are not connected, should we reset the data values?
+        this->resetDataValues();
         this->connected = false;
         return false;
     }

@@ -38,22 +38,39 @@ void IMU::requestData(){
     for (int i = 0; i < BNOs.size(); i++){
         BNOs[i]->requestData();
     }
+    this->computeAngles();
 
     last_update = millis();
 }
 
-void IMU::printBNOs(){
-    for (int i = 0; i < BNOs.size(); i++){
-        Serial.print("IMU "); BNOs[i]->printName(); Serial.print("\t");
-        Serial.print("LINK: "); Serial.print(BNOs[i]->checkIfConnected()); Serial.print("\t");
-        Serial.print("YAW:  ");   Serial.print("\t"); Serial.println(BNOs[i]->getEuler(true)[1]);
+// Print relevant IMU information
+void IMU::printBNOs(int startIndex, int endIndex){
+    for (int i = startIndex; i < endIndex; i++){
+        Serial.print("\tIMU "); BNOs[i]->printName(); Serial.print("\t");
+        Serial.print("LINK: "); Serial.print(BNOs[i]->checkIfConnected());
+        Serial.print(" RAW ANGLE:\t"); Serial.print(this->BNOs[i]->getEuler()[1]);
+        Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<enumIMU>(i)));
     }
 }
 
+void IMU::computeAngles() {
+    float hipL = BNOs[static_cast<int> (enumIMU::HIP_L)]->getEuler()[1];
+    float kneeL = -BNOs[static_cast<int> (enumIMU::KNEE_L)]->getEuler()[1];
+    float hipR = -BNOs[static_cast<int> (enumIMU::HIP_R)]->getEuler()[1];
+    float kneeR = BNOs[static_cast<int> (enumIMU::KNEE_R)]->getEuler()[1];
+
+    angles[static_cast<int> (enumIMU::HIP_L)] = hipL;
+    angles[static_cast<int> (enumIMU::KNEE_L)] = abs(kneeL-hipL);
+
+    angles[static_cast<int> (enumIMU::HIP_R)] = hipR;
+    angles[static_cast<int> (enumIMU::KNEE_R)] = abs(kneeR-hipR);
+
+}
+
 // Returns Yaw, same as previous implementation
-int16_t IMU::getValAngle(enumIMU position){
+float IMU::getValAngle(enumIMU position){
     int pos = static_cast<int> (position);
-    return BNOs[pos]->getEuler()[1];
+    return this->angles[pos];
 }
 
 BNOStruct IMU::getBNOData(enumIMU position){

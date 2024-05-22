@@ -11,6 +11,7 @@ using namespace std;
 class IMU {
     private:
         array<BNO *, 5> BNOs;
+        array<float, 5> angles;
         Multiplex mux;
         long last_update = 0;
 
@@ -18,8 +19,9 @@ class IMU {
         IMU();
         bool begin();
         void requestData();
-        void printBNOs();
-        int16_t getValAngle(enumIMU position);
+        void printBNOs(int startIndex = 0, int endIndex = 5);
+        void computeAngles(); // Computes angles of each part relative to each other
+        float getValAngle(enumIMU position); // Returns the relative angle of a part
         BNOStruct getBNOData(enumIMU position);
 
 };
