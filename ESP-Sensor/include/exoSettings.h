@@ -16,8 +16,9 @@ class ExoSettings{
         // Disarmed, Armed, Motorised
         EnumExoStates currentState;
         
-        // Tests
-        bool state;
+        // Binary states
+        bool state = 1;
+        bool angleSource = 1;
 
         // Calibrated height
         int height;
@@ -32,11 +33,13 @@ class ExoSettings{
         Relay relais;
         EnumExoStates getMotorState();
         bool getProximState();
+        bool getAngleSource();
         int getHeight();
         int getMotorPower();
 
         void setMotorState(EnumExoStates newState);
         void setProximState(bool setWalk);
+        void setAngleSource(bool angleSource);
         void setHeight(int setHeight);
         void setFutureMotorPower(double setMotoPower);
         void saveMotorPower();

@@ -12,7 +12,7 @@
 #include "test.h" 
 #include "touchScreen.h"
 #include "callbackSetup.h"
-
+#include "exoSettings.h"
 
 Test tester;
 Relay relais;
@@ -20,12 +20,10 @@ Motor motor;
 Imu imu01;
 QuadratureEncoder encoder;
 TouchScreen& screen = TouchScreen::getInstance();
+ExoSettings& settings = ExoSettings::getInstance();
 
 
 void updateAngles();
-void keyboardCommand();
-
-
 
 //===============================================================================================================
 //===================================================(SETUP)=====================================================
@@ -113,12 +111,24 @@ void loop()
   screen.update();
 }
 
-void updateAngles()
+void updateAngles(bool angleSource)
 {
-  imu01.getAngles();
-  motor.setAngle(enumIMU::HipR, imu01.getValAngle(enumIMU::HipR));
-  motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
-  motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
-  motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
+  switch(angleSource)
+  {
+    case(FROM_ENCODER):
+      //Add encoder logic to fecth and send angles
+      break;
+    case(FROM_IMU):
+      //Need change to 085
+      imu01.getAngles();
+      motor.setAngle(enumIMU::HipR, imu01.getValAngle(enumIMU::HipR));
+      motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
+      motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
+      motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
+      break;
+    default:
+      Serial.print("Angle source not recognized");
+      break;
+  }
 }
 

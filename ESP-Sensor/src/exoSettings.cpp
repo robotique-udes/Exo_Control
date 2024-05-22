@@ -29,6 +29,10 @@ bool ExoSettings::getProximState(){
     return state;
 }
 
+bool ExoSettings::getAngleSource(){
+    return angleSource;
+}
+
 int ExoSettings::getHeight(){
     return height;
 }
@@ -53,10 +57,16 @@ void ExoSettings::setMotorState(EnumExoStates newState){
     
 }
 
-void ExoSettings::setProximState(bool nState){
-    state = nState;
-    Serial.print("Logic state: ");
+void ExoSettings::setProximState(bool newState){
+    state = newState;
+    Serial.print("Proxim state: ");
     Serial.println(state);
+}
+
+void ExoSettings::setAngleSource(bool newSource){
+    angleSource = newSource;
+    Serial.print("Angle source: ");
+    Serial.println(angleSource);
 }
 
 void ExoSettings::setHeight(int setHeight){
@@ -73,3 +83,4 @@ void ExoSettings::setFutureMotorPower(double setFutureMotoPower){
 void ExoSettings::saveMotorPower(){
     currentMotorPower = futureMotorPower;
 }
+

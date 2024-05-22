@@ -86,3 +86,9 @@
 //------ TOUCH SCREEN ------
 #define RX_HMI 16
 #define TX_HMI 17
+
+//------ SETTINGS -------
+#define WALK_MODE 0
+#define SQUAT_MODE 1
+#define FROM_ENCODER 0
+#define FROM_IMU 1
