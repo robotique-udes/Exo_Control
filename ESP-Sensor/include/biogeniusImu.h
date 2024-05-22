@@ -19,6 +19,7 @@ class IMU {
         IMU(TwoWire* wireUsed);
         bool begin();
         void requestData();
+        void printBNOs();
         int16_t getValAngle(enumIMU position);
         BNOStruct getBNOData(enumIMU position);
 

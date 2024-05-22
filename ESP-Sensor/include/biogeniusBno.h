@@ -34,7 +34,6 @@ class BNO {
         void ensureReadAvailable(int16_t length);
         void updateEuler();
         void resetDataValues(); // Sets all fields to 0
-        void printName();
 
     public:
         BNO(enumIMU position, int muxAddress, Multiplex* muxPtr);
@@ -43,6 +42,7 @@ class BNO {
         bool requestData(); // Request data from BNO, stores values in data structure
         bool beginTracking();
         bool checkIfConnected();
+        void printName();
         array<int16_t, 4> getQuat();
         array<float, 3> getEuler(bool degrees = false);
         array<int16_t, 3> getAcceleration();

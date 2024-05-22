@@ -174,6 +174,7 @@ bool BNO::requestData() {
     this->muxPtr->selectChannel(this->muxAddress);
 
     if (!this->checkIfConnected()) {
+        // QUESTION If we are not connected, should we reset the data values?
         this->connected = false;
         return false;
     }
@@ -181,6 +182,7 @@ bool BNO::requestData() {
     // BNO was not previously connected, send setup commands
     // or if quat[0] is 0, then we need to reinitialize
     if (!this->connected || this->data.quat[0] == 0) {
+        // TO TEST if power was disconnected, the BNO seems to need the reset pin, to test
         this->beginTransmission(ACC_REPORT);
         this->beginTransmission(GYRO_REPORT);
         this->beginTransmission(MAG_REPORT);
