@@ -112,13 +112,13 @@ int16_t BNO::getTime() {
 
 // "Ping" the BNO to check if it is connected
 bool BNO::checkIfConnected() {
+    this->muxPtr->selectChannel(this->muxAddress);
     Wire.beginTransmission(this->i2cAddress);
     return Wire.endTransmission() == 0;
 }
 
 array<float, 3> BNO::getEuler(bool degrees) {
     // TODO - Check if values need to be converted depending on BNO placement
-    // TODO check to implement degrees return this->data.euler * (degrees ? RAD_TO_DEG : 1.0);
     if (degrees) {
         return {(float)(this->data.euler[0] * RAD_TO_DEG),
                 (float)(this->data.euler[1] * RAD_TO_DEG),
@@ -136,43 +136,6 @@ void BNO::beginTransmission(uint8_t reportType) {
     Wire.beginTransmission(this->i2cAddress);
     Wire.write(cmd_acc, sizeof(cmd_acc));
     Wire.endTransmission();
-}
-
-// Start tracking of BNO, returns true if successful
-bool BNO::beginTracking() {
-    Serial.print("beginTracking of IMU ");
-    this->printName();
-    Serial.print(" w/address 0x");
-    Serial.println(this->i2cAddress, HEX);
-
-    this->muxPtr->selectChannel(this->muxAddress);
-
-    
-
-    Serial.println("Reports requested");
-
-    // Wait for BNO to return non-zero quaternions
-    // Number of tries is a magic number, may need to be increased
-    bool status = false;
-    this->connected = true;
-
-    for (uint8_t i=0; i<5 && !status; i++) {
-        requestData();
-        if (!(!this->data.quat[0] && !this->data.quat[1] && !this->data.quat[2] && !this->data.quat[3])) {
-            Serial.println("First data valid!");
-
-            Serial.print("Quat: ");
-            Serial.print(this->data.quat[0]); Serial.print(" ");
-            Serial.print(this->data.quat[1]); Serial.print(" ");
-            Serial.print(this->data.quat[2]); Serial.print(" ");
-            Serial.println(this->data.quat[3]);
-
-            status = true;
-        }
-    } 
-
-    this->connected = status;
-    return status;
 }
 
 BNOStruct BNO::getData() {
@@ -216,13 +179,15 @@ bool BNO::requestData() {
     }
 
     // BNO was not previously connected, send setup commands
-    if (!this->connected) {
+    // or if quat[0] is 0, then we need to reinitialize
+    if (!this->connected || this->data.quat[0] == 0) {
         this->beginTransmission(ACC_REPORT);
         this->beginTransmission(GYRO_REPORT);
         this->beginTransmission(MAG_REPORT);
         this->beginTransmission(LAC_REPORT);
         this->beginTransmission(QUAT_REPORT);
         this->beginTransmission(TIME_REPORT);
+        this->resetDataValues();
         this->connected = true;
     }
 
