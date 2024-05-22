@@ -4,7 +4,6 @@
 #include "enumIMU.h"
 #include "PinExtender.h"
 #include "QuadratureEncoder.h"
-#include "biogeniusBno.h"
 #include "biogeniusImu.h"
 #include "touchScreen.h"
 #include <SPI.h>
@@ -21,6 +20,8 @@ Test tester;
 Relay relais;
 Motor motor;
 Imu imu01;
+// Handler must be a pointer because Wire needs to be instanciated
+IMU *imuHandler;
 QuadratureEncoder encoder;
 TouchScreen& screen = TouchScreen::getInstance();
 ExoSettings& settings = ExoSettings::getInstance();
@@ -39,7 +40,11 @@ void setup()
 
   Serial2.begin(9600, SERIAL_8N1, 16, 17); 
 
+  // IMU setup
+  Wire.setPins(MAIN_I2C_SDA, MAIN_I2C_SCL);
   Wire.begin();
+  imuHandler = new IMU();
+
   pinExtender.begin();
   QuadratureEncoder::begin(); 
   tester.setMotor(&motor);
@@ -63,11 +68,6 @@ void setup()
 
 void loop()
 {
-  imu01->requestData();
-
-  if (gaming % 100) {
-    imu01->getValAngle(enumIMU::EXO_BACK);
-  }
 
   //--------------Test BLOC----------------
   delay(500);
@@ -130,10 +130,10 @@ void updateAngles(bool angleSource)
     case(FROM_IMU):
       //Need change to 085
       imu01.getAngles();
-      motor.setAngle(enumIMU::HipR, imu01.getValAngle(enumIMU::HipR));
-      motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
-      motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
-      motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
+      motor.setAngle(enumIMU::HIP_R, imu01.getValAngle(enumIMU::HIP_R));
+      motor.setAngle(enumIMU::HIP_L, imu01.getValAngle(enumIMU::HIP_L));
+      motor.setAngle(enumIMU::KNEE_R, imu01.getValAngle(enumIMU::KNEE_R));
+      motor.setAngle(enumIMU::KNEE_L, imu01.getValAngle(enumIMU::KNEE_L));
       break;
     default:
       Serial.print("Angle source not recognized");

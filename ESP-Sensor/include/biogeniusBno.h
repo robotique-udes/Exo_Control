@@ -2,7 +2,7 @@
 #define BIOGENIUSBNO_H_
 #include "bnoStruct.h"
 #include "multiplex.h"
-#include "enum.h"
+#include "enumIMU.h"
 #include <Wire.h>
 #include <array>
 using namespace std;

@@ -1,5 +1,4 @@
 #include "biogeniusImu.h"
-#include "enum.h"
 #include "Arduino.h"
 using namespace std;
 
