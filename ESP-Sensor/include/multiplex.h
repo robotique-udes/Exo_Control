@@ -1,11 +1,11 @@
 #ifndef MULTIPLEX_H_
 #define MULTIPLEX_H_
-
 #include <Wire.h>
 
 class Multiplex{
 
 public:
+    const static uint8_t MUX_ADDR = 0x70;
 
     Multiplex();
     // Default constructor
@@ -16,7 +16,6 @@ public:
     int getCurrentChannel();
 
 private:
-    
     TwoWire* monWire;
     uint8_t currentChannel;
 };

@@ -1,10 +1,15 @@
 #include "multiplex.h"
+#include <Wire.h>
+#include "Arduino.h"
+#include "define.h"
 
-Multiplex::Multiplex(){}
+Multiplex::Multiplex(){
+    this->monWire = &Wire;
+    selectChannel(0);
+}
 
 Multiplex::Multiplex(TwoWire* wireUsed){
     this->monWire = wireUsed;
-    currentChannel = 0;
     selectChannel(0);
 }
 
@@ -12,8 +17,9 @@ bool Multiplex::selectChannel(uint8_t channel){
     if(channel > 7 || channel < 0){
         return false;
     }
+    // TODO don't write if already on good channel
 
-    monWire->beginTransmission(0x70);
+    monWire->beginTransmission(this->MUX_ADDR);
     monWire->write(1 << channel);
     monWire->endTransmission();
 
@@ -25,4 +31,3 @@ bool Multiplex::selectChannel(uint8_t channel){
 int Multiplex::getCurrentChannel(){
     return currentChannel;
 }
-

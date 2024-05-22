@@ -80,6 +80,12 @@
 #define I2C_SCL2 32
 #define I2C_SDA3 25
 #define I2C_SCL3 14
+
+#define IMU_DEBUG true
+#define MAIN_I2C_SDA 26
+#define MAIN_I2C_SCL 27
+#define I2C_CLOCK   400000L 
+
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (800)
 
