@@ -11,6 +11,7 @@ public:
     static void begin();
     long getPositionPulses(int motor);
     float getPositionAngle(int motor);
+    float getPositionAngleRad(int motor);
     void resetPosition(int motor);
     static const int PIN_ENC_HAN_DRO_A = 32;
     static const int PIN_ENC_HAN_DRO_B = 33;

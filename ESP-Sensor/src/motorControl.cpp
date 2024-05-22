@@ -1,5 +1,5 @@
 #include "motorControl.h"
-bool motorMode = OFF; // mutliplie le torque demandé au moteur, lorsque a 0, les moteur sont effectivement à Off, contrôlé avec le HMI ou hardcode pour test
+bool motorMode = ON; // mutliplie le torque demandé au moteur, lorsque a 0, les moteur sont effectivement à Off, contrôlé avec le HMI ou hardcode pour test
 double power = 175;
 
 Motor::Motor()
@@ -47,13 +47,13 @@ void Motor::LimitMinMaxInt(int &val, int max)
     val = -max;
 }
 
-/*void Motor::neededTorque()
+void Motor::neededTorque()
 {
   // If clutch are on automatic, calculate torque needed
   if (motorMode)
   {
     // Right Hip Torque Equation
-    if (!RightProxim.IsOnTheGround())
+    if (false)// if (!RightProxim.IsOnTheGround())
       RightHipTorque =0;
     else
     {
@@ -66,7 +66,7 @@ void Motor::LimitMinMaxInt(int &val, int max)
     }
 
     // Left Hip Torque Equation
-    if (!LeftProxim.IsOnTheGround())
+    if (false)// if (!LeftProxim.IsOnTheGround())
         LeftHipTorque = 0;
     else
     {
@@ -77,7 +77,7 @@ void Motor::LimitMinMaxInt(int &val, int max)
     }
 
     // Right Knee Torque Equation
-    if (!RightProxim.IsOnTheGround())
+    if (false) // if (!RightProxim.IsOnTheGround())
     {
       if (toDegrees(RightKneeAngle) > 0)
         RightKneeTorque = ((sin(RightHipAngle) * (LF / 2) * (MF * G)) + ((sin(RightHipAngle) * LF)) * (G * MH)) * 0.5;
@@ -93,7 +93,7 @@ void Motor::LimitMinMaxInt(int &val, int max)
     }
 
     // Left Knee Torque Equation
-    if (!LeftProxim.IsOnTheGround())
+    if (false) // if (!LeftProxim.IsOnTheGround())
     {
       if (toDegrees(LeftKneeAngle) > 0)
         LeftKneeTorque = ((sin(LeftHipAngle) * (LF / 2) * (MF * G)) + ((sin(LeftHipAngle) * LF)) * (G * MH)) * 0.5;
@@ -115,7 +115,15 @@ void Motor::LimitMinMaxInt(int &val, int max)
     LeftKneeTorque = 0;
     RightKneeTorque = 0;
   }
-}*/
+  Serial.print("  LeftHipTorque: ");
+  Serial.print(LeftHipTorque);
+  Serial.print("  RightHipTorque: ");
+  Serial.print(RightHipTorque);
+  Serial.print("  LeftKneeTorque: ");
+  Serial.print(LeftKneeTorque);
+  Serial.print("  RightKneeTorque: ");
+  Serial.println(RightKneeTorque);
+}
 
 void Motor::printTorque()
 {
@@ -185,6 +193,16 @@ void Motor::PIDCurrentPrealable()
   PWMLeftKnee = map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
   PWMRightHip = map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
   PWMLeftHip = map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power);
+
+  Serial.print("  PWMRightKnee: ");
+  Serial.print(PWMRightKnee);
+  Serial.print("  PWMLeftKnee: ");
+  Serial.print(PWMLeftKnee);
+  Serial.print("  PWMRightHip: ");
+  Serial.print(PWMRightHip);
+  Serial.print("  PWMLeftHip: ");
+  Serial.println(PWMLeftHip);
+
 }
 
 // void Motor::printProxim()
@@ -229,6 +247,28 @@ void Motor::setAngle(enumIMU imuType, float val)
     LeftKneeAngle = val;
     break;
   default:
+    break;
+  }
+}
+
+float Motor::getAngle(enumIMU imuType)
+{
+  switch (imuType)
+  {
+  case enumIMU::HipR:
+    return RightHipAngle;
+    break;
+  case enumIMU::KneeR:
+    return RightKneeAngle;
+    break;
+  case enumIMU::HipL:
+    return LeftHipAngle;
+    break;
+  case enumIMU::KneeL:
+    return LeftKneeAngle;
+    break;
+  default:
+    return 0;
     break;
   }
 }

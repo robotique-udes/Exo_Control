@@ -73,6 +73,32 @@ float QuadratureEncoder::getPositionAngle(int motor)
     return (float)pulses / pulsesPerRevolution * 360.0;
 }
 
+
+float QuadratureEncoder::getPositionAngleRad(int motor)
+{
+    long pulses;
+    switch (motor)
+    {
+    case HAN_DRO:
+        pulses = pulses_han_dro;
+        break;
+    case HAN_GAU:
+        pulses = -pulses_han_gau;
+        break;
+    case GEN_DRO:
+        pulses = -pulses_gen_dro;
+        break;
+    case GEN_GAU:
+        pulses = pulses_gen_gau;
+        break;
+    default:
+        Serial.println("Invalid motor");
+        return 0.0;
+    }
+    return (float)pulses / pulsesPerRevolution * 2 * PI;
+}
+
+
 void QuadratureEncoder::ISR_ENC_HAN_DRO()
 {
     if (instance != nullptr)

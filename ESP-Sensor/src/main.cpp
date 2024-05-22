@@ -9,7 +9,7 @@
 #include <Nextion.h>
 #include <string.h>
 #include "motorControl.h"
-#include "test.h" 
+#include "test.h"
 #include "touchScreen.h"
 #include "callbackSetup.h"
 #include "exoSettings.h"
@@ -19,11 +19,10 @@ Relay relais;
 Motor motor;
 Imu imu01;
 QuadratureEncoder encoder;
-TouchScreen& screen = TouchScreen::getInstance();
-ExoSettings& settings = ExoSettings::getInstance();
+TouchScreen &screen = TouchScreen::getInstance();
+ExoSettings &settings = ExoSettings::getInstance();
 
-
-void updateAngles();
+void updateAngles(int angleSource);
 
 //===============================================================================================================
 //===================================================(SETUP)=====================================================
@@ -34,11 +33,11 @@ void setup()
   Serial.begin(115200);
   nexInit();
 
-  Serial2.begin(9600, SERIAL_8N1, 16, 17); 
+  Serial2.begin(9600, SERIAL_8N1, 16, 17);
 
   Wire.begin();
   pinExtender.begin();
-  QuadratureEncoder::begin(); 
+  QuadratureEncoder::begin();
   tester.setMotor(&motor);
   tester.setEncoder(&encoder);
   pwmPinExtender.resetDevices();
@@ -46,7 +45,7 @@ void setup()
 
   motor.setPins();
   relais.setPins();
- 
+
   relais.setAllRelais(OFF);
 
   //--------------Test BLOC----------------
@@ -55,31 +54,12 @@ void setup()
   setupCallbacks();
   // imu01.IMUSetup(); // Comment if no IMU are in use
   // imu01.wifiSetup(); // Comment if not using wifi com
-
 }
 
 void loop()
 {
   //--------------Test BLOC----------------
-  delay(500);
-  Serial.print("Position Hanche Droite: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_DRO));
-  Serial.print("Position Hanche Gauche: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::HAN_GAU));
-  Serial.print("Position Genou Droit: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_DRO));
-  Serial.print("Position Genou Gauche: ");
-  Serial.println(encoder.getPositionPulses(QuadratureEncoder::GEN_GAU));
-
-  Serial.print("Position Hanche Droite: ");
-  Serial.println(encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
-  Serial.print("Position Hanche Gauche: ");
-  Serial.println(encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
-  Serial.print("Position Genou Droit: ");
-  Serial.println(encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
-  Serial.print("Position Genou Gauche: ");
-  Serial.println(encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
-
+  delay(400);
 
   // motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
   // motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
@@ -89,46 +69,59 @@ void loop()
   // --------------TEST BLOC computer commands----------------
   tester.keyboardCommand();
 
-//--------------LOGIC BLOC---------------
-// ecran.nextLoop();
-// updateAngles();
-// motor.sonarRead(); //Ne pas décommenter, remplace par HMI
-// motor.neededTorque();
-// motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
-// motor.readCurrent(); Ne pas décommenter, pas utile sans PID
-// motor.PIDCurrentPrealable();
-// motor.sendCommand();
+  //--------------LOGIC BLOC---------------
+  // ecran.nextLoop();
+  updateAngles(FROM_ENCODER);
+  // motor.sonarRead(); //Ne pas décommenter, remplace par HMI
+  motor.neededTorque();
+  // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
+  // motor.readCurrent(); Ne pas décommenter, pas utile sans PID
+  // motor.PIDCurrentPrealable();
+  // motor.sendCommand();
 
-//--------------PRINTING BLOC-------------
-// Serial.print(motor.getPower());
-// motor.printSonar();
-// motor.printTorque();
-// imu01.printAngles();
-// Serial.println("loop");
-  //delay(500);
+  //--------------PRINTING BLOC-------------
+  // Serial.print(motor.getPower());
+  // motor.printSonar();
+  // motor.printTorque();
+  // imu01.printAngles();
+  // Serial.println("loop");
+  // delay(500);
 
   // Obligatoire pour le HMI
   screen.update();
 }
 
-void updateAngles(bool angleSource)
+void updateAngles(int angleSource)
 {
-  switch(angleSource)
+  switch (angleSource)
   {
-    case(FROM_ENCODER):
-      //Add encoder logic to fecth and send angles
-      break;
-    case(FROM_IMU):
-      //Need change to 085
-      imu01.getAngles();
-      motor.setAngle(enumIMU::HipR, imu01.getValAngle(enumIMU::HipR));
-      motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
-      motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
-      motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
-      break;
-    default:
-      Serial.print("Angle source not recognized");
-      break;
+  case (FROM_ENCODER):
+    // Add encoder logic to fecth and send angles
+    motor.setAngle(enumIMU::HipR, encoder.getPositionAngleRad(QuadratureEncoder::HAN_DRO));
+    motor.setAngle(enumIMU::HipL, encoder.getPositionAngleRad(QuadratureEncoder::HAN_GAU));
+    motor.setAngle(enumIMU::KneeR, encoder.getPositionAngleRad(QuadratureEncoder::GEN_DRO));
+    motor.setAngle(enumIMU::KneeL, encoder.getPositionAngleRad(QuadratureEncoder::GEN_GAU));
+    Serial.print("HipR: ");
+    Serial.print(motor.getAngle(enumIMU::HipR));
+    Serial.print("  HipL: ");
+    Serial.print(motor.getAngle(enumIMU::HipL));
+    Serial.print("  KneeR: ");
+    Serial.print(motor.getAngle(enumIMU::KneeR));
+    Serial.print("  KneeL: ");
+    Serial.println(motor.getAngle(enumIMU::KneeL));
+
+    
+    break;
+  case (FROM_IMU):
+    // Need change to 085
+    imu01.getAngles();
+    motor.setAngle(enumIMU::HipR, imu01.getValAngle(enumIMU::HipR));
+    motor.setAngle(enumIMU::HipL, imu01.getValAngle(enumIMU::HipL));
+    motor.setAngle(enumIMU::KneeR, imu01.getValAngle(enumIMU::KneeR));
+    motor.setAngle(enumIMU::KneeL, imu01.getValAngle(enumIMU::KneeL));
+    break;
+  default:
+    Serial.print("Angle source not recognized");
+    break;
   }
 }
-
