@@ -50,20 +50,12 @@ void IMU::printBNOs(){
     }
 }
 
+// Returns Yaw, same as previous implementation
 int16_t IMU::getValAngle(enumIMU position){
     int pos = static_cast<int> (position);
-    Serial.print("IMU "); Serial.print(pos); Serial.print("\t"); 
-    Serial.print("Euler:  ");   Serial.print("\t");
-    
-    Serial.print(BNOs[pos]->getGyro()[0]);    Serial.print("\t");
-    Serial.print(BNOs[pos]->getGyro()[1]);    Serial.print("\t");
-    Serial.print(BNOs[pos]->getGyro()[2]);    Serial.print("\t");
-    Serial.println();
-
-    return BNOs[pos]->getEuler()[0];
+    return BNOs[pos]->getEuler()[1];
 }
 
 BNOStruct IMU::getBNOData(enumIMU position){
     return BNOs[static_cast<int> (position)]->getData();
 }
-

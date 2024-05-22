@@ -68,7 +68,7 @@ void loop()
 {
 
   //--------------Test BLOC----------------
-  delay(400);
+  delay(200);
 
   // motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
   // motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
@@ -80,7 +80,8 @@ void loop()
 
   //--------------LOGIC BLOC---------------
   // ecran.nextLoop();
-  updateAngles(FROM_ENCODER);
+  updateAngles(FROM_IMU);
+  imuHandler->printBNOs();
   // motor.sonarRead(); //Ne pas décommenter, remplace par HMI
   motor.neededTorque();
   // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
@@ -91,8 +92,7 @@ void loop()
   //--------------PRINTING BLOC-------------
   // Serial.print(motor.getPower());
   // motor.printSonar();
-  // motor.printTorque();
-  // imu01.printAngles();
+  //motor.printTorque();
   // Serial.println("loop");
   // delay(500);
 
@@ -121,11 +121,11 @@ void updateAngles(int angleSource)
     break;
     case(FROM_IMU):
       //Need change to 085
-      imu01.getAngles();
-      motor.setAngle(enumIMU::HIP_R, imu01.getValAngle(enumIMU::HIP_R));
-      motor.setAngle(enumIMU::HIP_L, imu01.getValAngle(enumIMU::HIP_L));
-      motor.setAngle(enumIMU::KNEE_R, imu01.getValAngle(enumIMU::KNEE_R));
-      motor.setAngle(enumIMU::KNEE_L, imu01.getValAngle(enumIMU::KNEE_L));
+      imuHandler->requestData();
+      motor.setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
+      motor.setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
+      motor.setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
+      motor.setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
       break;
   default:
     Serial.print("Angle source not recognized");

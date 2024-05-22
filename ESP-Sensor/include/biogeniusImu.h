@@ -16,7 +16,6 @@ class IMU {
 
     public:
         IMU();
-        IMU(TwoWire* wireUsed);
         bool begin();
         void requestData();
         void printBNOs();
