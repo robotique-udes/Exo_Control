@@ -68,7 +68,7 @@ void loop()
 {
 
   //--------------Test BLOC----------------
-  delay(200);
+  delay(100);
 
   // motor.motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
   // motor.motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
@@ -83,7 +83,7 @@ void loop()
   updateAngles(FROM_IMU);
   imuHandler->printBNOs();
   // motor.sonarRead(); //Ne pas décommenter, remplace par HMI
-  motor.neededTorque();
+  //motor.neededTorque();
   // motor.neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor.readCurrent(); Ne pas décommenter, pas utile sans PID
   // motor.PIDCurrentPrealable();
@@ -98,6 +98,7 @@ void loop()
 
   // Obligatoire pour le HMI
   screen.update();
+  Serial.println(" ");
 }
 
 void updateAngles(int angleSource)

@@ -82,8 +82,8 @@
 #define I2C_SCL3 14
 
 #define IMU_DEBUG true
-#define MAIN_I2C_SDA 26
-#define MAIN_I2C_SCL 27
+#define MAIN_I2C_SDA 21
+#define MAIN_I2C_SCL 22
 #define I2C_CLOCK   400000L 
 
 /* Set the delay between fresh samples */
