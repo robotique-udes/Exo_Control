@@ -31,8 +31,3 @@ bool Multiplex::selectChannel(uint8_t channel){
 int Multiplex::getCurrentChannel(){
     return currentChannel;
 }
-
-TwoWire* Multiplex::getWire(){
-    return monWire;
-}
-

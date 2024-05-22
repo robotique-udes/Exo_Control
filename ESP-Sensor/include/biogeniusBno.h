@@ -42,7 +42,7 @@ class BNO {
         ~BNO();
         bool requestData(); // Request data from BNO, stores values in data structure
         bool beginTracking();
-        bool isConnected();
+        bool checkIfConnected();
         array<int16_t, 4> getQuat();
         array<float, 3> getEuler(bool degrees = false);
         array<int16_t, 3> getAcceleration();

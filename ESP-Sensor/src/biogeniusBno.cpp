@@ -110,15 +110,19 @@ int16_t BNO::getTime() {
     return this->data.time;
 }
 
-bool BNO::isConnected() {
-    return this->connected;
+// "Ping" the BNO to check if it is connected
+bool BNO::checkIfConnected() {
+    Wire.beginTransmission(this->i2cAddress);
+    return Wire.endTransmission() == 0;
 }
 
 array<float, 3> BNO::getEuler(bool degrees) {
     // TODO - Check if values need to be converted depending on BNO placement
     // TODO check to implement degrees return this->data.euler * (degrees ? RAD_TO_DEG : 1.0);
     if (degrees) {
-        return {this->data.euler[0] * RAD_TO_DEG, this->data.euler[1] * RAD_TO_DEG, this->data.euler[2] * RAD_TO_DEG};
+        return {(float)(this->data.euler[0] * RAD_TO_DEG),
+                (float)(this->data.euler[1] * RAD_TO_DEG),
+                (float)(this->data.euler[2] * RAD_TO_DEG)};
     } else {
         return this->data.euler;
     }
@@ -143,19 +147,16 @@ bool BNO::beginTracking() {
 
     this->muxPtr->selectChannel(this->muxAddress);
 
-    this->beginTransmission(ACC_REPORT);
-    this->beginTransmission(GYRO_REPORT);
-    this->beginTransmission(MAG_REPORT);
-    this->beginTransmission(LAC_REPORT);
-    this->beginTransmission(QUAT_REPORT);
+    
 
     Serial.println("Reports requested");
 
     // Wait for BNO to return non-zero quaternions
     // Number of tries is a magic number, may need to be increased
     bool status = false;
+    this->connected = true;
 
-    for (uint8_t i=0; i<20 && !status; i++) {
+    for (uint8_t i=0; i<5 && !status; i++) {
         requestData();
         if (!(!this->data.quat[0] && !this->data.quat[1] && !this->data.quat[2] && !this->data.quat[3])) {
             Serial.println("First data valid!");
@@ -167,7 +168,6 @@ bool BNO::beginTracking() {
             Serial.println(this->data.quat[3]);
 
             status = true;
-            Serial.println("Status true!");
         }
     } 
 
@@ -201,13 +201,30 @@ void BNO::updateEuler() {
         (-sqx - sqy + sqz + sqw));
 }
 
+// Try to request data from BNO, return true if successful
 bool BNO::requestData() {
+
     int16_t length;
     uint8_t channel __attribute__((unused));
     uint8_t seqnum  __attribute__((unused));
 
-    // TODO add back change to multiplexer
     this->muxPtr->selectChannel(this->muxAddress);
+
+    if (!this->checkIfConnected()) {
+        this->connected = false;
+        return false;
+    }
+
+    // BNO was not previously connected, send setup commands
+    if (!this->connected) {
+        this->beginTransmission(ACC_REPORT);
+        this->beginTransmission(GYRO_REPORT);
+        this->beginTransmission(MAG_REPORT);
+        this->beginTransmission(LAC_REPORT);
+        this->beginTransmission(QUAT_REPORT);
+        this->beginTransmission(TIME_REPORT);
+        this->connected = true;
+    }
 
     // Parse SHTP header
     Wire.requestFrom(this->i2cAddress,4+1);       // read 4-byte SHTP header and first byte of cargo
