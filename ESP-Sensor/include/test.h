@@ -15,6 +15,7 @@ public:
     void keyboardCommand(); // S'assurer qu'il n'y a pas de délais dans le main pour que les commandes soient réactives
     void setMotor(Motor* motor);
     void setEncoder(QuadratureEncoder* encoder);
+    void printEncoder();
 private:
     Relay relais;
     Motor* motor;

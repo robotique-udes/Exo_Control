@@ -74,6 +74,7 @@ public:
     double getPower();
 
     void setAngle(enumIMU enumType, float val);
+    float getAngle(enumIMU enumType);
     float toDegrees(float radians);
     void printProxim();
     void printTorque();
