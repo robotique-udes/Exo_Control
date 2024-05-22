@@ -255,16 +255,16 @@ float Motor::getAngle(enumIMU imuType)
 {
   switch (imuType)
   {
-  case enumIMU::HipR:
+  case enumIMU::HIP_R:
     return RightHipAngle;
     break;
-  case enumIMU::KneeR:
+  case enumIMU::KNEE_R:
     return RightKneeAngle;
     break;
-  case enumIMU::HipL:
+  case enumIMU::HIP_L:
     return LeftHipAngle;
     break;
-  case enumIMU::KneeL:
+  case enumIMU::KNEE_L:
     return LeftKneeAngle;
     break;
   default:

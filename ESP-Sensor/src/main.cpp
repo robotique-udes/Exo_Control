@@ -106,18 +106,18 @@ void updateAngles(int angleSource)
   {
   case (FROM_ENCODER):
     // Add encoder logic to fecth and send angles
-    motor.setAngle(enumIMU::HipR, encoder.getPositionAngleRad(QuadratureEncoder::HAN_DRO));
-    motor.setAngle(enumIMU::HipL, encoder.getPositionAngleRad(QuadratureEncoder::HAN_GAU));
-    motor.setAngle(enumIMU::KneeR, encoder.getPositionAngleRad(QuadratureEncoder::GEN_DRO));
-    motor.setAngle(enumIMU::KneeL, encoder.getPositionAngleRad(QuadratureEncoder::GEN_GAU));
+    motor.setAngle(enumIMU::HIP_R, encoder.getPositionAngleRad(QuadratureEncoder::HAN_DRO));
+    motor.setAngle(enumIMU::HIP_L, encoder.getPositionAngleRad(QuadratureEncoder::HAN_GAU));
+    motor.setAngle(enumIMU::KNEE_R, encoder.getPositionAngleRad(QuadratureEncoder::GEN_DRO));
+    motor.setAngle(enumIMU::KNEE_L, encoder.getPositionAngleRad(QuadratureEncoder::GEN_GAU));
     Serial.print("HipR: ");
-    Serial.print(motor.getAngle(enumIMU::HipR));
+    Serial.print(motor.getAngle(enumIMU::HIP_R));
     Serial.print("  HipL: ");
-    Serial.print(motor.getAngle(enumIMU::HipL));
+    Serial.print(motor.getAngle(enumIMU::HIP_L));
     Serial.print("  KneeR: ");
-    Serial.print(motor.getAngle(enumIMU::KneeR));
+    Serial.print(motor.getAngle(enumIMU::KNEE_R));
     Serial.print("  KneeL: ");
-    Serial.println(motor.getAngle(enumIMU::KneeL));
+    Serial.println(motor.getAngle(enumIMU::KNEE_L));
     break;
     case(FROM_IMU):
       //Need change to 085
