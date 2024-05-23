@@ -1,9 +1,14 @@
 #include "ProxiSensor.h"
+#include "define.h"
 
 // Date constructor
-ProxiSensor::ProxiSensor(int FrameTiming, int sda, int scl)
+ProxiSensor::ProxiSensor(Multiplex *muxPtr, int muxAddress)
 {
-    Wire.begin(sda, scl);
+    this->muxAddress = muxAddress;
+    this->muxPtr = muxPtr;
+
+    this->muxPtr->selectChannel(muxAddress);
+
     CoreSensor.init();
 
     if (CoreSensor.getLastError())
@@ -12,7 +17,7 @@ ProxiSensor::ProxiSensor(int FrameTiming, int sda, int scl)
         Serial.println(CoreSensor.getLastError());
     }
 
-    CoreSensor.setFrameTiming(FrameTiming); // FrameTiming need to be power of 2  and between 1 & 4096 (each sample is 0.25ms long)
+    CoreSensor.setFrameTiming(PROXIM_REFRESH_RATE); // FrameTiming need to be power of 2  and between 1 & 4096 (each sample is 0.25ms long)
 
     CoreSensor.setChannel(0);
 
@@ -57,6 +62,7 @@ void ProxiSensor::PrintDistance()
 
 int ProxiSensor::GetMinDistance()
 {
+    this->muxPtr->selectChannel(muxAddress);
     int16_t min = -1;
     //Itère dans chaque channel pour faire une lecture et remplace min si elle est plus petite que la précédante
     for (int i = 0; i < 3; i++)
@@ -77,6 +83,7 @@ int ProxiSensor::GetMinDistance()
 
 void ProxiSensor::SetFrameTiming(int FrameTiming)
 {
+    this->muxPtr->selectChannel(muxAddress);
     CoreSensor.setFrameTiming(FrameTiming);
 }
 

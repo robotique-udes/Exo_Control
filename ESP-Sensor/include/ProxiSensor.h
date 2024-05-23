@@ -4,6 +4,7 @@
 #include <OPT3101.h>
 #include <Wire.h>
 #include <Arduino.h>
+#include "multiplex.h"
 
 #define GROUND_DISTANCE_RANGE 60
 
@@ -14,9 +15,11 @@ private:
     bool OnTheGround= false;
     int TriggerDistance = 0;
     int minimumDistance = 0;
+    int muxAddress;
+    Multiplex *muxPtr;
 
 public:
-    ProxiSensor(int FrameTiming, int sda, int scl);
+    ProxiSensor(Multiplex *muxPtr, int muxAddress);
 
     int GetMinDistance();
     bool IsOnTheGround();

@@ -6,10 +6,10 @@ IMU::IMU(){
     this->mux = Multiplex();
     // Hips will use 0x4A, Knee will use 0x4B
     // Keep this order, position in vector is same as enum value
-    BNOs[static_cast<int> (enumIMU::HIP_L)]     = new BNO(enumIMU::HIP_L, 1, &this->mux, 0x4A);
-    BNOs[static_cast<int> (enumIMU::KNEE_L)]    = new BNO(enumIMU::KNEE_L, 1, &this->mux, 0x4B);
-    BNOs[static_cast<int> (enumIMU::HIP_R)]     = new BNO(enumIMU::HIP_R, 2, &this->mux, 0x4A);
-    BNOs[static_cast<int> (enumIMU::KNEE_R)]    = new BNO(enumIMU::KNEE_R, 2, &this->mux, 0x4B);
+    BNOs[static_cast<int> (enumIMU::HIP_L)]     = new BNO(enumIMU::HIP_L, LEFT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4A);
+    BNOs[static_cast<int> (enumIMU::KNEE_L)]    = new BNO(enumIMU::KNEE_L, LEFT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4B);
+    BNOs[static_cast<int> (enumIMU::HIP_R)]     = new BNO(enumIMU::HIP_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4A);
+    BNOs[static_cast<int> (enumIMU::KNEE_R)]    = new BNO(enumIMU::KNEE_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4B);
     BNOs[static_cast<int> (enumIMU::EXO_BACK)]  = new BNO(enumIMU::EXO_BACK, 0, &this->mux, 0x4A);
 }
 

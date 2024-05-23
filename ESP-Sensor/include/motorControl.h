@@ -7,6 +7,7 @@
 #include "PinExtender.h"
 #include "exoSettings.h"
 #include "ProxiSensor.h"
+#include "multiplex.h"
 
 class Motor
 {
@@ -45,8 +46,9 @@ private:
     float LeftHipMeasuredCurrent = 0.0;
 
     // proximity sensor
-    // ProxiSensor LeftProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
-    // ProxiSensor RightProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+    Multiplex mux;
+    ProxiSensor *LeftProxim;
+    ProxiSensor *RightProxim;
     //settings
     ExoSettings& settings = ExoSettings::getInstance();
 

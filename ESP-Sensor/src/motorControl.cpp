@@ -4,6 +4,9 @@ double power = 175;
 
 Motor::Motor()
 {
+  this->mux = Multiplex();
+  this->LeftProxim = new ProxiSensor(&this->mux, LEFT_MOUSTACHE_MUX_CHANNEL);
+  this->RightProxim = new ProxiSensor(&this->mux, RIGHT_MOUSTACHE_MUX_CHANNEL);
   
 }
 
@@ -53,7 +56,7 @@ void Motor::neededTorque()
   if (motorMode)
   {
     // Right Hip Torque Equation
-    if (false)// if (!RightProxim.IsOnTheGround())
+    if (false)// if (!RightProxim->IsOnTheGround())
       RightHipTorque =0;
     else
     {
@@ -66,7 +69,7 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (false)// if (!LeftProxim.IsOnTheGround())
+    if (false)// if (!LeftProxim->IsOnTheGround())
         LeftHipTorque = 0;
     else
     {
@@ -77,7 +80,7 @@ void Motor::neededTorque()
     }
 
     // Right Knee Torque Equation
-    if (false) // if (!RightProxim.IsOnTheGround())
+    if (false) // if (!RightProxim->IsOnTheGround())
     {
       if (toDegrees(RightKneeAngle) > 0)
         RightKneeTorque = ((sin(RightHipAngle) * (LF / 2) * (MF * G)) + ((sin(RightHipAngle) * LF)) * (G * MH)) * 0.5;
@@ -93,7 +96,7 @@ void Motor::neededTorque()
     }
 
     // Left Knee Torque Equation
-    if (false) // if (!LeftProxim.IsOnTheGround())
+    if (false) // if (!LeftProxim->IsOnTheGround())
     {
       if (toDegrees(LeftKneeAngle) > 0)
         LeftKneeTorque = ((sin(LeftHipAngle) * (LF / 2) * (MF * G)) + ((sin(LeftHipAngle) * LF)) * (G * MH)) * 0.5;
@@ -208,9 +211,9 @@ void Motor::PIDCurrentPrealable()
 // void Motor::printProxim()
 // {
   // Serial.print(" SL: ");
-  // Serial.print(LeftProxim.IsOnTheGround());
+  // Serial.print(LeftProxim->IsOnTheGround());
   // Serial.print(" SR: ");
-  // Serial.print(RightProxim.IsOnTheGround());
+  // Serial.print(RightProxim->IsOnTheGround());
   // Serial.print(" MM: ");
   // Serial.print(motorMode);
 // }
@@ -360,7 +363,7 @@ void Motor::testFuncSetPwnHigh()
 //A renommer correctement
 void Motor::setSonarState(bool state){ settings.setProximState(state); }
 void Motor::setHeight(double h){ settings.setHeight(h); }
-// double Motor::sonarScanR(){ return RightProxim.GetMinDistance(); }
-// double Motor::sonarScanL(){ return LeftProxim.GetMinDistance(); }
+// double Motor::sonarScanR(){ return RightProxim->GetMinDistance(); }
+// double Motor::sonarScanL(){ return LeftProxim->GetMinDistance(); }
 //Fpnction probablement obscelete, a revisiter
 void Motor::sonarRead(){ /*sonar.sonarRead();*/}

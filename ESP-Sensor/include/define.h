@@ -73,7 +73,7 @@
 #define ON 1
 #define OFF 0
 
-//------IMU--------
+//------ I2C --------
 #define I2C_SDA1 26
 #define I2C_SCL1 27
 #define I2C_SDA2 33
@@ -84,7 +84,12 @@
 #define IMU_DEBUG true
 #define MAIN_I2C_SDA 21
 #define MAIN_I2C_SCL 22
+#define LEFT_MOUSTACHE_MUX_CHANNEL 1
+#define RIGHT_MOUSTACHE_MUX_CHANNEL 2 
 #define I2C_CLOCK   400000L 
+
+//------ PROXIM ------
+#define PROXIM_REFRESH_RATE 4
 
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (800)
