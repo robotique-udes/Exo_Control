@@ -5,7 +5,6 @@
 #include <Arduino.h>
 #include <Nextion.h>
 #include "exoSettings.h"
-#include "enumExoStates.h"
 #include "touchScreen.h"
 
 
@@ -16,7 +15,7 @@ void callbackButtonToggleMotor(void *ptr){
 
     uint32_t state;
 
-    button->getValue(state);
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
@@ -30,7 +29,7 @@ void callbackButtonToggleClutch(void *ptr){
 
     uint32_t state;
 
-    button->getValue(state);
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
@@ -62,11 +61,11 @@ void callbackButtonToggleAngleSource(void *ptr){
 
     uint32_t state;
 
-    button->getValue(state);
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setAngleSource(state);
+    settings.setAngleSource(static_cast<EnumAngleSource>(state));
 }
 
 void callbackButtonToggleProxim(void *ptr){
@@ -76,7 +75,7 @@ void callbackButtonToggleProxim(void *ptr){
 
     uint32_t state;
 
-    button->getValue(state);
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
@@ -135,19 +134,19 @@ void callbackSliderMotorPower(void *ptr){
 void setupCallbacks(){
     TouchScreen& screen = TouchScreen::getInstance();
     screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToggleMotor);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToggleClutch);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonInit);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonResetEncoder);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonAutoCalibProxim);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToggleAngleSource);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToggleProxim);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonTest);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonDev1);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonDev2);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToogle1);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToggle2);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackSliderDev1);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackSliderMotorPower);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_CLUTCH, &callbackButtonToggleClutch);
+    screen.setCallback(EnumScreenCallback::BUTTON_INIT, &callbackButtonInit);
+    screen.setCallback(EnumScreenCallback::BUTTON_RESET_ENCODER, &callbackButtonResetEncoder);
+    screen.setCallback(EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM, &callbackButtonAutoCalibProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE, &callbackButtonToggleAngleSource);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_PROXIM, &callbackButtonToggleProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_TEST, &callbackButtonTest);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_1, &callbackButtonDev1);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_2, &callbackButtonDev2);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_TOGGLE_1, &callbackButtonToogle1);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_TOGGLE_2, &callbackButtonToggle2);
+    screen.setCallback(EnumScreenCallback::SLIDER_DEV_1, &callbackSliderDev1);
+    screen.setCallback(EnumScreenCallback::SLIDER_MOTOR_POWER, &callbackSliderMotorPower);
 }
 
 

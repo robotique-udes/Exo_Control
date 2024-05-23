@@ -53,7 +53,6 @@ class TouchScreen{
         TouchScreen(const TouchScreen&) = delete;
         TouchScreen& operator=(const TouchScreen&) = delete;
         
-        NexNumber* getIndicator();
         void update();
         void print(string toPrint);
         void setCallback(EnumScreenCallback callback, void (*callbackFunction)(void *ptr));

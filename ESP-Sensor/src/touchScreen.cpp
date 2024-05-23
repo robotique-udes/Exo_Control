@@ -24,7 +24,9 @@ TouchScreen::TouchScreen(){
     
     currentString = "";
 
-    NexText *logText;
+    logText = new NexText(5, 6, "logText");
+
+    //Go quack : 4, 1
 
     listenList[0] = motorToggle;
     listenList[1] = clutchToggle;
@@ -100,12 +102,9 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
 }
 
 void TouchScreen::print(string toPrint){
-    currentString += toPrint + "\n";
-    logText->setText(currentString);
-}
+    //currentString += toPrint + "\n";
 
-NexNumber* TouchScreen::getIndicator(){
-    return Pindicator;
+    //logText->setText("asdfasdfasdfasdfasdf");
 }
 
 TouchScreen& TouchScreen::getInstance(){

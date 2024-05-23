@@ -45,9 +45,11 @@ void IMU::requestData(){
 
 // Print relevant IMU information
 void IMU::printBNOs(int startIndex, int endIndex){
-    Serial.print("\tIMU "); BNOs[i]->printName(); Serial.print("\t");
-    Serial.print("LINK: "); Serial.print(BNOs[i]->checkIfConnected());
-    Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<enumIMU>(i)));
+    for (int i = startIndex; i<endIndex; i++){
+        Serial.print("\tIMU "); BNOs[i]->printName(); Serial.print("\t");
+        Serial.print("LINK: "); Serial.print(BNOs[i]->checkIfConnected());
+        Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<enumIMU>(i)));
+    }
 }
 
 void IMU::computeAngles() {

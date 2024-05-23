@@ -18,4 +18,5 @@ void setup(void) {
 
 void loop() {
   screen.update();
+  screen.print("asdf\0");
 }

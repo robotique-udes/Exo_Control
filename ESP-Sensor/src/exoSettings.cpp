@@ -30,7 +30,7 @@ bool ExoSettings::isClutchEnabled(){
 }
 
 bool ExoSettings::isProximEnabled(){
-    return proximEnabled
+    return proximEnabled;
 }
 
 void ExoSettings::setMotorEnabled(bool setMotorEnabled){
@@ -74,5 +74,5 @@ int ExoSettings::getMotorPower(){
 }
 
 void ExoSettings::setMotorPower(int setMotorPower){
-    motorEnabled = setMotorEnabled;
+    motorEnabled = setMotorPower;
 }
