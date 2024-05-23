@@ -43,7 +43,7 @@ void setup()
     Serial.println("PWM Found I2C @ 0x7C");
   }
 
-  Wire.beginTransmission(0x7C);
+  Wire.beginTransmission(0x70);
   if (!Wire.endTransmission()) {
     Serial.println("Found I2C Multiplexer @ 0x70");
   }
