@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include <Nextion.h>
+#include <string>
+
 
 #include "enumScreenCallbacks.h"
 
@@ -11,28 +13,35 @@ using namespace std;
 class TouchScreen{
     private:
         //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
-        NexButton *bDISARMED;
-        NexButton *bARMED;
-        NexButton *bMOTORISED;
+        // Page Main
+        NexDSButton *motorToggle;
+        NexDSButton *clutchToggle;
+        NexButton *init;
 
-        NexButton *bWalk;
-        NexButton *bSquat;
+        // Page Calib
+        NexButton *resetEncoder;
+        NexButton *autoCalibProxim;
+        NexSlider *powerSlider;
 
-        NexButton *bAutoCalib;
-        NexButton *b4f;
-        NexButton *b5f8;
-        NexButton *b5f10;
-        NexButton *b6f;
+        // Page debug
+        NexDSButton *angleSource;
+        NexDSButton *proximToggle;
+        NexButton *testExo;
 
-        NexButton *bPID0;
-        NexButton *bPID1;
-        NexButton *bPID2;
-        NexButton *bSavePID;
+        // Page dev
+        NexButton *button1;
+        NexButton *button2;
+        NexDSButton *toggle1;
+        NexDSButton *toggle2;
+        NexSlider *slider1;
 
-        NexSlider *Pslider;
-        NexNumber *Pindicator;
+        // Page log
+        NexText *logText;
 
-        NexTouch *listenList[17];
+
+        NexTouch *listenList[15];
+
+        string currentString;
 
         TouchScreen();
 
@@ -46,6 +55,7 @@ class TouchScreen{
         
         NexNumber* getIndicator();
         void update();
+        void print(string toPrint);
         void setCallback(EnumScreenCallback callback, void (*callbackFunction)(void *ptr));
 };
 

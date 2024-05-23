@@ -3,15 +3,15 @@
 ExoSettings *ExoSettings::instance;
 
 ExoSettings::ExoSettings(){
-    currentState = EnumExoStates::DISARMED;
-    state = false;
+    motorEnabled = false;
+    clutchEnabled = false;
+    proximEnabled = true;
 
-    // 5 Pied 10
-    height = 1.778;
+    sonarState = EnumSonarState::SQUAT;
+    angleSource = EnumAngleSource::IMU;
 
-    // Valeur arbitraire - TODO : Changer la valeur
-    futureMotorPower = 0;
-    currentMotorPower = 175;
+    height = 180;
+    motorPower = 50;
 }
 
 ExoSettings& ExoSettings::getInstance(){
@@ -21,66 +21,58 @@ ExoSettings& ExoSettings::getInstance(){
     return *instance;
 }
 
-EnumExoStates ExoSettings::getMotorState(){
-    return currentState;
+bool ExoSettings::isMotorEnabled(){
+    return motorEnabled;
 }
 
-bool ExoSettings::getProximState(){
-    return state;
+bool ExoSettings::isClutchEnabled(){
+    return clutchEnabled;
 }
 
-bool ExoSettings::getAngleSource(){
+bool ExoSettings::isProximEnabled(){
+    return proximEnabled
+}
+
+void ExoSettings::setMotorEnabled(bool setMotorEnabled){
+    motorEnabled = setMotorEnabled;
+}
+
+void ExoSettings::setClutchEnabled(bool setClutchEnabled){
+    clutchEnabled = setClutchEnabled;
+}
+
+void ExoSettings::setProximEnabled(bool setProximEnabled){
+    proximEnabled = setProximEnabled;
+}
+
+EnumAngleSource ExoSettings::getAngleSource(){
     return angleSource;
+}
+
+void ExoSettings::setAngleSource(EnumAngleSource setAngleSource){
+    angleSource = setAngleSource;
+}
+
+EnumSonarState ExoSettings::getSonarState(){
+    return sonarState;
+}
+
+void ExoSettings::setSonarState(EnumSonarState setSonarState){
+    sonarState = setSonarState;
 }
 
 int ExoSettings::getHeight(){
     return height;
 }
 
-int ExoSettings::getMotorPower(){
-    return currentMotorPower;
-}
-
-void ExoSettings::setMotorState(EnumExoStates newState){
-    currentState = newState;
-    switch(newState)
-    {
-    case EnumExoStates::DISARMED:
-        relais.setAllRelais(OFF);
-        break;
-    case EnumExoStates::ARMED:
-        relais.setAllRelais(ON);
-        break;
-    default:
-        break;
-    }
-    
-}
-
-void ExoSettings::setProximState(bool newState){
-    state = newState;
-    Serial.print("Proxim state: ");
-    Serial.println(state);
-}
-
-void ExoSettings::setAngleSource(bool newSource){
-    angleSource = newSource;
-    Serial.print("Angle source: ");
-    Serial.println(angleSource);
-}
-
 void ExoSettings::setHeight(int setHeight){
     height = setHeight;
-    Serial.print("Height: ");
-    Serial.println(height);
 }
 
-void ExoSettings::setFutureMotorPower(double setFutureMotoPower){
-    futureMotorPower = setFutureMotoPower;
-    Serial.println(futureMotorPower);
+int ExoSettings::getMotorPower(){
+    return motorPower;
 }
 
-void ExoSettings::saveMotorPower(){
-    currentMotorPower = futureMotorPower;
+void ExoSettings::setMotorPower(int setMotorPower){
+    motorEnabled = setMotorEnabled;
 }
-

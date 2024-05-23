@@ -4,42 +4,45 @@ TouchScreen *TouchScreen::instance;
 
 TouchScreen::TouchScreen(){
 
-    bDISARMED = new NexButton(0, 6, "bDISARMED");
-    bARMED = new NexButton(0, 8, "bARMED"); //Clutch ON   ( ARMED)
-    bMOTORISED = new NexButton(0, 7, "bMOTORISED");// CLUTCH ON + MOTOR ON 
-    bWalk = new NexButton(1, 6, "bStand"); //test standing straight
-    bSquat = new NexButton(1, 7, "bSquat"); //test squat
-    bAutoCalib = new NexButton(2, 5, "bAutoCalib"); //Auto calibration
-    b4f = new NexButton(2, 7, "b4f"); //Calibration at (4')
-    b5f8 = new NexButton(2, 8, "b5f8"); //Calibration at (5'8")
-    b5f10 = new NexButton(2, 6, "b5f10"); //Calibration at (5'10")
-    b6f = new NexButton(2, 9, "b6f"); //Calibration at (6')
-    bPID0 = new NexButton(0, 4, "bPID");
-    bPID1 = new NexButton(1, 4, "bPID");
-    bPID2 = new NexButton(2, 4, "bPID");
-    bSavePID = new NexButton(4, 4, "bSavePID");
-    Pslider = new NexSlider(4, 6, "Pslider");   //Power motor slider
-    Pindicator = new NexNumber(4, 12, "Pindic");//Power motor indicator
-    
-    listenList[0] = bDISARMED;
-    listenList[1] = bARMED;
-    listenList[2] = bMOTORISED;
-    listenList[3] = bWalk;
-    listenList[4] = bSquat;
-    listenList[5] = bAutoCalib;
-    listenList[6] = b4f;
-    listenList[7] = b5f8;
-    listenList[8] = b5f10;
-    listenList[9] = b6f;
-    listenList[10] = bPID0;
-    listenList[11] = bPID1;
-    listenList[12] = bPID2;
-    listenList[13] = bSavePID;
-    listenList[14] = Pslider;
-    listenList[15] = Pindicator;
-    listenList[16] = NULL;
+    motorToggle = new NexDSButton(0, 7, "motorToggle");
+    clutchToggle = new NexDSButton(0, 8, "clutchToggle");
+    init = new NexButton(0, 6, "init");
 
-    Pslider->setValue(50);
+    resetEncoder = new NexButton(1, 2, "resetEncoder");
+    autoCalibProxim = new NexButton(1, 3, "autoCalibProxim");
+    powerSlider = new NexSlider(1, 6, "powerSlider");
+
+    angleSource = new NexDSButton(2, 2, "motorToggle");
+    proximToggle = new NexDSButton(2, 3, "motorToggle");
+    testExo = new NexButton(2, 4, "motorToggle");
+
+    button1 = new NexButton(3, 2, "button1");
+    button2 = new NexButton(3, 3, "button2");
+    toggle1 = new NexDSButton(3, 4, "toggle1");
+    toggle2 = new NexDSButton(3, 5, "toggle2");
+    slider1 = new NexSlider(3, 8, "slider1");
+    
+    currentString = "";
+
+    NexText *logText;
+
+    listenList[0] = motorToggle;
+    listenList[1] = clutchToggle;
+    listenList[2] = init;
+    listenList[3] = resetEncoder;
+    listenList[4] = autoCalibProxim;
+    listenList[5] = powerSlider;
+    listenList[6] = angleSource;
+    listenList[7] = proximToggle;
+    listenList[8] = testExo;
+    listenList[9] = button1;
+    listenList[10] = button2;
+    listenList[11] = toggle1;
+    listenList[12] = toggle2;
+    listenList[13] = slider1;
+    listenList[14] = NULL;
+
+    powerSlider->setValue(50);
 }
 
 void TouchScreen::update(){
@@ -50,56 +53,55 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
 
     switch (callback)
     {
-        case EnumScreenCallback::BUTTON_4F:
-            b4f->attachPush(callbackFunction, b4f);
+        case EnumScreenCallback::BUTTON_TOGGLE_MOTOR:
+            motorToggle->attachPush(callbackFunction, motorToggle);
         break;
-        case EnumScreenCallback::BUTTON_5F10:
-            b5f10->attachPush(callbackFunction, b5f10);
+        case EnumScreenCallback::BUTTON_TOGGLE_CLUTCH:
+            clutchToggle->attachPush(callbackFunction, clutchToggle);
         break;
-        case EnumScreenCallback::BUTTON_5F8:
-            b5f8->attachPush(callbackFunction, b5f8);
+        case EnumScreenCallback::BUTTON_INIT:
+            init->attachPush(callbackFunction, init);
         break;
-        case EnumScreenCallback::BUTTON_6F:
-            b6f->attachPush(callbackFunction, b6f);
+        case EnumScreenCallback::BUTTON_RESET_ENCODER:
+            resetEncoder->attachPush(callbackFunction, resetEncoder);
         break;
-        case EnumScreenCallback::BUTTON_ARMED:
-            bARMED->attachPush(callbackFunction, bARMED);
+        case EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM:
+            autoCalibProxim->attachPush(callbackFunction, autoCalibProxim);
         break;
-        case EnumScreenCallback::BUTTON_AUTOCALIB :
-            bAutoCalib->attachPush(callbackFunction, bAutoCalib);
+        case EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE :
+            angleSource->attachPush(callbackFunction, angleSource);
         break;
-        case EnumScreenCallback::BUTTON_DISARMED :
-            bDISARMED->attachPush(callbackFunction, bDISARMED);
+        case EnumScreenCallback::BUTTON_TOGGLE_PROXIM :
+            proximToggle->attachPush(callbackFunction, proximToggle);
         break;
-        case EnumScreenCallback::BUTTON_MOTORISED :
-            bMOTORISED->attachPush(callbackFunction, bMOTORISED);
+        case EnumScreenCallback::BUTTON_TEST :
+            testExo->attachPush(callbackFunction, testExo);
         break;
-        case EnumScreenCallback::BUTTON_PID0 :
-            bPID0->attachPush(callbackFunction, bPID0);
+        case EnumScreenCallback::BUTTON_DEV_1 :
+            button1->attachPush(callbackFunction, button1);
         break;
-        case EnumScreenCallback::BUTTON_PID1 :
-            bPID1->attachPush(callbackFunction, bPID1);
+        case EnumScreenCallback::BUTTON_DEV_2 :
+            button2->attachPush(callbackFunction, button2);
         break;
-        case EnumScreenCallback::BUTTON_PID2 :
-            bPID2->attachPush(callbackFunction, bPID2);
+        case EnumScreenCallback::BUTTON_DEV_TOGGLE_1 :
+            toggle1->attachPush(callbackFunction, toggle1);
         break;
-        case EnumScreenCallback::BUTTON_SAVE_PID :
-            bSavePID->attachPush(callbackFunction, bSavePID);
+        case EnumScreenCallback::BUTTON_DEV_TOGGLE_2 :
+            toggle2->attachPush(callbackFunction, toggle2);
         break;
-        case EnumScreenCallback::BUTTON_SQUAT :
-            bSquat->attachPush(callbackFunction, bSquat);
+        case EnumScreenCallback::SLIDER_DEV_1 :
+            slider1->attachPush(callbackFunction, slider1);
         break;
-        case EnumScreenCallback::BUTTON_WALK :
-            bWalk->attachPush(callbackFunction, bWalk);
-        break;
-        case EnumScreenCallback::P_INDICATOR :
-            Pindicator->attachPush(callbackFunction, Pindicator);
-        break;
-        case EnumScreenCallback::P_SLIDER :
-            Pslider->attachPush(callbackFunction, Pslider);
+        case EnumScreenCallback::SLIDER_MOTOR_POWER :
+            powerSlider->attachPush(callbackFunction, powerSlider);
         break;
         default:break;
     }
+}
+
+void TouchScreen::print(string toPrint){
+    currentString += toPrint + "\n";
+    logText->setText(currentString);
 }
 
 NexNumber* TouchScreen::getIndicator(){

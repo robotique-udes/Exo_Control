@@ -5,7 +5,8 @@
 #include <Nextion.h>
 
 #include "enumScreenCallbacks.h"
-#include "enumExoStates.h"
+#include "enumAngleSource.h"
+#include "enumSonarState.h"
 #include "relay.h"
 
 using namespace std;
@@ -13,36 +14,39 @@ using namespace std;
 class ExoSettings{
     private:
 
-        // Disarmed, Armed, Motorised
-        EnumExoStates currentState;
-        
-        // Binary states
-        bool state = 1;
-        bool angleSource = 1;
+        bool motorEnabled;
+        bool clutchEnabled;
+        bool proximEnabled;
 
-        // Calibrated height
+        EnumSonarState sonarState;
+        EnumAngleSource angleSource;
+
         int height;
-
-        // Ajusted PID
-        int currentMotorPower;
-        int futureMotorPower;
+        int motorPower;
 
         ExoSettings();
 
     public:
         Relay relais;
-        EnumExoStates getMotorState();
-        bool getProximState();
-        bool getAngleSource();
-        int getHeight();
-        int getMotorPower();
 
-        void setMotorState(EnumExoStates newState);
-        void setProximState(bool setWalk);
-        void setAngleSource(bool angleSource);
+        bool isMotorEnabled();
+        bool isClutchEnabled();
+        bool isProximEnabled();
+        void setMotorEnabled(bool setMotorEnabled);
+        void setClutchEnabled(bool setClutchEnabled);
+        void setProximEnabled(bool setProximEnabled);
+
+        EnumAngleSource getAngleSource();
+        void setAngleSource(EnumAngleSource setAngleSource);
+
+        EnumSonarState getSonarState();
+        void setSonarState(EnumSonarState setSonarState);
+
+        int getHeight();
         void setHeight(int setHeight);
-        void setFutureMotorPower(double setMotoPower);
-        void saveMotorPower();
+
+        int getMotorPower();
+        void setMotorPower(int setMotorPower);
 
         // Code pour le singleton
 
