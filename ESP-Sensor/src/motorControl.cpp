@@ -208,15 +208,20 @@ void Motor::PIDCurrentPrealable()
 
 }
 
-// void Motor::printProxim()
-// {
-  // Serial.print(" SL: ");
-  // Serial.print(LeftProxim->IsOnTheGround());
-  // Serial.print(" SR: ");
-  // Serial.print(RightProxim->IsOnTheGround());
+void Motor::printProxim()
+{
+  Serial.print("\t LEFT PROXIM: ");
+  Serial.print(LeftProxim->IsOnTheGround());
+  Serial.print("\t RIGHT PROXIM: ");
+  Serial.print(RightProxim->IsOnTheGround());
   // Serial.print(" MM: ");
-  // Serial.print(motorMode);
-// }
+  // Serial.println(motorMode);
+}
+
+void Motor::setSonarTrigger(){
+  LeftProxim->SetTriggerDistance();
+  RightProxim->SetTriggerDistance();
+}
 
 void Motor::setMotorMode(bool state)
 {
@@ -365,5 +370,3 @@ void Motor::setSonarState(bool state){ settings.setProximState(state); }
 void Motor::setHeight(double h){ settings.setHeight(h); }
 // double Motor::sonarScanR(){ return RightProxim->GetMinDistance(); }
 // double Motor::sonarScanL(){ return LeftProxim->GetMinDistance(); }
-//Fpnction probablement obscelete, a revisiter
-void Motor::sonarRead(){ /*sonar.sonarRead();*/}

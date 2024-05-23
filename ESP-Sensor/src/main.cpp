@@ -57,8 +57,6 @@ void setup()
 
   relais.setAllRelais(OFF);
 
-  //--------------Test BLOC----------------
-
   // Setup HMI
   setupCallbacks();
   // imu01.IMUSetup(); // Comment if no IMU are in use
@@ -69,21 +67,18 @@ void loop()
 {
 
   //--------------Test BLOC----------------
-  delay(100);
 
   // motor->motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
-
-  // --------------TEST BLOC computer commands----------------
   tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
   // ecran.nextLoop();
-  updateAngles(FROM_IMU);
+  //updateAngles(FROM_IMU);
 
-  imuHandler->printBNOs(0, 4);
+  //imuHandler->printBNOs(0, 4);
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
   //motor->neededTorque();
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
@@ -93,13 +88,13 @@ void loop()
 
   //--------------PRINTING BLOC-------------
   // Serial.print(motor->getPower());
-  // motor->printSonar();
+  motor->printProxim();
   //motor->printTorque();
   // Serial.println("loop");
   // delay(500);
 
   // Obligatoire pour le HMI
-  screen.update();
+  //screen.update();
   Serial.println(" ");
 }
 

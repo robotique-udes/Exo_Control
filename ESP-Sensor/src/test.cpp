@@ -203,6 +203,11 @@ void Test::keyboardCommand()
       Serial.println("Reset Encoder Genou Gauche");
       encoder->resetPosition(QuadratureEncoder::GEN_GAU);
     }
+    else if (incomingByte == '-')
+    {
+      Serial.println("Reset Encoder Genou Gauche");
+      motor->setSonarTrigger();
+    }
     
   }
 }

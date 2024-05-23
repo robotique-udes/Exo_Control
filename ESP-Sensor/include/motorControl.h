@@ -61,7 +61,6 @@ public:
     int PWMRightHip = 0;
     int PWMLeftHip = 0;
 
-    void sonarRead();
     void setPins();
     void readCurrent();
     void LimitMinMaxFloat(float &val, float max);
@@ -74,6 +73,7 @@ public:
     void setMotorMode(bool state);
     void setPower(double p);
     double getPower();
+    void setSonarTrigger();
 
     void setAngle(enumIMU enumType, float val);
     float getAngle(enumIMU enumType);
