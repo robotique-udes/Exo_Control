@@ -5,6 +5,8 @@
 #include <Wire.h>
 #include <Arduino.h>
 #include "multiplex.h"
+#include "define.h"
+#include <algorithm>
 
 #define GROUND_DISTANCE_RANGE 60
 
@@ -17,6 +19,9 @@ private:
     int minimumDistance = 0;
     int muxAddress;
     Multiplex *muxPtr;
+    int bufferOnTheGround[BUFFER_SIZE];
+    std::fill_n(bufferOnTheGround, BUFFER_SIZE, 1);
+    
 
 public:
     ProxiSensor(Multiplex *muxPtr, int muxAddress);
