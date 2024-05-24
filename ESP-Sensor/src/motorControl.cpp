@@ -210,10 +210,11 @@ void Motor::PIDCurrentPrealable()
 
 void Motor::printProxim()
 {
-  Serial.print("\t LEFT PROXIM: ");
-  Serial.print(LeftProxim->IsOnTheGround());
   Serial.print("\t RIGHT PROXIM: ");
   Serial.print(RightProxim->IsOnTheGround());
+  Serial.print("\t LEFT PROXIM: ");
+  Serial.print(LeftProxim->IsOnTheGround());
+
   // Serial.print(" MM: ");
   // Serial.println(motorMode);
 }

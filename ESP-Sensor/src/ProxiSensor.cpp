@@ -25,6 +25,9 @@ ProxiSensor::ProxiSensor(Multiplex *muxPtr, int muxAddress)
     CoreSensor.setBrightness(OPT3101Brightness::High);
 
     SetTriggerDistance();
+    for(int i = 0; i<BUFFER_SIZE; i++){
+        bufferOnTheGround[i] = 1;
+    }
 }
 
 int ProxiSensor::GetChannel()
@@ -115,7 +118,7 @@ bool ProxiSensor::IsOnTheGround()
 
     // Count how many times the sensor has been on the ground in the buffer
     int count = 0;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < BUFFER_SIZE; i++)
     {
         if (bufferOnTheGround[i])
         {
@@ -124,7 +127,7 @@ bool ProxiSensor::IsOnTheGround()
     }
 
     // Set OnTheGround based on the count
-    OnTheGround = (count > 5);
+    OnTheGround = int(count > BUFFER_SIZE/2);
 
     // Serial.print("\t Min dist: ");
     // Serial.print(minimumDistance);
