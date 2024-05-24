@@ -53,19 +53,21 @@ void IMU::printBNOs(int startIndex, int endIndex){
 }
 
 void IMU::computeAngles() {
-    float hipL = BNOs[static_cast<int> (enumIMU::HIP_L)]->getEuler()[1];
-    float kneeL = -BNOs[static_cast<int> (enumIMU::KNEE_L)]->getEuler()[1];
-    float hipR = -BNOs[static_cast<int> (enumIMU::HIP_R)]->getEuler()[1];
-    float kneeR = BNOs[static_cast<int> (enumIMU::KNEE_R)]->getEuler()[1];
-    float back = BNOs[static_cast<int> (enumIMU::EXO_BACK)]->getEuler()[2];
+    float thighL = BNOs[static_cast<int> (enumIMU::HIP_L)]->getEuler()[1];
+    float tibiaL = -BNOs[static_cast<int> (enumIMU::KNEE_L)]->getEuler()[1];
+    float thighR = -BNOs[static_cast<int> (enumIMU::HIP_R)]->getEuler()[1];
+    float tibiaR = BNOs[static_cast<int> (enumIMU::KNEE_R)]->getEuler()[1];
 
-    angles[static_cast<int> (enumIMU::HIP_L)] = hipL;
-    angles[static_cast<int> (enumIMU::KNEE_L)] = abs(kneeL-hipL);
+    // Compute back angle "right away" to be used in hip calculations
+    float back = BNOs[static_cast<int> (enumIMU::EXO_BACK)]->getEuler()[1];
 
-    angles[static_cast<int> (enumIMU::HIP_R)] = hipR;
-    angles[static_cast<int> (enumIMU::KNEE_R)] = abs(kneeR-hipR);
+    angles[static_cast<int> (enumIMU::HIP_L)] = abs(-thighL-back);
+    angles[static_cast<int> (enumIMU::KNEE_L)] = abs(tibiaL-thighL);
 
-    angles[static_cast<int> (enumIMU::EXO_BACK)] = -(back-90);
+    angles[static_cast<int> (enumIMU::HIP_R)] = abs(-thighR-back);
+    angles[static_cast<int> (enumIMU::KNEE_R)] = abs(tibiaR-thighR);
+
+    angles[static_cast<int> (enumIMU::EXO_BACK)] = back;
 
 }
 
