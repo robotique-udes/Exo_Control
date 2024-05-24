@@ -1,9 +1,9 @@
 #ifndef ENUM_SONAR_STATE_H
 #define ENUM_SONAR_STATE_H
-enum class enumSonarState
+enum class EnumSonarState
 {
-    Squat =0,
-    Walk =1
+    SQUAT,
+    WALK,
 };
 
 #endif
