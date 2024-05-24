@@ -81,18 +81,18 @@ void loop()
   screen.update();
   updateAngles(settings.getAngleSource());
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
-  motor->neededTorque();
+  //motor->neededTorque();
   
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
-  motor->PIDCurrentPrealable();
-  motor->sendCommand();
+  //motor->PIDCurrentPrealable();
+  //motor->sendCommand();
 
   //--------------PRINTING BLOC-------------
   // Serial.print(motor->getPower());
   // imuHandler->printBNOs(0, 4);
-  //motor->printProxim();
-  motor->printPMW();
+  motor->printProxim();
+  //motor->printPMW();
   // motor->printTorque();
   //delay(200);
   

@@ -91,7 +91,9 @@
 
 //------ PROXIM ------
 #define PROXIM_REFRESH_RATE 4
-#define BUFFER_SIZE 6      
+#define BUFFER_SIZE 6     
+#define GROUND_DISTANCE_RANGE 60
+
 
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (800)

@@ -7,7 +7,6 @@
 #include "multiplex.h"
 #include "define.h"
 
-#define GROUND_DISTANCE_RANGE 60
 
 class ProxiSensor
 {

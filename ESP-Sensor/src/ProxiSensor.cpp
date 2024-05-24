@@ -22,7 +22,7 @@ ProxiSensor::ProxiSensor(Multiplex *muxPtr, int muxAddress)
 
     CoreSensor.setChannel(0);
 
-    CoreSensor.setBrightness(OPT3101Brightness::High);
+    CoreSensor.setBrightness(OPT3101Brightness::Low);
 
     SetTriggerDistance();
     for(int i = 0; i<BUFFER_SIZE; i++){
@@ -141,7 +141,7 @@ void ProxiSensor::SetTriggerDistance()
     float moyenne;
     for (int i = 0; i < 3; i++)
     {
-        moyenne = GetMinDistance();
+        moyenne += GetMinDistance();
     }
     TriggerDistance = int(moyenne / 3) + GROUND_DISTANCE_RANGE;
     Serial.print("Trigger dist set to: ");
