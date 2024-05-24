@@ -7,7 +7,6 @@ Motor::Motor()
   this->mux = Multiplex();
   this->LeftProxim = new ProxiSensor(&this->mux, LEFT_MOUSTACHE_MUX_CHANNEL);
   this->RightProxim = new ProxiSensor(&this->mux, RIGHT_MOUSTACHE_MUX_CHANNEL);
-  
 }
 
 Motor::~Motor()
@@ -61,8 +60,8 @@ void Motor::neededTorque()
   if (motorMode)
   {
     // Right Hip Torque Equation
-    if (false)// if (!RightProxim->IsOnTheGround())
-      RightHipTorque =0;
+    if (false) // if (!RightProxim->IsOnTheGround())
+      RightHipTorque = 0;
     else
     {
       if (RightHipAngle < 110)
@@ -74,8 +73,8 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (false)// if (!LeftProxim->IsOnTheGround())
-        LeftHipTorque = 0;
+    if (false) // if (!LeftProxim->IsOnTheGround())
+      LeftHipTorque = 0;
     else
     {
       if (LeftHipAngle < 110)
@@ -189,14 +188,14 @@ void Motor::PIDCurrent()
 void Motor::PIDCurrentPrealable()
 {
   // Setting  PWM values
-  PWMRightKnee = (float)map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)/100.0*4096.0;
-  PWMLeftKnee = (float)map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)/100.0*4096.0;
-  PWMRightHip = (float)map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)/100.0*4096.0;
-  PWMLeftHip = (float)map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)/100.0*4096.0;
-
+  PWMRightKnee = float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+  PWMLeftKnee = float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+  PWMRightHip = float(map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+  PWMLeftHip = float(map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
 }
 
-void Motor::printPMW(){
+void Motor::printPMW()
+{
 
   Serial.print("\t  PWMRightKnee: ");
   Serial.print(PWMRightKnee);
@@ -206,7 +205,6 @@ void Motor::printPMW(){
   Serial.print(PWMRightHip);
   Serial.print("\t  PWMLeftHip: ");
   Serial.println(PWMLeftHip);
-
 }
 
 void Motor::printProxim()
@@ -220,7 +218,8 @@ void Motor::printProxim()
   // Serial.println(motorMode);
 }
 
-void Motor::setSonarTrigger(){
+void Motor::setSonarTrigger()
+{
   LeftProxim->SetTriggerDistance();
   RightProxim->SetTriggerDistance();
 }
@@ -244,20 +243,20 @@ void Motor::setAngle(enumIMU imuType, float val)
 {
   switch (imuType)
   {
-    case enumIMU::HIP_R:
-        RightHipAngle = val;
-        break;
-    case enumIMU::KNEE_R:
-        RightKneeAngle = val;
-        break;
-    case enumIMU::HIP_L:
-        LeftHipAngle = val;
-        break;
-    case enumIMU::KNEE_L:
-        LeftKneeAngle = val;
-        break;
-    default:
-        break;
+  case enumIMU::HIP_R:
+    RightHipAngle = val;
+    break;
+  case enumIMU::KNEE_R:
+    RightKneeAngle = val;
+    break;
+  case enumIMU::HIP_L:
+    LeftHipAngle = val;
+    break;
+  case enumIMU::KNEE_L:
+    LeftKneeAngle = val;
+    break;
+  default:
+    break;
   }
 }
 
@@ -372,8 +371,8 @@ void Motor::testFuncSetPwnHigh()
   pwmPinExtender.setChannelPWM(7, 2048);
 }
 
-//A renommer correctement
-void Motor::setSonarState(bool state){ settings.setProximEnabled(state); }
-void Motor::setHeight(double h){ settings.setHeight(h); }
+// A renommer correctement
+void Motor::setSonarState(bool state) { settings.setProximEnabled(state); }
+void Motor::setHeight(double h) { settings.setHeight(h); }
 // double Motor::sonarScanR(){ return RightProxim->GetMinDistance(); }
 // double Motor::sonarScanL(){ return LeftProxim->GetMinDistance(); }

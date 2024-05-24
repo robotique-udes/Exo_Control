@@ -27,12 +27,15 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("HELLO_WORLD!");
-  delay(1000);
   Wire.setPins(SDA_2, SCL_2);
   Wire.begin();
 
 
   Serial.println("Scanning for Onboard I2C devices...");
+}
+
+void tryStuff() {
+
   Wire.beginTransmission(0x20);
   if (!Wire.endTransmission()) {
     Serial.println("Extra GPIO Found I2C @ 0x20");
@@ -48,10 +51,15 @@ void setup()
     Serial.println("Found I2C Multiplexer @ 0x70");
   }
 
-  delay(2000);
-}
+  Wire.beginTransmission(0x0);
+  if (!Wire.endTransmission()) {
+    Serial.println("Found Generic Address @ 0x0");
+  }
 
-void tryStuff() {
+  Wire.beginTransmission(0x48);
+  if (!Wire.endTransmission()) {
+    Serial.println("Found Ghost Address @ 0x48");
+  }
   
   for (uint8_t t=0; t<8; t++) {
     pcaselect(t);
@@ -61,6 +69,8 @@ void tryStuff() {
       if (addr == PCAADDR) continue;
       if (addr == 0x20) continue;
       if (addr == 0x7C) continue;
+      if (addr == 0x0) continue;
+      if (addr == 0x48) continue;
 
       Wire.beginTransmission(addr);
       if (!Wire.endTransmission()) {

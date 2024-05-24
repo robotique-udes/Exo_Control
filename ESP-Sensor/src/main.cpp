@@ -73,26 +73,26 @@ void loop()
   // motor->motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
+  //tester.testRelay();
   tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
   //screen.update();
-  updateAngles(settings.getAngleSource());
+  //updateAngles(settings.getAngleSource());
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
-  motor->neededTorque();
+  //motor->neededTorque();
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
-  motor->PIDCurrentPrealable();
-  motor->sendCommand();
+  //motor->PIDCurrentPrealable();
+  //motor->sendCommand();
 
   //--------------PRINTING BLOC-------------
   // Serial.print(motor->getPower());
   // imuHandler->printBNOs(0, 4);
   //motor->printProxim();
-  motor->printPMW();
-  motor->printTorque();
-  // Serial.println("loop");
-  delay(200);
+  //motor->printPMW();
+  //motor->printTorque();
+  //delay(200);
   
 }
 
@@ -110,6 +110,7 @@ void updateAngles(EnumAngleSource angleSource)
     break;
   case (EnumAngleSource::ENCODER):
   //Fetch angles from ENCODERs
+    Serial.println("yeepee");
     motor->setAngle(enumIMU::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
     motor->setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
     motor->setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));

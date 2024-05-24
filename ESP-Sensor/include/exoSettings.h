@@ -19,7 +19,7 @@ class ExoSettings{
         bool proximEnabled;
 
         EnumSonarState sonarState;
-        EnumAngleSource angleSource;
+        EnumAngleSource angleSource = EnumAngleSource::ENCODER;
 
         int height;
         int motorPower;
