@@ -1,6 +1,5 @@
 #include "motorControl.h"
 bool motorMode = ON; // mutliplie le torque demandé au moteur, lorsque a 0, les moteur sont effectivement à Off, contrôlé avec le HMI ou hardcode pour test
-double power = 20;
 
 Motor::Motor()
 {
@@ -192,6 +191,7 @@ void Motor::PIDCurrent()
 
 void Motor::PIDCurrentPrealable()
 {
+  int power = settings.getMotorPower();
   // Setting  PWM values
   PWMRightKnee = -float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMLeftKnee = float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
@@ -234,15 +234,6 @@ void Motor::SetTriggerDistance()
   RightProxim->SetTriggerDistance();
 }
 
-void Motor::setPower(double p)
-{
-  power = p;
-}
-
-double Motor::getPower()
-{
-  return power;
-}
 
 void Motor::setAngle(enumIMU imuType, float val)
 {

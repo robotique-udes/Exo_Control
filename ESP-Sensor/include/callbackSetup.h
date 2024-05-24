@@ -112,7 +112,6 @@ void callbackButtonDev2(void *ptr){
 void callbackButtonToogle1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_1");
 
-    //...
 }
 
 void callbackButtonToggle2(void *ptr){
