@@ -7,6 +7,7 @@
 #include "PinExtender.h"
 #include "exoSettings.h"
 #include "ProxiSensor.h"
+#include "multiplex.h"
 
 class Motor
 {
@@ -45,8 +46,9 @@ private:
     float LeftHipMeasuredCurrent = 0.0;
 
     // proximity sensor
-    // ProxiSensor LeftProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
-    // ProxiSensor RightProxim = ProxiSensor(4, SDA_PIN_GAUCHE, SCL_PIN_GAUCHE);
+    Multiplex mux;
+    ProxiSensor *LeftProxim;
+    ProxiSensor *RightProxim;
     //settings
     ExoSettings& settings = ExoSettings::getInstance();
 
@@ -59,7 +61,6 @@ public:
     int PWMRightHip = 0;
     int PWMLeftHip = 0;
 
-    void sonarRead();
     void setPins();
     void readCurrent();
     void LimitMinMaxFloat(float &val, float max);
@@ -72,6 +73,7 @@ public:
     void setMotorMode(bool state);
     void setPower(double p);
     double getPower();
+    void setSonarTrigger();
 
     void setAngle(enumIMU enumType, float val);
     float getAngle(enumIMU enumType);

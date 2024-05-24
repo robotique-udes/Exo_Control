@@ -350,7 +350,7 @@ void setup()
 
   Wire.setPins(MUX_SDA, MUX_SCL);
   Wire.begin();                         // initialize I2C
-  Wire.setClock(I2C_CLOCK);             // set I2C clock rate
+  Wire.setClock(I2C_CLOCK/4);             // set I2C clock rate
 
   for (uint8_t bno=0; bno<BNOs; bno++)  // request desired reports
     request_reports(bno);
