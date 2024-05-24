@@ -64,7 +64,6 @@ void callbackButtonToggleAngleSource(void *ptr){
     button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
-
     settings.setAngleSource(static_cast<EnumAngleSource>(state));
 }
 

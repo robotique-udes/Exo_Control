@@ -78,8 +78,10 @@ public:
     void setAngle(enumIMU enumType, float val);
     float getAngle(enumIMU enumType);
     float toDegrees(float radians);
+    float toRadian(float degree);
     void printProxim();
     void printTorque();
+    void printPMW();
 
     void setSonarState(bool state);
     void setHeight(double h);
