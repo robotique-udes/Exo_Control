@@ -41,6 +41,7 @@ class ExoSettings{
         void setMotorEnabled(bool setMotorEnabled);
         void setClutchEnabled(bool setClutchEnabled);
         void setProximEnabled(bool setProximEnabled);
+        void adjustMotorPower(int powerOffset);
 
         void resetEncoder();
 

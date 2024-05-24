@@ -110,3 +110,7 @@ void ExoSettings::resetEncoder(){
     encodeurPtr->resetPosition(QuadratureEncoder::HAN_DRO);
     encodeurPtr->resetPosition(QuadratureEncoder::HAN_GAU);
 }
+
+void ExoSettings::adjustMotorPower(int offset){
+    setMotorPower(motorPower+offset);
+}

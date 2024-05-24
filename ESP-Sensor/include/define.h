@@ -105,3 +105,4 @@
 #define SQUAT_MODE 1
 #define FROM_IMU 0
 #define FROM_ENCODER 1
+#define MOTOR_INCREASE 5
