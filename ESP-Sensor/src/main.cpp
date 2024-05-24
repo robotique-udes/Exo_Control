@@ -14,6 +14,7 @@
 #include "touchScreen.h"
 #include "callbackSetup.h"
 #include "exoSettings.h"
+#include "enumAngleSource.h"
 
 Test tester;
 Relay relais;
@@ -24,7 +25,7 @@ QuadratureEncoder encoder;
 TouchScreen &screen = TouchScreen::getInstance();
 ExoSettings &settings = ExoSettings::getInstance();
 
-void updateAngles(int angleSource);
+void updateAngles(EnumAngleSource angleSource);
 
 //===============================================================================================================
 //===================================================(SETUP)=====================================================
@@ -76,51 +77,44 @@ void loop()
 
   //--------------LOGIC BLOC---------------
   //screen.update();
-  // updateAngles(FROM_IMU);
-  // imuHandler->printBNOs(0, 4);
+  updateAngles(settings.getAngleSource());
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
-  // motor->neededTorque();
+  motor->neededTorque();
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
-  // motor->PIDCurrentPrealable();
-  // motor->sendCommand();
+  motor->PIDCurrentPrealable();
+  motor->sendCommand();
 
   //--------------PRINTING BLOC-------------
   // Serial.print(motor->getPower());
-  motor->printProxim();
-  //motor->printTorque();
+  // imuHandler->printBNOs(0, 4);
+  //motor->printProxim();
+  motor->printPMW();
+  motor->printTorque();
   // Serial.println("loop");
-  // delay(500);
-  Serial.println(" ");
+  delay(200);
+  
 }
 
-void updateAngles(int angleSource)
+void updateAngles(EnumAngleSource angleSource)
 {
   switch (angleSource)
   {
-  case (FROM_ENCODER):
-    // Add encoder logic to fecth and send angles
-    motor->setAngle(enumIMU::HIP_R, encoder.getPositionAngleRad(QuadratureEncoder::HAN_DRO));
-    motor->setAngle(enumIMU::HIP_L, encoder.getPositionAngleRad(QuadratureEncoder::HAN_GAU));
-    motor->setAngle(enumIMU::KNEE_R, encoder.getPositionAngleRad(QuadratureEncoder::GEN_DRO));
-    motor->setAngle(enumIMU::KNEE_L, encoder.getPositionAngleRad(QuadratureEncoder::GEN_GAU));
-    Serial.print("HipR: ");
-    Serial.print(motor->getAngle(enumIMU::HIP_R));
-    Serial.print("  HipL: ");
-    Serial.print(motor->getAngle(enumIMU::HIP_L));
-    Serial.print("  KneeR: ");
-    Serial.print(motor->getAngle(enumIMU::KNEE_R));
-    Serial.print("  KneeL: ");
-    Serial.println(motor->getAngle(enumIMU::KNEE_L));
+  case(EnumAngleSource::IMU):
+    //Fetch angles from IMUs
+    imuHandler->requestData();
+    motor->setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
+    motor->setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
+    motor->setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
+    motor->setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
     break;
-    case(FROM_IMU):
-      //Need change to 085
-      imuHandler->requestData();
-      motor->setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
-      motor->setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
-      motor->setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
-      motor->setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
-      break;
+  case (EnumAngleSource::ENCODER):
+  //Fetch angles from ENCODERs
+    motor->setAngle(enumIMU::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
+    motor->setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
+    motor->setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
+    motor->setAngle(enumIMU::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
+    break;
   default:
     Serial.print("Angle source not recognized");
     break;

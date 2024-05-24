@@ -21,6 +21,7 @@
 #define KI 0
 #define KD 0
 #define HIGH_TORQUE 100
+#define PI 3.141592653
 
 #define MOTEUR_GENOU_GAUCHE 0
 #define MOTEUR_GENOU_DROIT 1
@@ -102,5 +103,5 @@
 //------ SETTINGS -------
 #define WALK_MODE 0
 #define SQUAT_MODE 1
-#define FROM_ENCODER 0
-#define FROM_IMU 1
+#define FROM_IMU 0
+#define FROM_ENCODER 1
