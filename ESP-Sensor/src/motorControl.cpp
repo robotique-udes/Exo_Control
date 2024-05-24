@@ -1,6 +1,6 @@
 #include "motorControl.h"
 bool motorMode = ON; // mutliplie le torque demandé au moteur, lorsque a 0, les moteur sont effectivement à Off, contrôlé avec le HMI ou hardcode pour test
-double power = 100;
+double power = 20;
 
 Motor::Motor()
 {
@@ -60,8 +60,8 @@ void Motor::neededTorque()
   if (motorMode)
   {
     // Right Hip Torque Equation
-    if (false)                                                                                                                   // if (!RightProxim->IsOnTheGround())
-      RightHipTorque = (MF*G) * sin(RightHipRAD) * LF / 2 + (MT*G) * (sin(RightHipRAD) * LF + sin(RightKneeRAD - RightHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
+    if (false)                                                                                                                               // if (!RightProxim->IsOnTheGround())
+      RightHipTorque = (MF * G) * sin(RightHipRAD) * LF / 2 + (MT * G) * (sin(RightHipRAD) * LF + sin(RightKneeRAD - RightHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
       if (RightHipAngle < 110)
@@ -73,7 +73,7 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (false) // if (!LeftProxim->IsOnTheGround())
+    if (false)                                                                                                                          // if (!LeftProxim->IsOnTheGround())
       LeftHipTorque = (MF * G) * sin(LeftHipRAD) * LF / 2 + (MT * G) * (sin(LeftHipRAD) * LF + sin(LeftKneeRAD - LeftHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
@@ -188,10 +188,10 @@ void Motor::PIDCurrent()
 void Motor::PIDCurrentPrealable()
 {
   // Setting  PWM values
-  PWMRightKnee = float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+  PWMRightKnee = -float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMLeftKnee = float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMRightHip = float(map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
-  PWMLeftHip = float(map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+  PWMLeftHip = -float(map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
 }
 
 void Motor::printPMW()
@@ -301,6 +301,10 @@ void Motor::motorSetSpeed(int ID, int val)
     val = 4000; // Protection contre les valeurs trop élevées (drive limitée à 98%)
   else if (val < -4000)
     val = -4000;
+
+  // deadzone à 200
+  if (val < 200 && val > -200)
+    val = 0;
 
   int PIN_IN1;
   int PIN_IN2;
