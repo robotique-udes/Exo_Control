@@ -367,7 +367,7 @@ void Motor::testFuncSetPwnHigh()
 }
 
 //A renommer correctement
-void Motor::setSonarState(bool state){ settings.setProximState(state); }
+void Motor::setSonarState(bool state){ settings.setProximEnabled(state); }
 void Motor::setHeight(double h){ settings.setHeight(h); }
 // double Motor::sonarScanR(){ return RightProxim->GetMinDistance(); }
 // double Motor::sonarScanL(){ return LeftProxim->GetMinDistance(); }

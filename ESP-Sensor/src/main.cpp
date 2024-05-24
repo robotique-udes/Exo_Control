@@ -75,12 +75,11 @@ void loop()
   tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
-  // ecran.nextLoop();
-  //updateAngles(FROM_IMU);
-
-  //imuHandler->printBNOs(0, 4);
+  //screen.update();
+  // updateAngles(FROM_IMU);
+  // imuHandler->printBNOs(0, 4);
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
-  //motor->neededTorque();
+  // motor->neededTorque();
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->PIDCurrentPrealable();
@@ -92,9 +91,6 @@ void loop()
   //motor->printTorque();
   // Serial.println("loop");
   // delay(500);
-
-  // Obligatoire pour le HMI
-  //screen.update();
   Serial.println(" ");
 }
 

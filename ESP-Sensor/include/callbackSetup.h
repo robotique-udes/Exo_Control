@@ -5,136 +5,120 @@
 #include <Arduino.h>
 #include <Nextion.h>
 #include "exoSettings.h"
-#include "enumExoStates.h"
 #include "touchScreen.h"
 
-void callbackButtonDisarmed(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_DISARMED");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
+void callbackButtonToggleMotor(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_MOTOR");
 
-    ExoSettings& settings = ExoSettings::getInstance();
+    NexDSButton *button = static_cast<NexDSButton*>(ptr);
 
-    settings.setMotorState(EnumExoStates::DISARMED);
-    Serial.println("Motor state: DISARMED");
-}
+    uint32_t state;
 
-void callbackButtonArmed(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_ARMED");
-
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setMotorState(EnumExoStates::ARMED); 
-    Serial.println("Motor state: ARMED");
+    settings.setMotorEnabled(state);
 }
 
-void callbackButtonMotorised(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_MOTORISED");
+void callbackButtonToggleClutch(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_CLUTCH");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
+    NexDSButton *button = static_cast<NexDSButton*>(ptr);
+
+    uint32_t state;
+
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setMotorState(EnumExoStates::MOTORISED); 
-    Serial.println("Motor state: MOTORISED");
+    settings.setClutchEnabled(state);
 }
 
-void callbackButtonWalk(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_WALK");
+void callbackButtonInit(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_INIT");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
+    //...
+}
+
+void callbackButtonResetEncoder(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
+
+    //...
+}
+
+void callbackButtonAutoCalibProxim(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
+
+    //...
+}
+
+void callbackButtonToggleAngleSource(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE");
+
+    NexDSButton *button = static_cast<NexDSButton*>(ptr);
+
+    uint32_t state;
+
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setProximState(WALK_MODE);
+    settings.setAngleSource(static_cast<EnumAngleSource>(state));
 }
 
-void callbackButtonSquat(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_SQUAT");
+void callbackButtonToggleProxim(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
+    NexDSButton *button = static_cast<NexDSButton*>(ptr);
+
+    uint32_t state;
+
+    button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setProximState(SQUAT_MODE);
+    settings.setProximEnabled(state);
 }
 
-void callbackAutocalib(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_AUTOCALIB");
+void callbackButtonTest(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_TEST");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
-
-    ExoSettings& settings = ExoSettings::getInstance();
-
-    settings.setHeight(400);
+    //...
 }
 
-void callbackBUTTON_4F(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_4F");
+void callbackButtonDev1(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
-
-    ExoSettings& settings = ExoSettings::getInstance();
-
-    settings.setHeight(200);
+    //...
 }
 
-void callbackBUTTON_5F8(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_5F8");
+void callbackButtonDev2(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
+    //...
+}
+void callbackButtonToogle1(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_1");
 
-    ExoSettings& settings = ExoSettings::getInstance();
-
-    settings.setHeight(400);
+    //...
 }
 
-void callbackBUTTON_5F10(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_5F10");
+void callbackButtonToggle2(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_2");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
-
-    ExoSettings& settings = ExoSettings::getInstance();
-
-    settings.setHeight(450);
+    //...
 }
 
-void callbackBUTTON_6F(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_6F");
+void callbackSliderDev1(void *ptr){
+    Serial.println("Pressed EnumScreenCallback::SLIDER_DEV_1");
 
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
-
-    ExoSettings& settings = ExoSettings::getInstance();
-
-    settings.setHeight(500);
+    //...
 }
 
-void callbackBUTTON_PID0(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_PID0 -> Doing nothing XD");
-}
-
-void callbackBUTTON_PID1(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_PID1 -> Doing nothing XD");
-}
-
-void callbackBUTTON_PID2(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_PID2 -> Doing nothing XD");
-}
-
-void callbackBUTTON_SAVE_PID(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_SAVE_PID");
-
-    NexButton *buttonControl = static_cast<NexButton*>(ptr);
-
-    ExoSettings& settings = ExoSettings::getInstance();
-
-    settings.saveMotorPower();
-}
-
-void callbackP_SLIDER(void *ptr){
-    Serial.println("Interaction with EnumScreenCallback::P_SLIDER");
+void callbackSliderMotorPower(void *ptr){
+    Serial.println("Interaction with EnumScreenCallback::SLIDER_MOTOR_POWER");
 
     NexSlider *sliderControl = static_cast<NexSlider*>(ptr);
 
@@ -143,30 +127,26 @@ void callbackP_SLIDER(void *ptr){
     uint32_t value;
     sliderControl->getValue(&value);
 
-    NexNumber* indicator = TouchScreen::getInstance().getIndicator();
-    settings.setFutureMotorPower(value);
-    indicator->setValue(value);
+    settings.setMotorPower(value);
 }
-
-
 
 
 void setupCallbacks(){
     TouchScreen& screen = TouchScreen::getInstance();
-    screen.setCallback(EnumScreenCallback::BUTTON_DISARMED, &callbackButtonDisarmed);
-    screen.setCallback(EnumScreenCallback::BUTTON_ARMED, &callbackButtonArmed);
-    screen.setCallback(EnumScreenCallback::BUTTON_MOTORISED, &callbackButtonMotorised);
-    screen.setCallback(EnumScreenCallback::BUTTON_WALK, &callbackButtonWalk);
-    screen.setCallback(EnumScreenCallback::BUTTON_SQUAT, &callbackButtonSquat);
-    screen.setCallback(EnumScreenCallback::BUTTON_AUTOCALIB, &callbackAutocalib);
-    screen.setCallback(EnumScreenCallback::BUTTON_4F, &callbackBUTTON_4F);
-    screen.setCallback(EnumScreenCallback::BUTTON_5F8, &callbackBUTTON_5F8);
-    screen.setCallback(EnumScreenCallback::BUTTON_5F10, &callbackBUTTON_5F10);
-    screen.setCallback(EnumScreenCallback::BUTTON_6F, &callbackBUTTON_6F);
-    screen.setCallback(EnumScreenCallback::BUTTON_PID0, &callbackBUTTON_PID0);
-    screen.setCallback(EnumScreenCallback::BUTTON_PID1, &callbackBUTTON_PID1);
-    screen.setCallback(EnumScreenCallback::BUTTON_PID2, &callbackBUTTON_PID2);
-    screen.setCallback(EnumScreenCallback::P_SLIDER, &callbackP_SLIDER);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToggleMotor);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_CLUTCH, &callbackButtonToggleClutch);
+    screen.setCallback(EnumScreenCallback::BUTTON_INIT, &callbackButtonInit);
+    screen.setCallback(EnumScreenCallback::BUTTON_RESET_ENCODER, &callbackButtonResetEncoder);
+    screen.setCallback(EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM, &callbackButtonAutoCalibProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE, &callbackButtonToggleAngleSource);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_PROXIM, &callbackButtonToggleProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_TEST, &callbackButtonTest);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_1, &callbackButtonDev1);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_2, &callbackButtonDev2);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_TOGGLE_1, &callbackButtonToogle1);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_TOGGLE_2, &callbackButtonToggle2);
+    screen.setCallback(EnumScreenCallback::SLIDER_DEV_1, &callbackSliderDev1);
+    screen.setCallback(EnumScreenCallback::SLIDER_MOTOR_POWER, &callbackSliderMotorPower);
 }
 
 
