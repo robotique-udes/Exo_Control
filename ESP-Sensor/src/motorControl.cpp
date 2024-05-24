@@ -60,8 +60,8 @@ void Motor::neededTorque()
   if (motorMode)
   {
     // Right Hip Torque Equation
-    if (false) // if (!RightProxim->IsOnTheGround())
-      RightHipTorque = 0;
+    if (false)                                                                                                                   // if (!RightProxim->IsOnTheGround())
+      RightHipTorque = (MF*G) * sin(RightHipRAD) * LF / 2 + (MT*G) * (sin(RightHipRAD) * LF + sin(RightKneeRAD - RightHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
       if (RightHipAngle < 110)
@@ -74,7 +74,7 @@ void Motor::neededTorque()
 
     // Left Hip Torque Equation
     if (false) // if (!LeftProxim->IsOnTheGround())
-      LeftHipTorque = 0;
+      LeftHipTorque = (MF * G) * sin(LeftHipRAD) * LF / 2 + (MT * G) * (sin(LeftHipRAD) * LF + sin(LeftKneeRAD - LeftHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
       if (LeftHipAngle < 110)
