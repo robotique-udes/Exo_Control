@@ -8,18 +8,23 @@
 #include "enumAngleSource.h"
 #include "enumSonarState.h"
 #include "relay.h"
+#include "QuadratureEncoder.h"
 
 using namespace std;
 
 class ExoSettings{
     private:
 
-        bool motorEnabled;
-        bool clutchEnabled;
-        bool proximEnabled;
+        Relay relais;
+        QuadratureEncoder *encodeurPtr;
 
-        EnumSonarState sonarState;
-        EnumAngleSource angleSource = EnumAngleSource::ENCODER;
+        
+        bool motorEnabled = false;
+        bool clutchEnabled = false;
+        bool proximEnabled = true;
+        bool needResetProxim = false;
+        bool sonarState = SQUAT_MODE;
+        bool angleSource = FROM_IMU;
 
         int height;
         int motorPower;
@@ -27,8 +32,9 @@ class ExoSettings{
         ExoSettings();
 
     public:
-        Relay relais;
+        
 
+        void init(QuadratureEncoder *encodeur);
         bool isMotorEnabled();
         bool isClutchEnabled();
         bool isProximEnabled();
@@ -36,11 +42,16 @@ class ExoSettings{
         void setClutchEnabled(bool setClutchEnabled);
         void setProximEnabled(bool setProximEnabled);
 
-        EnumAngleSource getAngleSource();
-        void setAngleSource(EnumAngleSource setAngleSource);
+        void resetEncoder();
 
-        EnumSonarState getSonarState();
-        void setSonarState(EnumSonarState setSonarState);
+        bool getResetProxim();
+        void setResetProxim(bool reset);
+
+        bool getAngleSource();
+        void setAngleSource(bool setAngleSource);
+
+        bool getSonarState();
+        void setSonarState(bool setSonarState);
 
         int getHeight();
         void setHeight(int setHeight);

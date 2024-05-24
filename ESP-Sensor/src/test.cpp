@@ -206,7 +206,7 @@ void Test::keyboardCommand()
     else if (incomingByte == '-')
     {
       Serial.println("Reset Encoder Genou Gauche");
-      motor->setSonarTrigger();
+      motor->SetTriggerDistance();
     }
     
   }
