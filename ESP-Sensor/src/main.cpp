@@ -25,7 +25,7 @@ QuadratureEncoder encoder;
 TouchScreen &screen = TouchScreen::getInstance();
 ExoSettings &settings = ExoSettings::getInstance();
 
-void updateAngles(EnumAngleSource angleSource);
+void updateAngles(bool angleSource);
 
 //===============================================================================================================
 //===================================================(SETUP)=====================================================
@@ -52,6 +52,7 @@ void setup()
   tester.setEncoder(&encoder);
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
+  settings.init(&encoder);
 
   motor->setPins();
   relais.setPins();
@@ -77,7 +78,7 @@ void loop()
   tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
-  //screen.update();
+  screen.update();
   updateAngles(settings.getAngleSource());
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
   motor->neededTorque();
@@ -97,28 +98,21 @@ void loop()
   
 }
 
-void updateAngles(EnumAngleSource angleSource)
+void updateAngles(bool angleSource)
 {
-  switch (angleSource)
-  {
-  case(EnumAngleSource::IMU):
+  if(FROM_IMU){
     //Fetch angles from IMUs
     imuHandler->requestData();
     motor->setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
     motor->setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
     motor->setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
     motor->setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
-    break;
-  case (EnumAngleSource::ENCODER):
-  //Fetch angles from ENCODERs
-    Serial.println("yeepee");
+  }
+  else{
+    //Fetch angles from ENCODERs
     motor->setAngle(enumIMU::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
     motor->setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
     motor->setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
     motor->setAngle(enumIMU::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
-    break;
-  default:
-    Serial.print("Angle source not recognized");
-    break;
   }
 }

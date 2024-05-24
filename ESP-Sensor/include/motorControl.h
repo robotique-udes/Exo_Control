@@ -70,10 +70,9 @@ public:
     void PIDCurrent();
     void PIDCurrentPrealable();
     void sendCommand();
-    void setMotorMode(bool state);
     void setPower(double p);
     double getPower();
-    void setSonarTrigger();
+    void SetTriggerDistance();
 
     void setAngle(enumIMU enumType, float val);
     float getAngle(enumIMU enumType);
@@ -85,8 +84,6 @@ public:
 
     void setSonarState(bool state);
     void setHeight(double h);
-    double sonarScanR();
-    double sonarScanL();
 
     void motorSetSpeed(int ID, int val); // ID 0 to 3, val -4096 to 4096
 

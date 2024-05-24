@@ -7,8 +7,8 @@ ExoSettings::ExoSettings(){
     clutchEnabled = false;
     proximEnabled = true;
 
-    sonarState = EnumSonarState::SQUAT;
-    angleSource = EnumAngleSource::IMU;
+    sonarState = SQUAT_MODE;
+    angleSource = FROM_IMU;
 
     height = 180;
     motorPower = 50;
@@ -19,6 +19,10 @@ ExoSettings& ExoSettings::getInstance(){
         instance = new ExoSettings();
     }
     return *instance;
+}
+
+void ExoSettings::init(QuadratureEncoder *encodeur){
+    encodeurPtr = encodeur;
 }
 
 bool ExoSettings::isMotorEnabled(){
@@ -34,31 +38,42 @@ bool ExoSettings::isProximEnabled(){
 }
 
 void ExoSettings::setMotorEnabled(bool setMotorEnabled){
-    motorEnabled = setMotorEnabled;
+    motorEnabled = !(motorEnabled);
+    Serial.print("\t Motor enable set to: ");
+    Serial.println(motorEnabled);
 }
 
 void ExoSettings::setClutchEnabled(bool setClutchEnabled){
-    clutchEnabled = setClutchEnabled;
+    clutchEnabled = !(clutchEnabled);
+    relais.setAllRelais(clutchEnabled);
+    Serial.print("\t Clutch enable set to: ");
+    Serial.println(clutchEnabled);
 }
 
 void ExoSettings::setProximEnabled(bool setProximEnabled){
-    proximEnabled = setProximEnabled;
+    proximEnabled = !(proximEnabled);
+    Serial.print("\t Proxim enable set to: ");
+    Serial.println(proximEnabled);
 }
 
-EnumAngleSource ExoSettings::getAngleSource(){
+bool ExoSettings::getAngleSource(){
     return angleSource;
 }
 
-void ExoSettings::setAngleSource(EnumAngleSource setAngleSource){
-    angleSource = setAngleSource;
+void ExoSettings::setAngleSource(bool setAngleSource){
+    angleSource = !(angleSource);
+    Serial.print("\t Angle source set to: ");
+    Serial.println(angleSource);
 }
 
-EnumSonarState ExoSettings::getSonarState(){
+bool ExoSettings::getSonarState(){
     return sonarState;
 }
 
-void ExoSettings::setSonarState(EnumSonarState setSonarState){
-    sonarState = setSonarState;
+void ExoSettings::setSonarState(bool setSonarState){
+    sonarState = !(sonarState);
+    Serial.print("\t Sonar state set to: ");
+    Serial.println(sonarState);
 }
 
 int ExoSettings::getHeight(){
@@ -69,10 +84,29 @@ void ExoSettings::setHeight(int setHeight){
     height = setHeight;
 }
 
+bool ExoSettings::getResetProxim(){
+    return needResetProxim;
+}
+
+void ExoSettings::setResetProxim(bool reset){
+    Serial.println("\t proxim reset to high ");
+    needResetProxim = reset;
+}
+
 int ExoSettings::getMotorPower(){
     return motorPower;
 }
 
 void ExoSettings::setMotorPower(int setMotorPower){
-    motorEnabled = setMotorPower;
+    motorPower = setMotorPower;
+    Serial.print("\t Motor power set to: ");
+    Serial.println(motorEnabled);
+}
+
+void ExoSettings::resetEncoder(){
+    Serial.println("\t Reseting encoder ");
+    encodeurPtr->resetPosition(QuadratureEncoder::GEN_DRO);
+    encodeurPtr->resetPosition(QuadratureEncoder::GEN_GAU);
+    encodeurPtr->resetPosition(QuadratureEncoder::HAN_DRO);
+    encodeurPtr->resetPosition(QuadratureEncoder::HAN_GAU);
 }

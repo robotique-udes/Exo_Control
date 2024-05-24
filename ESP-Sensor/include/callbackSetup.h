@@ -38,20 +38,27 @@ void callbackButtonToggleClutch(void *ptr){
 
 void callbackButtonInit(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_INIT");
+    ExoSettings& settings = ExoSettings::getInstance();
 
-    //...
+    settings.setClutchEnabled(OFF);
+    settings.setMotorEnabled(false);
+    settings.setMotorPower(50);
+    settings.setResetProxim(true);
+    settings.setSonarState(SQUAT_MODE);
+    settings.setAngleSource(FROM_IMU);
+    settings.resetEncoder();
 }
 
 void callbackButtonResetEncoder(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
-
-    //...
+    ExoSettings& settings = ExoSettings::getInstance();
+    settings.resetEncoder();
 }
 
 void callbackButtonAutoCalibProxim(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
-
-    //...
+    ExoSettings& settings = ExoSettings::getInstance();
+    settings.setResetProxim(true);
 }
 
 void callbackButtonToggleAngleSource(void *ptr){
@@ -64,7 +71,7 @@ void callbackButtonToggleAngleSource(void *ptr){
     button->getValue(&state);
 
     ExoSettings& settings = ExoSettings::getInstance();
-    settings.setAngleSource(static_cast<EnumAngleSource>(state));
+    settings.setAngleSource(state);
 }
 
 void callbackButtonToggleProxim(void *ptr){

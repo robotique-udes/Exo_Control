@@ -55,9 +55,14 @@ void Motor::neededTorque()
   float LeftKneeRAD = toRadian(LeftKneeAngle);
   float RightHipRAD = toRadian(RightHipAngle);
   float RightKneeRAD = toRadian(RightKneeAngle);
-
+  //check if proxim to reset trigger dist
+  if(settings.getResetProxim())
+  {
+    SetTriggerDistance();
+    settings.setResetProxim(false);
+  }
   // If clutch are on automatic, calculate torque needed
-  if (motorMode)
+  if (settings.isMotorEnabled())
   {
     // Right Hip Torque Equation
     if (false)                                                                                                                               // if (!RightProxim->IsOnTheGround())
@@ -209,24 +214,24 @@ void Motor::printPMW()
 
 void Motor::printProxim()
 {
+  if(settings.getResetProxim())
+  {
+    SetTriggerDistance();
+    settings.setResetProxim(false);
+  }
   Serial.print("\t RIGHT PROXIM: ");
   Serial.print(RightProxim->IsOnTheGround());
   Serial.print("\t LEFT PROXIM: ");
   Serial.print(LeftProxim->IsOnTheGround());
 
-  // Serial.print(" MM: ");
-  // Serial.println(motorMode);
+  Serial.print(" ME: ");
+  Serial.println(settings.isMotorEnabled());
 }
 
-void Motor::setSonarTrigger()
+void Motor::SetTriggerDistance()
 {
   LeftProxim->SetTriggerDistance();
   RightProxim->SetTriggerDistance();
-}
-
-void Motor::setMotorMode(bool state)
-{
-  motorMode = state;
 }
 
 void Motor::setPower(double p)
