@@ -4,27 +4,27 @@ TouchScreen *TouchScreen::instance;
 
 TouchScreen::TouchScreen(){
 
-    motorToggle = new NexDSButton(0, 7, "bt0");
-    clutchToggle = new NexDSButton(0, 8, "bt1");
-    init = new NexButton(0, 6, "b6");
+    motorToggle = new NexDSButton(0, 7, "motorToggle");
+    clutchToggle = new NexDSButton(0, 8, "clutchToggle");
+    init = new NexButton(0, 6, "init");
 
-    resetEncoder = new NexButton(1, 2, "b5");
-    autoCalibProxim = new NexButton(1, 3, "b6");
-    powerSlider = new NexSlider(1, 6, "h0");
+    resetEncoder = new NexButton(1, 2, "resetEncoder");
+    autoCalibProxim = new NexButton(1, 3, "autoCalib");
+    powerSlider = new NexSlider(1, 6, "powerSlider");
 
-    angleSource = new NexDSButton(2, 2, "bt0");
-    proximToggle = new NexDSButton(2, 3, "bt1");
-    testExo = new NexButton(2, 4, "b4");
+    angleSource = new NexDSButton(2, 2, "angleSource");
+    proximToggle = new NexDSButton(2, 3, "proximToggle");
+    testExo = new NexButton(2, 4, "testExo");
 
-    button1 = new NexButton(3, 2, "b4");
-    button2 = new NexButton(3, 3, "b5");
-    toggle1 = new NexDSButton(3, 4, "bt0");
-    toggle2 = new NexDSButton(3, 5, "bt1");
-    slider1 = new NexSlider(3, 8, "h0");
+    button1 = new NexButton(3, 2, "button1");
+    button2 = new NexButton(3, 3, "button2");
+    toggle1 = new NexDSButton(3, 4, "toggle1");
+    toggle2 = new NexDSButton(3, 5, "toggle2");
+    slider1 = new NexSlider(3, 8, "slider1");
     
     currentString = "";
 
-    logText = new NexText(5, 6, "t0");
+    logText = new NexText(5, 6, "logText");
     logText->setText("");
 
     //Go quack : 4, 1
@@ -104,6 +104,7 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
 
 void TouchScreen::println(string toPrint){
     currentString = currentString + toPrint + "\n";
+    logText->setText(currentString.c_str());
 }
 
 TouchScreen& TouchScreen::getInstance(){
@@ -111,9 +112,5 @@ TouchScreen& TouchScreen::getInstance(){
         instance = new TouchScreen();
     }
     return *instance;
-}
-
-void TouchScreen::showScreen(){
-    logText->setText(currentString);
 }
 

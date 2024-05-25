@@ -55,7 +55,6 @@ class TouchScreen{
         
         void update();
         void println(string toPrint);
-        void showScreen();
         void setCallback(EnumScreenCallback callback, void (*callbackFunction)(void *ptr));
 };
 
