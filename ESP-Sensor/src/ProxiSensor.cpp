@@ -22,9 +22,7 @@ ProxiSensor::ProxiSensor(Multiplex *muxPtr, int muxAddress)
 
     CoreSensor.setChannel(0);
 
-    CoreSensor.setBrightness(OPT3101Brightness::High);
-
-    SetTriggerDistance();
+    SetTriggerDistance(HIGH);
     for(int i = 0; i<BUFFER_SIZE; i++){
         bufferOnTheGround[i] = 1;
     }
@@ -146,8 +144,14 @@ bool ProxiSensor::IsOnTheGround()
     return OnTheGround;
 }
 
-void ProxiSensor::SetTriggerDistance()
+void ProxiSensor::SetTriggerDistance(bool brightness)
 {
+    if(brightness){
+        CoreSensor.setBrightness(OPT3101Brightness::High);
+    }
+    else{
+        CoreSensor.setBrightness(OPT3101Brightness::Low);
+    }
     float moyenne = 0;
     for (int i = 0; i < 3; i++)
     {

@@ -192,16 +192,18 @@ void Motor::PIDCurrent()
 void Motor::PIDCurrentPrealable()
 {
   int power = settings.getMotorPower();
+
   // Setting  PWM values
-  PWMRightKnee = -float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
-  PWMLeftKnee = float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
-  PWMRightHip = float(map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
-  PWMLeftHip = -float(map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+  PWMRightKnee = -float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power));
+  PWMLeftKnee = float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power));
+  PWMRightHip = float(map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power));
+  PWMLeftHip = -float(map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power));
 }
 
 void Motor::printPMW()
 {
-
+  Serial.print("\t Motor Power: ");
+  Serial.print(settings.getMotorPower());
   Serial.print("\t  PWMRightKnee: ");
   Serial.print(PWMRightKnee);
   Serial.print("\t  PWMLeftKnee: ");
@@ -222,7 +224,7 @@ void Motor::printProxim()
   Serial.print("\t RIGHT PROXIM: ");
   Serial.print(RightProxim->IsOnTheGround());
   Serial.print("\t LEFT PROXIM: ");
-  Serial.print(LeftProxim->IsOnTheGround());
+  Serial.println(LeftProxim->IsOnTheGround());
 
   // Serial.print("\t ME: ");
   // Serial.println(settings.isMotorEnabled());
@@ -230,8 +232,8 @@ void Motor::printProxim()
 
 void Motor::SetTriggerDistance()
 {
-  LeftProxim->SetTriggerDistance();
-  RightProxim->SetTriggerDistance();
+  LeftProxim->SetTriggerDistance(settings.getBrightness());
+  RightProxim->SetTriggerDistance(settings.getBrightness());
 }
 
 

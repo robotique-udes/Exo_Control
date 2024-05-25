@@ -19,16 +19,16 @@ class ExoSettings{
         QuadratureEncoder *encodeurPtr;
 
         
-        bool motorEnabled = false;
-        bool clutchEnabled = false;
-        bool proximEnabled = true;
-        bool needResetProxim = false;
-        bool sonarState = SQUAT_MODE;
-        bool angleSource = FROM_IMU;
-        bool brightness = HIGH;
+        bool motorEnabled;
+        bool clutchEnabled;
+        bool proximEnabled;
+        bool needResetProxim;
+        bool sonarState;
+        bool angleSource;
+        bool brightness;
 
         int height;
-        int motorPower;
+        float motorPower;
 
         ExoSettings();
 
@@ -43,9 +43,13 @@ class ExoSettings{
         void setClutchEnabled(bool setClutchEnabled);
         void setProximEnabled(bool setProximEnabled);
         void adjustMotorPower(int powerOffset);
-        void setBrightness();
+        
+        void initialise();
 
         void resetEncoder();
+
+        void setBrightness();
+        bool getBrightness();
 
         bool getResetProxim();
         void setResetProxim(bool reset);
