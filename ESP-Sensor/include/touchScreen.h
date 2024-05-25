@@ -38,6 +38,8 @@ class TouchScreen{
         // Page log
         NexText *logText;
 
+        int logLines;
+
 
         NexTouch *listenList[15];
 

@@ -23,6 +23,7 @@ TouchScreen::TouchScreen(){
     slider1 = new NexSlider(3, 8, "slider1");
     
     currentString = "";
+    logLines = 0;
 
     logText = new NexText(5, 6, "logText");
     logText->setText("");
@@ -103,8 +104,15 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
 }
 
 void TouchScreen::println(string toPrint){
-    currentString = currentString + toPrint + "\n";
+    currentString = currentString + toPrint + "\r\n";
+    
+    if(logLines > 11){
+        currentString = currentString.substr(currentString.find("\r\n", 0) + 2, currentString.length());
+    }
+    
     logText->setText(currentString.c_str());
+
+    logLines++;
 }
 
 TouchScreen& TouchScreen::getInstance(){
