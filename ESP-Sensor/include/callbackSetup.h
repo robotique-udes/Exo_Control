@@ -127,7 +127,9 @@ void callbackSliderMotorPower(void *ptr){
     uint32_t value;
     sliderControl->getValue(&value);
 
-    settings.setMotorPower(value);
+    TouchScreen& screen = TouchScreen::getInstance();
+
+    //settings.setMotorPower(value);
 }
 
 
