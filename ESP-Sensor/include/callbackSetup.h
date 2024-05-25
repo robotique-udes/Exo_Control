@@ -40,13 +40,7 @@ void callbackButtonInit(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_INIT");
     ExoSettings& settings = ExoSettings::getInstance();
 
-    settings.setClutchEnabled(OFF);
-    settings.setMotorEnabled(false);
-    settings.setMotorPower(50);
-    settings.setResetProxim(true);
-    settings.setSonarState(SQUAT_MODE);
-    settings.setAngleSource(FROM_IMU);
-    settings.resetEncoder();
+    settings.initialise();
 }
 
 void callbackButtonResetEncoder(void *ptr){
@@ -96,17 +90,15 @@ void callbackButtonTest(void *ptr){
 
 void callbackButtonDev1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
-    Serial.println("Increasing motor power");
+    Serial.print("Switching brightness settings");
     ExoSettings& settings = ExoSettings::getInstance();
-    settings.adjustMotorPower(MOTOR_INCREASE);
+    settings.setBrightness();
 
 }
 
 void callbackButtonDev2(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
-    Serial.println("Decreasing motor power");
-    ExoSettings& settings = ExoSettings::getInstance();
-    settings.adjustMotorPower(-MOTOR_INCREASE);
+    //...
 
 }
 void callbackButtonToogle1(void *ptr){
@@ -134,8 +126,9 @@ void callbackSliderMotorPower(void *ptr){
     ExoSettings& settings = ExoSettings::getInstance();
 
     uint32_t value;
+    Serial.println("About to print value : ...");
     sliderControl->getValue(&value);
-
+    Serial.println(value);
     settings.setMotorPower(value);
 }
 

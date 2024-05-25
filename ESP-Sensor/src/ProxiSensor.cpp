@@ -22,9 +22,7 @@ ProxiSensor::ProxiSensor(Multiplex *muxPtr, int muxAddress)
 
     CoreSensor.setChannel(0);
 
-    CoreSensor.setBrightness(OPT3101Brightness::High);
-
-    SetTriggerDistance();
+    SetTriggerDistance(HIGH);
     for(int i = 0; i<BUFFER_SIZE; i++){
         bufferOnTheGround[i] = 1;
     }
@@ -72,7 +70,7 @@ int ProxiSensor::GetMinDistance()
     this->muxPtr->selectChannel(muxAddress);
     int16_t min = 0;
     float moyenne = 0;
-    int sample = 0;
+    float sample = 0;
     // Itère dans chaque channel pour faire une lecture et remplace min si elle est plus petite que la précédante
     for (int j = 0; j < 3; j++)
     {
@@ -82,19 +80,29 @@ int ProxiSensor::GetMinDistance()
             CoreSensor.sample();
 
             int16_t dist = CoreSensor.distanceMillimeters;
-            if ((dist < min || min == 0) && dist > 0)
+
+            if(i == 0){
+                min = dist;
+            }
+            if ((dist < min) && dist > 0)
             {
                 min = dist;
             }
         }
-        if (min != 0)
-        {
-            moyenne += min;
-            sample++;
-        }
+        
+        moyenne += float(min);
+        sample++;
+        
     }
     CoreSensor.setChannel(0);
-    minimumDistance = (moyenne / sample);
+    if(moyenne > 0){
+        minimumDistance = int(moyenne / sample);
+    }
+    // Serial.print("Sample: \t");
+    // Serial.print(sample);
+    // Serial.print(" Distance: \t");
+    // Serial.print(minimumDistance);
+    // Serial.print("  ");
     return minimumDistance;
 }
 
@@ -136,14 +144,20 @@ bool ProxiSensor::IsOnTheGround()
     return OnTheGround;
 }
 
-void ProxiSensor::SetTriggerDistance()
+void ProxiSensor::SetTriggerDistance(bool brightness)
 {
-    float moyenne;
+    if(brightness){
+        CoreSensor.setBrightness(OPT3101Brightness::High);
+    }
+    else{
+        CoreSensor.setBrightness(OPT3101Brightness::Low);
+    }
+    float moyenne = 0;
     for (int i = 0; i < 3; i++)
     {
-        moyenne = GetMinDistance();
+        moyenne += float(GetMinDistance());
     }
-    TriggerDistance = int(moyenne / 3) + GROUND_DISTANCE_RANGE;
+    TriggerDistance = (moyenne / 3.0) + GROUND_DISTANCE_RANGE;
     Serial.print("Trigger dist set to: ");
     Serial.println(TriggerDistance);
 }

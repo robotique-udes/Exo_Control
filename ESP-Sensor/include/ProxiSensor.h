@@ -7,7 +7,6 @@
 #include "multiplex.h"
 #include "define.h"
 
-#define GROUND_DISTANCE_RANGE 60
 
 class ProxiSensor
 {
@@ -19,7 +18,6 @@ private:
     int muxAddress;
     Multiplex *muxPtr;
     int bufferOnTheGround[BUFFER_SIZE];
-    
 
 public:
     ProxiSensor(Multiplex *muxPtr, int muxAddress);
@@ -32,7 +30,7 @@ public:
     void PrintData();
     void PrintDistance();
     void SetFrameTiming(int FrameTiming);
-    void SetTriggerDistance();
+    void SetTriggerDistance(bool brightness);
     
 };
 

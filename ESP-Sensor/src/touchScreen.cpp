@@ -9,12 +9,12 @@ TouchScreen::TouchScreen(){
     init = new NexButton(0, 6, "init");
 
     resetEncoder = new NexButton(1, 2, "resetEncoder");
-    autoCalibProxim = new NexButton(1, 3, "autoCalibProxim");
+    autoCalibProxim = new NexButton(1, 3, "autoCalib");
     powerSlider = new NexSlider(1, 6, "powerSlider");
 
-    angleSource = new NexDSButton(2, 2, "motorToggle");
-    proximToggle = new NexDSButton(2, 3, "motorToggle");
-    testExo = new NexButton(2, 4, "motorToggle");
+    angleSource = new NexDSButton(2, 2, "angleSource");
+    proximToggle = new NexDSButton(2, 3, "proximToggle");
+    testExo = new NexButton(2, 4, "testExo");
 
     button1 = new NexButton(3, 2, "button1");
     button2 = new NexButton(3, 3, "button2");
@@ -23,8 +23,10 @@ TouchScreen::TouchScreen(){
     slider1 = new NexSlider(3, 8, "slider1");
     
     currentString = "";
+    logLines = 0;
 
     logText = new NexText(5, 6, "logText");
+    logText->setText("");
 
     //Go quack : 4, 1
 
@@ -95,16 +97,22 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
             slider1->attachPush(callbackFunction, slider1);
         break;
         case EnumScreenCallback::SLIDER_MOTOR_POWER :
-            powerSlider->attachPush(callbackFunction, powerSlider);
+            powerSlider->attachPop(callbackFunction, powerSlider);
         break;
         default:break;
     }
 }
 
-void TouchScreen::print(string toPrint){
-    //currentString += toPrint + "\n";
+void TouchScreen::println(string toPrint){
+    currentString = currentString + toPrint + "\r\n";
+    
+    if(logLines > 11){
+        currentString = currentString.substr(currentString.find("\r\n", 0) + 2, currentString.length());
+    }
+    
+    logText->setText(currentString.c_str());
 
-    //logText->setText("asdfasdfasdfasdfasdf");
+    logLines++;
 }
 
 TouchScreen& TouchScreen::getInstance(){

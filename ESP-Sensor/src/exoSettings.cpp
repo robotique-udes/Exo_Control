@@ -6,12 +6,14 @@ ExoSettings::ExoSettings(){
     motorEnabled = false;
     clutchEnabled = false;
     proximEnabled = true;
+    brightness = HIGH;
+    needResetProxim = false;
 
     sonarState = SQUAT_MODE;
     angleSource = FROM_IMU;
 
     height = 180;
-    motorPower = 50;
+    motorPower = 2048;
 }
 
 ExoSettings& ExoSettings::getInstance(){
@@ -84,6 +86,14 @@ void ExoSettings::setHeight(int setHeight){
     height = setHeight;
 }
 
+bool ExoSettings::getBrightness(){
+    return brightness;
+}
+
+void ExoSettings::setBrightness(){
+    brightness = !(brightness);
+}
+
 bool ExoSettings::getResetProxim(){
     return needResetProxim;
 }
@@ -97,10 +107,10 @@ int ExoSettings::getMotorPower(){
     return motorPower;
 }
 
-void ExoSettings::setMotorPower(int setMotorPower){
-    motorPower = setMotorPower;
+void ExoSettings::setMotorPower(int newMotorPower){
+    motorPower = float(newMotorPower) / 100.0 * 4096.0;
     Serial.print("\t Motor power set to: ");
-    Serial.println(motorEnabled);
+    Serial.println(motorPower);
 }
 
 void ExoSettings::resetEncoder(){
@@ -113,4 +123,14 @@ void ExoSettings::resetEncoder(){
 
 void ExoSettings::adjustMotorPower(int offset){
     setMotorPower(motorPower+offset);
+}
+
+void ExoSettings::initialise(){
+    clutchEnabled = OFF;
+    motorEnabled = false;
+    motorPower = 2048;
+    needResetProxim = true;
+    sonarState = FROM_IMU;
+    angleSource = FROM_IMU;
+    resetEncoder();
 }
