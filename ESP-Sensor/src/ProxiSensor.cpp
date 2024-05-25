@@ -86,14 +86,10 @@ int ProxiSensor::GetMinDistance()
             if(i == 0){
                 min = dist;
             }
-
             if ((dist < min) && dist > 0)
             {
                 min = dist;
             }
-            // if(dist <= 0){
-            //     i--;
-            // }
         }
         
         moyenne += float(min);

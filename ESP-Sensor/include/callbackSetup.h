@@ -96,17 +96,13 @@ void callbackButtonTest(void *ptr){
 
 void callbackButtonDev1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
-    Serial.println("Increasing motor power");
-    ExoSettings& settings = ExoSettings::getInstance();
-    settings.adjustMotorPower(MOTOR_INCREASE);
+    Serial.print("Switching brightness");
 
 }
 
 void callbackButtonDev2(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
-    Serial.println("Decreasing motor power");
-    ExoSettings& settings = ExoSettings::getInstance();
-    settings.adjustMotorPower(-MOTOR_INCREASE);
+    //...
 
 }
 void callbackButtonToogle1(void *ptr){

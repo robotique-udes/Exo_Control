@@ -91,7 +91,7 @@ void loop()
   //--------------PRINTING BLOC-------------
   // Serial.print(motor->getPower());
   // imuHandler->printBNOs(0, 4);
-  motor->printProxim();
+  // motor->printProxim();
   //motor->printPMW();
   // motor->printTorque();
   //delay(200);
