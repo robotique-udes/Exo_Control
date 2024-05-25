@@ -148,9 +148,11 @@ void ProxiSensor::SetTriggerDistance(bool brightness)
 {
     if(brightness){
         CoreSensor.setBrightness(OPT3101Brightness::High);
+        Serial.println("Brightness to High");
     }
     else{
         CoreSensor.setBrightness(OPT3101Brightness::Low);
+        Serial.println("Brightness to Low");
     }
     float moyenne = 0;
     for (int i = 0; i < 3; i++)

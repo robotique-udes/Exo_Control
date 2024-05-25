@@ -9,7 +9,7 @@ ExoSettings::ExoSettings(){
     brightness = HIGH;
     needResetProxim = false;
 
-    sonarState = SQUAT_MODE;
+    proximState = SQUAT_MODE;
     angleSource = FROM_IMU;
 
     height = 180;
@@ -68,14 +68,14 @@ void ExoSettings::setAngleSource(bool setAngleSource){
     Serial.println(angleSource);
 }
 
-bool ExoSettings::getSonarState(){
-    return sonarState;
+bool ExoSettings::getproximState(){
+    return proximState;
 }
 
-void ExoSettings::setSonarState(bool setSonarState){
-    sonarState = !(sonarState);
-    Serial.print("\t Sonar state set to: ");
-    Serial.println(sonarState);
+void ExoSettings::setproximState(){
+    proximState = !(proximState);
+    Serial.print("\t Proxim state set to: ");
+    Serial.println(proximState);
 }
 
 int ExoSettings::getHeight(){
@@ -130,7 +130,7 @@ void ExoSettings::initialise(){
     motorEnabled = false;
     motorPower = 2048;
     needResetProxim = true;
-    sonarState = FROM_IMU;
+    proximState = FROM_IMU;
     angleSource = FROM_IMU;
     resetEncoder();
 }

@@ -23,7 +23,7 @@ class ExoSettings{
         bool clutchEnabled;
         bool proximEnabled;
         bool needResetProxim;
-        bool sonarState;
+        bool proximState;
         bool angleSource;
         bool brightness;
 
@@ -57,8 +57,8 @@ class ExoSettings{
         bool getAngleSource();
         void setAngleSource(bool setAngleSource);
 
-        bool getSonarState();
-        void setSonarState(bool setSonarState);
+        bool getproximState();
+        void setproximState();
 
         int getHeight();
         void setHeight(int setHeight);

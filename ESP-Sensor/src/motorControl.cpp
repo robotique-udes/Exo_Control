@@ -1,5 +1,4 @@
 #include "motorControl.h"
-bool motorMode = ON; // mutliplie le torque demandé au moteur, lorsque a 0, les moteur sont effectivement à Off, contrôlé avec le HMI ou hardcode pour test
 
 Motor::Motor()
 {
@@ -50,6 +49,17 @@ void Motor::LimitMinMaxInt(int &val, int max)
 
 void Motor::neededTorque()
 {
+  bool rightIsOnGround;
+  bool leftIsOnGround;
+  //Fetch squat/walk logic from either proxim or HMI
+  if(settings.isProximEnabled()){
+    rightIsOnGround = !RightProxim->IsOnTheGround();
+    leftIsOnGround = !RightProxim->IsOnTheGround();
+  }
+  else{
+    rightIsOnGround = settings.getproximState();
+    leftIsOnGround = settings.getproximState();
+  }
   float LeftHipRAD = toRadian(LeftHipAngle);
   float LeftKneeRAD = toRadian(LeftKneeAngle);
   float RightHipRAD = toRadian(RightHipAngle);
@@ -64,7 +74,7 @@ void Motor::neededTorque()
   if (settings.isMotorEnabled())
   {
     // Right Hip Torque Equation
-    if (!RightProxim->IsOnTheGround())
+    if (!rightIsOnGround)
       RightHipTorque = (MF * G) * sin(RightHipRAD) * LF / 2 + (MT * G) * (sin(RightHipRAD) * LF + sin(RightKneeRAD - RightHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
@@ -77,7 +87,7 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (!LeftProxim->IsOnTheGround())
+    if (!leftIsOnGround)
       LeftHipTorque = (MF * G) * sin(LeftHipRAD) * LF / 2 + (MT * G) * (sin(LeftHipRAD) * LF + sin(LeftKneeRAD - LeftHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
@@ -88,7 +98,7 @@ void Motor::neededTorque()
     }
 
     // Right Knee Torque Equation
-    if (!RightProxim->IsOnTheGround())
+    if (!rightIsOnGround)
     {
       if (RightKneeAngle > 0)
         RightKneeTorque = ((sin(RightHipRAD) * (LF / 2) * (MF * G)) + ((sin(RightHipRAD) * LF)) * (G * MH)) * 0.5;
@@ -104,7 +114,7 @@ void Motor::neededTorque()
     }
 
     // Left Knee Torque Equation
-    if (!LeftProxim->IsOnTheGround())
+    if (!leftIsOnGround)
     {
       if (LeftKneeAngle > 0)
         LeftKneeTorque = ((sin(LeftHipRAD) * (LF / 2) * (MF * G)) + ((sin(LeftHipRAD) * LF)) * (G * MH)) * 0.5;

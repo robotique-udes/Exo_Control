@@ -98,7 +98,8 @@ void callbackButtonDev1(void *ptr){
 
 void callbackButtonDev2(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
-    //...
+    ExoSettings& settings = ExoSettings::getInstance();
+    settings.setproximState();
 
 }
 void callbackButtonToogle1(void *ptr){
