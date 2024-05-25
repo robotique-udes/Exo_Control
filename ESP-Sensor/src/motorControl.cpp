@@ -285,7 +285,7 @@ void Motor::logAngle(enumIMU position, float val) {
   this->anglesIndex[imu] = this->anglesIndex[imu] + 1;
 }
 
-// Returns the speed of the motor in degrees per second
+// Returns the speed of the motor in degrees per second, positive speed means user is "crouching"
 float Motor::getSpeed(enumIMU position) {
   int imu = static_cast<int> (position);
   if (this->anglesIndex[imu] < PREDICTION_LENGTH) {
@@ -295,27 +295,25 @@ float Motor::getSpeed(enumIMU position) {
   int sumLatest = 0; // Most recent half of the data
   int sumPrevious = 0; // Oldest half of data
 
-  int sumTimeLatest = 0;
-  int sumTimePrevious = 0;
+  int timeLatest = 0;
+  int timePrevious = 0;
 
   for (int i = 0; i < PREDICTION_LENGTH; i++) {
     int index = (this->anglesIndex[imu] - i) % PREDICTION_LENGTH; // Adjusted index
     if (i < PREDICTION_LENGTH / 2) {
       sumLatest += this->angles[imu][index];
-      sumTimeLatest += this->times[imu][index];
+      timeLatest = this->times[imu][index];
     } else {
       sumPrevious += this->angles[imu][index];
-      sumTimePrevious += this->times[imu][index];
+      timePrevious = this->times[imu][index]; // Storing time of oldest value
     }
   }
 
   // Simply get most recent, go back half the length and that space is average most recent
   float latestAngle = sumLatest / (PREDICTION_LENGTH / 2);
   float previousAngle = sumPrevious / (PREDICTION_LENGTH / 2);
-  float latestTime = sumTimeLatest / (PREDICTION_LENGTH / 2);
-  float previousTime = sumTimePrevious / (PREDICTION_LENGTH / 2);
 
-  return (latestAngle - previousAngle) / ((latestTime - previousTime) / 1000.0);
+  return (latestAngle - previousAngle) / ((timeLatest - timePrevious) / 1000.0);
 }
 
 // Uses the last PREDICTION_LENGTH values to compute the power of the motor
@@ -325,18 +323,18 @@ float Motor::computePWMMultiplier(enumIMU position) {
     return 1; // Not enough data to compute
   }
 
-  float currentSpeed = this->getSpeed(position);
+  float currentSpeed = -this->getSpeed(position);
 
-  if (-10 < currentSpeed < 20) { // No significant change, do not affect power
+  if (-2 < currentSpeed < 20) { // No significant change, do not affect power
     return 1;
   } else {
       // Crouch logic
-      if (currentSpeed < 0) {
+      if (currentSpeed > 0) {
         if (currentSpeed < -30) {
           // Max out the drop of power
           return 0.2;
         } else {
-          // Smoothly decrease power, diff is already negative
+          // Smoothly decrease power, speed is already negative
           return 1 + (currentSpeed * 0.04);
         }
       } else {
