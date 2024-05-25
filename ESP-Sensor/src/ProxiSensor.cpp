@@ -22,7 +22,7 @@ ProxiSensor::ProxiSensor(Multiplex *muxPtr, int muxAddress)
 
     CoreSensor.setChannel(0);
 
-    CoreSensor.setBrightness(OPT3101Brightness::Low);
+    CoreSensor.setBrightness(OPT3101Brightness::High);
 
     SetTriggerDistance();
     for(int i = 0; i<BUFFER_SIZE; i++){
@@ -91,9 +91,9 @@ int ProxiSensor::GetMinDistance()
             {
                 min = dist;
             }
-            if(dist <= 0){
-                i--;
-            }
+            // if(dist <= 0){
+            //     i--;
+            // }
         }
         
         moyenne += float(min);
@@ -101,11 +101,14 @@ int ProxiSensor::GetMinDistance()
         
     }
     CoreSensor.setChannel(0);
-    minimumDistance = int(moyenne / sample);
+    if(moyenne > 0){
+        minimumDistance = int(moyenne / sample);
+    }
     // Serial.print("Sample: \t");
     // Serial.print(sample);
-    // Serial.print(" Distance: \t");
-    // Serial.print(minimumDistance);
+    Serial.print(" Distance: \t");
+    Serial.print(minimumDistance);
+    Serial.print("  ");
     return minimumDistance;
 }
 
@@ -149,12 +152,12 @@ bool ProxiSensor::IsOnTheGround()
 
 void ProxiSensor::SetTriggerDistance()
 {
-    float moyenne;
+    float moyenne = 0;
     for (int i = 0; i < 3; i++)
     {
         moyenne += float(GetMinDistance());
     }
-    TriggerDistance = int(moyenne / 3.0) + GROUND_DISTANCE_RANGE;
+    TriggerDistance = (moyenne / 3.0) + GROUND_DISTANCE_RANGE;
     Serial.print("Trigger dist set to: ");
     Serial.println(TriggerDistance);
 }

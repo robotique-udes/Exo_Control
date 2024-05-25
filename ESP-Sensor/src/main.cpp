@@ -79,7 +79,7 @@ void loop()
 
   //--------------LOGIC BLOC---------------
   screen.update();
-  updateAngles(settings.getAngleSource());
+  // updateAngles(settings.getAngleSource());
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
   //motor->neededTorque();
   
