@@ -25,6 +25,7 @@ class ExoSettings{
         bool needResetProxim = false;
         bool sonarState = SQUAT_MODE;
         bool angleSource = FROM_IMU;
+        bool brightness = HIGH;
 
         int height;
         int motorPower;
@@ -42,7 +43,7 @@ class ExoSettings{
         void setClutchEnabled(bool setClutchEnabled);
         void setProximEnabled(bool setProximEnabled);
         void adjustMotorPower(int powerOffset);
-        void setBrightness(bool brightness);
+        void setBrightness();
 
         void resetEncoder();
 

@@ -75,32 +75,33 @@ void loop()
   // motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
   //tester.testRelay();
-  tester.keyboardCommand();
+  // tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
   screen.update();
-  // updateAngles(settings.getAngleSource());
+  updateAngles(true);
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
-  //motor->neededTorque();
+  motor->neededTorque();
   
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
-  //motor->PIDCurrentPrealable();
-  //motor->sendCommand();
+  motor->PIDCurrentPrealable();
+  motor->sendCommand();
 
   //--------------PRINTING BLOC-------------
   // Serial.print(motor->getPower());
   // imuHandler->printBNOs(0, 4);
-  // motor->printProxim();
+  motor->printProxim();
   //motor->printPMW();
-  // motor->printTorque();
+  motor->printTorque();
   //delay(200);
+
   
 }
 
 void updateAngles(bool angleSource)
 {
-  if(FROM_IMU){
+  if(angleSource){
     //Fetch angles from IMUs
     imuHandler->requestData();
     motor->setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));

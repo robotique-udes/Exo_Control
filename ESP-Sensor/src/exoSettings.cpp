@@ -84,6 +84,8 @@ void ExoSettings::setHeight(int setHeight){
     height = setHeight;
 }
 
+void ExoSettings::setBrightness(){}
+
 bool ExoSettings::getResetProxim(){
     return needResetProxim;
 }

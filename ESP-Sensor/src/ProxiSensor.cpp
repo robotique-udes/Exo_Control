@@ -102,9 +102,9 @@ int ProxiSensor::GetMinDistance()
     }
     // Serial.print("Sample: \t");
     // Serial.print(sample);
-    Serial.print(" Distance: \t");
-    Serial.print(minimumDistance);
-    Serial.print("  ");
+    // Serial.print(" Distance: \t");
+    // Serial.print(minimumDistance);
+    // Serial.print("  ");
     return minimumDistance;
 }
 

@@ -64,7 +64,7 @@ void Motor::neededTorque()
   if (settings.isMotorEnabled())
   {
     // Right Hip Torque Equation
-    if (false)                                                                                                                               // if (!RightProxim->IsOnTheGround())
+    if (!RightProxim->IsOnTheGround())
       RightHipTorque = (MF * G) * sin(RightHipRAD) * LF / 2 + (MT * G) * (sin(RightHipRAD) * LF + sin(RightKneeRAD - RightHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
@@ -77,7 +77,7 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (false)                                                                                                                          // if (!LeftProxim->IsOnTheGround())
+    if (!LeftProxim->IsOnTheGround())
       LeftHipTorque = (MF * G) * sin(LeftHipRAD) * LF / 2 + (MT * G) * (sin(LeftHipRAD) * LF + sin(LeftKneeRAD - LeftHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
@@ -88,7 +88,7 @@ void Motor::neededTorque()
     }
 
     // Right Knee Torque Equation
-    if (false) // if (!RightProxim->IsOnTheGround())
+    if (!RightProxim->IsOnTheGround())
     {
       if (RightKneeAngle > 0)
         RightKneeTorque = ((sin(RightHipRAD) * (LF / 2) * (MF * G)) + ((sin(RightHipRAD) * LF)) * (G * MH)) * 0.5;
@@ -104,7 +104,7 @@ void Motor::neededTorque()
     }
 
     // Left Knee Torque Equation
-    if (false) // if (!LeftProxim->IsOnTheGround())
+    if (!LeftProxim->IsOnTheGround())
     {
       if (LeftKneeAngle > 0)
         LeftKneeTorque = ((sin(LeftHipRAD) * (LF / 2) * (MF * G)) + ((sin(LeftHipRAD) * LF)) * (G * MH)) * 0.5;
@@ -222,7 +222,7 @@ void Motor::printProxim()
   Serial.print("\t RIGHT PROXIM: ");
   Serial.print(RightProxim->IsOnTheGround());
   Serial.print("\t LEFT PROXIM: ");
-  Serial.println(LeftProxim->IsOnTheGround());
+  Serial.print(LeftProxim->IsOnTheGround());
 
   // Serial.print("\t ME: ");
   // Serial.println(settings.isMotorEnabled());
