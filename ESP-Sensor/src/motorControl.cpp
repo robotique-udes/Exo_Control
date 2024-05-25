@@ -222,10 +222,10 @@ void Motor::printProxim()
   Serial.print("\t RIGHT PROXIM: ");
   Serial.print(RightProxim->IsOnTheGround());
   Serial.print("\t LEFT PROXIM: ");
-  Serial.print(LeftProxim->IsOnTheGround());
+  Serial.println(LeftProxim->IsOnTheGround());
 
-  Serial.print(" ME: ");
-  Serial.println(settings.isMotorEnabled());
+  // Serial.print("\t ME: ");
+  // Serial.println(settings.isMotorEnabled());
 }
 
 void Motor::SetTriggerDistance()

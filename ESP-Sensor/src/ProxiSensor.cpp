@@ -72,7 +72,7 @@ int ProxiSensor::GetMinDistance()
     this->muxPtr->selectChannel(muxAddress);
     int16_t min = 0;
     float moyenne = 0;
-    int sample = 0;
+    float sample = 0;
     // Itère dans chaque channel pour faire une lecture et remplace min si elle est plus petite que la précédante
     for (int j = 0; j < 3; j++)
     {
@@ -82,19 +82,30 @@ int ProxiSensor::GetMinDistance()
             CoreSensor.sample();
 
             int16_t dist = CoreSensor.distanceMillimeters;
-            if ((dist < min || min == 0) && dist > 0)
+
+            if(i == 0){
+                min = dist;
+            }
+
+            if ((dist < min) && dist > 0)
             {
                 min = dist;
             }
+            if(dist <= 0){
+                i--;
+            }
         }
-        if (min != 0)
-        {
-            moyenne += min;
-            sample++;
-        }
+        
+        moyenne += float(min);
+        sample++;
+        
     }
     CoreSensor.setChannel(0);
-    minimumDistance = (moyenne / sample);
+    minimumDistance = int(moyenne / sample);
+    // Serial.print("Sample: \t");
+    // Serial.print(sample);
+    // Serial.print(" Distance: \t");
+    // Serial.print(minimumDistance);
     return minimumDistance;
 }
 
@@ -141,9 +152,9 @@ void ProxiSensor::SetTriggerDistance()
     float moyenne;
     for (int i = 0; i < 3; i++)
     {
-        moyenne += GetMinDistance();
+        moyenne += float(GetMinDistance());
     }
-    TriggerDistance = int(moyenne / 3) + GROUND_DISTANCE_RANGE;
+    TriggerDistance = int(moyenne / 3.0) + GROUND_DISTANCE_RANGE;
     Serial.print("Trigger dist set to: ");
     Serial.println(TriggerDistance);
 }
