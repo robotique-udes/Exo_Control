@@ -8,6 +8,7 @@
 #include "exoSettings.h"
 #include "ProxiSensor.h"
 #include "multiplex.h"
+#include <string>
 #include <array>
 
 class Motor
@@ -88,7 +89,8 @@ public:
     float toRadian(float degree);
     void printProxim();
     void printTorque();
-    void printPMW();
+    void printPWM();
+    void printComputedSpeed(enumIMU position);
 
     void setSonarState(bool state);
     void setHeight(double h);

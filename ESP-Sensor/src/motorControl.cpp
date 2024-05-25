@@ -8,9 +8,9 @@ Motor::Motor()
   this->RightProxim = new ProxiSensor(&this->mux, RIGHT_MOUSTACHE_MUX_CHANNEL);
 
   // Fill data sets
-  for (int i = 0; i < 5; i++) 
+  for (int i = 0; i < 5; i++)
   {
-    // 
+    //
     for (int j = 0; j < PREDICTION_LENGTH; j++)
     {
       angles[i][j] = 0;
@@ -66,8 +66,8 @@ void Motor::neededTorque()
   float LeftKneeRAD = toRadian(LeftKneeAngle);
   float RightHipRAD = toRadian(RightHipAngle);
   float RightKneeRAD = toRadian(RightKneeAngle);
-  //check if proxim to reset trigger dist
-  if(settings.getResetProxim())
+  // check if proxim to reset trigger dist
+  if (settings.getResetProxim())
   {
     SetTriggerDistance();
     settings.setResetProxim(false);
@@ -201,6 +201,44 @@ void Motor::PIDCurrent()
     */
 }
 
+void Motor::printComputedSpeed(enumIMU position) {
+
+  string posi = "DF";
+  
+  // Switch case for positon 
+  switch (position)
+  {
+    case enumIMU::HIP_R:
+      posi = "RH";
+      break;
+    case enumIMU::KNEE_R:
+      posi = "RK";
+      break;
+    case enumIMU::HIP_L:  
+      posi = "LH";
+      break;
+    case enumIMU::KNEE_L:
+      posi = "LK";
+      break;
+    default:
+      break;
+  }
+
+
+  // Print data
+  Serial.print(posi.c_str());
+  Serial.print("A:\t");
+  Serial.print(getAngle(position));
+  Serial.print("\t");
+  Serial.print(posi.c_str());
+  Serial.print("S:\t");
+  Serial.print(getSpeed(position));
+  Serial.print("\t");
+  Serial.print(posi.c_str());
+  Serial.print("M:\t");
+  Serial.println(computePWMMultiplier(position));
+}
+
 void Motor::torqueToPWM()
 {
   int power = settings.getMotorPower();
@@ -210,19 +248,6 @@ void Motor::torqueToPWM()
   float multiRightHip = computePWMMultiplier(enumIMU::HIP_R);
   float multiLeftHip = computePWMMultiplier(enumIMU::HIP_L);
 
-  Serial.print("RKA:\t");
-  Serial.print(getAngle(enumIMU::KNEE_R));
-  Serial.print("RKS:\t");
-  Serial.print(getSpeed(enumIMU::KNEE_R));
-  Serial.print("\tRKM:\t");
-  Serial.print(multiRightKnee);
-
-  Serial.print("\tRHA:\t");
-  Serial.print(getAngle(enumIMU::HIP_R));
-  Serial.print("\tRHS:\t");
-  Serial.print(getSpeed(enumIMU::HIP_R));
-  Serial.print("\tRHM:\t");
-  Serial.println(multiRightHip);
 
 
   // Setting  PWM values
@@ -260,7 +285,7 @@ float Motor::getTorque(enumIMU position)
   }
 }
 
-void Motor::printPMW()
+void Motor::printPWM()
 {
   Serial.print("\t Motor Power: ");
   Serial.print(settings.getMotorPower());
@@ -271,12 +296,18 @@ void Motor::printPMW()
   Serial.print("\t  PWMRightHip: ");
   Serial.print(PWMRightHip);
   Serial.print("\t  PWMLeftHip: ");
-  Serial.println(PWMLeftHip);
+  Serial.print(PWMLeftHip);
+
+  Serial.print("\t RKM:\t");
+  Serial.print(computePWMMultiplier(enumIMU::KNEE_R));
+  Serial.print("\t RHM:\t");
+  Serial.println(computePWMMultiplier(enumIMU::HIP_R));
+
 }
 
 void Motor::printProxim()
 {
-  if(settings.getResetProxim())
+  if (settings.getResetProxim())
   {
     SetTriggerDistance();
     settings.setResetProxim(false);
@@ -296,8 +327,9 @@ void Motor::SetTriggerDistance()
   RightProxim->SetTriggerDistance(settings.getBrightness());
 }
 
-void Motor::logAngle(enumIMU position, float val) {
-  int imu = static_cast<int> (position);
+void Motor::logAngle(enumIMU position, float val)
+{
+  int imu = static_cast<int>(position);
 
   // Shift all values by one
   int currentReadingPos = this->anglesIndex[imu] % PREDICTION_LENGTH;
@@ -307,24 +339,30 @@ void Motor::logAngle(enumIMU position, float val) {
 }
 
 // Returns the speed of the motor in degrees per second, positive speed means user is "crouching"
-float Motor::getSpeed(enumIMU position) {
-  int imu = static_cast<int> (position);
-  if (this->anglesIndex[imu] < PREDICTION_LENGTH) {
+float Motor::getSpeed(enumIMU position)
+{
+  int imu = static_cast<int>(position);
+  if (this->anglesIndex[imu] < PREDICTION_LENGTH)
+  {
     return 0; // Not enough data to compute
   }
 
-  int sumLatest = 0; // Most recent half of the data
+  int sumLatest = 0;   // Most recent half of the data
   int sumPrevious = 0; // Oldest half of data
 
   int timeLatest = 0;
   int timePrevious = 0;
 
-  for (int i = 0; i < PREDICTION_LENGTH; i++) {
+  for (int i = 0; i < PREDICTION_LENGTH; i++)
+  {
     int index = (this->anglesIndex[imu] - i) % PREDICTION_LENGTH; // Adjusted index
-    if (i < PREDICTION_LENGTH / 2) {
+    if (i < PREDICTION_LENGTH / 2)
+    {
       sumLatest += this->angles[imu][index];
       timeLatest = this->times[imu][index];
-    } else {
+    }
+    else
+    {
       sumPrevious += this->angles[imu][index];
       timePrevious = this->times[imu][index]; // Storing time of oldest value
     }
@@ -338,38 +376,40 @@ float Motor::getSpeed(enumIMU position) {
 }
 
 // Uses the last PREDICTION_LENGTH values to compute the power of the motor
-float Motor::computePWMMultiplier(enumIMU position) {
-  int imu = static_cast<int> (position);
-  if (this->anglesIndex[imu] < PREDICTION_LENGTH) {
+float Motor::computePWMMultiplier(enumIMU position)
+{
+  int imu = static_cast<int>(position);
+  if (this->anglesIndex[imu] < PREDICTION_LENGTH)
+  {
     return 1; // Not enough data to compute
   }
 
   float currentSpeed = -this->getSpeed(position);
 
-  if (-2 < currentSpeed < 20) { // No significant change, do not affect power
+  // Check if the speed is in the range that indicates no significant change
+  if (currentSpeed < 2 && currentSpeed > -20) {
     return 1;
-  } else {
-      // Crouch logic
-      if (currentSpeed > 0) {
-        if (currentSpeed < -30) {
-          // Max out the drop of power
-          return 0.2;
-        } else {
-          // Smoothly decrease power, speed is already negative
-          return 1 + (currentSpeed * 0.04);
-        }
-      } else {
-        // Stand logic
-        if (currentSpeed < 20) {
-          return 1;
-        } else if (currentSpeed <= 50) {
-          // Smoothly increase power
-          return 1 + 0.025 * (currentSpeed - 20);
-        } else {
-          // Max out the increase of power
-          return 1.5;
-        }
-      }
+  }
+
+  // Stand logic (inverted because speed symbol is flipped)
+  if (currentSpeed > 0) {
+    if (currentSpeed > 30) {
+      // Max out the increase of power
+      return 4.5;
+    } else {
+      // Smoothly increase power
+      return 1 + (currentSpeed * 0.04);
+    }
+  } else { // Crouch logic (inverted because speed symbol is flipped)
+    if (currentSpeed > -20) {
+      return 1;
+    } else if (currentSpeed >= -50) {
+      // Smoothly decrease power
+      return 1 + 0.025 * (currentSpeed + 20);
+    } else {
+      // Max out the decrease of power
+      return 0.0;
+    }
   }
 }
 

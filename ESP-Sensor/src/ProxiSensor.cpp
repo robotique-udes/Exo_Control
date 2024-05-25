@@ -114,6 +114,7 @@ void ProxiSensor::SetFrameTiming(int FrameTiming)
 
 bool ProxiSensor::IsOnTheGround()
 {
+    return true;
     int dist = GetMinDistance();
     bool onTheGround = (dist < TriggerDistance);
 
@@ -141,7 +142,7 @@ bool ProxiSensor::IsOnTheGround()
     // Serial.print(minimumDistance);
     // Serial.print("\t Trigger dist: ");
     // Serial.print(TriggerDistance);
-    return OnTheGround;
+    // return OnTheGround;
 }
 
 void ProxiSensor::SetTriggerDistance(bool brightness)

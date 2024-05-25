@@ -80,11 +80,8 @@ void loop()
   //--------------LOGIC BLOC---------------
   screen.update();
   updateAngles(true);
-  // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
   motor->neededTorque();
   
-  // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
-  // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
   motor->torqueToPWM();
   motor->sendCommand();
 
@@ -92,7 +89,7 @@ void loop()
   // Serial.print(motor->getPower());
   // imuHandler->printBNOs(0, 4);
   // motor->printProxim();
-  // motor->printPMW();
+  motor->printPWM();
   // motor->printTorque();
   //delay(200);
 

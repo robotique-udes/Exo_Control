@@ -21,7 +21,6 @@
 #define KI 0
 #define KD 0
 #define HIGH_TORQUE 100
-#define PI 3.141592653
 
 #define MOTEUR_GENOU_GAUCHE 0
 #define MOTEUR_GENOU_DROIT 1
@@ -110,4 +109,4 @@
 #define MOTOR_INCREASE 5
 
 //----- EXPERIMENTAL -----
-#define PREDICTION_LENGTH 20 // Make this a pair number or you crash
+#define PREDICTION_LENGTH 10 // Make this a pair number or you crash
