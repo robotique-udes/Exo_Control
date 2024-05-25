@@ -54,7 +54,7 @@ class TouchScreen{
         TouchScreen& operator=(const TouchScreen&) = delete;
         
         void update();
-        void print(string toPrint);
+        void println(string toPrint);
         void setCallback(EnumScreenCallback callback, void (*callbackFunction)(void *ptr));
 };
 
