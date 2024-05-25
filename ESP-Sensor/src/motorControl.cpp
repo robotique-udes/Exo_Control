@@ -205,10 +205,24 @@ void Motor::torqueToPWM()
 {
   int power = settings.getMotorPower();
 
-  int powerRightKnee = computePWMMultiplier(enumIMU::KNEE_R);
-  int powerLeftKnee = computePWMMultiplier(enumIMU::KNEE_L);
-  int powerRightHip = computePWMMultiplier(enumIMU::HIP_R);
-  int powerLeftHip = computePWMMultiplier(enumIMU::HIP_L);
+  float multiRightKnee = computePWMMultiplier(enumIMU::KNEE_R);
+  float multiLeftKnee = computePWMMultiplier(enumIMU::KNEE_L);
+  float multiRightHip = computePWMMultiplier(enumIMU::HIP_R);
+  float multiLeftHip = computePWMMultiplier(enumIMU::HIP_L);
+
+  Serial.print("RKA:\t");
+  Serial.print(getAngle(enumIMU::KNEE_R));
+  Serial.print("RKS:\t");
+  Serial.print(getSpeed(enumIMU::KNEE_R));
+  Serial.print("\tRKM:\t");
+  Serial.print(multiRightKnee);
+
+  Serial.print("\tRHA:\t");
+  Serial.print(getAngle(enumIMU::HIP_R));
+  Serial.print("\tRHS:\t");
+  Serial.print(getSpeed(enumIMU::HIP_R));
+  Serial.print("\tRHM:\t");
+  Serial.println(multiRightHip);
 
 
   // Setting  PWM values
@@ -216,6 +230,12 @@ void Motor::torqueToPWM()
   PWMLeftKnee = float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMRightHip = float(map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMLeftHip = -float(map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+
+  // Apply multiplier
+  PWMRightKnee *= multiRightKnee;
+  PWMLeftKnee *= multiLeftKnee;
+  PWMRightHip *= multiRightHip;
+  PWMLeftHip *= multiLeftHip;
 }
 
 float Motor::getTorque(enumIMU position)
