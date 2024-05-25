@@ -7,6 +7,7 @@
 #include "exoSettings.h"
 #include "touchScreen.h"
 
+TouchScreen& screenForCallbacks = TouchScreen::getInstance();
 
 void callbackButtonToggleMotor(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_MOTOR");
@@ -20,6 +21,8 @@ void callbackButtonToggleMotor(void *ptr){
     ExoSettings& settings = ExoSettings::getInstance();
 
     settings.setMotorEnabled(state);
+
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_MOTOR state : " + to_string(state));
 }
 
 void callbackButtonToggleClutch(void *ptr){
@@ -34,6 +37,8 @@ void callbackButtonToggleClutch(void *ptr){
     ExoSettings& settings = ExoSettings::getInstance();
 
     settings.setClutchEnabled(state);
+
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_CLUTCH state : " + to_string(state));
 }
 
 void callbackButtonInit(void *ptr){
@@ -41,18 +46,22 @@ void callbackButtonInit(void *ptr){
     ExoSettings& settings = ExoSettings::getInstance();
 
     settings.initialise();
+
+    screenForCallbacks.println("Pressed EnumScreenCallback::INIT");
 }
 
 void callbackButtonResetEncoder(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
     ExoSettings& settings = ExoSettings::getInstance();
     settings.resetEncoder();
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
 }
 
 void callbackButtonAutoCalibProxim(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
     ExoSettings& settings = ExoSettings::getInstance();
     settings.setResetProxim(true);
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
 }
 
 void callbackButtonToggleAngleSource(void *ptr){
@@ -66,6 +75,8 @@ void callbackButtonToggleAngleSource(void *ptr){
 
     ExoSettings& settings = ExoSettings::getInstance();
     settings.setAngleSource(state);
+
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE : " + to_string(state));
 }
 
 void callbackButtonToggleProxim(void *ptr){
@@ -80,11 +91,14 @@ void callbackButtonToggleProxim(void *ptr){
     ExoSettings& settings = ExoSettings::getInstance();
 
     settings.setProximEnabled(state);
+
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM : " + to_string(state));
 }
 
 void callbackButtonTest(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_TEST");
 
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TEST");
     //...
 }
 
@@ -93,29 +107,37 @@ void callbackButtonDev1(void *ptr){
     Serial.print("Switching brightness settings");
     ExoSettings& settings = ExoSettings::getInstance();
     settings.setBrightness();
-
+    
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
 }
 
 void callbackButtonDev2(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
     //...
 
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
+
 }
 void callbackButtonToogle1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_1");
 
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_1");
 }
 
 void callbackButtonToggle2(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_2");
 
     //...
+
+    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_2");
 }
 
 void callbackSliderDev1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::SLIDER_DEV_1");
 
     //...
+
+    screenForCallbacks.println("Pressed EnumScreenCallback::SLIDER_DEV_1");
 }
 
 void callbackSliderMotorPower(void *ptr){
@@ -130,6 +152,8 @@ void callbackSliderMotorPower(void *ptr){
     sliderControl->getValue(&value);
     Serial.println(value);
     settings.setMotorPower(value);
+
+    screenForCallbacks.println("Interaction with EnumScreenCallback::SLIDER_MOTOR_POWER : " + to_string(value));
 }
 
 
