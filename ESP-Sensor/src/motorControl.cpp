@@ -325,47 +325,31 @@ float Motor::computePWMMultiplier(enumIMU position) {
     return 1; // Not enough data to compute
   }
 
-  int sumLatest = 0; // Most recent half of the data
-  int sumPrevious = 0; // Oldest half of data
+  float currentSpeed = this->getSpeed(position);
 
-  for (int i = 0; i < PREDICTION_LENGTH; i++) {
-    int index = (this->anglesIndex[imu] - i) % PREDICTION_LENGTH; // Adjusted index
-    if (i < PREDICTION_LENGTH / 2) {
-      sumLatest += this->angles[imu][index];
-    } else {
-      sumPrevious += this->angles[imu][index];
-    }
-  }
-  // Simply get most recent, go back half the length and that space is average most recent
-  float latestAngle = sumLatest / (PREDICTION_LENGTH / 2);
-  float previousAngle = sumPrevious / (PREDICTION_LENGTH / 2);
-
-  // Compute the difference between the two
-  float diff = previousAngle - latestAngle; // A negative angle means the angle is increasing
-
-
-  if (-10 < diff < 20) { // No significant change, do not affect power
+  if (-10 < currentSpeed < 20) { // No significant change, do not affect power
     return 1;
   } else {
       // Crouch logic
-      if (diff < 0) {
-        if (diff < -30) {
+      if (currentSpeed < 0) {
+        if (currentSpeed < -30) {
           // Max out the drop of power
           return 0.2;
         } else {
           // Smoothly decrease power, diff is already negative
-          return 1 + (diff * 0.04);
+          return 1 + (currentSpeed * 0.04);
         }
       } else {
         // Stand logic
-        if (diff > 30) {
-          // Max out the increase of power
-          return 1.8;
-        } else {
+        if (currentSpeed < 20) {
+          return 1;
+        } else if (currentSpeed <= 50) {
           // Smoothly increase power
-          return 1 + (diff * 0.04);
+          return 1 + 0.025 * (currentSpeed - 20);
+        } else {
+          // Max out the increase of power
+          return 1.5;
         }
-
       }
   }
 }
