@@ -85,7 +85,7 @@ void loop()
   
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
-  motor->PIDCurrentPrealable();
+  motor->torqueToPWM();
   motor->sendCommand();
 
   //--------------PRINTING BLOC-------------
