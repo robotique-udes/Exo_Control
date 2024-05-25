@@ -6,6 +6,18 @@ Motor::Motor()
   this->mux = Multiplex();
   this->LeftProxim = new ProxiSensor(&this->mux, LEFT_MOUSTACHE_MUX_CHANNEL);
   this->RightProxim = new ProxiSensor(&this->mux, RIGHT_MOUSTACHE_MUX_CHANNEL);
+
+  // Fill data sets
+  for (int i = 0; i < 5; i++) 
+  {
+    // 
+    for (int j = 0; j < PREDICTION_LENGTH; j++)
+    {
+      angles[i][j] = 0;
+      times[i][j] = 0;
+    }
+    anglesIndex[i] = 0;
+  }
 }
 
 Motor::~Motor()
@@ -150,7 +162,7 @@ void Motor::neededCurrent()
 
 void Motor::PIDCurrent()
 {
-  // TODO : In the future, use PID control instead of direct PWM control using map in PIDCurrentPrealable
+  // TODO : In the future, use PID control instead of direct PWM control using map in torqueToPWM
   //        For now, the PID control is not working properly, so we use the map function to set the PWM values
 
   /*
@@ -189,14 +201,43 @@ void Motor::PIDCurrent()
     */
 }
 
-void Motor::PIDCurrentPrealable()
+void Motor::torqueToPWM()
 {
   int power = settings.getMotorPower();
+
+  int powerRightKnee = computePWMMultiplier(enumIMU::KNEE_R);
+  int powerLeftKnee = computePWMMultiplier(enumIMU::KNEE_L);
+  int powerRightHip = computePWMMultiplier(enumIMU::HIP_R);
+  int powerLeftHip = computePWMMultiplier(enumIMU::HIP_L);
+
+
   // Setting  PWM values
   PWMRightKnee = -float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMLeftKnee = float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMRightHip = float(map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
   PWMLeftHip = -float(map(LeftHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)) / 100.0 * 4096.0;
+}
+
+float Motor::getTorque(enumIMU position)
+{
+  switch (position)
+  {
+  case enumIMU::HIP_R:
+    return RightHipTorque;
+    break;
+  case enumIMU::KNEE_R:
+    return RightKneeTorque;
+    break;
+  case enumIMU::HIP_L:
+    return LeftHipTorque;
+    break;
+  case enumIMU::KNEE_L:
+    return LeftKneeTorque;
+    break;
+  default:
+    return 0;
+    break;
+  }
 }
 
 void Motor::printPMW()
@@ -234,9 +275,105 @@ void Motor::SetTriggerDistance()
   RightProxim->SetTriggerDistance();
 }
 
+void Motor::logAngle(enumIMU position, float val) {
+  int imu = static_cast<int> (position);
+
+  // Shift all values by one
+  int currentReadingPos = this->anglesIndex[imu] % PREDICTION_LENGTH;
+  this->angles[imu][currentReadingPos] = val;
+  this->times[imu][currentReadingPos] = millis();
+  this->anglesIndex[imu] = this->anglesIndex[imu] + 1;
+}
+
+// Returns the speed of the motor in degrees per second
+float Motor::getSpeed(enumIMU position) {
+  int imu = static_cast<int> (position);
+  if (this->anglesIndex[imu] < PREDICTION_LENGTH) {
+    return 0; // Not enough data to compute
+  }
+
+  int sumLatest = 0; // Most recent half of the data
+  int sumPrevious = 0; // Oldest half of data
+
+  int sumTimeLatest = 0;
+  int sumTimePrevious = 0;
+
+  for (int i = 0; i < PREDICTION_LENGTH; i++) {
+    int index = (this->anglesIndex[imu] - i) % PREDICTION_LENGTH; // Adjusted index
+    if (i < PREDICTION_LENGTH / 2) {
+      sumLatest += this->angles[imu][index];
+      sumTimeLatest += this->times[imu][index];
+    } else {
+      sumPrevious += this->angles[imu][index];
+      sumTimePrevious += this->times[imu][index];
+    }
+  }
+
+  // Simply get most recent, go back half the length and that space is average most recent
+  float latestAngle = sumLatest / (PREDICTION_LENGTH / 2);
+  float previousAngle = sumPrevious / (PREDICTION_LENGTH / 2);
+  float latestTime = sumTimeLatest / (PREDICTION_LENGTH / 2);
+  float previousTime = sumTimePrevious / (PREDICTION_LENGTH / 2);
+
+  return (latestAngle - previousAngle) / ((latestTime - previousTime) / 1000.0);
+}
+
+// Uses the last PREDICTION_LENGTH values to compute the power of the motor
+float Motor::computePWMMultiplier(enumIMU position) {
+  int imu = static_cast<int> (position);
+  if (this->anglesIndex[imu] < PREDICTION_LENGTH) {
+    return 1; // Not enough data to compute
+  }
+
+  int sumLatest = 0; // Most recent half of the data
+  int sumPrevious = 0; // Oldest half of data
+
+  for (int i = 0; i < PREDICTION_LENGTH; i++) {
+    int index = (this->anglesIndex[imu] - i) % PREDICTION_LENGTH; // Adjusted index
+    if (i < PREDICTION_LENGTH / 2) {
+      sumLatest += this->angles[imu][index];
+    } else {
+      sumPrevious += this->angles[imu][index];
+    }
+  }
+  // Simply get most recent, go back half the length and that space is average most recent
+  float latestAngle = sumLatest / (PREDICTION_LENGTH / 2);
+  float previousAngle = sumPrevious / (PREDICTION_LENGTH / 2);
+
+  // Compute the difference between the two
+  float diff = previousAngle - latestAngle; // A negative angle means the angle is increasing
+
+
+  if (-10 < diff < 20) { // No significant change, do not affect power
+    return 1;
+  } else {
+      // Crouch logic
+      if (diff < 0) {
+        if (diff < -30) {
+          // Max out the drop of power
+          return 0.2;
+        } else {
+          // Smoothly decrease power, diff is already negative
+          return 1 + (diff * 0.04);
+        }
+      } else {
+        // Stand logic
+        if (diff > 30) {
+          // Max out the increase of power
+          return 1.8;
+        } else {
+          // Smoothly increase power
+          return 1 + (diff * 0.04);
+        }
+
+      }
+  }
+}
 
 void Motor::setAngle(enumIMU imuType, float val)
 {
+  this->logAngle(imuType, val);
+
   switch (imuType)
   {
   case enumIMU::HIP_R:

@@ -106,3 +106,6 @@
 #define FROM_IMU 0
 #define FROM_ENCODER 1
 #define MOTOR_INCREASE 5
+
+//----- EXPERIMENTAL -----
+#define PREDICTION_LENGTH 20 // Make this a pair number or you crash

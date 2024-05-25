@@ -8,10 +8,14 @@
 #include "exoSettings.h"
 #include "ProxiSensor.h"
 #include "multiplex.h"
+#include <array>
 
 class Motor
 {
 private:
+    array<array<float, PREDICTION_LENGTH>, 5> angles;           // Log of recent angles
+    array<array<unsigned long, PREDICTION_LENGTH>, 5> times;    // Log of recent times
+    array<int, 5> anglesIndex;                                  // Index of the last angle in the array
 
     // PID variables
     float ErrorCurrentRightKnee = 0.0;
@@ -68,14 +72,18 @@ public:
     void neededTorque();
     void neededCurrent();
     void PIDCurrent();
-    void PIDCurrentPrealable();
+    void torqueToPWM();
     void sendCommand();
+    float computePWMMultiplier(enumIMU position);
+    float getTorque(enumIMU position);
+    float getSpeed(enumIMU position);
     void setPower(double p);
     double getPower();
     void SetTriggerDistance();
 
     void setAngle(enumIMU enumType, float val);
     float getAngle(enumIMU enumType);
+    void logAngle(enumIMU enumType, float val);
     float toDegrees(float radians);
     float toRadian(float degree);
     void printProxim();
