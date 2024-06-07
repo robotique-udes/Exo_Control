@@ -15,9 +15,11 @@
 #include "callbackSetup.h"
 #include "exoSettings.h"
 #include "enumAngleSource.h"
+#include "wifiSimulation.h"
 
 Test tester;
 Relay relais;
+WifiSimulation wifi;
 Motor *motor;
 // Handler must be a pointer because Wire needs to be instanciated
 IMU *imuHandler;
@@ -61,8 +63,12 @@ void setup()
 
   // Setup HMI
   setupCallbacks();
-  // imu01.IMUSetup(); // Comment if no IMU are in use
-  // imu01.wifiSetup(); // Comment if not using wifi com
+
+  // Setup wifi
+  if (WIFI_ACTIVE)
+  {
+    wifi.wifiSetup();
+  }
 }
 
 void loop()
@@ -74,7 +80,7 @@ void loop()
   // motor->motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
-  //tester.testRelay();
+  // tester.testRelay();
   // tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
@@ -82,7 +88,7 @@ void loop()
   updateAngles(settings.getAngleSource());
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
   motor->neededTorque();
-  
+
   // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
   // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
   motor->PIDCurrentPrealable();
@@ -94,26 +100,43 @@ void loop()
   // motor->printProxim();
   // motor->printPMW();
   // motor->printTorque();
-  //delay(200);
-
-  
+  // delay(200);
 }
 
 void updateAngles(bool angleSource)
 {
-  if(angleSource){
-    //Fetch angles from IMUs
+  if (angleSource)
+  {
+    // Fetch angles from IMUs
     imuHandler->requestData();
     motor->setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
     motor->setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
     motor->setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
     motor->setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
+
+    if (WIFI_ACTIVE)
+    {
+      wifi.setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
+      wifi.setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
+      wifi.setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
+      wifi.setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
+      wifi.setAngle(enumIMU::EXO_BACK, imuHandler->getValAngle(enumIMU::EXO_BACK));
+    }
   }
-  else{
-    //Fetch angles from ENCODERs
+  else
+  {
+    // Fetch angles from ENCODERs
     motor->setAngle(enumIMU::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
     motor->setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
     motor->setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
     motor->setAngle(enumIMU::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
+
+    if (WIFI_ACTIVE)
+    {
+      wifi.setAngle(enumIMU::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
+      wifi.setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
+      wifi.setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
+      wifi.setAngle(enumIMU::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
+    }
   }
 }
