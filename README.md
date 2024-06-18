@@ -1,4 +1,4 @@
-# Exo_Control
+# Core
 
 ## Table of Contents
 
