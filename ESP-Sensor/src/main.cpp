@@ -116,10 +116,10 @@ void updateAngles(bool angleSource)
 
     if (WIFI_ACTIVE)
     {
-      wifi.setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
-      wifi.setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
-      wifi.setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
-      wifi.setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
+      wifi.setAngle(enumIMU::TIBIA_L, imuHandler->getValAngle(enumIMU::TIBIA_L));
+      wifi.setAngle(enumIMU::TIBIA_R, imuHandler->getValAngle(enumIMU::TIBIA_R));
+      wifi.setAngle(enumIMU::THIGH_L, imuHandler->getValAngle(enumIMU::THIGH_L));
+      wifi.setAngle(enumIMU::THIGH_R, imuHandler->getValAngle(enumIMU::THIGH_R));
       wifi.setAngle(enumIMU::EXO_BACK, imuHandler->getValAngle(enumIMU::EXO_BACK));
     }
   }
@@ -130,13 +130,5 @@ void updateAngles(bool angleSource)
     motor->setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
     motor->setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
     motor->setAngle(enumIMU::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
-
-    if (WIFI_ACTIVE)
-    {
-      wifi.setAngle(enumIMU::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
-      wifi.setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
-      wifi.setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
-      wifi.setAngle(enumIMU::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
-    }
   }
 }

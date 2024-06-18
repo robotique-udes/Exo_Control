@@ -69,6 +69,15 @@ void IMU::computeAngles() {
 
     angles[static_cast<int> (enumIMU::EXO_BACK)] = back;
 
+    angles[static_cast<int> (enumIMU::TIBIA_L)] = tibiaL;
+    angles[static_cast<int> (enumIMU::TIBIA_R)] = tibiaR;
+    angles[static_cast<int> (enumIMU::THIGH_L)] = thighL;
+    angles[static_cast<int> (enumIMU::THIGH_R)] = thighR;
+
+    // Change buffer size before adding more angles and IMUs
+    
+
+
 }
 
 // Returns Yaw, same as previous implementation

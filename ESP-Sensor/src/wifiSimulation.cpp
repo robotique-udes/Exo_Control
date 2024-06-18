@@ -15,6 +15,13 @@ AsyncWebSocketClient *globalClient = NULL;
 // Create an Event Source on /events
 AsyncEventSource events("/events");
 
+// global angle variables
+float WIFI_THIGH_L = 0;
+float WIFI_TIBIA_L = 0;
+float WIFI_THIGH_R = 0;
+float WIFI_TIBIA_R = 0;
+float WIFI_BACK = 0;
+
 void WifiSimulation::wifiSetup()
 {
     initWiFi();
@@ -32,24 +39,30 @@ float WifiSimulation::toDegrees(float radians)
 String WifiSimulation::writeJson()
 {
     // readings["G_ALPHA_X"] = toDegrees(angleHipL.x());
-    readings["G_ALPHA_Y"] = LeftKneeAngle;
+    // readings["G_ALPHA_Y"] = LeftKneeAngle;
     // readings["G_ALPHA_Z"] = toDegrees(angleHipL.z());
 
     // readings["G_BETA_X"] = toDegrees(angleKneeL.x());
-    readings["G_BETA_Y"] = LeftHipAngle;
+    // readings["G_BETA_Y"] = LeftHipAngle;
     // readings["G_BETA_Z"] = toDegrees(angleKneeL.z());
 
     // readings["D_ALPHA_X"] = toDegrees(angleHipR.x());
-    readings["D_ALPHA_Y"] = RightKneeAngle;
+    // readings["D_ALPHA_Y"] = RightKneeAngle;
     // readings["D_ALPHA_Z"] = toDegrees(angleHipR.z());
 
     // readings["D_BETA_X"] = toDegrees(angleKneeR.x());
-    readings["D_BETA_Y"] = RightHipAngle;
+    // readings["D_BETA_Y"] = RightHipAngle;
     // readings["D_BETA_Z"] = toDegrees(angleKneeR.z());
 
     // readings["SPINE_X"] = toDegrees(SPLINE.x());
     // readings["SPINE_Y"] = toDegrees(SPLINE.y());
     // readings["SPINE_Z"] = toDegrees(SPLINE.z());
+
+    readings["TIBIA_L"] = WIFI_TIBIA_L;
+    readings["TIBIA_R"] = WIFI_TIBIA_R;
+    readings["THIGH_L"] = WIFI_THIGH_L;
+    readings["THIGH_R"] = WIFI_THIGH_R;
+    readings["BACK"] = WIFI_BACK;
 
     String jsonString = JSON.stringify(readings);
     return jsonString;
@@ -146,20 +159,20 @@ void WifiSimulation::setAngle(enumIMU imuType, float val)
 {
     switch (imuType)
     {
-    case enumIMU::HIP_R:
-        RightHipAngle = val;
+    case enumIMU::THIGH_L:
+        WIFI_THIGH_L = val;
         break;
-    case enumIMU::KNEE_R:
-        RightKneeAngle = val;
+    case enumIMU::TIBIA_L:
+        WIFI_TIBIA_L = val;
         break;
-    case enumIMU::HIP_L:
-        LeftHipAngle = val;
+    case enumIMU::THIGH_R:
+        WIFI_THIGH_R = val;
         break;
-    case enumIMU::KNEE_L:
-        LeftKneeAngle = val;
+    case enumIMU::TIBIA_R:
+        WIFI_TIBIA_R = val;
         break;
     case enumIMU::EXO_BACK:
-        SpineAngle = val;
+        WIFI_BACK = val;
         break;
     default:
         break;
