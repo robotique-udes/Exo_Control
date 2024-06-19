@@ -53,31 +53,24 @@ void IMU::printBNOs(int startIndex, int endIndex){
 }
 
 void IMU::computeAngles() {
+
+    // Angles on Y axis (getEuler()[1])
     float thighL = BNOs[static_cast<int> (enumIMU::HIP_L)]->getEuler()[1];
     float tibiaL = -BNOs[static_cast<int> (enumIMU::KNEE_L)]->getEuler()[1];
     float thighR = -BNOs[static_cast<int> (enumIMU::HIP_R)]->getEuler()[1];
     float tibiaR = BNOs[static_cast<int> (enumIMU::KNEE_R)]->getEuler()[1];
-
-    // Compute back angle "right away" to be used in hip calculations
     float back = BNOs[static_cast<int> (enumIMU::EXO_BACK)]->getEuler()[1];
+
 
     angles[static_cast<int> (enumIMU::HIP_L)] = abs(-thighL-back);
     angles[static_cast<int> (enumIMU::KNEE_L)] = abs(tibiaL-thighL);
-
     angles[static_cast<int> (enumIMU::HIP_R)] = abs(-thighR-back);
     angles[static_cast<int> (enumIMU::KNEE_R)] = abs(tibiaR-thighR);
-
     angles[static_cast<int> (enumIMU::EXO_BACK)] = back;
-
     angles[static_cast<int> (enumIMU::TIBIA_L)] = tibiaL;
     angles[static_cast<int> (enumIMU::TIBIA_R)] = tibiaR;
     angles[static_cast<int> (enumIMU::THIGH_L)] = thighL;
     angles[static_cast<int> (enumIMU::THIGH_R)] = thighR;
-
-    // Change buffer size before adding more angles and IMUs
-    
-
-
 }
 
 // Returns Yaw, same as previous implementation

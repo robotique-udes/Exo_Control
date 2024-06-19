@@ -113,7 +113,6 @@ void WifiSimulation::initWiFi()
 
 void WifiSimulation::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
-    // Je n'ai pas le esp32 pour tester cette fonction, mais je trouve étrange que tu crées un objet WifiSimulation ici
     WifiSimulation imu;
 
     if (type == WS_EVT_CONNECT)
