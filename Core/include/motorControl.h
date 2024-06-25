@@ -1,8 +1,7 @@
 #ifndef MOTORCONTROL_H
 #define MOTORCONTROL_H
 #include <Arduino.h>
-#include "enumIMU.h"
-#include "sonar.h"
+#include "enums.h"
 #include "define.h"
 #include "PinExtender.h"
 #include "exoSettings.h"

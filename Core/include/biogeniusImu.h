@@ -2,7 +2,7 @@
 #define BIOGENIUSIMU_H_
 #include "biogeniusBno.h"
 #include "multiplex.h"
-#include "enumIMU.h"
+#include "enums.h"
 #include "define.h"
 #include <array>
 using namespace std;

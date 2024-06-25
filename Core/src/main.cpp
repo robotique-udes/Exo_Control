@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
-#include "enumIMU.h"
+#include "enums.h"
 #include "PinExtender.h"
 #include "QuadratureEncoder.h"
-#include "biogeniusImu.h"
+#include "enums.h"
 #include "touchScreen.h"
 #include <SPI.h>
 #include <SD.h>
@@ -14,7 +14,7 @@
 #include "touchScreen.h"
 #include "callbackSetup.h"
 #include "exoSettings.h"
-#include "enumAngleSource.h"
+#include "biogeniusImu.h"
 
 Test tester;
 Relay relais;

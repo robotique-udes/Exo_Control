@@ -4,9 +4,7 @@
 #include <Arduino.h>
 #include <Nextion.h>
 
-#include "enumScreenCallbacks.h"
-#include "enumAngleSource.h"
-#include "enumSonarState.h"
+#include "enums.h"
 #include "relay.h"
 #include "QuadratureEncoder.h"
 
