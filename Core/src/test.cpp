@@ -11,6 +11,11 @@ void Test::setEncoder(QuadratureEncoder *newEncoder)
     encoder = newEncoder;
 }
 
+void Test::setProxiHandler(ProxiHandler *newProxiHandler)
+{
+    proxiHandler = newProxiHandler;
+}
+
 void Test::testSonar()
 {
     float erreur = 0;
@@ -206,7 +211,7 @@ void Test::keyboardCommand()
     else if (incomingByte == '-')
     {
       Serial.println("Reset Encoder Genou Gauche");
-      motor->SetTriggerDistance();
+      proxiHandler->setTriggerDist();
     }
     
   }

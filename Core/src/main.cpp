@@ -15,6 +15,7 @@
 #include "callbackSetup.h"
 #include "dataCore.h"
 #include "bnoHandler.h"
+#include "proxiHandler.h"
 
 Test tester;
 Relay relais;
@@ -24,6 +25,8 @@ BnoHandler *bnoHandler;
 QuadratureEncoder encoder;
 TouchScreen &screen = TouchScreen::getInstance();
 DataCore &settings = DataCore::getInstance();
+ProxiHandler proxiHandler;
+
 
 void updateAngles(bool angleSource);
 
@@ -50,6 +53,7 @@ void setup()
   QuadratureEncoder::begin();
   tester.setMotor(motor);
   tester.setEncoder(&encoder);
+  tester.setProxiHandler(&proxiHandler);
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
   settings.init(&encoder);
