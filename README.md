@@ -46,14 +46,13 @@ Getting started with our project is a straightforward process. Simply clone the 
   - This class orchestrates most of the operation in the exo and use the info it receive from various sensors to calculate the needed current for the motors
   - Most of the class is either mathematics or fetching info from other classes
   - Most other classes are called by this one
-- imu:
-  - BNO055 logic class, used to fetch information from our IMUs, converting it to angles, and sending it to motorControl
-  - We use mainly the adafruit bno055 library here
+- bnoHandler:
+  - This class orchestrates the calls to and from each BNO.
 - multiplex:
-  - multiplexer control class composed of simple functions used to switch multiplexer chanels
-- bnoMultiplex:
-  - Bridge between the imu and multiplex classes
-  - Used to associate any IMUs to an ID from it's constructor and switch multiplexer channel automatically when using IMU's basic functions
+  - Wrapper class to facilitate the use of i2c devices going through the multiplexer
+- BNO_085:
+  - Logic class to interact with the Adafruit BNO_085. Stores data in the BnoStruct
+  format for easy access, accessible with a getter.
 - sonar:
   - Sonar logic class, used to read distance from ground and determine whether or not the foot of the user is grounded
 - relay:
