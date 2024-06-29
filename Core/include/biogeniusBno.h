@@ -1,6 +1,6 @@
 #ifndef BIOGENIUSBNO_H_
 #define BIOGENIUSBNO_H_
-#include "bnoStruct.h"
+#include "structs.h"
 #include "multiplex.h"
 #include "enums.h"
 #include <Wire.h>
@@ -76,7 +76,7 @@ class BNO {
         * @return true if tracking was successfully started
         */
         bool beginTracking();
-        
+
         /**
         * Sends a simple packet to check connection status.
         * @return true if the BNO responded
