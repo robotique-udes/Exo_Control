@@ -21,7 +21,6 @@
 #define KI 0
 #define KD 0
 #define HIGH_TORQUE 100
-#define PI 3.141592653
 
 #define MOTEUR_GENOU_GAUCHE 0
 #define MOTEUR_GENOU_DROIT 1

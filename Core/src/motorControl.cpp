@@ -52,12 +52,7 @@ void Motor::neededTorque()
   float LeftKneeRAD = toRadian(LeftKneeAngle);
   float RightHipRAD = toRadian(RightHipAngle);
   float RightKneeRAD = toRadian(RightKneeAngle);
-  //check if proxim to reset trigger dist
-  if(dataCore.getResetProxim())
-  {
-    SetTriggerDistance();
-    dataCore.setResetProxim(false);
-  }
+
   // If clutch are on automatic, calculate torque needed
   if (dataCore.isMotorEnabled())
   {
@@ -210,27 +205,6 @@ void Motor::printPMW()
   Serial.print(PWMRightHip);
   Serial.print("\t  PWMLeftHip: ");
   Serial.println(PWMLeftHip);
-}
-
-void Motor::printProxim()
-{
-  if(dataCore.getResetProxim())
-  {
-    SetTriggerDistance();
-    dataCore.setResetProxim(false);
-  }
-  Serial.print("\t RIGHT PROXIM: ");
-  Serial.print(dataCore.getRightProxi());
-  Serial.print("\t LEFT PROXIM: ");
-  Serial.println(dataCore.getLeftProxi());
-
-  // Serial.print("\t ME: ");
-  // Serial.println(dataCore.isMotorEnabled());
-}
-
-void Motor::SetTriggerDistance()
-{
-
 }
 
 
