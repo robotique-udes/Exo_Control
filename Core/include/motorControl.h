@@ -44,12 +44,8 @@ private:
     float RightHipMeasuredCurrent = 0.0;
     float LeftHipMeasuredCurrent = 0.0;
 
-    // proximity sensor
-    Multiplex mux;
-    ProxiSensor *LeftProxim;
-    ProxiSensor *RightProxim;
     //settings
-    DataCore& settings = DataCore::getInstance();
+    DataCore& dataCore = DataCore::getInstance();
 
 public:
     Motor();

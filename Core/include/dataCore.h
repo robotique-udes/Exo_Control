@@ -16,7 +16,11 @@ class DataCore{
         Relay relais;
         QuadratureEncoder *encodeurPtr;
 
-        
+        //Ins
+        bool rightProxiState = false;
+        bool leftProxiState = false;
+
+
         bool motorEnabled;
         bool clutchEnabled;
         bool proximEnabled;
@@ -25,6 +29,8 @@ class DataCore{
         bool angleSource;
         bool brightness;
 
+
+        //Outs
         int height;
         float motorPower;
 
@@ -63,6 +69,12 @@ class DataCore{
 
         int getMotorPower();
         void setMotorPower(int setMotorPower);
+
+        //from proxim
+        int getRightProxi();
+        int getLeftProxi();
+        void setRightProxi(bool state);
+        void setLeftProxi(bool state);
 
         // Code pour le singleton
 

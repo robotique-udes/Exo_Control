@@ -1,4 +1,4 @@
-#include "QuadratureEncoder.h"
+#include "quadratureEncoder.h"
 
 QuadratureEncoder *QuadratureEncoder::instance = nullptr;
 

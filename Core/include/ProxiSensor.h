@@ -1,11 +1,12 @@
-#ifndef SENSOROPT3101_H
-#define SENSOROPT3101_H
+#ifndef PROXISENSOR_H
+#define PROXISENSOR_H
 
 #include <OPT3101.h>
 #include <Wire.h>
 #include <Arduino.h>
 #include "multiplex.h"
 #include "define.h"
+#include "dataCore.h"
 
 
 class ProxiSensor
