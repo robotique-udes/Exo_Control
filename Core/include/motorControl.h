@@ -73,8 +73,8 @@ public:
     double getPower();
     void SetTriggerDistance();
 
-    void setAngle(enumIMU enumType, float val);
-    float getAngle(enumIMU enumType);
+    void setAngle(EnumBnoPosition enumType, float val);
+    float getAngle(EnumBnoPosition enumType);
     float toDegrees(float radians);
     float toRadian(float degree);
     void printProxim();

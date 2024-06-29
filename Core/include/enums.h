@@ -6,7 +6,7 @@ enum class EnumAngleSource
     ENCODER,
 };
 
-enum class enumIMU
+enum class EnumBnoPosition
 {
     HIP_L    =   0,
     KNEE_L   =   1,

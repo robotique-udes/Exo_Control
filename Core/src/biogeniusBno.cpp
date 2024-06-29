@@ -5,7 +5,7 @@
 #include "define.h"
 using namespace std;
 
-BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
+BNO::BNO(EnumBnoPosition position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
     this->position = position;
     this->muxAddress = muxAddress;
     this->muxPtr = muxPtr;
@@ -13,14 +13,6 @@ BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
     this->resetDataValues();
 }
 
-BNO::BNO(enumIMU position, int muxAddress, Multiplex* muxPtr) {
-    this->position = position;
-    this->muxAddress = muxAddress;
-    this->muxPtr = muxPtr;
-    this->resetDataValues();
-}
-
-// Sets to 0 all structure values
 void BNO::resetDataValues() {
     this->data.acceleration[0] = 0;
     this->data.acceleration[1] = 0;
@@ -52,20 +44,20 @@ void BNO::resetDataValues() {
 void BNO::printName() {
     switch (this->position)
     {
-    case enumIMU::EXO_BACK:
+    case EnumBnoPosition::EXO_BACK:
         Serial.print("Back");
         break;
-    case enumIMU::HIP_L:
+    case EnumBnoPosition::HIP_L:
         Serial.print("Hip Left");
         break;
-    case enumIMU::HIP_R:
+    case EnumBnoPosition::HIP_R:
 
         Serial.print("Hip Right");
         break;
-    case enumIMU::KNEE_L:
+    case EnumBnoPosition::KNEE_L:
         Serial.print("Knee Left");
         break;
-    case enumIMU::KNEE_R:
+    case EnumBnoPosition::KNEE_R:
         Serial.print("Knee Right");
         break;
     default:
@@ -110,14 +102,12 @@ int16_t BNO::getTime() {
     return this->data.time;
 }
 
-// "Ping" the BNO to check if it is connected
 bool BNO::checkIfConnected() {
     this->muxPtr->selectChannel(this->muxAddress);
     Wire.beginTransmission(this->i2cAddress);
     return Wire.endTransmission() == 0;
 }
 
-// Returns the Euler angles of the BNO, in degrees by default
 array<float, 3> BNO::getEuler(bool radians) {
     if (!radians) {
         return {(float)(this->data.euler[0] * RAD_TO_DEG),
@@ -164,7 +154,6 @@ void BNO::updateEuler() {
         (-sqx - sqy + sqz + sqw));
 }
 
-// Try to request data from BNO, return true if successful
 bool BNO::requestData() {
 
     int16_t length;

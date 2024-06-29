@@ -237,20 +237,20 @@ void Motor::SetTriggerDistance()
 }
 
 
-void Motor::setAngle(enumIMU imuType, float val)
+void Motor::setAngle(EnumBnoPosition imuType, float val)
 {
   switch (imuType)
   {
-  case enumIMU::HIP_R:
+  case EnumBnoPosition::HIP_R:
     RightHipAngle = val;
     break;
-  case enumIMU::KNEE_R:
+  case EnumBnoPosition::KNEE_R:
     RightKneeAngle = val;
     break;
-  case enumIMU::HIP_L:
+  case EnumBnoPosition::HIP_L:
     LeftHipAngle = val;
     break;
-  case enumIMU::KNEE_L:
+  case EnumBnoPosition::KNEE_L:
     LeftKneeAngle = val;
     break;
   default:
@@ -258,20 +258,20 @@ void Motor::setAngle(enumIMU imuType, float val)
   }
 }
 
-float Motor::getAngle(enumIMU imuType)
+float Motor::getAngle(EnumBnoPosition imuType)
 {
   switch (imuType)
   {
-  case enumIMU::HIP_R:
+  case EnumBnoPosition::HIP_R:
     return RightHipAngle;
     break;
-  case enumIMU::KNEE_R:
+  case EnumBnoPosition::KNEE_R:
     return RightKneeAngle;
     break;
-  case enumIMU::HIP_L:
+  case EnumBnoPosition::HIP_L:
     return LeftHipAngle;
     break;
-  case enumIMU::KNEE_L:
+  case EnumBnoPosition::KNEE_L:
     return LeftKneeAngle;
     break;
   default:
