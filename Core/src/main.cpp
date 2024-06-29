@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include "enums.h"
-#include "PinExtender.h"
-#include "QuadratureEncoder.h"
+#include "pinExtender.h"
+#include "quadratureEncoder.h"
 #include "enums.h"
 #include "touchScreen.h"
 #include <SPI.h>

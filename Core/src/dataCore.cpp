@@ -113,6 +113,23 @@ void DataCore::setMotorPower(int newMotorPower){
     Serial.println(motorPower);
 }
 
+int DataCore::getRightProxi(){
+    return rightProxiState;
+}
+
+int DataCore::getLeftProxi(){
+    return leftProxiState;
+}
+
+void DataCore::setRightProxi(bool state){
+    rightProxiState = state;
+}
+
+void DataCore::setLeftProxi(bool state){
+    leftProxiState = state;
+}
+
+
 void DataCore::resetEncoder(){
     Serial.println("\t Reseting encoder ");
     encodeurPtr->resetPosition(QuadratureEncoder::GEN_DRO);

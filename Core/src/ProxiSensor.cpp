@@ -1,4 +1,4 @@
-#include "ProxiSensor.h"
+#include "proxiSensor.h"
 #include "define.h"
 
 // Date constructor

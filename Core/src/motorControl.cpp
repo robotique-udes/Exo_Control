@@ -3,9 +3,7 @@ bool motorMode = ON; // mutliplie le torque demandé au moteur, lorsque a 0, les
 
 Motor::Motor()
 {
-  this->mux = Multiplex();
-  this->LeftProxim = new ProxiSensor(&this->mux, LEFT_MOUSTACHE_MUX_CHANNEL);
-  this->RightProxim = new ProxiSensor(&this->mux, RIGHT_MOUSTACHE_MUX_CHANNEL);
+
 }
 
 Motor::~Motor()
@@ -55,16 +53,16 @@ void Motor::neededTorque()
   float RightHipRAD = toRadian(RightHipAngle);
   float RightKneeRAD = toRadian(RightKneeAngle);
   //check if proxim to reset trigger dist
-  if(settings.getResetProxim())
+  if(dataCore.getResetProxim())
   {
     SetTriggerDistance();
-    settings.setResetProxim(false);
+    dataCore.setResetProxim(false);
   }
   // If clutch are on automatic, calculate torque needed
-  if (settings.isMotorEnabled())
+  if (dataCore.isMotorEnabled())
   {
     // Right Hip Torque Equation
-    if (!RightProxim->IsOnTheGround())
+    if (!dataCore.getRightProxi())
       RightHipTorque = (MF * G) * sin(RightHipRAD) * LF / 2 + (MT * G) * (sin(RightHipRAD) * LF + sin(RightKneeRAD - RightHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
@@ -77,7 +75,7 @@ void Motor::neededTorque()
     }
 
     // Left Hip Torque Equation
-    if (!LeftProxim->IsOnTheGround())
+    if (!dataCore.getLeftProxi())
       LeftHipTorque = (MF * G) * sin(LeftHipRAD) * LF / 2 + (MT * G) * (sin(LeftHipRAD) * LF + sin(LeftKneeRAD - LeftHipRAD) * LT / 2); // TODO : TEST THIS NEW EQUATION
     else
     {
@@ -88,7 +86,7 @@ void Motor::neededTorque()
     }
 
     // Right Knee Torque Equation
-    if (!RightProxim->IsOnTheGround())
+    if (!dataCore.getRightProxi())
     {
       if (RightKneeAngle > 0)
         RightKneeTorque = ((sin(RightHipRAD) * (LF / 2) * (MF * G)) + ((sin(RightHipRAD) * LF)) * (G * MH)) * 0.5;
@@ -104,7 +102,7 @@ void Motor::neededTorque()
     }
 
     // Left Knee Torque Equation
-    if (!LeftProxim->IsOnTheGround())
+    if (!dataCore.getLeftProxi())
     {
       if (LeftKneeAngle > 0)
         LeftKneeTorque = ((sin(LeftHipRAD) * (LF / 2) * (MF * G)) + ((sin(LeftHipRAD) * LF)) * (G * MH)) * 0.5;
@@ -191,7 +189,7 @@ void Motor::PIDCurrent()
 
 void Motor::PIDCurrentPrealable()
 {
-  int power = settings.getMotorPower();
+  int power = dataCore.getMotorPower();
 
   // Setting  PWM values
   PWMRightKnee = -float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power));
@@ -203,7 +201,7 @@ void Motor::PIDCurrentPrealable()
 void Motor::printPMW()
 {
   Serial.print("\t Motor Power: ");
-  Serial.print(settings.getMotorPower());
+  Serial.print(dataCore.getMotorPower());
   Serial.print("\t  PWMRightKnee: ");
   Serial.print(PWMRightKnee);
   Serial.print("\t  PWMLeftKnee: ");
@@ -216,24 +214,23 @@ void Motor::printPMW()
 
 void Motor::printProxim()
 {
-  if(settings.getResetProxim())
+  if(dataCore.getResetProxim())
   {
     SetTriggerDistance();
-    settings.setResetProxim(false);
+    dataCore.setResetProxim(false);
   }
   Serial.print("\t RIGHT PROXIM: ");
-  Serial.print(RightProxim->IsOnTheGround());
+  Serial.print(dataCore.getRightProxi());
   Serial.print("\t LEFT PROXIM: ");
-  Serial.println(LeftProxim->IsOnTheGround());
+  Serial.println(dataCore.getLeftProxi());
 
   // Serial.print("\t ME: ");
-  // Serial.println(settings.isMotorEnabled());
+  // Serial.println(dataCore.isMotorEnabled());
 }
 
 void Motor::SetTriggerDistance()
 {
-  LeftProxim->SetTriggerDistance(settings.getBrightness());
-  RightProxim->SetTriggerDistance(settings.getBrightness());
+
 }
 
 
@@ -374,7 +371,7 @@ void Motor::testFuncSetPwnHigh()
 }
 
 // A renommer correctement
-void Motor::setSonarState(bool state) { settings.setProximEnabled(state); }
-void Motor::setHeight(double h) { settings.setHeight(h); }
+void Motor::setSonarState(bool state) { dataCore.setProximEnabled(state); }
+void Motor::setHeight(double h) { dataCore.setHeight(h); }
 // double Motor::sonarScanR(){ return RightProxim->GetMinDistance(); }
 // double Motor::sonarScanL(){ return LeftProxim->GetMinDistance(); }
