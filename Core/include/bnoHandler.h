@@ -1,17 +1,17 @@
-#ifndef BIOGENIUSIMU_H_
-#define BIOGENIUSIMU_H_
-#include "biogeniusBno.h"
+#ifndef BNOHANDLER_H_
+#define BNOHANDLER_H_
+#include "BNO_085.h"
 #include "multiplex.h"
 #include "enums.h"
 #include "define.h"
 #include <array>
 using namespace std;
 
-// Class storing all the IMU classes and the multiplexer that they use
-class IMU {
+// Class storing all BNOs and the multiplexer that they use
+class BnoHandler {
     private:
         // Array of the physical BNOs, ordered by EnumBnoPosition
-        array<BNO *, 5> BNOs;
+        array<BNO_085 *, 5> BNOs;
         // Array of the angles between the parts, stored in degrees
         array<float, 5> angles;
         // Multiplexer used to switch between BNOs
@@ -23,7 +23,7 @@ class IMU {
         /**
         * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
         */
-        IMU();
+        BnoHandler();
 
         /**
         * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
