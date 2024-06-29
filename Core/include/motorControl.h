@@ -4,7 +4,7 @@
 #include "enums.h"
 #include "define.h"
 #include "PinExtender.h"
-#include "exoSettings.h"
+#include "dataCore.h"
 #include "ProxiSensor.h"
 #include "multiplex.h"
 
@@ -49,7 +49,7 @@ private:
     ProxiSensor *LeftProxim;
     ProxiSensor *RightProxim;
     //settings
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
 
 public:
     Motor();

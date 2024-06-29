@@ -1,5 +1,5 @@
-#ifndef EXOSETTINGS_H
-#define EXOSETTINGS_H
+#ifndef DATACORE_H
+#define DATACORE_H
 
 #include <Arduino.h>
 #include <Nextion.h>
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class ExoSettings{
+class DataCore{
     private:
 
         Relay relais;
@@ -28,7 +28,7 @@ class ExoSettings{
         int height;
         float motorPower;
 
-        ExoSettings();
+        DataCore();
 
     public:
         
@@ -66,10 +66,10 @@ class ExoSettings{
 
         // Code pour le singleton
 
-        static ExoSettings *instance;
-        static ExoSettings& getInstance();
-        ExoSettings(const ExoSettings&) = delete;
-        ExoSettings& operator=(const ExoSettings&) = delete;
+        static DataCore *instance;
+        static DataCore& getInstance();
+        DataCore(const DataCore&) = delete;
+        DataCore& operator=(const DataCore&) = delete;
 };
 
 

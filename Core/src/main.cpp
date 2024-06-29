@@ -13,7 +13,7 @@
 #include "test.h"
 #include "touchScreen.h"
 #include "callbackSetup.h"
-#include "exoSettings.h"
+#include "dataCore.h"
 #include "biogeniusImu.h"
 
 Test tester;
@@ -23,7 +23,7 @@ Motor *motor;
 IMU *imuHandler;
 QuadratureEncoder encoder;
 TouchScreen &screen = TouchScreen::getInstance();
-ExoSettings &settings = ExoSettings::getInstance();
+DataCore &settings = DataCore::getInstance();
 
 void updateAngles(bool angleSource);
 

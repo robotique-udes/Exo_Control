@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 #include <Nextion.h>
-#include "exoSettings.h"
+#include "dataCore.h"
 #include "touchScreen.h"
 
 TouchScreen& screenForCallbacks = TouchScreen::getInstance();
@@ -18,7 +18,7 @@ void callbackButtonToggleMotor(void *ptr){
 
     button->getValue(&state);
 
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
 
     settings.setMotorEnabled(state);
 
@@ -34,7 +34,7 @@ void callbackButtonToggleClutch(void *ptr){
 
     button->getValue(&state);
 
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
 
     settings.setClutchEnabled(state);
 
@@ -43,7 +43,7 @@ void callbackButtonToggleClutch(void *ptr){
 
 void callbackButtonInit(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_INIT");
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
 
     settings.initialise();
 
@@ -52,14 +52,14 @@ void callbackButtonInit(void *ptr){
 
 void callbackButtonResetEncoder(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
     settings.resetEncoder();
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
 }
 
 void callbackButtonAutoCalibProxim(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
     settings.setResetProxim(true);
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
 }
@@ -73,7 +73,7 @@ void callbackButtonToggleAngleSource(void *ptr){
 
     button->getValue(&state);
 
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
     settings.setAngleSource(state);
 
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE : " + to_string(state));
@@ -88,7 +88,7 @@ void callbackButtonToggleProxim(void *ptr){
 
     button->getValue(&state);
 
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
 
     settings.setProximEnabled(state);
 
@@ -105,7 +105,7 @@ void callbackButtonTest(void *ptr){
 void callbackButtonDev1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
     Serial.print("Switching brightness settings");
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
     settings.setBrightness();
     
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
@@ -145,7 +145,7 @@ void callbackSliderMotorPower(void *ptr){
 
     NexSlider *sliderControl = static_cast<NexSlider*>(ptr);
 
-    ExoSettings& settings = ExoSettings::getInstance();
+    DataCore& settings = DataCore::getInstance();
 
     uint32_t value;
     Serial.println("About to print value : ...");

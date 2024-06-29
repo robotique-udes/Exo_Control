@@ -1,8 +1,8 @@
-#include "exoSettings.h"
+#include "dataCore.h"
 
-ExoSettings *ExoSettings::instance;
+DataCore *DataCore::instance;
 
-ExoSettings::ExoSettings(){
+DataCore::DataCore(){
     motorEnabled = false;
     clutchEnabled = false;
     proximEnabled = true;
@@ -16,104 +16,104 @@ ExoSettings::ExoSettings(){
     motorPower = 2048;
 }
 
-ExoSettings& ExoSettings::getInstance(){
+DataCore& DataCore::getInstance(){
     if(instance == NULL){
-        instance = new ExoSettings();
+        instance = new DataCore();
     }
     return *instance;
 }
 
-void ExoSettings::init(QuadratureEncoder *encodeur){
+void DataCore::init(QuadratureEncoder *encodeur){
     encodeurPtr = encodeur;
 }
 
-bool ExoSettings::isMotorEnabled(){
+bool DataCore::isMotorEnabled(){
     return motorEnabled;
 }
 
-bool ExoSettings::isClutchEnabled(){
+bool DataCore::isClutchEnabled(){
     return clutchEnabled;
 }
 
-bool ExoSettings::isProximEnabled(){
+bool DataCore::isProximEnabled(){
     return proximEnabled;
 }
 
-void ExoSettings::setMotorEnabled(bool setMotorEnabled){
+void DataCore::setMotorEnabled(bool setMotorEnabled){
     motorEnabled = !(motorEnabled);
     Serial.print("\t Motor enable set to: ");
     Serial.println(motorEnabled);
 }
 
-void ExoSettings::setClutchEnabled(bool setClutchEnabled){
+void DataCore::setClutchEnabled(bool setClutchEnabled){
     clutchEnabled = !(clutchEnabled);
     relais.setAllRelais(clutchEnabled);
     Serial.print("\t Clutch enable set to: ");
     Serial.println(clutchEnabled);
 }
 
-void ExoSettings::setProximEnabled(bool setProximEnabled){
+void DataCore::setProximEnabled(bool setProximEnabled){
     proximEnabled = !(proximEnabled);
     Serial.print("\t Proxim enable set to: ");
     Serial.println(proximEnabled);
 }
 
-bool ExoSettings::getAngleSource(){
+bool DataCore::getAngleSource(){
     return angleSource;
 }
 
-void ExoSettings::setAngleSource(bool setAngleSource){
+void DataCore::setAngleSource(bool setAngleSource){
     angleSource = !(angleSource);
     Serial.print("\t Angle source set to: ");
     Serial.println(angleSource);
 }
 
-bool ExoSettings::getSonarState(){
+bool DataCore::getSonarState(){
     return sonarState;
 }
 
-void ExoSettings::setSonarState(bool setSonarState){
+void DataCore::setSonarState(bool setSonarState){
     sonarState = !(sonarState);
     Serial.print("\t Sonar state set to: ");
     Serial.println(sonarState);
 }
 
-int ExoSettings::getHeight(){
+int DataCore::getHeight(){
     return height;
 }
 
-void ExoSettings::setHeight(int setHeight){
+void DataCore::setHeight(int setHeight){
     height = setHeight;
 }
 
-bool ExoSettings::getBrightness(){
+bool DataCore::getBrightness(){
     return brightness;
 }
 
-void ExoSettings::setBrightness(){
+void DataCore::setBrightness(){
     brightness = !(brightness);
 }
 
-bool ExoSettings::getResetProxim(){
+bool DataCore::getResetProxim(){
     return needResetProxim;
 }
 
-void ExoSettings::setResetProxim(bool reset){
+void DataCore::setResetProxim(bool reset){
     Serial.println("\t proxim reset to high ");
     needResetProxim = reset;
 }
 
-int ExoSettings::getMotorPower(){
+int DataCore::getMotorPower(){
     return motorPower;
 }
 
-void ExoSettings::setMotorPower(int newMotorPower){
+void DataCore::setMotorPower(int newMotorPower){
     motorPower = float(newMotorPower) / 100.0 * 4096.0;
     Serial.print("\t Motor power set to: ");
     Serial.println(motorPower);
 }
 
-void ExoSettings::resetEncoder(){
+void DataCore::resetEncoder(){
     Serial.println("\t Reseting encoder ");
     encodeurPtr->resetPosition(QuadratureEncoder::GEN_DRO);
     encodeurPtr->resetPosition(QuadratureEncoder::GEN_GAU);
@@ -121,11 +121,11 @@ void ExoSettings::resetEncoder(){
     encodeurPtr->resetPosition(QuadratureEncoder::HAN_GAU);
 }
 
-void ExoSettings::adjustMotorPower(int offset){
+void DataCore::adjustMotorPower(int offset){
     setMotorPower(motorPower+offset);
 }
 
-void ExoSettings::initialise(){
+void DataCore::initialise(){
     clutchEnabled = OFF;
     motorEnabled = false;
     motorPower = 2048;
