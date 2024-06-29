@@ -108,16 +108,16 @@ void updateAngles(bool angleSource)
   if(angleSource){
     //Fetch angles from IMUs
     imuHandler->requestData();
-    motor->setAngle(enumIMU::HIP_R, imuHandler->getValAngle(enumIMU::HIP_R));
-    motor->setAngle(enumIMU::HIP_L, imuHandler->getValAngle(enumIMU::HIP_L));
-    motor->setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
-    motor->setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
+    motor->setAngle(EnumBnoPosition::HIP_R, imuHandler->getValAngle(EnumBnoPosition::HIP_R));
+    motor->setAngle(EnumBnoPosition::HIP_L, imuHandler->getValAngle(EnumBnoPosition::HIP_L));
+    motor->setAngle(EnumBnoPosition::KNEE_R, imuHandler->getValAngle(EnumBnoPosition::KNEE_R));
+    motor->setAngle(EnumBnoPosition::KNEE_L, imuHandler->getValAngle(EnumBnoPosition::KNEE_L));
   }
   else{
     //Fetch angles from ENCODERs
-    motor->setAngle(enumIMU::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
-    motor->setAngle(enumIMU::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
-    motor->setAngle(enumIMU::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
-    motor->setAngle(enumIMU::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
+    motor->setAngle(EnumBnoPosition::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
+    motor->setAngle(EnumBnoPosition::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
+    motor->setAngle(EnumBnoPosition::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
+    motor->setAngle(EnumBnoPosition::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
   }
 }
