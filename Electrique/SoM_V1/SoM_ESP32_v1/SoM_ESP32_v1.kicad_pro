@@ -385,6 +385,26 @@
     [
       "ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce",
       "Racine"
+    ],
+    [
+      "c4014528-9d1a-4585-ac7c-830bae440eaa",
+      "Alimentation"
+    ],
+    [
+      "8e20c774-e159-4c82-b251-7add9faa2a44",
+      "Communication"
+    ],
+    [
+      "965647b5-3b12-4f33-b1a4-753c3f18e129",
+      "Analogue"
+    ],
+    [
+      "fc7293f1-5a36-4fea-b330-faa9d597a61e",
+      "Sortie"
+    ],
+    [
+      "42eddecc-5d06-4740-ba8f-a05813435351",
+      "ESP32"
     ]
   ],
   "text_variables": {}

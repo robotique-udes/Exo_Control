@@ -1,4 +1,4 @@
-24254990454524319
+24249836846916649
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -99329,31 +99329,10 @@ Varistor VF
 0
 2
 2
-m.2_connector
-M.2-B+M-KEY
+connecteur_M2_key_E
+NGFF_E
 
 
 0
-60
-60
-m.2_connector
-M.2-B-KEY
-
-
-0
-68
-68
-m.2_connector
-M.2-B-KEY-2280-ADAPTER
-
-
-0
-69
-69
-m.2_connector
-M.2-KEY-BLANK
-
-
-0
-76
-76
+67
+67
