@@ -14,7 +14,7 @@ class DataCore{
     private:
 
         Relay relais;
-
+        
         //Ins
         //proxim
         bool rightProxiState = false;
@@ -28,6 +28,13 @@ class DataCore{
         float encoder_hip_right = 0;
         float encoder_hip_left = 0;
         bool needResetEncoder = false;
+
+        //BNO
+        float Imu_knee_right = 0;
+        float Imu_knee_left = 0;
+        float Imu_hip_right = 0;
+        float Imu_hip_left = 0;
+        float Imu_back = 0;
 
 
         bool motorEnabled;
@@ -88,6 +95,10 @@ class DataCore{
         void setEncoderAngles(EnumMotorPosition motor, int pulse);
         bool isEncoderResetNeeded();
         void setEncoderReset(bool state);
+
+        //Bno
+        void setBnoAngles(EnumBnoPosition bno, float angle);
+        float getBnoAngles(EnumBnoPosition bno);
 
         // Code pour le singleton
 

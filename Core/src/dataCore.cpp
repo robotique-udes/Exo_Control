@@ -212,6 +212,55 @@ void DataCore::setEncoderReset(bool state){
     needResetEncoder = state;
 }
 
+float DataCore::getBnoAngles(EnumBnoPosition bno)
+{
+    switch (bno)
+    {
+    case EnumBnoPosition::HIP_R:
+        return Imu_hip_right;
+        break;
+    case EnumBnoPosition::HIP_L:
+        return Imu_hip_left;
+        break;
+    case EnumBnoPosition::KNEE_R:
+        return Imu_knee_right;
+        break;
+    case EnumBnoPosition::KNEE_L:
+        return Imu_knee_left;
+        break;
+    case EnumBnoPosition::EXO_BACK:
+        return Imu_back;
+        break;
+    default:
+        Serial.println("Invalid bno pos");
+        return 0.0;
+    }
+}
+
+void DataCore::setBnoAngles(EnumBnoPosition bno, float angle)
+{
+    switch (bno)
+    {
+    case EnumBnoPosition::HIP_R:
+        Imu_hip_right = angle;
+        break;
+    case EnumBnoPosition::HIP_L:
+        Imu_hip_left = angle;
+        break;
+    case EnumBnoPosition::KNEE_R:
+        Imu_knee_right = angle;
+        break;
+    case EnumBnoPosition::KNEE_L:
+        Imu_knee_left = angle;
+        break;
+    case EnumBnoPosition::EXO_BACK:
+        Imu_back = angle;
+        break;
+    default:
+        break;
+    }
+}
+
 void DataCore::adjustMotorPower(int offset){
     setMotorPower(motorPower+offset);
 }

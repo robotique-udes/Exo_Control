@@ -34,6 +34,15 @@ bool BnoHandler::begin(){
     return connected > 0;
 }
 
+void BnoHandler::read(){
+    requestData();
+    dataCore.setBnoAngles(EnumBnoPosition::HIP_R, getValAngle(EnumBnoPosition::HIP_R));
+    dataCore.setBnoAngles(EnumBnoPosition::HIP_L, getValAngle(EnumBnoPosition::HIP_L));
+    dataCore.setBnoAngles(EnumBnoPosition::KNEE_R, getValAngle(EnumBnoPosition::KNEE_R));
+    dataCore.setBnoAngles(EnumBnoPosition::KNEE_L, getValAngle(EnumBnoPosition::KNEE_L));
+    dataCore.setBnoAngles(EnumBnoPosition::EXO_BACK, getValAngle(EnumBnoPosition::EXO_BACK));
+}
+
 // Request data from all BNOs
 void BnoHandler::requestData(){
     for (int i = 0; i < BNOs.size(); i++){

@@ -28,8 +28,6 @@ DataCore &settings = DataCore::getInstance();
 ProxiHandler proxiHandler;
 
 
-void updateAngles(bool angleSource);
-
 //===============================================================================================================
 //===================================================(SETUP)=====================================================
 //===============================================================================================================
@@ -82,7 +80,6 @@ void loop()
 
   //--------------LOGIC BLOC---------------
   screen.update();
-  updateAngles(true);
   // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
   motor->neededTorque();
   
@@ -100,23 +97,4 @@ void loop()
   //delay(200);
 
   
-}
-
-void updateAngles(bool angleSource)
-{
-  if(angleSource){
-    //Fetch angles from IMUs
-    bnoHandler->requestData();
-    motor->setAngle(EnumBnoPosition::HIP_R, bnoHandler->getValAngle(EnumBnoPosition::HIP_R));
-    motor->setAngle(EnumBnoPosition::HIP_L, bnoHandler->getValAngle(EnumBnoPosition::HIP_L));
-    motor->setAngle(EnumBnoPosition::KNEE_R, bnoHandler->getValAngle(EnumBnoPosition::KNEE_R));
-    motor->setAngle(EnumBnoPosition::KNEE_L, bnoHandler->getValAngle(EnumBnoPosition::KNEE_L));
-  }
-  else{
-    //Fetch angles from ENCODERs
-    motor->setAngle(EnumBnoPosition::HIP_R, encoder.getPositionAngle(EnumMotorPosition::HIP_R));
-    motor->setAngle(EnumBnoPosition::HIP_L, encoder.getPositionAngle(EnumMotorPosition::HIP_L));
-    motor->setAngle(EnumBnoPosition::KNEE_R, encoder.getPositionAngle(EnumMotorPosition::KNEE_R));
-    motor->setAngle(EnumBnoPosition::KNEE_L, encoder.getPositionAngle(EnumMotorPosition::KNEE_L));
-  }
 }

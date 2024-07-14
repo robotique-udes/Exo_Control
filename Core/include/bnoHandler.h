@@ -1,6 +1,7 @@
 #ifndef BNOHANDLER_H_
 #define BNOHANDLER_H_
 #include "BNO_085.h"
+#include "dataCore.h"
 #include "multiplex.h"
 #include "enums.h"
 #include "define.h"
@@ -18,12 +19,20 @@ class BnoHandler {
         Multiplex mux;
         // Time of last update, based on millis()
         long last_update = 0;
+        // Instance of dataCore
+        DataCore& dataCore = DataCore::getInstance();
 
     public:
         /**
         * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
         */
         BnoHandler();
+
+        /**
+        * @brief Read angles and store them in dataCore
+        */
+        void read();
+
 
         /**
         * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
