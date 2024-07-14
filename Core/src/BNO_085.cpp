@@ -1,11 +1,11 @@
-#include "biogeniusBno.h"
+#include "BNO_085.h"
 #include "Arduino.h"
 #include <array>
 #include <Wire.h>
 #include "define.h"
 using namespace std;
 
-BNO::BNO(EnumBnoPosition position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
+BNO_085::BNO_085(EnumBnoPosition position, int muxAddress, Multiplex* muxPtr, int i2cAddress) {
     this->position = position;
     this->muxAddress = muxAddress;
     this->muxPtr = muxPtr;
@@ -13,7 +13,7 @@ BNO::BNO(EnumBnoPosition position, int muxAddress, Multiplex* muxPtr, int i2cAdd
     this->resetDataValues();
 }
 
-void BNO::resetDataValues() {
+void BNO_085::resetDataValues() {
     this->data.acceleration[0] = 0;
     this->data.acceleration[1] = 0;
     this->data.acceleration[2] = 0;
@@ -41,7 +41,7 @@ void BNO::resetDataValues() {
     this->data.time = 0;
 }
 
-void BNO::printName() {
+void BNO_085::printName() {
     switch (this->position)
     {
     case EnumBnoPosition::EXO_BACK:
@@ -66,7 +66,7 @@ void BNO::printName() {
     }
 }
 
-void BNO::ensureReadAvailable(int16_t length)
+void BNO_085::ensureReadAvailable(int16_t length)
 {
     // Ensure a read byte is available, if necessary reread and discard 4-byte SHTP header, then read as much length as possible
     if (!Wire.available()) {
@@ -78,37 +78,37 @@ void BNO::ensureReadAvailable(int16_t length)
     }
 }
 
-array<int16_t, 4> BNO::getQuat() {
+array<int16_t, 4> BNO_085::getQuat() {
     return this->data.quat;
 }
 
-array<int16_t, 3> BNO::getAcceleration() {
+array<int16_t, 3> BNO_085::getAcceleration() {
     return this->data.acceleration;
 }
 
-array<int16_t, 3> BNO::getGyro() {
+array<int16_t, 3> BNO_085::getGyro() {
     return this->data.gyro;
 }
 
-array<int16_t, 3> BNO::getMag() {
+array<int16_t, 3> BNO_085::getMag() {
     return this->data.mag;
 }
 
-array<int16_t, 3> BNO::getLinAcceleration() {
+array<int16_t, 3> BNO_085::getLinAcceleration() {
     return this->data.lin_acceleration;
 }
 
-int16_t BNO::getTime() {
+int16_t BNO_085::getTime() {
     return this->data.time;
 }
 
-bool BNO::checkIfConnected() {
+bool BNO_085::checkIfConnected() {
     this->muxPtr->selectChannel(this->muxAddress);
     Wire.beginTransmission(this->i2cAddress);
     return Wire.endTransmission() == 0;
 }
 
-array<float, 3> BNO::getEuler(bool radians) {
+array<float, 3> BNO_085::getEuler(bool radians) {
     if (!radians) {
         return {(float)(this->data.euler[0] * RAD_TO_DEG),
                 (float)(this->data.euler[1] * RAD_TO_DEG),
@@ -118,9 +118,9 @@ array<float, 3> BNO::getEuler(bool radians) {
     }
 }
 
-BNO::~BNO() {};
+BNO_085::~BNO_085() {};
 
-void BNO::beginTransmission(uint8_t reportType) {
+void BNO_085::beginTransmission(uint8_t reportType) {
     // Manual write to start report of given type
     uint8_t cmd_acc[]  = {21, 0, 2, 0, 0xFD, reportType,  0, 0, 0, (SENSOR_US>>0)&255, (SENSOR_US>>8)&255, (SENSOR_US>>16)&255, (SENSOR_US>>24)&255, 0, 0, 0, 0, 0, 0, 0, 0};
     Wire.beginTransmission(this->i2cAddress);
@@ -128,11 +128,11 @@ void BNO::beginTransmission(uint8_t reportType) {
     Wire.endTransmission();
 }
 
-BNOStruct BNO::getData() {
+BNOStruct BNO_085::getData() {
     return this->data;
 }
 
-void BNO::updateEuler() {
+void BNO_085::updateEuler() {
     float sqw = sq(this->data.quat[0]);
     float sqx = sq(this->data.quat[1]);
     float sqy = sq(this->data.quat[2]);
@@ -154,7 +154,7 @@ void BNO::updateEuler() {
         (-sqx - sqy + sqz + sqw));
 }
 
-bool BNO::requestData() {
+bool BNO_085::requestData() {
 
     int16_t length;
     uint8_t channel __attribute__((unused));

@@ -14,14 +14,14 @@
 #include "touchScreen.h"
 #include "callbackSetup.h"
 #include "dataCore.h"
-#include "biogeniusImu.h"
+#include "bnoHandler.h"
 #include "proxiHandler.h"
 
 Test tester;
 Relay relais;
 Motor *motor;
 // Handler must be a pointer because Wire needs to be instanciated
-IMU *imuHandler;
+BnoHandler *bnoHandler;
 QuadratureEncoder encoder;
 TouchScreen &screen = TouchScreen::getInstance();
 DataCore &settings = DataCore::getInstance();
@@ -46,7 +46,7 @@ void setup()
   Wire.begin();
 
   // Setup devices using I2C
-  imuHandler = new IMU();
+  bnoHandler = new BnoHandler();
   motor = new Motor();
 
   pinExtender.begin();
@@ -93,7 +93,7 @@ void loop()
 
   //--------------PRINTING BLOC-------------
   // Serial.print(motor->getPower());
-  // imuHandler->printBNOs(0, 4);
+  // bnoHandler->printBNOs(0, 4);
   // motor->printProxim();
   // motor->printPMW();
   // motor->printTorque();
@@ -106,11 +106,11 @@ void updateAngles(bool angleSource)
 {
   if(angleSource){
     //Fetch angles from IMUs
-    imuHandler->requestData();
-    motor->setAngle(EnumBnoPosition::HIP_R, imuHandler->getValAngle(EnumBnoPosition::HIP_R));
-    motor->setAngle(EnumBnoPosition::HIP_L, imuHandler->getValAngle(EnumBnoPosition::HIP_L));
-    motor->setAngle(EnumBnoPosition::KNEE_R, imuHandler->getValAngle(EnumBnoPosition::KNEE_R));
-    motor->setAngle(EnumBnoPosition::KNEE_L, imuHandler->getValAngle(EnumBnoPosition::KNEE_L));
+    bnoHandler->requestData();
+    motor->setAngle(EnumBnoPosition::HIP_R, bnoHandler->getValAngle(EnumBnoPosition::HIP_R));
+    motor->setAngle(EnumBnoPosition::HIP_L, bnoHandler->getValAngle(EnumBnoPosition::HIP_L));
+    motor->setAngle(EnumBnoPosition::KNEE_R, bnoHandler->getValAngle(EnumBnoPosition::KNEE_R));
+    motor->setAngle(EnumBnoPosition::KNEE_L, bnoHandler->getValAngle(EnumBnoPosition::KNEE_L));
   }
   else{
     //Fetch angles from ENCODERs

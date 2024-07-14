@@ -1,5 +1,5 @@
-#ifndef BIOGENIUSBNO_H_
-#define BIOGENIUSBNO_H_
+#ifndef BNO_085_H_
+#define BNO_085_H_
 #include "structs.h"
 #include "multiplex.h"
 #include "enums.h"
@@ -29,7 +29,7 @@ using namespace std;
  * through getter functions. beginTracking must be used to initialize the BNO
  * and requestData must be used to update the data.
  */
-class BNO {
+class BNO_085 {
     private:
         // Latest data from BNO
         BNOStruct data;
@@ -62,8 +62,8 @@ class BNO {
         * @param muxPtr pointer to the multiplexer that the BNO is connected to
         * @param i2cAddress I2C address of the BNO
         */
-        BNO(EnumBnoPosition position, int muxAddress, Multiplex* muxPtr, int i2cAddress);
-        ~BNO();
+        BNO_085(EnumBnoPosition position, int muxAddress, Multiplex* muxPtr, int i2cAddress);
+        ~BNO_085();
 
         /**
         * Request latest data, store values in data structure.
