@@ -23,10 +23,6 @@ DataCore& DataCore::getInstance(){
     return *instance;
 }
 
-void DataCore::init(QuadratureEncoder *encodeur){
-    encodeurPtr = encodeur;
-}
-
 bool DataCore::isMotorEnabled(){
     return motorEnabled;
 }
@@ -37,6 +33,10 @@ bool DataCore::isClutchEnabled(){
 
 bool DataCore::isProximEnabled(){
     return proximEnabled;
+}
+
+bool DataCore::isEncoderResetNeeded(){
+    return needResetEncoder;
 }
 
 void DataCore::setMotorEnabled(bool setMotorEnabled){
@@ -129,13 +129,87 @@ void DataCore::setLeftProxi(bool state){
     leftProxiState = state;
 }
 
+float DataCore::getEncoderDeg(EnumMotorPosition motor)
+{
+    long pulses;
+    switch (motor)
+    {
+    case EnumMotorPosition::HIP_R:
+        pulses = encoder_hip_right;
+        break;
+    case EnumMotorPosition::HIP_L:
+        pulses = -encoder_hip_left;
+        break;
+    case EnumMotorPosition::KNEE_R:
+        pulses = -encoder_knee_right;
+        break;
+    case EnumMotorPosition::KNEE_L:
+        pulses = encoder_knee_left;
+        break;
+    default:
+        Serial.println("Invalid motor");
+        return 0.0;
+    }
+    return (float)pulses / PULSES_PER_REVOLUTION * 360.0;
+}
+
+float DataCore::getEncoderRad(EnumMotorPosition motor)
+{
+    long pulses;
+    switch (motor)
+    {
+    case EnumMotorPosition::HIP_R:
+        pulses = encoder_hip_right;
+        break;
+    case EnumMotorPosition::HIP_L:
+        pulses = -encoder_hip_left;
+        break;
+    case EnumMotorPosition::KNEE_R:
+        pulses = -encoder_knee_right;
+        break;
+    case EnumMotorPosition::KNEE_L:
+        pulses = encoder_knee_left;
+        break;
+    default:
+        Serial.println("Invalid motor");
+        return 0.0;
+    }
+    return (float)pulses / PULSES_PER_REVOLUTION * 2 * PI;
+}
+
+void DataCore::setEncoderAngles(EnumMotorPosition motor, int pulse)
+{
+    switch (motor)
+    {
+    case EnumMotorPosition::HIP_R:
+        encoder_hip_right = pulse;
+        break;
+    case EnumMotorPosition::HIP_L:
+        encoder_knee_left = pulse;
+        break;
+    case EnumMotorPosition::KNEE_R:
+        encoder_knee_right = pulse;
+        break;
+    case EnumMotorPosition::KNEE_L:
+        encoder_knee_left = pulse;
+        break;
+    default:
+        break;
+    }
+}
+
 
 void DataCore::resetEncoder(){
     Serial.println("\t Reseting encoder ");
-    encodeurPtr->resetPosition(QuadratureEncoder::GEN_DRO);
-    encodeurPtr->resetPosition(QuadratureEncoder::GEN_GAU);
-    encodeurPtr->resetPosition(QuadratureEncoder::HAN_DRO);
-    encodeurPtr->resetPosition(QuadratureEncoder::HAN_GAU);
+    encoder_knee_right = 0;
+    encoder_knee_left = 0;
+    encoder_hip_right = 0;
+    encoder_hip_left = 0;
+    setEncoderReset(true);
+}
+
+void DataCore::setEncoderReset(bool state){
+    needResetEncoder = state;
 }
 
 void DataCore::adjustMotorPower(int offset){

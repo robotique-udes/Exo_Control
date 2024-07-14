@@ -191,22 +191,22 @@ void Test::keyboardCommand()
     else if (incomingByte == 'z')
     {
       Serial.println("Reset Encoder Hanche Droite");
-      encoder->resetPosition(QuadratureEncoder::HAN_DRO);
+      encoder->resetPosition(EnumMotorPosition::HIP_R);
     }
     else if (incomingByte == 'x')
     {
       Serial.println("Reset Encoder Hanche Gauche");
-      encoder->resetPosition(QuadratureEncoder::HAN_GAU);
+      encoder->resetPosition(EnumMotorPosition::HIP_L);
     }
     else if (incomingByte == 'c')
     {
       Serial.println("Reset Encoder Genou Droit");
-      encoder->resetPosition(QuadratureEncoder::GEN_DRO);
+      encoder->resetPosition(EnumMotorPosition::KNEE_R);
     }
     else if (incomingByte == 'v')
     {
       Serial.println("Reset Encoder Genou Gauche");
-      encoder->resetPosition(QuadratureEncoder::GEN_GAU);
+      encoder->resetPosition(EnumMotorPosition::KNEE_L);
     }
     else if (incomingByte == '-')
     {
@@ -220,20 +220,20 @@ void Test::keyboardCommand()
 void Test::printEncoder()
 {
     Serial.print("Position Hanche Droite: ");
-    Serial.println(encoder->getPositionPulses(QuadratureEncoder::HAN_DRO));
+    Serial.println(encoder->getPositionPulses(EnumMotorPosition::HIP_R));
     Serial.print("Position Hanche Gauche: ");
-    Serial.println(encoder->getPositionPulses(QuadratureEncoder::HAN_GAU));
+    Serial.println(encoder->getPositionPulses(EnumMotorPosition::HIP_L));
     Serial.print("Position Genou Droit: ");
-    Serial.println(encoder->getPositionPulses(QuadratureEncoder::GEN_DRO));
+    Serial.println(encoder->getPositionPulses(EnumMotorPosition::KNEE_R));
     Serial.print("Position Genou Gauche: ");
-    Serial.println(encoder->getPositionPulses(QuadratureEncoder::GEN_GAU));
+    Serial.println(encoder->getPositionPulses(EnumMotorPosition::KNEE_L));
 
     Serial.print("Position Hanche Droite: ");
-    Serial.println(encoder->getPositionAngle(QuadratureEncoder::HAN_DRO));
+    Serial.println(encoder->getPositionAngle(EnumMotorPosition::HIP_R));
     Serial.print("Position Hanche Gauche: ");
-    Serial.println(encoder->getPositionAngle(QuadratureEncoder::HAN_GAU));
+    Serial.println(encoder->getPositionAngle(EnumMotorPosition::HIP_L));
     Serial.print("Position Genou Droit: ");
-    Serial.println(encoder->getPositionAngle(QuadratureEncoder::GEN_DRO));
+    Serial.println(encoder->getPositionAngle(EnumMotorPosition::KNEE_R));
     Serial.print("Position Genou Gauche: ");
-    Serial.println(encoder->getPositionAngle(QuadratureEncoder::GEN_GAU));
+    Serial.println(encoder->getPositionAngle(EnumMotorPosition::KNEE_L));
 }

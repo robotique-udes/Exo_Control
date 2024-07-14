@@ -4,9 +4,9 @@
 #include <Arduino.h>
 #include <Nextion.h>
 
+#include "define.h"
 #include "enums.h"
 #include "relay.h"
-#include "QuadratureEncoder.h"
 
 using namespace std;
 
@@ -14,17 +14,24 @@ class DataCore{
     private:
 
         Relay relais;
-        QuadratureEncoder *encodeurPtr;
 
         //Ins
+        //proxim
         bool rightProxiState = false;
         bool leftProxiState = false;
+        bool proximEnabled;
+        bool needResetProxim;
+
+        //encoder
+        float encoder_knee_right = 0;
+        float encoder_knee_left = 0;
+        float encoder_hip_right = 0;
+        float encoder_hip_left = 0;
+        bool needResetEncoder = false;
 
 
         bool motorEnabled;
         bool clutchEnabled;
-        bool proximEnabled;
-        bool needResetProxim;
         bool sonarState;
         bool angleSource;
         bool brightness;
@@ -39,7 +46,6 @@ class DataCore{
     public:
         
 
-        void init(QuadratureEncoder *encodeur);
         bool isMotorEnabled();
         bool isClutchEnabled();
         bool isProximEnabled();
@@ -70,11 +76,18 @@ class DataCore{
         int getMotorPower();
         void setMotorPower(int setMotorPower);
 
-        //from proxim
+        //proxim
         int getRightProxi();
         int getLeftProxi();
         void setRightProxi(bool state);
         void setLeftProxi(bool state);
+
+        //encoder
+        float getEncoderDeg(EnumMotorPosition motor);
+        float getEncoderRad(EnumMotorPosition motor);
+        void setEncoderAngles(EnumMotorPosition motor, int pulse);
+        bool isEncoderResetNeeded();
+        void setEncoderReset(bool state);
 
         // Code pour le singleton
 

@@ -3,16 +3,19 @@
 
 #include <Arduino.h>
 #include <define.h>
+#include "enums.h"
+#include "dataCore.h"
 
 class QuadratureEncoder
 {
 public:
     QuadratureEncoder();
+    void read();
     static void begin();
-    long getPositionPulses(int motor);
-    float getPositionAngle(int motor);
-    float getPositionAngleRad(int motor);
-    void resetPosition(int motor);
+    long getPositionPulses(EnumMotorPosition motor);
+    float getPositionAngle(EnumMotorPosition motor);
+    float getPositionAngleRad(EnumMotorPosition motor);
+    void resetPosition(EnumMotorPosition motor);
     static const int PIN_ENC_HAN_DRO_A = 32;
     static const int PIN_ENC_HAN_DRO_B = 33;
     static const int PIN_ENC_HAN_GAU_A = 14;
@@ -21,19 +24,10 @@ public:
     static const int PIN_ENC_GEN_DRO_B = 12;
     static const int PIN_ENC_GEN_GAU_A = 19;
     static const int PIN_ENC_GEN_GAU_B = 4;
-    static const int PULSES_PER_REVOLUTION = 925; // 2442.96 pulses per revolution for 2.64:1 gear ratio
 
-
-
-    enum motors
-    {
-        HAN_DRO,
-        HAN_GAU,
-        GEN_DRO,
-        GEN_GAU
-    };
 
 private:
+    DataCore& dataCore = DataCore::getInstance();
     static void ISR_ENC_HAN_DRO();
     static void ISR_ENC_HAN_GAU();
     static void ISR_ENC_GEN_DRO();

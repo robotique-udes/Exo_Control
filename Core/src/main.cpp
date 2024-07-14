@@ -56,7 +56,6 @@ void setup()
   tester.setProxiHandler(&proxiHandler);
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
-  settings.init(&encoder);
 
   motor->setPins();
   relais.setPins();
@@ -115,9 +114,9 @@ void updateAngles(bool angleSource)
   }
   else{
     //Fetch angles from ENCODERs
-    motor->setAngle(EnumBnoPosition::HIP_R, encoder.getPositionAngle(QuadratureEncoder::HAN_DRO));
-    motor->setAngle(EnumBnoPosition::HIP_L, encoder.getPositionAngle(QuadratureEncoder::HAN_GAU));
-    motor->setAngle(EnumBnoPosition::KNEE_R, encoder.getPositionAngle(QuadratureEncoder::GEN_DRO));
-    motor->setAngle(EnumBnoPosition::KNEE_L, encoder.getPositionAngle(QuadratureEncoder::GEN_GAU));
+    motor->setAngle(EnumBnoPosition::HIP_R, encoder.getPositionAngle(EnumMotorPosition::HIP_R));
+    motor->setAngle(EnumBnoPosition::HIP_L, encoder.getPositionAngle(EnumMotorPosition::HIP_L));
+    motor->setAngle(EnumBnoPosition::KNEE_R, encoder.getPositionAngle(EnumMotorPosition::KNEE_R));
+    motor->setAngle(EnumBnoPosition::KNEE_L, encoder.getPositionAngle(EnumMotorPosition::KNEE_L));
   }
 }

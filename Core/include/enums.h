@@ -21,6 +21,14 @@ enum class EnumSonarState
     WALK,
 };
 
+enum class EnumMotorPosition
+{
+    HIP_R,
+    HIP_L,
+    KNEE_R,
+    KNEE_L
+};
+
 enum class EnumScreenCallback
 {
     BUTTON_TOGGLE_MOTOR,
