@@ -9,17 +9,19 @@
 #include <SD.h>
 #include <Nextion.h>
 #include <string.h>
-#include "motorControl.h"
+#include "motor.h"
 #include "test.h"
 #include "touchScreen.h"
 #include "callbackSetup.h"
 #include "dataCore.h"
 #include "bnoHandler.h"
 #include "proxiHandler.h"
+#include "logic.h"
 
+Logic logicHandler;
 Test tester;
 Relay relais;
-Motor *motor;
+Motor motor;
 // Handler must be a pointer because Wire needs to be instanciated
 BnoHandler *bnoHandler;
 QuadratureEncoder encoder;
@@ -45,17 +47,16 @@ void setup()
 
   // Setup devices using I2C
   bnoHandler = new BnoHandler();
-  motor = new Motor();
 
   pinExtender.begin();
   QuadratureEncoder::begin();
-  tester.setMotor(motor);
+  tester.setMotor(&motor);
   tester.setEncoder(&encoder);
   tester.setProxiHandler(&proxiHandler);
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
 
-  motor->setPins();
+  motor.setPins();
   relais.setPins();
 
   relais.setAllRelais(OFF);
@@ -75,26 +76,19 @@ void loop()
   // motor->motorSetSpeed(MOTEUR_GENOU_DROIT, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
-  //tester.testRelay();
+  // tester.testRelay();
   // tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
+  encoder.read();
+  bnoHandler->read();
+  proxiHandler.read();
   screen.update();
-  // motor->sonarRead(); //Ne pas décommenter, remplace par HMI
-  motor->neededTorque();
-  
-  // motor->neededCurrent(); Ne pas décommenter, pas utile sans PID
-  // motor->readCurrent(); Ne pas décommenter, pas utile sans PID
-  motor->PIDCurrentPrealable();
-  motor->sendCommand();
+  logicHandler.Update();
+  motor.write();
 
   //--------------PRINTING BLOC-------------
-  // Serial.print(motor->getPower());
-  // bnoHandler->printBNOs(0, 4);
-  // motor->printProxim();
-  // motor->printPMW();
-  // motor->printTorque();
-  //delay(200);
+
 
   
 }

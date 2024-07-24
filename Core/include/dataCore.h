@@ -14,7 +14,13 @@ class DataCore{
     private:
 
         Relay relais;
-        
+
+        //PWM
+        int PWMRightKnee = 0;
+        int PWMLeftKnee = 0;
+        int PWMRightHip = 0;
+        int PWMLeftHip = 0;
+
         //Ins
         //proxim
         bool rightProxiState = false;
@@ -99,6 +105,10 @@ class DataCore{
         //Bno
         void setBnoAngles(EnumBnoPosition bno, float angle);
         float getBnoAngles(EnumBnoPosition bno);
+
+        //PWM
+        void setPWM(EnumMotorPosition motor, float pwm);
+        float getPWM(EnumMotorPosition motor);
 
         // Code pour le singleton
 

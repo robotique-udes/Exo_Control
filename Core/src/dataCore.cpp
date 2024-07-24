@@ -212,6 +212,8 @@ void DataCore::setEncoderReset(bool state){
     needResetEncoder = state;
 }
 
+
+
 float DataCore::getBnoAngles(EnumBnoPosition bno)
 {
     switch (bno)
@@ -255,6 +257,47 @@ void DataCore::setBnoAngles(EnumBnoPosition bno, float angle)
         break;
     case EnumBnoPosition::EXO_BACK:
         Imu_back = angle;
+        break;
+    default:
+        break;
+    }
+}
+
+float DataCore::getPWM(EnumMotorPosition motor){
+    switch (motor)
+    {
+    case EnumMotorPosition::HIP_R:
+        return PWMRightHip;
+        break;
+    case EnumMotorPosition::HIP_L:
+        return PWMLeftHip;
+        break;
+    case EnumMotorPosition::KNEE_R:
+        return PWMRightKnee;
+        break;
+    case EnumMotorPosition::KNEE_L:
+        return PWMLeftKnee;
+        break;
+    default:
+        return 0.0;
+        break;
+    }
+}
+
+void DataCore::setPWM(EnumMotorPosition motor, float pwm){
+    switch (motor)
+    {
+    case EnumMotorPosition::HIP_R:
+        PWMRightHip = pwm;
+        break;
+    case EnumMotorPosition::HIP_L:
+        PWMLeftHip = pwm;
+        break;
+    case EnumMotorPosition::KNEE_R:
+        PWMRightKnee = pwm;
+        break;
+    case EnumMotorPosition::KNEE_L:
+        PWMLeftKnee = pwm;
         break;
     default:
         break;

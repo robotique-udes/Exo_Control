@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "relay.h"
 #include "define.h"
-#include "motorControl.h"
+#include "motor.h"
 #include "QuadratureEncoder.h"
 #include "proxiHandler.h"
 
