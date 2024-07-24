@@ -80,12 +80,6 @@ class DataCore{
         bool getAngleSource();
         void setAngleSource(bool setAngleSource);
 
-        bool getSonarState();
-        void setSonarState(bool setSonarState);
-
-        int getHeight();
-        void setHeight(int setHeight);
-
         int getMotorPower();
         void setMotorPower(int setMotorPower);
 

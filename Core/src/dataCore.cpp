@@ -16,6 +16,17 @@ DataCore::DataCore(){
     motorPower = 2048;
 }
 
+void DataCore::initialise(){
+    clutchEnabled = OFF;
+    motorEnabled = false;
+    motorPower = 2048;
+    needResetProxim = true;
+    sonarState = FROM_IMU;
+    angleSource = FROM_IMU;
+    resetEncoder();
+}
+
+
 DataCore& DataCore::getInstance(){
     if(instance == NULL){
         instance = new DataCore();
@@ -68,24 +79,8 @@ void DataCore::setAngleSource(bool setAngleSource){
     Serial.println(angleSource);
 }
 
-bool DataCore::getSonarState(){
-    return sonarState;
-}
 
-void DataCore::setSonarState(bool setSonarState){
-    sonarState = !(sonarState);
-    Serial.print("\t Sonar state set to: ");
-    Serial.println(sonarState);
-}
-
-int DataCore::getHeight(){
-    return height;
-}
-
-void DataCore::setHeight(int setHeight){
-    height = setHeight;
-}
-
+//PROXIM
 bool DataCore::getBrightness(){
     return brightness;
 }
@@ -98,11 +93,28 @@ bool DataCore::getResetProxim(){
     return needResetProxim;
 }
 
+int DataCore::getRightProxi(){
+    return rightProxiState;
+}
+
+void DataCore::setRightProxi(bool state){
+    rightProxiState = state;
+}
+
+int DataCore::getLeftProxi(){
+    return leftProxiState;
+}
+
+void DataCore::setLeftProxi(bool state){
+    leftProxiState = state;
+}
+
 void DataCore::setResetProxim(bool reset){
     Serial.println("\t proxim reset to high ");
     needResetProxim = reset;
 }
 
+//MOTOR POWER
 int DataCore::getMotorPower(){
     return motorPower;
 }
@@ -113,22 +125,11 @@ void DataCore::setMotorPower(int newMotorPower){
     Serial.println(motorPower);
 }
 
-int DataCore::getRightProxi(){
-    return rightProxiState;
+void DataCore::adjustMotorPower(int offset){
+    setMotorPower(motorPower+offset);
 }
 
-int DataCore::getLeftProxi(){
-    return leftProxiState;
-}
-
-void DataCore::setRightProxi(bool state){
-    rightProxiState = state;
-}
-
-void DataCore::setLeftProxi(bool state){
-    leftProxiState = state;
-}
-
+//ENCODER
 float DataCore::getEncoderDeg(EnumMotorPosition motor)
 {
     long pulses;
@@ -213,7 +214,7 @@ void DataCore::setEncoderReset(bool state){
 }
 
 
-
+//BNO
 float DataCore::getBnoAngles(EnumBnoPosition bno)
 {
     switch (bno)
@@ -263,6 +264,7 @@ void DataCore::setBnoAngles(EnumBnoPosition bno, float angle)
     }
 }
 
+//PWM
 float DataCore::getPWM(EnumMotorPosition motor){
     switch (motor)
     {
@@ -304,16 +306,4 @@ void DataCore::setPWM(EnumMotorPosition motor, float pwm){
     }
 }
 
-void DataCore::adjustMotorPower(int offset){
-    setMotorPower(motorPower+offset);
-}
 
-void DataCore::initialise(){
-    clutchEnabled = OFF;
-    motorEnabled = false;
-    motorPower = 2048;
-    needResetProxim = true;
-    sonarState = FROM_IMU;
-    angleSource = FROM_IMU;
-    resetEncoder();
-}
