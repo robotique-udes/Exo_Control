@@ -5,19 +5,14 @@ void Logic::Update(){
     PIDCurrentPrealable();
 }
 
-void Logic::LimitMinMaxFloat(float &val, float max)
-{
-    val > max ? val = max : val < -max ? val = -max : 0;
-    // uncomment if pussy
-    //  if (val > max)
-    //  val = max;
-    // else if (val < -max)
-    // val = -max;
-}
 
-void Logic::LimitMinMaxInt(int &val, int max)
+template <typename T> void Logic::LimitMinMax(T &val, T cap)
 {
-    val > max ? val = max : val < -max ? val = -max : 0;
+    if (std::is_same<T, int>::val || std::is_same<T, float>::val)
+        val > cap ? val = cap : val < -cap ? val = -cap : 0;
+    else
+        Serial.print("LimitMinMax Error - Invalide data type: ");
+        Serial.println(val);
     // uncomment if pussy
     //  if (val > max)
     //  val = max;
@@ -31,22 +26,18 @@ void Logic::neededTorque()
     float LeftKneeAngle = 0;
     float RightHipAngle = 0;
     float RightKneeAngle = 0;
-    switch (dataCore.getAngleSource())
-    {
-    case FROM_ENCODER:
+
+    if(dataCore.getAngleSource()==FROM_ENCODER){
         LeftHipAngle = dataCore.getEncoderDeg(EnumMotorPosition::HIP_L);
         LeftKneeAngle = dataCore.getEncoderDeg(EnumMotorPosition::KNEE_L);
         RightHipAngle = dataCore.getEncoderDeg(EnumMotorPosition::HIP_R);
         RightKneeAngle = dataCore.getEncoderDeg(EnumMotorPosition::KNEE_L);
-        break;
-    case FROM_IMU:
+    }
+    else{
         LeftHipAngle = dataCore.getBnoAngles(EnumBnoPosition::HIP_L);
         LeftKneeAngle = dataCore.getBnoAngles(EnumBnoPosition::KNEE_L);
         RightHipAngle = dataCore.getBnoAngles(EnumBnoPosition::HIP_R);
         RightKneeAngle = dataCore.getBnoAngles(EnumBnoPosition::KNEE_L);
-        break;
-    default:
-        break;
     }
 
     float LeftHipRAD = toRadian(LeftHipAngle);
@@ -167,10 +158,10 @@ void Logic::PIDCurrent()
       DerivativeLeftKnee = ErrorCurrentLeftKnee - PreviousErrorLeftKnee;
 
       // Capping the error values
-      LimitMinMaxFloat(ErrorCurrentRightKnee, 5);
-      LimitMinMaxFloat(ErrorCurrentLeftKnee, 5);
+      LimitMinMax(ErrorCurrentRightKnee, 5);
+      LimitMinMax(ErrorCurrentLeftKnee, 5);
 
-      // LimitMinMaxFloat(derivative, 50);
+      // LimitMinMax(derivative, 50);
       // Setting both PWM values
       PWMRightKnee += KP * ErrorCurrentRightKnee + KI * IntegralRightKnee + KD * DerivativeRightKnee;
       PWMLeftKnee += KP * ErrorCurrentLeftKnee + KI * IntegralLeftKnee + KD * DerivativeLeftKnee;
@@ -180,8 +171,8 @@ void Logic::PIDCurrent()
       PreviousErrorLeftKnee = ErrorCurrentLeftKnee;
 
       // Capping the PWM values for both motors
-      LimitMinMaxInt(PWMRightKnee, 255);
-      LimitMinMaxInt(PWMLeftKnee, 255);
+      LimitMinMax(PWMRightKnee, 255);
+      LimitMinMax(PWMLeftKnee, 255);
 
       //if (angle < 0.2 || angle > (2 * PI - 0.2))
         //PWM = 0;
@@ -201,7 +192,7 @@ void Logic::PIDCurrentPrealable()
 {
     int power = dataCore.getMotorPower();
 
-    // Setting  PWM values
+    // Setting  PWM values in dataCore
     dataCore.setPWM(EnumMotorPosition::KNEE_R, -float(map(RightKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)));
     dataCore.setPWM(EnumMotorPosition::KNEE_L, float(map(LeftKneeTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)));
     dataCore.setPWM(EnumMotorPosition::HIP_R, float(map(RightHipTorque, -HIGH_TORQUE, HIGH_TORQUE, -power, power)));

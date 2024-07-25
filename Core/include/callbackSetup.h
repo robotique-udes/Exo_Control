@@ -9,6 +9,9 @@
 
 TouchScreen& screenForCallbacks = TouchScreen::getInstance();
 
+/**
+ * @brief Callback for motor enable button
+ */
 void callbackButtonToggleMotor(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_MOTOR");
 
@@ -25,6 +28,9 @@ void callbackButtonToggleMotor(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_MOTOR state : " + to_string(state));
 }
 
+/**
+ * @brief Callback for clutch enable button
+ */
 void callbackButtonToggleClutch(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_CLUTCH");
 
@@ -41,6 +47,9 @@ void callbackButtonToggleClutch(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_CLUTCH state : " + to_string(state));
 }
 
+/**
+ * @brief Callback for initialisation button
+ */
 void callbackButtonInit(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_INIT");
     DataCore& settings = DataCore::getInstance();
@@ -50,6 +59,9 @@ void callbackButtonInit(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::INIT");
 }
 
+/**
+ * @brief Callback for encoder reset button
+ */
 void callbackButtonResetEncoder(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
     DataCore& settings = DataCore::getInstance();
@@ -57,6 +69,9 @@ void callbackButtonResetEncoder(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
 }
 
+/**
+ * @brief Callback for proxim's auto calibration button
+ */
 void callbackButtonAutoCalibProxim(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
     DataCore& settings = DataCore::getInstance();
@@ -64,6 +79,9 @@ void callbackButtonAutoCalibProxim(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
 }
 
+/**
+ * @brief Callback for angle source toggle button
+ */
 void callbackButtonToggleAngleSource(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE");
 
@@ -79,6 +97,9 @@ void callbackButtonToggleAngleSource(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE : " + to_string(state));
 }
 
+/**
+ * @brief Callback for proxim activation button
+ */
 void callbackButtonToggleProxim(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM");
 
@@ -95,6 +116,9 @@ void callbackButtonToggleProxim(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM : " + to_string(state));
 }
 
+/**
+ * @brief Placeholder test button if we need
+ */
 void callbackButtonTest(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_TEST");
 
@@ -102,6 +126,9 @@ void callbackButtonTest(void *ptr){
     //...
 }
 
+/**
+ * @brief Placeholder button if we need (has been assign to proxim's brightness setting)
+ */
 void callbackButtonDev1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
     Serial.print("Switching brightness settings");
@@ -111,19 +138,28 @@ void callbackButtonDev1(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
 }
 
+/**
+ * @brief Placeholder button if we need
+ */
 void callbackButtonDev2(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
     //...
 
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_2");
 
+/**
+ * @brief Placeholder toggle button if we need
+ */
 }
-void callbackButtonToogle1(void *ptr){
+void callbackButtonToggle1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_1");
 
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_1");
 }
 
+/**
+ * @brief Placeholder toggle button if we need
+ */
 void callbackButtonToggle2(void *ptr){
     Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_2");
 
@@ -132,6 +168,9 @@ void callbackButtonToggle2(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_TOGGLE_2");
 }
 
+/**
+ * @brief Placeholder slider if we need
+ */
 void callbackSliderDev1(void *ptr){
     Serial.println("Pressed EnumScreenCallback::SLIDER_DEV_1");
 
@@ -140,6 +179,9 @@ void callbackSliderDev1(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::SLIDER_DEV_1");
 }
 
+/**
+ * @brief Callback for motor power slider
+ */
 void callbackSliderMotorPower(void *ptr){
     Serial.println("Interaction with EnumScreenCallback::SLIDER_MOTOR_POWER");
 
@@ -156,7 +198,9 @@ void callbackSliderMotorPower(void *ptr){
     screenForCallbacks.println("Interaction with EnumScreenCallback::SLIDER_MOTOR_POWER : " + to_string(value));
 }
 
-
+/**
+ * @brief Sets every callback for the hmi
+ */
 void setupCallbacks(){
     TouchScreen& screen = TouchScreen::getInstance();
     screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_MOTOR, &callbackButtonToggleMotor);
@@ -169,7 +213,7 @@ void setupCallbacks(){
     screen.setCallback(EnumScreenCallback::BUTTON_TEST, &callbackButtonTest);
     screen.setCallback(EnumScreenCallback::BUTTON_DEV_1, &callbackButtonDev1);
     screen.setCallback(EnumScreenCallback::BUTTON_DEV_2, &callbackButtonDev2);
-    screen.setCallback(EnumScreenCallback::BUTTON_DEV_TOGGLE_1, &callbackButtonToogle1);
+    screen.setCallback(EnumScreenCallback::BUTTON_DEV_TOGGLE_1, &callbackButtonToggle1);
     screen.setCallback(EnumScreenCallback::BUTTON_DEV_TOGGLE_2, &callbackButtonToggle2);
     screen.setCallback(EnumScreenCallback::SLIDER_DEV_1, &callbackSliderDev1);
     screen.setCallback(EnumScreenCallback::SLIDER_MOTOR_POWER, &callbackSliderMotorPower);

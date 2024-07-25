@@ -7,7 +7,7 @@ class Logic
 private:
 
     DataCore& dataCore = DataCore::getInstance();
-    // PID variables
+    // PID variables (Unused at the moment)
     float ErrorCurrentRightKnee = 0.0;
     float ErrorCurrentLeftKnee = 0.0;
     float IntegralRightKnee = 0.0;
@@ -23,7 +23,7 @@ private:
     float LeftKneeTorque = 0.0;
     float RightKneeTorque = 0.0;
 
-    // Currents
+    // Currents (Unused at the moment)
     float RightKneeNeededCurrent = 0.0;
     float LeftKneeNeededCurrent = 0.0;
     float RightHipNeededCurrent = 0.0;
@@ -34,16 +34,58 @@ private:
     float LeftHipMeasuredCurrent = 0.0;
 
 public:
+    /**
+     * @brief Compute torque and update required PWM by calling other functions
+     */
     void Update();
-    void LimitMinMaxFloat(float &val, float max);
-    void LimitMinMaxInt(int &val, int max);
+
+    /**
+     * @brief Cap input value to max/min value
+     * @param val Value tu map (float or int)
+     * @param max max/min reachable value (float or int)
+     */
+    template <typename T> void LimitMinMax(T &val, T cap);
+
+    /**
+     * @brief Compute needed torque using either angles from encoders or IMUs
+     */
     void neededTorque();
+
+    /**
+     * @brief Print computed needed torque
+     */
     void printTorque();
+
+    /**
+     * @brief Print computed needed PWM
+     */
     void printPMW();
+
+    /**
+     * @brief Compute PID on needed current ---UNUSED---
+     */
     void PIDCurrent();
+
+    /**
+     * @brief Compute needed current ---UNUSED---
+     */
     void neededCurrent();
+
+    /**
+     * @brief Map torque to PWM and update value in dataCore
+     */
     void PIDCurrentPrealable();
+
+    /**
+     * @brief Convert degree in radian equivalent 
+     * @param radians Input radian value
+     */
     float toDegrees(float radians);
+
+    /**
+     * @brief Convert radian in degree equivalent 
+     * @param radians Input degree value
+     */
     float toRadian(float degree);
 
 };

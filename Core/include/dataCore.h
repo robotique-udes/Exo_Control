@@ -10,108 +10,251 @@
 
 using namespace std;
 
-class DataCore{
-    private:
+class DataCore
+{
+private:
+    Relay relais;
 
-        Relay relais;
+    // Ins
+    // proxim
+    bool rightProxiState = false;
+    bool leftProxiState = false;
+    bool proximEnabled;
+    bool needResetProxim;
 
-        //PWM
-        int PWMRightKnee = 0;
-        int PWMLeftKnee = 0;
-        int PWMRightHip = 0;
-        int PWMLeftHip = 0;
+    // encoder
+    float encoder_knee_right = 0;
+    float encoder_knee_left = 0;
+    float encoder_hip_right = 0;
+    float encoder_hip_left = 0;
+    bool needResetEncoder = false;
 
-        //Ins
-        //proxim
-        bool rightProxiState = false;
-        bool leftProxiState = false;
-        bool proximEnabled;
-        bool needResetProxim;
+    // BNO
+    float Imu_knee_right = 0;
+    float Imu_knee_left = 0;
+    float Imu_hip_right = 0;
+    float Imu_hip_left = 0;
+    float Imu_back = 0;
 
-        //encoder
-        float encoder_knee_right = 0;
-        float encoder_knee_left = 0;
-        float encoder_hip_right = 0;
-        float encoder_hip_left = 0;
-        bool needResetEncoder = false;
+    //In between settings
+    bool motorEnabled;
+    bool clutchEnabled;
+    bool sonarState;
+    bool angleSource;
+    bool brightness;
+    int height;
+    float motorPower;
 
-        //BNO
-        float Imu_knee_right = 0;
-        float Imu_knee_left = 0;
-        float Imu_hip_right = 0;
-        float Imu_hip_left = 0;
-        float Imu_back = 0;
+    // Outs
+    // PWM
+    int PWMRightKnee = 0;
+    int PWMLeftKnee = 0;
+    int PWMRightHip = 0;
+    int PWMLeftHip = 0;
+    
+
+    DataCore();
+
+public:
 
 
-        bool motorEnabled;
-        bool clutchEnabled;
-        bool sonarState;
-        bool angleSource;
-        bool brightness;
+    /**
+    * @brief Clutch enable getter
+    * @return Clutch state
+    */
+    bool isClutchEnabled();
 
+    /**
+    * @brief Clutch enable setter
+    * @param setClutchEnabled Clutch enable state
+    */
+    void setClutchEnabled(bool setClutchEnabled);
 
-        //Outs
-        int height;
-        float motorPower;
+    
 
-        DataCore();
+    /**
+    * @brief Motor enable setter
+    * @param setMotorEnabled motor enable state
+    */
+    void setMotorEnabled(bool setMotorEnabled);
 
-    public:
-        
+    /**
+    * @brief Motor enable getter
+    */
+    bool isMotorEnabled();
 
-        bool isMotorEnabled();
-        bool isClutchEnabled();
-        bool isProximEnabled();
-        void setMotorEnabled(bool setMotorEnabled);
-        void setClutchEnabled(bool setClutchEnabled);
-        void setProximEnabled(bool setProximEnabled);
-        void adjustMotorPower(int powerOffset);
-        
-        void initialise();
+    /**
+    * @brief Proxim enable setter
+    * @param setProximEnabled Proxim enable state
+    */
+    void setProximEnabled(bool setProximEnabled);
 
-        void resetEncoder();
+    /**
+    * @brief Proxim enable getter
+    * @return Proxim state
+    */
+    bool isProximEnabled();
+    
+    /**
+    * @brief Put all settings back to boot values
+    */
+    void initialise();
 
-        void setBrightness();
-        bool getBrightness();
+    /**
+    * @brief Set all encoder pulse values to 0
+    */
+    void resetEncoder();
 
-        bool getResetProxim();
-        void setResetProxim(bool reset);
+    /**
+    * @brief Toggle brightness mode for proxims
+    */
+    void setBrightness();
+    /**
+    * @brief Brightness getter
+    * @return Brightness state
+    */
+    bool getBrightness();
 
-        bool getAngleSource();
-        void setAngleSource(bool setAngleSource);
+    /**
+    * @brief Proxim reset getter
+    * @return Proxim reset state
+    */
+    bool getResetProxim();
 
-        int getMotorPower();
-        void setMotorPower(int setMotorPower);
+    /**
+    * @brief Proxim reset setter
+    * @param reset Proxim reset state
+    */
+    void setResetProxim(bool reset);
 
-        //proxim
-        int getRightProxi();
-        int getLeftProxi();
-        void setRightProxi(bool state);
-        void setLeftProxi(bool state);
+    /**
+    * @brief Angle source getter
+    * @return Angle source state
+    */
+    bool getAngleSource();
 
-        //encoder
-        float getEncoderDeg(EnumMotorPosition motor);
-        float getEncoderRad(EnumMotorPosition motor);
-        void setEncoderAngles(EnumMotorPosition motor, int pulse);
-        bool isEncoderResetNeeded();
-        void setEncoderReset(bool state);
+    /**
+    * @brief Angle source setter
+    * @param setAngleSource Angle source state
+    */
+    void setAngleSource(bool setAngleSource);
 
-        //Bno
-        void setBnoAngles(EnumBnoPosition bno, float angle);
-        float getBnoAngles(EnumBnoPosition bno);
+    /**
+    * @brief Motor power getter
+    * @return Motor power value state
+    */
+    int getMotorPower();
 
-        //PWM
-        void setPWM(EnumMotorPosition motor, float pwm);
-        float getPWM(EnumMotorPosition motor);
+    /**
+    * @brief Motor power setter
+    * @param setMotorPower Motor power value
+    */
+    void setMotorPower(int setMotorPower);
 
-        // Code pour le singleton
+    /**
+    * @brief Change motor power using an offset
+    * @param setMotorPower Motor power offset value
+    */
+    void adjustMotorPower(int powerOffset);
 
-        static DataCore *instance;
-        static DataCore& getInstance();
-        DataCore(const DataCore&) = delete;
-        DataCore& operator=(const DataCore&) = delete;
+    // proxim
+    /**
+    * @brief Right proxi getter
+    * @return Right proxi state (1 if grounded, 0 if not)
+    */
+    bool getRightProxi();
+
+    /**
+    * @brief Left proxi getter
+    * @return Left proxi state (1 if grounded, 0 if not)
+    */
+    bool getLeftProxi();
+
+    /**
+    * @brief Right proxi state setter
+    * @param state Current state (1 if grounded, 0 if not)
+    */
+    void setRightProxi(bool state);
+
+    /**
+    * @brief left proxi state setter
+    * @param state Current state (1 if grounded, 0 if not)
+    */
+    void setLeftProxi(bool state);
+
+    // encoder
+    /**
+    * @brief Encoder getter (Deg)
+    * @param motor Target motor
+    * @return Degree angle value
+    */
+    float getEncoderDeg(EnumMotorPosition motor);
+
+    /**
+    * @brief Encoder getter (Rad)
+    * @param motor Traget motor
+    * @return Radian angle value
+    */
+    float getEncoderRad(EnumMotorPosition motor);
+
+    /**
+    * @brief Encoder angle setter
+    * @param motor Target motor
+    * @param pulse Pulse value
+    */
+    void setEncoderAngles(EnumMotorPosition motor, int pulse);
+
+    /**
+    * @brief Encoder reset getter
+    * @return Encoder reset state
+    */
+    bool isEncoderResetNeeded();
+
+    /**
+    * @brief Encoder reset setter
+    * @param state New state
+    */
+    void setEncoderReset(bool state);
+
+    // Bno
+    /**
+    * @brief Bno angle setter
+    * @param bno Target bno
+    * @param angle Angle value
+    */
+    void setBnoAngles(EnumBnoPosition bno, float angle);
+
+    /**
+    * @brief Bno angle getter
+    * @param bno Target bno
+    * @return Degree angle value
+    */
+    float getBnoAngles(EnumBnoPosition bno);
+
+    // PWM
+    /**
+    * @brief PWM setter
+    * @param motor Target motor
+    * @param pwm PWM value
+    */
+    void setPWM(EnumMotorPosition motor, float pwm);
+
+    /**
+    * @brief PWM getter
+    * @param motor Target motor
+    * @return PWM value
+    */
+    float getPWM(EnumMotorPosition motor);
+
+    // Singleton code
+    static DataCore *instance;
+    /**
+     * @brief Create new instance if none existe, return existing singleton otherwise
+     * @return Singletan instance
+     */
+    static DataCore &getInstance();
+    DataCore(const DataCore &) = delete;
+    DataCore &operator=(const DataCore &) = delete;
 };
 
-
-
-#endif 
+#endif

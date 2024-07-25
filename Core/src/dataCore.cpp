@@ -93,7 +93,7 @@ bool DataCore::getResetProxim(){
     return needResetProxim;
 }
 
-int DataCore::getRightProxi(){
+bool DataCore::getRightProxi(){
     return rightProxiState;
 }
 
@@ -101,7 +101,7 @@ void DataCore::setRightProxi(bool state){
     rightProxiState = state;
 }
 
-int DataCore::getLeftProxi(){
+bool DataCore::getLeftProxi(){
     return leftProxiState;
 }
 

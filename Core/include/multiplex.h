@@ -5,18 +5,34 @@
 class Multiplex{
 
 public:
+    //Mux address
     const static uint8_t MUX_ADDR = 0x70;
 
     Multiplex();
-    // Default constructor
+
+    /**
+     * @brief Default constructor
+     * @param wireUsed Pointer to twoWire instance
+     */
     Multiplex(TwoWire* wireUsed);
-    // Selects the channel
+
+    /**
+     * @brief Selects mux channel
+     * @param channel Target channel
+     * @return Success
+     */
     bool selectChannel(uint8_t channel);
-    // Returns the current active port
+
+    /**
+     * @brief Returns the current active port
+     * @return Active port
+     */
     int getCurrentChannel();
 
 private:
+    //twoWire instance
     TwoWire* monWire;
+    //Active channel
     uint8_t currentChannel;
 };
 
