@@ -5,61 +5,73 @@
 #include <Nextion.h>
 #include <string>
 
-
 #include "enums.h"
 
 using namespace std;
 
-class TouchScreen{
-    private:
-        //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
-        // Page Main
-        NexDSButton *motorToggle;
-        NexDSButton *clutchToggle;
-        NexButton *init;
+class TouchScreen
+{
+private:
+    //---------------------------------------BOUTONS (page, id, name)--------------------------------------------
+    // Page Main
+    NexDSButton *motorToggle;
+    NexDSButton *clutchToggle;
+    NexButton *init;
 
-        // Page Calib
-        NexButton *resetEncoder;
-        NexButton *autoCalibProxim;
-        NexSlider *powerSlider;
+    // Page Calib
+    NexButton *resetEncoder;
+    NexButton *autoCalibProxim;
+    NexSlider *powerSlider;
 
-        // Page debug
-        NexDSButton *angleSource;
-        NexDSButton *proximToggle;
-        NexButton *testExo;
+    // Page debug
+    NexDSButton *angleSource;
+    NexDSButton *proximToggle;
+    NexButton *testExo;
 
-        // Page dev
-        NexButton *button1;
-        NexButton *button2;
-        NexDSButton *toggle1;
-        NexDSButton *toggle2;
-        NexSlider *slider1;
+    // Page dev
+    NexButton *button1;
+    NexButton *button2;
+    NexDSButton *toggle1;
+    NexDSButton *toggle2;
+    NexSlider *slider1;
 
-        // Page log
-        NexText *logText;
+    // Page log
+    NexText *logText;
 
-        int logLines;
+    int logLines;
 
+    NexTouch *listenList[15];
 
-        NexTouch *listenList[15];
+    string currentString;
 
-        string currentString;
+    TouchScreen();
 
-        TouchScreen();
+public:
+    static TouchScreen *instance;
+    static TouchScreen &getInstance();
+    /**
+     * @brief Touchscreen singleton init
+     */
+    TouchScreen(const TouchScreen &) = delete;
+    TouchScreen &operator=(const TouchScreen &) = delete;
 
-    public:
-        
-        static TouchScreen *instance;
-        static TouchScreen& getInstance();
+    /**
+     * @brief Update to next loop for nextion lib
+     */
+    void update();
 
-        TouchScreen(const TouchScreen&) = delete;
-        TouchScreen& operator=(const TouchScreen&) = delete;
-        
-        void update();
-        void println(string toPrint);
-        void setCallback(EnumScreenCallback callback, void (*callbackFunction)(void *ptr));
+    /**
+    * @brief Print to HMI log console
+    * @param toPrint String to print on console
+    */
+    void println(string toPrint);
+
+    /**
+    * @brief Set all callback for the HMI's buttons and sliders
+    * @param callback Callback to set 
+    * @param callbackFunction Pointer to callback function
+    */
+    void setCallback(EnumScreenCallback callback, void (*callbackFunction)(void *ptr));
 };
 
-
-
-#endif 
+#endif

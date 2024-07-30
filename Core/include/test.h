@@ -11,13 +11,40 @@
 class Test
 {
 public:
-    void testSonar();
+
+    /**
+    * @brief Toggle every relay on/off
+    */
     void testRelay();
+
+    /**
+    * @brief Enable multiple keyboard inpt for testing
+    */
     void keyboardCommand(); // S'assurer qu'il n'y a pas de délais dans le main pour que les commandes soient réactives
+
+    /**
+    * @brief Set motor pointer for testing
+    * @param motor Pointer to motor
+    */
     void setMotor(Motor* motor);
+
+    /**
+    * @brief Set encoder pointer for testing
+    * @param encoder Pointer to encoder
+    */
     void setEncoder(QuadratureEncoder* encoder);
+
+    /**
+    * @brief Set proxi handler pointer for testing
+    * @param newHandler Pointer to proxim handler
+    */
     void setProxiHandler(ProxiHandler* newHandler);
+
+    /**
+    * @brief Print encoder values (Why is this here?) 
+    */
     void printEncoder();
+
 private:
     Relay relais;
     Motor* motor;
@@ -25,8 +52,6 @@ private:
     ProxiHandler* proxiHandler;
     long duration;
     double cm, inches;
-    int trigPin = 26;  // Trigger
-    int echoPin = 27;  // Echo
     bool state=false;
     double height=40;
     

@@ -58,7 +58,7 @@ void DataCore::setMotorEnabled(bool setMotorEnabled){
 
 void DataCore::setClutchEnabled(bool setClutchEnabled){
     clutchEnabled = !(clutchEnabled);
-    relais.setAllRelais(clutchEnabled);
+    relais.setAllRelay(clutchEnabled);
     Serial.print("\t Clutch enable set to: ");
     Serial.println(clutchEnabled);
 }

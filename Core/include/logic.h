@@ -2,11 +2,10 @@
 #define LOGIC_H
 #include "dataCore.h"
 
-class Logic 
+class Logic
 {
 private:
-
-    DataCore& dataCore = DataCore::getInstance();
+    DataCore &dataCore = DataCore::getInstance();
     // PID variables (Unused at the moment)
     float ErrorCurrentRightKnee = 0.0;
     float ErrorCurrentLeftKnee = 0.0;
@@ -44,7 +43,8 @@ public:
      * @param val Value tu map (float or int)
      * @param max max/min reachable value (float or int)
      */
-    template <typename T> void LimitMinMax(T &val, T cap);
+    template <typename T>
+    void LimitMinMax(T &val, T cap);
 
     /**
      * @brief Compute needed torque using either angles from encoders or IMUs
@@ -77,17 +77,16 @@ public:
     void PIDCurrentPrealable();
 
     /**
-     * @brief Convert degree in radian equivalent 
+     * @brief Convert degree in radian equivalent
      * @param radians Input radian value
      */
     float toDegrees(float radians);
 
     /**
-     * @brief Convert radian in degree equivalent 
+     * @brief Convert radian in degree equivalent
      * @param radians Input degree value
      */
     float toRadian(float degree);
-
 };
 
 #endif

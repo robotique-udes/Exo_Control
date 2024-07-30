@@ -58,11 +58,6 @@ void ProxiSensor::PrintData()
     Serial.print("distanceMillimeters:");
     Serial.println(minimumDistance); // Distance en millimètres
 }
-void ProxiSensor::PrintDistance()
-{
-    Serial.print("distanceMillimeters:");
-    Serial.println(minimumDistance); // Distance en millimètres
-}
 
 int ProxiSensor::GetMinDistance()
 {
@@ -98,11 +93,6 @@ int ProxiSensor::GetMinDistance()
     if(moyenne > 0){
         minimumDistance = int(moyenne / sample);
     }
-    // Serial.print("Sample: \t");
-    // Serial.print(sample);
-    // Serial.print(" Distance: \t");
-    // Serial.print(minimumDistance);
-    // Serial.print("  ");
     return minimumDistance;
 }
 

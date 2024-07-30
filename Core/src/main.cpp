@@ -59,7 +59,7 @@ void setup()
   motor.setPins();
   relais.setPins();
 
-  relais.setAllRelais(OFF);
+  relais.setAllRelay(OFF);
 
   // Setup HMI
   setupCallbacks();

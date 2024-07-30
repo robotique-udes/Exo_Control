@@ -69,56 +69,6 @@ long QuadratureEncoder::getPositionPulses(EnumMotorPosition motor)
     }
 }
 
-float QuadratureEncoder::getPositionAngle(EnumMotorPosition motor)
-{
-    long pulses;
-    switch (motor)
-    {
-    case EnumMotorPosition::HIP_R:
-        pulses = pulses_han_dro;
-        break;
-    case EnumMotorPosition::HIP_L:
-        pulses = -pulses_han_gau;
-        break;
-    case EnumMotorPosition::KNEE_R:
-        pulses = -pulses_gen_dro;
-        break;
-    case EnumMotorPosition::KNEE_L:
-        pulses = pulses_gen_gau;
-        break;
-    default:
-        Serial.println("Invalid motor");
-        return 0.0;
-    }
-    return (float)pulses / pulsesPerRevolution * 360.0;
-}
-
-
-float QuadratureEncoder::getPositionAngleRad(EnumMotorPosition motor)
-{
-    long pulses;
-    switch (motor)
-    {
-    case EnumMotorPosition::HIP_R:
-        pulses = pulses_han_dro;
-        break;
-    case EnumMotorPosition::HIP_L:
-        pulses = -pulses_han_gau;
-        break;
-    case EnumMotorPosition::KNEE_R:
-        pulses = -pulses_gen_dro;
-        break;
-    case EnumMotorPosition::KNEE_L:
-        pulses = pulses_gen_gau;
-        break;
-    default:
-        Serial.println("Invalid motor");
-        return 0.0;
-    }
-    return (float)pulses / pulsesPerRevolution * 2 * PI;
-}
-
-
 void QuadratureEncoder::ISR_ENC_HAN_DRO()
 {
     if (instance != nullptr)

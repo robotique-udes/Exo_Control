@@ -16,70 +16,28 @@ void Test::setProxiHandler(ProxiHandler *newProxiHandler)
     proxiHandler = newProxiHandler;
 }
 
-void Test::testSonar()
-{
-    float erreur = 0;
-    duration = pulseIn(echoPin, HIGH);
-
-    cm = (duration/2) / 29.1;
-
-    inches = (duration/2) / 74;
-    if (state==false)
-    {
-        for (int i =0; i<10;i++) if (cm<height) erreur+=1;
-        erreur=erreur/10;
-        if(erreur<=0.2) state=true;
-    }
-    else
-    {
-        for (int i=0; i<10;i++) if (cm>height) erreur+=1;
-        erreur=erreur/10;
-        if(erreur<=0.2) state=false;
-    }
-    if(state==false)
-    {
-        Serial.println("Sol");
-    }
-    else
-    {
-        Serial.println("      Air");
-    }
-
-    //Serial.print(inches);
-
-    //Serial.print("in, ");
-    //Serial.print("State: ");
-    //Serial.println(state);
-    //Serial.print(cm);
-
-    //Serial.print("cm");
-    //Serial.println();
-    //delay(200);
-
-}
-
 void Test::testRelay()
 {
-    relais.setAllRelais(ON);
+    relais.setAllRelay(ON);
     delay(500);
-    relais.setAllRelais(OFF);
+    relais.setAllRelay(OFF);
     delay(500);
     Serial.println("Relais 1 ");
-    relais.setRelais(RELAIS_HANCHE_GAUCHE, ON);
+    relais.setRelay(RELAIS_HANCHE_GAUCHE, ON);
     delay(500);
-    relais.setRelais(RELAIS_HANCHE_GAUCHE, OFF);
+    relais.setRelay(RELAIS_HANCHE_GAUCHE, OFF);
     Serial.println("Relais 2 ");
-    relais.setRelais(RELAIS_HANCHE_DROITE, ON);
+    relais.setRelay(RELAIS_HANCHE_DROITE, ON);
     delay(500);
-    relais.setRelais(RELAIS_HANCHE_DROITE, OFF);
+    relais.setRelay(RELAIS_HANCHE_DROITE, OFF);
     Serial.println("Relais 3 ");
-    relais.setRelais(RELAIS_GENOU_GAUCHE, ON);
+    relais.setRelay(RELAIS_GENOU_GAUCHE, ON);
     delay(500);
-    relais.setRelais(RELAIS_GENOU_GAUCHE, OFF);
+    relais.setRelay(RELAIS_GENOU_GAUCHE, OFF);
     Serial.println("Relais 4 ");
-    relais.setRelais(RELAIS_GENOU_DROIT, ON);
+    relais.setRelay(RELAIS_GENOU_DROIT, ON);
     delay(500);
-    relais.setRelais(RELAIS_GENOU_DROIT, OFF);
+    relais.setRelay(RELAIS_GENOU_DROIT, OFF);
 }
 
 void Test::keyboardCommand()
@@ -141,52 +99,52 @@ void Test::keyboardCommand()
     else if (incomingByte == '1')
     {
       Serial.println("Relais 1 ON");
-      relais.setRelais(RELAIS_HANCHE_DROITE, ON);
+      relais.setRelay(RELAIS_HANCHE_DROITE, ON);
     } 
     else if (incomingByte == '2')
     {
       Serial.println("Relais 2 OFF");
-      relais.setRelais(RELAIS_HANCHE_DROITE, OFF);
+      relais.setRelay(RELAIS_HANCHE_DROITE, OFF);
     }
     else if (incomingByte == '3')
     {
       Serial.println("Relais 2 ON");
-      relais.setRelais(RELAIS_GENOU_DROIT, ON);
+      relais.setRelay(RELAIS_GENOU_DROIT, ON);
     }
     else if (incomingByte == '4')
     {
       Serial.println("Relais 2 OFF");
-      relais.setRelais(RELAIS_GENOU_DROIT, OFF);
+      relais.setRelay(RELAIS_GENOU_DROIT, OFF);
     }
     else if (incomingByte == '5')
     {
       Serial.println("Relais 3 ON");
-      relais.setRelais(RELAIS_HANCHE_GAUCHE, ON);
+      relais.setRelay(RELAIS_HANCHE_GAUCHE, ON);
     }
     else if (incomingByte == '6')
     {
       Serial.println("Relais 3 OFF");
-      relais.setRelais(RELAIS_HANCHE_GAUCHE, OFF);
+      relais.setRelay(RELAIS_HANCHE_GAUCHE, OFF);
     }
     else if (incomingByte == '7')
     {
       Serial.println("Relais 4 ON");
-      relais.setRelais(RELAIS_GENOU_GAUCHE, ON);
+      relais.setRelay(RELAIS_GENOU_GAUCHE, ON);
     }
     else if (incomingByte == '8')
     {
       Serial.println("Relais 4 OFF");
-      relais.setRelais(RELAIS_GENOU_GAUCHE, OFF);
+      relais.setRelay(RELAIS_GENOU_GAUCHE, OFF);
     }
     else if (incomingByte == '9')
     {
       Serial.println("Relais ALL ON");
-      relais.setAllRelais(ON);
+      relais.setAllRelay(ON);
     }
     else if (incomingByte == '0')
     {
       Serial.println("Relais ALL OFF");
-      relais.setAllRelais(OFF);
+      relais.setAllRelay(OFF);
     }
     else if (incomingByte == 'z')
     {
@@ -227,13 +185,4 @@ void Test::printEncoder()
     Serial.println(encoder->getPositionPulses(EnumMotorPosition::KNEE_R));
     Serial.print("Position Genou Gauche: ");
     Serial.println(encoder->getPositionPulses(EnumMotorPosition::KNEE_L));
-
-    Serial.print("Position Hanche Droite: ");
-    Serial.println(encoder->getPositionAngle(EnumMotorPosition::HIP_R));
-    Serial.print("Position Hanche Gauche: ");
-    Serial.println(encoder->getPositionAngle(EnumMotorPosition::HIP_L));
-    Serial.print("Position Genou Droit: ");
-    Serial.println(encoder->getPositionAngle(EnumMotorPosition::KNEE_R));
-    Serial.print("Position Genou Gauche: ");
-    Serial.println(encoder->getPositionAngle(EnumMotorPosition::KNEE_L));
 }

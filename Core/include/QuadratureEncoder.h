@@ -9,13 +9,6 @@
 class QuadratureEncoder
 {
 public:
-    QuadratureEncoder();
-    void read();
-    static void begin();
-    long getPositionPulses(EnumMotorPosition motor);
-    float getPositionAngle(EnumMotorPosition motor);
-    float getPositionAngleRad(EnumMotorPosition motor);
-    void resetPosition(EnumMotorPosition motor);
     static const int PIN_ENC_HAN_DRO_A = 32;
     static const int PIN_ENC_HAN_DRO_B = 33;
     static const int PIN_ENC_HAN_GAU_A = 14;
@@ -25,19 +18,63 @@ public:
     static const int PIN_ENC_GEN_GAU_A = 19;
     static const int PIN_ENC_GEN_GAU_B = 4;
 
+    /**
+    * @brief Initialize and set pins
+    */
+    QuadratureEncoder();
 
+    /**
+    * @brief Update value of every encoder in dataCore
+    */
+    void read();
+
+    /**
+    * @brief Initialize interrupts
+    */
+    static void begin();
+
+    /**
+    * @brief Getter for pulse value of a specific encoder
+    * @param motor Target motor
+    * @return Pulse value
+    */
+    long getPositionPulses(EnumMotorPosition motor);
+
+    /**
+    * @brief Reset pulse value of a specific encoder
+    * @param motor Target motor
+    */
+    void resetPosition(EnumMotorPosition motor);
+    
 private:
     DataCore& dataCore = DataCore::getInstance();
-    static void ISR_ENC_HAN_DRO();
-    static void ISR_ENC_HAN_GAU();
-    static void ISR_ENC_GEN_DRO();
-    static void ISR_ENC_GEN_GAU();
     static QuadratureEncoder *instance;
     volatile long pulses_han_dro;
     volatile long pulses_han_gau;
     volatile long pulses_gen_dro;
     volatile long pulses_gen_gau;
     int pulsesPerRevolution;
+
+    /**
+    * @brief Interrupt right hip
+    */
+    static void ISR_ENC_HAN_DRO();
+
+    /**
+    * @brief Interrupt left hip
+    */
+    static void ISR_ENC_HAN_GAU();
+
+    /**
+    * @brief Interrupt right knee
+    */
+    static void ISR_ENC_GEN_DRO();
+
+    /**
+    * @brief Interrupt left knee
+    */
+    static void ISR_ENC_GEN_GAU();
+    
 };
 
 #endif
