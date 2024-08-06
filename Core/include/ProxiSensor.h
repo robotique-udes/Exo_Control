@@ -44,7 +44,7 @@ public:
     */
     void SetTriggerDistance(bool brightness);
     /**
-    * @brief Getter for current channel used by proxim's interne MUX 
+    * @brief Getter for current channel used by proxim's internal MUX 
     * @return Channel
     */
     int GetChannel();
