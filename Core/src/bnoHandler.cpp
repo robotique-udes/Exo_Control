@@ -81,7 +81,7 @@ void BnoHandler::computeAngles() {
 
 }
 
-// Returns Yaw, same as previous implementation
+// Returns Yaw, same as previous implementation (BNO_055 used on Darianne)
 float BnoHandler::getValAngle(EnumBnoPosition position){
     int pos = static_cast<int> (position);
     return this->angles[pos];
