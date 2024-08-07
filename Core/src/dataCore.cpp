@@ -74,7 +74,7 @@ bool DataCore::getAngleSource(){
 }
 
 void DataCore::setAngleSource(bool setAngleSource){
-    angleSource = !(angleSource);
+    angleSource = (setAngleSource);
     Serial.print("\t Angle source set to: ");
     Serial.println(angleSource);
 }
@@ -110,7 +110,6 @@ void DataCore::setLeftProxi(bool state){
 }
 
 void DataCore::setResetProxim(bool reset){
-    Serial.println("\t proxim reset to high ");
     needResetProxim = reset;
 }
 

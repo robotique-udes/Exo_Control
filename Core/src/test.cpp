@@ -16,6 +16,17 @@ void Test::setProxiHandler(ProxiHandler *newProxiHandler)
     proxiHandler = newProxiHandler;
 }
 
+void Test::setBNOHandler(BnoHandler *newHandler)
+{
+  bnoHandler = newHandler;
+}
+
+void Test::setLogic(Logic *newLogic)
+{
+  logicHandler = newLogic;
+}
+
+
 void Test::testRelay()
 {
     relais.setAllRelay(ON);
@@ -171,18 +182,26 @@ void Test::keyboardCommand()
       Serial.println("Reset Encoder Genou Gauche");
       proxiHandler->setTriggerDist();
     }
-    
+    else if (incomingByte == 'm')
+    {
+      Serial.println("Encoder:");
+      encoder->printEncoder();
+      Serial.println("Proxim: ");
+      proxiHandler->print();
+      Serial.println("BNOs");
+      bnoHandler->printBNOs();
+      Serial.println("Torque: ");
+      logicHandler->printTorque();
+      Serial.print("PWM: ");
+      motor->printPMW();
+    }
+    else if (incomingByte == 'n')
+    {
+        dataCore.setAngleSource(FROM_IMU);
+    }
+    else if (incomingByte == 'b')
+    {
+        dataCore.setAngleSource(FROM_ENCODER);
+    }
   }
-}
-
-void Test::printEncoder()
-{
-    Serial.print("Position Hanche Droite: ");
-    Serial.println(encoder->getPositionPulses(EnumMotorPosition::HIP_R));
-    Serial.print("Position Hanche Gauche: ");
-    Serial.println(encoder->getPositionPulses(EnumMotorPosition::HIP_L));
-    Serial.print("Position Genou Droit: ");
-    Serial.println(encoder->getPositionPulses(EnumMotorPosition::KNEE_R));
-    Serial.print("Position Genou Gauche: ");
-    Serial.println(encoder->getPositionPulses(EnumMotorPosition::KNEE_L));
 }

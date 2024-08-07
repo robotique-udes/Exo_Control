@@ -39,6 +39,11 @@ public:
      * @brief Test function for I don't know what, ask Edouard
      */
     void testFuncSetPwnHigh();
+
+    /**
+     * @brief Print computed needed PWM
+     */
+    void printPMW();
 };
 
 #endif

@@ -50,7 +50,7 @@ class BnoHandler {
          * @param startIndex Index of the first BNO to print (value of EnumBnoPosition)
          * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
          */
-        void printBNOs(int startIndex = 0, int endIndex = 5);
+        void printBNOs(int startIndex = 0, int endIndex = 4);
 
         /**
          * @brief Compute the relative angles at the joints

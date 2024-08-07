@@ -7,6 +7,7 @@
 #include <PCA9685.h>
 
 //Ask Edouard, I don't even know
+//TODO make some sens out of it
 extern PCA9505_06 pinExtender;
 extern PCA9685 pwmPinExtender;
 

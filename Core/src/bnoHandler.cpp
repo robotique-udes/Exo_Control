@@ -55,7 +55,7 @@ void BnoHandler::requestData(){
 
 // Print relevant IMU information
 void BnoHandler::printBNOs(int startIndex, int endIndex){
-    for (int i = startIndex; i<endIndex; i++){
+    for (int i = startIndex; i<=endIndex; i++){
         Serial.print("\tIMU "); BNOs[i]->printName(); Serial.print("\t");
         Serial.print("LINK: "); Serial.print(BNOs[i]->checkIfConnected());
         Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<EnumBnoPosition>(i)));

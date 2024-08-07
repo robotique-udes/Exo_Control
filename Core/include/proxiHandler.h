@@ -9,7 +9,7 @@
 class ProxiHandler
 {
 private:
-    Multiplex mux;
+    Multiplex* mux;
     ProxiSensor *LeftProxim;
     ProxiSensor *RightProxim;
     DataCore &dataCore = DataCore::getInstance();

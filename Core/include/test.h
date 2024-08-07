@@ -7,6 +7,9 @@
 #include "motor.h"
 #include "QuadratureEncoder.h"
 #include "proxiHandler.h"
+#include "bnoHandler.h"
+#include "dataCore.h"
+#include "logic.h"
 
 class Test
 {
@@ -40,20 +43,23 @@ public:
     */
     void setProxiHandler(ProxiHandler* newHandler);
 
-    /**
-    * @brief Print encoder values (Why is this here?) 
-    */
-    void printEncoder();
+    void setBNOHandler(BnoHandler *newHandler);
+
+    void setLogic(Logic *newLogic);
 
 private:
     Relay relais;
     Motor* motor;
     QuadratureEncoder* encoder;
     ProxiHandler* proxiHandler;
+    BnoHandler *bnoHandler;
+    Logic   *logicHandler;
     long duration;
     double cm, inches;
     bool state=false;
     double height=40;
+    //DataCore instanciation
+    DataCore& dataCore = DataCore::getInstance();
     
 };
 

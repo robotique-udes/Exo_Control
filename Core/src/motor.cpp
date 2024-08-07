@@ -105,3 +105,17 @@ void Motor::testFuncSetPwnHigh()
   pwmPinExtender.setChannelPWM(6, 2048);
   pwmPinExtender.setChannelPWM(7, 2048);
 }
+
+void Motor::printPMW()
+{
+    Serial.print("\t Motor Power: ");
+    Serial.print(dataCore.getMotorPower());
+    Serial.print("\t  PWMRightKnee: ");
+    Serial.print(dataCore.getPWM(EnumMotorPosition::KNEE_R));
+    Serial.print("\t  PWMLeftKnee: ");
+    Serial.print(dataCore.getPWM(EnumMotorPosition::KNEE_L));
+    Serial.print("\t  PWMRightHip: ");
+    Serial.print(dataCore.getPWM(EnumMotorPosition::HIP_R));
+    Serial.print("\t  PWMLeftHip: ");
+    Serial.println(dataCore.getPWM(EnumMotorPosition::HIP_L));
+}

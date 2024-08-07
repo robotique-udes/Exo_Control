@@ -40,7 +40,7 @@ public:
 
     /**
      * @brief Cap input value to max/min value
-     * @param val Value tu map (float or int)
+     * @param val Value to map (float or int)
      * @param max max/min reachable value (float or int)
      */
     template <typename T>
@@ -55,11 +55,6 @@ public:
      * @brief Print computed needed torque
      */
     void printTorque();
-
-    /**
-     * @brief Print computed needed PWM
-     */
-    void printPMW();
 
     /**
      * @brief Compute PID on needed current ---UNUSED---

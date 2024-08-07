@@ -25,7 +25,7 @@ public:
 
     /**
     * @brief Scan each 3 sensors to get the closest distance between the 3 using an average of 3 readings 
-    * @return Closest distance to ground
+    * @return Closest distance(mm) to ground
     */
     int GetMinDistance();
     /**
@@ -35,14 +35,14 @@ public:
     bool IsOnTheGround();
     /**
     * @brief Getter for current trigger distance (threshold) 
-    * @return Trigger distance
+    * @return Trigger distance(mm)
     */
     int GetTriggerDistance();
     /**
     * @brief Update brightness and auto calibrate trigger distance with an average of 3 GetMinDistance() readings
     * @param brightness New brightness lvl
     */
-    void SetTriggerDistance(bool brightness);
+    void UpdateSettings(bool brightness);
     /**
     * @brief Getter for current channel used by proxim's interne MUX 
     * @return Channel

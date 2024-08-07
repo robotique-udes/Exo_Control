@@ -27,7 +27,7 @@ BnoHandler *bnoHandler;
 QuadratureEncoder encoder;
 TouchScreen &screen = TouchScreen::getInstance();
 DataCore &settings = DataCore::getInstance();
-ProxiHandler proxiHandler;
+ProxiHandler *proxiHandler;
 
 
 //===============================================================================================================
@@ -47,12 +47,14 @@ void setup()
 
   // Setup devices using I2C
   bnoHandler = new BnoHandler();
-
+  proxiHandler = new ProxiHandler();
   pinExtender.begin();
   QuadratureEncoder::begin();
   tester.setMotor(&motor);
   tester.setEncoder(&encoder);
-  tester.setProxiHandler(&proxiHandler);
+  tester.setProxiHandler(proxiHandler);
+  tester.setBNOHandler(bnoHandler);
+  tester.setLogic(&logicHandler);
   pwmPinExtender.resetDevices();
   pwmPinExtender.init();
 
@@ -77,12 +79,12 @@ void loop()
   // motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
   // tester.testRelay();
-  // tester.keyboardCommand();
+  tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
   encoder.read();
   bnoHandler->read();
-  proxiHandler.read();
+  proxiHandler->read();
   screen.update();
   logicHandler.Update();
   motor.write();

@@ -45,6 +45,11 @@ public:
     * @param motor Target motor
     */
     void resetPosition(EnumMotorPosition motor);
+
+    /**
+    * @brief Print encoder values
+    */
+    void printEncoder();
     
 private:
     DataCore& dataCore = DataCore::getInstance();
@@ -74,6 +79,7 @@ private:
     * @brief Interrupt left knee
     */
     static void ISR_ENC_GEN_GAU();
+
     
 };
 

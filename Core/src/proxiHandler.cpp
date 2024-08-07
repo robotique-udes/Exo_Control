@@ -2,9 +2,9 @@
 
 ProxiHandler::ProxiHandler()
 {
-    this->mux = Multiplex();
-    this->LeftProxim = new ProxiSensor(&this->mux, LEFT_MOUSTACHE_MUX_CHANNEL);
-    this->RightProxim = new ProxiSensor(&this->mux, RIGHT_MOUSTACHE_MUX_CHANNEL);
+    this->mux = new Multiplex();
+    this->LeftProxim = new ProxiSensor(mux, LEFT_MOUSTACHE_MUX_CHANNEL);
+    this->RightProxim = new ProxiSensor(mux, RIGHT_MOUSTACHE_MUX_CHANNEL);
 }
 
 void ProxiHandler::read()
@@ -20,8 +20,8 @@ void ProxiHandler::read()
 }
 
 void ProxiHandler::setTriggerDist(){
-    LeftProxim->SetTriggerDistance(dataCore.getBrightness());
-    RightProxim->SetTriggerDistance(dataCore.getBrightness());
+    LeftProxim->UpdateSettings(dataCore.getBrightness());
+    RightProxim->UpdateSettings(dataCore.getBrightness());
 }
 
 void ProxiHandler::print(){

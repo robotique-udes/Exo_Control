@@ -121,3 +121,15 @@ void QuadratureEncoder::resetPosition(EnumMotorPosition motor)
         Serial.println("Invalid motor");
     }
 }
+
+void QuadratureEncoder::printEncoder()
+{
+    Serial.print("Position Hanche Droite: ");
+    Serial.println(getPositionPulses(EnumMotorPosition::HIP_R));
+    Serial.print("Position Hanche Gauche: ");
+    Serial.println(getPositionPulses(EnumMotorPosition::HIP_L));
+    Serial.print("Position Genou Droit: ");
+    Serial.println(getPositionPulses(EnumMotorPosition::KNEE_R));
+    Serial.print("Position Genou Gauche: ");
+    Serial.println(getPositionPulses(EnumMotorPosition::KNEE_L));
+}
