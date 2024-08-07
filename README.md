@@ -1,8 +1,8 @@
-# Exo_Control
+# Core
 
 ## Table of Contents
 
-- [Exo\_Control](#exo_control)
+- [Core](#core)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
   - [Hardware](#hardware)
@@ -42,20 +42,27 @@ Getting started with our project is a straightforward process. Simply clone the 
     - Logic bloc controls normal operation for the exo, needs to be active when using
     - Printing bloc is for debugging, keep commented otherwise
   - Setup starts IMUs and their wifi functions, comment either of those lines if not needed when testing
-- motorControl:
-  - This class orchestrates most of the operation in the exo and use the info it receive from various sensors to calculate the needed current for the motors
-  - Most of the class is either mathematics or fetching info from other classes
-  - Most other classes are called by this one
-- imu:
-  - BNO055 logic class, used to fetch information from our IMUs, converting it to angles, and sending it to motorControl
-  - We use mainly the adafruit bno055 library here
+- dataCore:
+  - Class holding every middleman variable for every other classes.
+  - Mostly composed of setter and getter
+- bnoHandler:
+  - This class orchestrates the calls to and from each BNO.
 - multiplex:
-  - multiplexer control class composed of simple functions used to switch multiplexer chanels
-- bnoMultiplex:
-  - Bridge between the imu and multiplex classes
-  - Used to associate any IMUs to an ID from it's constructor and switch multiplexer channel automatically when using IMU's basic functions
-- sonar:
-  - Sonar logic class, used to read distance from ground and determine whether or not the foot of the user is grounded
+  - Wrapper class to facilitate the use of i2c devices going through the multiplexer
+- BNO_085:
+  - Logic class to interact with the Adafruit BNO_085. Stores data in the BnoStruct
+  format for easy access, accessible with a getter.
+- proxiHandler:
+  - This class orchestrates the calls to and from each proximity sensor.
+- proximSensor:
+  - Proxim logic class, used to read distance from ground and determine whether or not the foot of the user is grounded
+- logic:
+  - This class handles mathematic operations. 
+  - It takes the angles of the legs and compute the required pwm out of it.
+- motor:
+  - Mainly send commands to directly to the motors.
+- quadratureEncoder:
+  - Alternative way to get the leg angles from the motor encoders.
 - relay:
   - Relay logic class,  used to turn ON/OFF any relay
 - touchScreen:

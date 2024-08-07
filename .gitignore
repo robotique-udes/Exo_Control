@@ -1,4 +1,8 @@
+Core/.pio
+Core/.vscode/.browse.c_cpp.db*
+Core/.vscode/c_cpp_properties.json
+Core/.vscode/launch.json
+Core/.vscode/ipch
+Core/.vscode/settings.json
+UtilsProjects/I2C-Scanner/.vscode
 
-Pin_Extender/.vscode/settings.json
-I2C-Scanner/.vscode/settings.json
-ESP-Sensor/.vscode/extensions.json
