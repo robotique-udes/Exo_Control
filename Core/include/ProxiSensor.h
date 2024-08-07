@@ -44,7 +44,7 @@ public:
     */
     void UpdateSettings(bool brightness);
     /**
-    * @brief Getter for current channel used by proxim's interne MUX 
+    * @brief Getter for current channel used by proxim's internal MUX 
     * @return Channel
     */
     int GetChannel();
@@ -54,7 +54,7 @@ public:
     */
     void SetChannel(int c);
     /**
-    * @brief Print proxim's interne settings, plus it's last min distance read
+    * @brief Print proxim's internal settings, plus it's last min distance read
     */
     void PrintData();
     /**
