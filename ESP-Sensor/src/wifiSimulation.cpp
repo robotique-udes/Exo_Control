@@ -2,6 +2,7 @@
 
 // Create AsyncWebServer object on port 80
 // WebServer server(80);
+//IPAddress(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
 IPAddress local_ip(192, 168, 4, 1);
 IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
@@ -22,6 +23,18 @@ float WIFI_THIGH_R = 0;
 float WIFI_TIBIA_R = 0;
 float WIFI_BACK = 0;
 
+float WIFI_THIGH_LX = 0;
+float WIFI_TIBIA_LX = 0;
+float WIFI_THIGH_RX = 0;
+float WIFI_TIBIA_RX = 0;
+float WIFI_BACKX = 0;
+
+float WIFI_THIGH_LZ = 0;
+float WIFI_TIBIA_LZ = 0;
+float WIFI_THIGH_RZ = 0;
+float WIFI_TIBIA_RZ = 0;
+float WIFI_BACKZ = 0;
+
 void WifiSimulation::wifiSetup()
 {
     initWiFi();
@@ -36,7 +49,7 @@ float WifiSimulation::toDegrees(float radians)
     return radians * 180 / PI;
 }
 
-String WifiSimulation::writeJson()
+String WifiSimulation::writeJson() // convertie les valeurs des variables suivantes en une string sous le format d'un JSON
 {
     // readings["G_ALPHA_X"] = toDegrees(angleHipL.x());
     // readings["G_ALPHA_Y"] = LeftKneeAngle;
@@ -58,12 +71,28 @@ String WifiSimulation::writeJson()
     // readings["SPINE_Y"] = toDegrees(SPLINE.y());
     // readings["SPINE_Z"] = toDegrees(SPLINE.z());
 
+// Les variables WIFI sont assigné a des clés JSON
     readings["TIBIA_L"] = WIFI_TIBIA_L;
     readings["TIBIA_R"] = WIFI_TIBIA_R;
     readings["THIGH_L"] = WIFI_THIGH_L;
     readings["THIGH_R"] = WIFI_THIGH_R;
     readings["BACK"] = WIFI_BACK;
 
+    //--------WIFI X-------//
+    readings["TIBIA_LX"] = WIFI_TIBIA_LX;
+    readings["TIBIA_RX"] = WIFI_TIBIA_RX;
+    readings["THIGH_LX"] = WIFI_THIGH_LX;
+    readings["THIGH_RX"] = WIFI_THIGH_RX;
+    readings["BACKX"] = WIFI_BACKX;
+
+    //--------WIFI Y-------//
+    readings["TIBIA_LZ"] = WIFI_TIBIA_LZ;
+    readings["TIBIA_RZ"] = WIFI_TIBIA_RZ;
+    readings["THIGH_LZ"] = WIFI_THIGH_LZ;
+    readings["THIGH_RZ"] = WIFI_THIGH_RZ;
+    readings["BACKZ"] = WIFI_BACKZ;
+
+//Convertion de l'objet reading en une string format JSON
     String jsonString = JSON.stringify(readings);
     return jsonString;
 }
@@ -111,9 +140,9 @@ void WifiSimulation::initWiFi()
     Serial.println("Hello World, I'm connected to the internets!!");
 }
 
-void WifiSimulation::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+void WifiSimulation::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)//cette fonction ce fait appelé tout seul asynchrone
 {
-    WifiSimulation imu;
+    WifiSimulation imu;//Weird que il y ait un objet WifiSimulation dans la classe WifiSimulation
 
     if (type == WS_EVT_CONNECT)
     {
@@ -127,13 +156,13 @@ void WifiSimulation::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *cli
         Serial.println("Client disconnected");
         Serial.println("-----------------------");
     }
-    else if (type == WS_EVT_DATA)
+    else if (type == WS_EVT_DATA)//SI rentre, cela signifie que des données ont été reçues du client WebSocket.
     {
         if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
         {
-            String angles = imu.writeJson();
+            String angles = imu.writeJson();//pourquoi pas juste un this->writeJson
             // Serial.println(angles);
-            globalClient->text(angles);
+            globalClient->text(angles);// fait simplement envoyé la string (le JSON) au client via le WebSocket.
         }
         else
         {
@@ -172,6 +201,36 @@ void WifiSimulation::setAngle(enumIMU imuType, float val)
         break;
     case enumIMU::EXO_BACK:
         WIFI_BACK = val;
+        break;
+    case enumIMU::THIGH_LX:
+        WIFI_THIGH_LX = val;
+        break;
+    case enumIMU::TIBIA_LX:
+        WIFI_TIBIA_LX = val;
+        break;
+    case enumIMU::THIGH_RX:
+        WIFI_THIGH_RX = val;
+        break;
+    case enumIMU::TIBIA_RX:
+        WIFI_TIBIA_RX = val;  
+        break;
+    case enumIMU::EXO_BACKX:
+        WIFI_BACKX = val;  
+        break;
+    case enumIMU::THIGH_LZ:
+        WIFI_THIGH_LZ = val;
+        break;
+    case enumIMU::TIBIA_LZ:
+        WIFI_TIBIA_LZ = val;
+        break;
+    case enumIMU::THIGH_RZ:
+        WIFI_THIGH_RZ = val;
+        break;
+    case enumIMU::TIBIA_RZ:
+        WIFI_TIBIA_RZ = val;  
+        break;
+    case enumIMU::EXO_BACKZ:
+        WIFI_BACKZ = val;    
         break;
     default:
         break;

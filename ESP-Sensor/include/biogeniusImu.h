@@ -11,7 +11,7 @@ using namespace std;
 class IMU {
     private:
         array<BNO *, 5> BNOs;
-        array<float, 9> angles; // TODO : change this number dynamically
+        array<float, 27> angles; // TODO : change this number dynamically
         Multiplex mux;
         long last_update = 0;
 

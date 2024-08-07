@@ -114,13 +114,28 @@ void updateAngles(bool angleSource)
     motor->setAngle(enumIMU::KNEE_R, imuHandler->getValAngle(enumIMU::KNEE_R));
     motor->setAngle(enumIMU::KNEE_L, imuHandler->getValAngle(enumIMU::KNEE_L));
 
-    if (WIFI_ACTIVE)
+    if (WIFI_ACTIVE)//ICI, ON PASSE LA VALEUR 
     {
+      //--------SetAngle Y---------//
       wifi.setAngle(enumIMU::TIBIA_L, imuHandler->getValAngle(enumIMU::TIBIA_L));
       wifi.setAngle(enumIMU::TIBIA_R, imuHandler->getValAngle(enumIMU::TIBIA_R));
       wifi.setAngle(enumIMU::THIGH_L, imuHandler->getValAngle(enumIMU::THIGH_L));
       wifi.setAngle(enumIMU::THIGH_R, imuHandler->getValAngle(enumIMU::THIGH_R));
       wifi.setAngle(enumIMU::EXO_BACK, imuHandler->getValAngle(enumIMU::EXO_BACK));
+
+      //--------SetAngle X---------//      
+      wifi.setAngle(enumIMU::TIBIA_LX, imuHandler->getValAngle(enumIMU::TIBIA_LX));
+      wifi.setAngle(enumIMU::TIBIA_RX, imuHandler->getValAngle(enumIMU::TIBIA_RX));
+      wifi.setAngle(enumIMU::THIGH_LX, imuHandler->getValAngle(enumIMU::THIGH_LX));
+      wifi.setAngle(enumIMU::THIGH_RX, imuHandler->getValAngle(enumIMU::THIGH_RX));
+      wifi.setAngle(enumIMU::EXO_BACKX, imuHandler->getValAngle(enumIMU::EXO_BACKX));
+
+	    //--------SetAngle Z---------// 
+      wifi.setAngle(enumIMU::TIBIA_LZ, imuHandler->getValAngle(enumIMU::TIBIA_LZ));
+      wifi.setAngle(enumIMU::TIBIA_RZ, imuHandler->getValAngle(enumIMU::TIBIA_RZ));
+      wifi.setAngle(enumIMU::THIGH_LZ, imuHandler->getValAngle(enumIMU::THIGH_LZ));
+      wifi.setAngle(enumIMU::THIGH_RZ, imuHandler->getValAngle(enumIMU::THIGH_RZ));
+      wifi.setAngle(enumIMU::EXO_BACKZ, imuHandler->getValAngle(enumIMU::EXO_BACKZ));
     }
   }
   else
