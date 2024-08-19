@@ -14,7 +14,7 @@ class BnoHandler {
         // Array of the physical BNOs, ordered by EnumBnoPosition
         array<BNO_085 *, 5> BNOs;
         // Array of the angles between the parts, stored in degrees
-        array<float, 5> angles;
+        array<float, 9> angles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
         // Time of last update, based on millis()
@@ -50,7 +50,8 @@ class BnoHandler {
          * @param startIndex Index of the first BNO to print (value of EnumBnoPosition)
          * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
          */
-        void printBNOs(int startIndex = 0, int endIndex = 4);
+        void printBNOsStatus(int startIndex = 0, int endIndex = 4);
+        void printBNOsData(int startIndex = 0, int endIndex = 8);
 
         /**
          * @brief Compute the relative angles at the joints
@@ -62,7 +63,7 @@ class BnoHandler {
          * @param position EnumBnoPosition of the part
          * @return Angle in degrees
          */
-        float getValAngle(EnumBnoPosition position);
+        float getValAngle(EnumBnoAngle position);
 
         /**
          * @brief Get the BNO data of a part
@@ -70,5 +71,7 @@ class BnoHandler {
          * @return BNOStruct of the part
          */
         BNOStruct getBNOData(EnumBnoPosition position);
+
+        void printName(EnumBnoAngle position);
 };
 #endif

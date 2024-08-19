@@ -214,24 +214,36 @@ void DataCore::setEncoderReset(bool state){
 
 
 //BNO
-float DataCore::getBnoAngles(EnumBnoPosition bno)
+float DataCore::getBnoAngles(EnumBnoAngle bno)
 {
     switch (bno)
     {
-    case EnumBnoPosition::HIP_R:
+    case EnumBnoAngle::HIP_R:
         return Imu_hip_right;
         break;
-    case EnumBnoPosition::HIP_L:
+    case EnumBnoAngle::HIP_L:
         return Imu_hip_left;
         break;
-    case EnumBnoPosition::KNEE_R:
+    case EnumBnoAngle::KNEE_R:
         return Imu_knee_right;
         break;
-    case EnumBnoPosition::KNEE_L:
+    case EnumBnoAngle::KNEE_L:
         return Imu_knee_left;
         break;
-    case EnumBnoPosition::EXO_BACK:
+    case EnumBnoAngle::EXO_BACK:
         return Imu_back;
+        break;
+    case EnumBnoAngle::THIGH_L:
+        return Imu_thigh_left;
+        break;
+    case EnumBnoAngle::THIGH_R:
+        return Imu_thigh_right;
+        break;
+    case EnumBnoAngle::TIBIA_L:
+        return Imu_tibia_left;
+        break;
+    case EnumBnoAngle::TIBIA_R:
+        return Imu_tibia_right;
         break;
     default:
         Serial.println("Invalid bno pos");
@@ -239,24 +251,36 @@ float DataCore::getBnoAngles(EnumBnoPosition bno)
     }
 }
 
-void DataCore::setBnoAngles(EnumBnoPosition bno, float angle)
+void DataCore::setBnoAngles(EnumBnoAngle bno, float angle)
 {
     switch (bno)
     {
-    case EnumBnoPosition::HIP_R:
+    case EnumBnoAngle::HIP_R:
         Imu_hip_right = angle;
         break;
-    case EnumBnoPosition::HIP_L:
+    case EnumBnoAngle::HIP_L:
         Imu_hip_left = angle;
         break;
-    case EnumBnoPosition::KNEE_R:
+    case EnumBnoAngle::KNEE_R:
         Imu_knee_right = angle;
         break;
-    case EnumBnoPosition::KNEE_L:
+    case EnumBnoAngle::KNEE_L:
         Imu_knee_left = angle;
         break;
-    case EnumBnoPosition::EXO_BACK:
+    case EnumBnoAngle::EXO_BACK:
         Imu_back = angle;
+        break;
+    case EnumBnoAngle::THIGH_L:
+        Imu_thigh_left = angle;
+        break;
+    case EnumBnoAngle::THIGH_R:
+        Imu_thigh_right = angle;
+        break;
+    case EnumBnoAngle::TIBIA_L:
+        Imu_tibia_left = angle;
+        break;
+    case EnumBnoAngle::TIBIA_R:
+        Imu_tibia_right = angle;
         break;
     default:
         break;

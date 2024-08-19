@@ -189,7 +189,7 @@ void Test::keyboardCommand()
       Serial.println("Proxim: ");
       proxiHandler->print();
       Serial.println("BNOs");
-      bnoHandler->printBNOs();
+      bnoHandler->printBNOsStatus();
       Serial.println("Torque: ");
       logicHandler->printTorque();
       Serial.print("PWM: ");

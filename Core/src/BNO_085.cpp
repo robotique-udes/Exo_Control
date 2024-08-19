@@ -47,17 +47,16 @@ void BNO_085::printName() {
     case EnumBnoPosition::EXO_BACK:
         Serial.print("Back");
         break;
-    case EnumBnoPosition::HIP_L:
+    case EnumBnoPosition::THIGH_L:
         Serial.print("Hip Left");
         break;
-    case EnumBnoPosition::HIP_R:
-
+    case EnumBnoPosition::THIGH_R:
         Serial.print("Hip Right");
         break;
-    case EnumBnoPosition::KNEE_L:
+    case EnumBnoPosition::TIBIA_L:
         Serial.print("Knee Left");
         break;
-    case EnumBnoPosition::KNEE_R:
+    case EnumBnoPosition::TIBIA_R:
         Serial.print("Knee Right");
         break;
     default:

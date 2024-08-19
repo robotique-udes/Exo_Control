@@ -35,6 +35,10 @@ private:
     float Imu_hip_right = 0;
     float Imu_hip_left = 0;
     float Imu_back = 0;
+    float Imu_thigh_left = 0;
+    float Imu_thigh_right = 0;
+    float Imu_tibia_left = 0;
+    float Imu_tibia_right = 0;
 
     //In between settings
     bool motorEnabled;
@@ -222,14 +226,14 @@ public:
     * @param bno Target bno
     * @param angle Angle value
     */
-    void setBnoAngles(EnumBnoPosition bno, float angle);
+    void setBnoAngles(EnumBnoAngle bno, float angle);
 
     /**
     * @brief Bno angle getter
     * @param bno Target bno
     * @return Degree angle value
     */
-    float getBnoAngles(EnumBnoPosition bno);
+    float getBnoAngles(EnumBnoAngle bno);
 
     // PWM
     /**

@@ -62,10 +62,10 @@ void Logic::neededTorque()
         RightKneeAngle = dataCore.getEncoderDeg(EnumMotorPosition::KNEE_L);
     }
     else{
-        LeftHipAngle = dataCore.getBnoAngles(EnumBnoPosition::HIP_L);
-        LeftKneeAngle = dataCore.getBnoAngles(EnumBnoPosition::KNEE_L);
-        RightHipAngle = dataCore.getBnoAngles(EnumBnoPosition::HIP_R);
-        RightKneeAngle = dataCore.getBnoAngles(EnumBnoPosition::KNEE_L);
+        LeftHipAngle = dataCore.getBnoAngles(EnumBnoAngle::HIP_L);
+        LeftKneeAngle = dataCore.getBnoAngles(EnumBnoAngle::KNEE_L);
+        RightHipAngle = dataCore.getBnoAngles(EnumBnoAngle::HIP_R);
+        RightKneeAngle = dataCore.getBnoAngles(EnumBnoAngle::KNEE_L);
     }
 
     float LeftHipRAD = toRadian(LeftHipAngle);
