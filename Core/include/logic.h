@@ -32,7 +32,14 @@ private:
     float RightHipMeasuredCurrent = 0.0;
     float LeftHipMeasuredCurrent = 0.0;
 
+    // BATTERY ESTIMATION   
+    unsigned long previousTimeBatterie = 0;
+
 public:
+
+    // BATTERY ESTIMATION   
+    float totalEnergy = 0.0;
+    void IntegralPowerConsumption();
     /**
      * @brief Compute torque and update required PWM by calling other functions
      */

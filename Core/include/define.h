@@ -21,6 +21,9 @@
 #define KI 0
 #define KD 0
 #define HIGH_TORQUE 100
+#define MOTOR_KM 1.27
+#define MOTOR_W_PER_NM_HIP 30.72
+#define MOTOR_W_PER_NM_KNEE 52.57
 
 #define MOTEUR_GENOU_GAUCHE 0
 #define MOTEUR_GENOU_DROIT 1

@@ -5,6 +5,34 @@ void Logic::Update(){
     PIDCurrentPrealable();
 }
 
+// BATTERY ESTIMATION
+void Logic::IntegralPowerConsumption()
+{
+  // TODO : Implement the integral power consumption calculation
+  // km = Nm / sqrt(watt)
+  // Power = (torque / km)^2
+ 
+  unsigned long time = millis();
+  unsigned long dt = time - previousTimeBatterie;
+ 
+ 
+  // float leftHipPower = (LeftHipTorque/MOTOR_KM) * (LeftHipTorque/MOTOR_KM);
+  // float rightHipPower = (RightHipTorque/MOTOR_KM) * (RightHipTorque/MOTOR_KM);
+  // float leftKneePower = (LeftKneeTorque/MOTOR_KM) * (LeftKneeTorque/MOTOR_KM);
+  // float rightKneePower = (RightKneeTorque/MOTOR_KM) * (RightKneeTorque/MOTOR_KM);
+ 
+  float leftHipPower = abs(LeftHipTorque) * MOTOR_W_PER_NM_HIP;
+  float rightHipPower = abs(RightHipTorque) * MOTOR_W_PER_NM_HIP;
+  float leftKneePower = abs(LeftKneeTorque) * MOTOR_W_PER_NM_KNEE;
+  float rightKneePower = abs(RightKneeTorque) * MOTOR_W_PER_NM_KNEE;
+ 
+  float totalpower = leftHipPower + rightHipPower + leftKneePower + rightKneePower;
+ 
+  Serial.print("  Power: ");
+  Serial.print(totalpower);
+  totalEnergy += totalpower * (float)dt * 0.001 / 3600.0; // W*milisecond to Wh
+  previousTimeBatterie = time;
+}
 
 template <typename T> void Logic::LimitMinMax(T &val, T cap)
 {
