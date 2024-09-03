@@ -67,8 +67,7 @@
 					(color 72 0 0 1)
 				)
 				(fill
-					(type color)
-					(color 255 0 0 0.52)
+					(type background)
 				)
 			)
 			(text "Pins d'alimentation\n&\nResets"
@@ -451,8 +450,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "I2C"
@@ -655,8 +653,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "SPI"
@@ -770,8 +767,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "Canbus"
@@ -831,8 +827,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "UART"
@@ -892,8 +887,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "USB"
@@ -953,8 +947,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "DEBUG"
@@ -1014,8 +1007,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "I2S"
@@ -1092,8 +1084,7 @@
 					(type default)
 				)
 				(fill
-					(type color)
-					(color 255 153 0 0.3)
+					(type background)
 				)
 			)
 			(text "Pins analogue\n<-Input\nOutput->"
@@ -1188,8 +1179,7 @@
 					(color 0 72 0 1)
 				)
 				(fill
-					(type color)
-					(color 0 132 0 0.3)
+					(type background)
 				)
 			)
 			(text "Sortie PWM\n"
@@ -1284,8 +1274,7 @@
 					(color 0 72 0 1)
 				)
 				(fill
-					(type color)
-					(color 0 132 0 0.3)
+					(type background)
 				)
 			)
 			(text "ESP32\n"
@@ -1496,8 +1485,7 @@
 					(type default)
 				)
 				(fill
-					(type color)
-					(color 255 255 0 0.4)
+					(type background)
 				)
 			)
 			(text "Sortie\nclock"

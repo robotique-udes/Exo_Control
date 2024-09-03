@@ -67,8 +67,7 @@
 					(color 72 0 0 1)
 				)
 				(fill
-					(type color)
-					(color 255 0 0 0.52)
+					(type background)
 				)
 			)
 			(text "Pins d'alimentation\n&\nResets"
@@ -451,8 +450,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "I2C"
@@ -655,8 +653,7 @@
 					(color 0 0 72 1)
 				)
 				(fill
-					(type color)
-					(color 0 0 255 0.2)
+					(type background)
 				)
 			)
 			(text "SPI"
@@ -1381,7 +1378,7 @@
 			(pin bidirectional line
 				(at -15.24 1.27 0)
 				(length 2.54)
-				(name "NC"
+				(name "GPIO26"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1399,7 +1396,7 @@
 			(pin bidirectional line
 				(at -15.24 -1.27 0)
 				(length 2.54)
-				(name "NC"
+				(name "GPIO33"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1417,7 +1414,7 @@
 			(pin bidirectional line
 				(at -15.24 -3.81 0)
 				(length 2.54)
-				(name "NC"
+				(name "GPIO34"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1435,7 +1432,7 @@
 			(pin bidirectional line
 				(at 16.51 6.35 180)
 				(length 2.54)
-				(name "NC"
+				(name "GPIO45"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1453,7 +1450,7 @@
 			(pin bidirectional line
 				(at 16.51 3.81 180)
 				(length 2.54)
-				(name "NC"
+				(name "GPIO46"
 					(effects
 						(font
 							(size 1.27 1.27)
