@@ -9,23 +9,23 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "J201"
-				(at 0 6.35 0)
+			(property "Reference" "J"
+				(at 0.254 16.51 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Value" "~"
-				(at 0 3.81 0)
+			(property "Value" ""
+				(at -6.35 -7.62 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Footprint" "connecteur_M2_key_E:NGFF_E"
+			(property "Footprint" ""
 				(at -6.35 -7.62 0)
 				(effects
 					(font
@@ -70,8 +70,7 @@
 						(color 72 0 0 1)
 					)
 					(fill
-						(type color)
-						(color 255 0 0 0.52)
+						(type background)
 					)
 				)
 				(text "Pins d'alimentation\n&\nResets"
@@ -454,8 +453,7 @@
 						(color 0 0 72 1)
 					)
 					(fill
-						(type color)
-						(color 0 0 255 0.2)
+						(type background)
 					)
 				)
 				(text "I2C"
@@ -658,8 +656,7 @@
 						(color 0 0 72 1)
 					)
 					(fill
-						(type color)
-						(color 0 0 255 0.2)
+						(type background)
 					)
 				)
 				(text "SPI"
@@ -773,8 +770,7 @@
 						(color 0 0 72 1)
 					)
 					(fill
-						(type color)
-						(color 0 0 255 0.2)
+						(type background)
 					)
 				)
 				(text "Canbus"
@@ -834,8 +830,7 @@
 						(color 0 0 72 1)
 					)
 					(fill
-						(type color)
-						(color 0 0 255 0.2)
+						(type background)
 					)
 				)
 				(text "UART"
@@ -895,8 +890,7 @@
 						(color 0 0 72 1)
 					)
 					(fill
-						(type color)
-						(color 0 0 255 0.2)
+						(type background)
 					)
 				)
 				(text "USB"
@@ -910,9 +904,9 @@
 					)
 				)
 				(pin bidirectional line
-					(at 13.97 1.27 180)
+					(at 13.97 -1.27 180)
 					(length 2.54)
-					(name "USB_D-_FT231"
+					(name "USB_D+_FT231"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -928,9 +922,9 @@
 					)
 				)
 				(pin bidirectional line
-					(at 13.97 -1.27 180)
+					(at 13.97 1.27 180)
 					(length 2.54)
-					(name "USB_D+_FT231"
+					(name "USB_D-_FT231"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -956,8 +950,7 @@
 						(color 0 0 72 1)
 					)
 					(fill
-						(type color)
-						(color 0 0 255 0.2)
+						(type background)
 					)
 				)
 				(text "DEBUG"
@@ -1017,8 +1010,7 @@
 						(color 0 0 72 1)
 					)
 					(fill
-						(type color)
-						(color 0 0 255 0.2)
+						(type background)
 					)
 				)
 				(text "I2S"
@@ -1095,8 +1087,7 @@
 						(type default)
 					)
 					(fill
-						(type color)
-						(color 255 153 0 0.3)
+						(type background)
 					)
 				)
 				(text "Pins analogue\n<-Input\nOutput->"
@@ -1191,8 +1182,7 @@
 						(color 0 72 0 1)
 					)
 					(fill
-						(type color)
-						(color 0 132 0 0.3)
+						(type background)
 					)
 				)
 				(text "Sortie PWM\n"
@@ -1287,8 +1277,7 @@
 						(color 0 72 0 1)
 					)
 					(fill
-						(type color)
-						(color 0 132 0 0.3)
+						(type background)
 					)
 				)
 				(text "ESP32\n"
@@ -1384,7 +1373,7 @@
 				(pin bidirectional line
 					(at -15.24 1.27 0)
 					(length 2.54)
-					(name "NC"
+					(name "GPIO26"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1402,7 +1391,7 @@
 				(pin bidirectional line
 					(at -15.24 -1.27 0)
 					(length 2.54)
-					(name "NC"
+					(name "GPIO33"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1420,7 +1409,7 @@
 				(pin bidirectional line
 					(at -15.24 -3.81 0)
 					(length 2.54)
-					(name "NC"
+					(name "GPIO34"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1438,7 +1427,7 @@
 				(pin bidirectional line
 					(at 16.51 6.35 180)
 					(length 2.54)
-					(name "NC"
+					(name "GPIO45"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1456,7 +1445,7 @@
 				(pin bidirectional line
 					(at 16.51 3.81 180)
 					(length 2.54)
-					(name "NC"
+					(name "GPIO46"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1499,8 +1488,7 @@
 						(type default)
 					)
 					(fill
-						(type color)
-						(color 255 255 0 0.4)
+						(type background)
 					)
 				)
 				(text "Sortie\nclock"
@@ -2207,10 +2195,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "463af352-a33a-43d7-8cd4-026cd737da4a")
 		(property "Reference" "J201"
-			(at 152.4 71.12 0)
+			(at 152.4 68.834 0)
 			(effects
 				(font
 					(size 1.27 1.27)
