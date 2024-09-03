@@ -18800,10 +18800,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "6345b759-e0a9-4068-a8ef-e1c29af66181")
 		(property "Reference" "J201"
-			(at 66.04 22.86 0)
+			(at 66.294 16.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
