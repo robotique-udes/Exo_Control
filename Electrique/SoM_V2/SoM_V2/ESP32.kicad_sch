@@ -2612,22 +2612,10 @@
 		(uuid "4bf5194a-e1cb-48fd-bebe-3a8a018d3fff")
 	)
 	(junction
-		(at 143.51 63.5)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "4de8027c-6c18-4918-8985-ece9a9831eeb")
-	)
-	(junction
 		(at 45.72 29.21)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "78f80ce5-b989-492a-ac30-383daf83106a")
-	)
-	(junction
-		(at 143.51 66.04)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7b90afd9-06a1-4977-b5a4-30cec36b2dff")
 	)
 	(junction
 		(at 45.72 40.64)
@@ -2672,6 +2660,12 @@
 		(uuid "d77664c1-a0df-45e7-95e3-5656f4b19a9a")
 	)
 	(junction
+		(at 139.7 66.04)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "dfc26bbe-f0cf-476b-98d0-cfbd9678e721")
+	)
+	(junction
 		(at 172.72 34.29)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2680,10 +2674,6 @@
 	(no_connect
 		(at 107.95 63.5)
 		(uuid "2dd4309e-152f-4065-a6e4-96c27e2d92d8")
-	)
-	(no_connect
-		(at 143.51 63.5)
-		(uuid "36cd578b-c942-40a1-b872-52fa12f091aa")
 	)
 	(no_connect
 		(at 107.95 60.96)
@@ -2704,10 +2694,6 @@
 	(no_connect
 		(at 107.95 71.12)
 		(uuid "aef3e305-4bf0-435b-9121-827d0c721e26")
-	)
-	(no_connect
-		(at 143.51 66.04)
-		(uuid "cc1d7eff-10b9-4289-b526-6e7fe51e13a0")
 	)
 	(no_connect
 		(at 107.95 76.2)
@@ -2809,16 +2795,6 @@
 	)
 	(wire
 		(pts
-			(xy 143.51 66.04) (xy 143.51 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "26c66aa0-ff9c-4e14-9ca9-1fb67bf9e797")
-	)
-	(wire
-		(pts
 			(xy 30.48 40.64) (xy 30.48 45.72)
 		)
 		(stroke
@@ -2909,6 +2885,16 @@
 	)
 	(wire
 		(pts
+			(xy 139.7 66.04) (xy 143.51 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "59f70902-be01-4cbc-8ae0-7f1d1b501d02")
+	)
+	(wire
+		(pts
 			(xy 114.3 48.26) (xy 107.95 48.26)
 		)
 		(stroke
@@ -2979,6 +2965,16 @@
 	)
 	(wire
 		(pts
+			(xy 139.7 63.5) (xy 139.7 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "73dd6cb0-d0c1-404f-80db-a385192c1297")
+	)
+	(wire
+		(pts
 			(xy 271.78 91.44) (xy 271.78 82.55)
 		)
 		(stroke
@@ -3016,6 +3012,16 @@
 			(type default)
 		)
 		(uuid "92a2eb47-fe84-4717-97fa-9a6ead140e31")
+	)
+	(wire
+		(pts
+			(xy 143.51 63.5) (xy 139.7 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95be1c38-49e7-4ca0-ae51-3ff56fe68dda")
 	)
 	(wire
 		(pts
@@ -3109,7 +3115,7 @@
 	)
 	(wire
 		(pts
-			(xy 143.51 58.42) (xy 143.51 63.5)
+			(xy 143.51 73.66) (xy 143.51 68.58)
 		)
 		(stroke
 			(width 0)
@@ -3126,16 +3132,6 @@
 			(type default)
 		)
 		(uuid "bcc97bdf-5137-4f1b-9068-f8ca07e14718")
-	)
-	(wire
-		(pts
-			(xy 143.51 63.5) (xy 143.51 66.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c10c9c30-e4d7-45fc-b414-f5865af84fd0")
 	)
 	(wire
 		(pts
@@ -4399,7 +4395,7 @@
 	)
 	(global_label "Vcc_3V3"
 		(shape input)
-		(at 143.51 58.42 180)
+		(at 143.51 73.66 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4409,7 +4405,7 @@
 		)
 		(uuid "ec83be3f-2cd9-4424-8e04-24b271ea7884")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 132.7838 58.42 0)
+			(at 132.7838 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5326,6 +5322,71 @@
 			(project "SoM_V2"
 				(path "/ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce/42eddecc-5d06-4740-ba8f-a05813435351"
 					(reference "C604")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 139.7 66.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8791f791-ae98-492c-9c84-ac8ace0eb25f")
+		(property "Reference" "#PWR0608"
+			(at 139.7 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 139.7 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 139.7 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 139.7 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2bfa039d-cfec-490a-8a5c-8c3e55d188eb")
+		)
+		(instances
+			(project "SoM_V2"
+				(path "/ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce/42eddecc-5d06-4740-ba8f-a05813435351"
+					(reference "#PWR0608")
 					(unit 1)
 				)
 			)
