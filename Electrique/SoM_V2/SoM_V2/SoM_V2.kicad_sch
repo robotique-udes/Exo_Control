@@ -6,8 +6,8 @@
 	(paper "A4")
 	(lib_symbols)
 	(sheet
-		(at 215.9 15.24)
-		(size 68.58 142.24)
+		(at 115.57 90.17)
+		(size 98.425 68.58)
 		(fields_autoplaced yes)
 		(stroke
 			(width 0.1524)
@@ -18,7 +18,7 @@
 		)
 		(uuid "42eddecc-5d06-4740-ba8f-a05813435351")
 		(property "Sheetname" "ESP32"
-			(at 215.9 14.5284 0)
+			(at 115.57 89.4584 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27,7 +27,7 @@
 			)
 		)
 		(property "Sheetfile" "ESP32.kicad_sch"
-			(at 215.9 158.0646 0)
+			(at 115.57 159.3346 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -82,44 +82,6 @@
 		)
 	)
 	(sheet
-		(at 13.97 88.9)
-		(size 99.06 68.58)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "965647b5-3b12-4f33-b1a4-753c3f18e129")
-		(property "Sheetname" "Analogue"
-			(at 13.97 88.1884 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "Analogue.kicad_sch"
-			(at 13.97 158.0646 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "SoM_V2"
-				(path "/ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce"
-					(page "4")
-				)
-			)
-		)
-	)
-	(sheet
 		(at 13.97 15.24)
 		(size 99.06 68.58)
 		(fields_autoplaced yes)
@@ -158,7 +120,7 @@
 		)
 	)
 	(sheet
-		(at 115.57 88.9)
+		(at 13.97 90.17)
 		(size 99.06 68.58)
 		(fields_autoplaced yes)
 		(stroke
@@ -170,7 +132,7 @@
 		)
 		(uuid "fc7293f1-5a36-4fea-b330-faa9d597a61e")
 		(property "Sheetname" "Sortie"
-			(at 115.57 88.1884 0)
+			(at 13.97 89.4584 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -179,7 +141,7 @@
 			)
 		)
 		(property "Sheetfile" "Sortie.kicad_sch"
-			(at 115.57 158.0646 0)
+			(at 13.97 159.3346 0)
 			(effects
 				(font
 					(size 1.27 1.27)
