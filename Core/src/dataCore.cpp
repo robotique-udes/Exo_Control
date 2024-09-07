@@ -3,6 +3,8 @@
 DataCore *DataCore::instance;
 
 DataCore::DataCore(){
+    rightProxiState = false;
+    leftProxiState = false;
     motorEnabled = false;
     clutchEnabled = false;
     proximEnabled = true;

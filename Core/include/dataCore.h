@@ -17,8 +17,8 @@ private:
 
     // Ins
     // proxim
-    bool rightProxiState = false;
-    bool leftProxiState = false;
+    bool rightProxiState;
+    bool leftProxiState;
     bool proximEnabled;
     bool needResetProxim;
 

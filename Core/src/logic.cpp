@@ -24,22 +24,7 @@ void Logic::IntegralPowerConsumption()
     previousTimeBatterie = time;
 }
 
-template <typename T>
-void Logic::LimitMinMax(T &val, T cap)
-{
-    if (std::is_same<T, int>::value || std::is_same<T, float>::value)
-    {
-        if (val > cap)
-            val = cap;
-        else if (val < -cap)
-            val = -cap;
-    }
-    else
-    {
-        Serial.print("LimitMinMax Error - Invalid data type: ");
-        Serial.println(val);
-    }
-}
+
 
 void Logic::neededTorque()
 {
@@ -47,7 +32,8 @@ void Logic::neededTorque()
     getAngles();
     getOnGround();
 
-    if (dataCore.isMotorEnabled() || NbOnGround == 0)
+
+    if (dataCore.isMotorEnabled() && NbOnGround > 0)
     {
         if (RightOnGround)
             calculateTorqueFootOnGround(RightThighAngle, RightTibiaAngle, ExoBackAngle, false);
@@ -60,6 +46,10 @@ void Logic::neededTorque()
             calculateTorqueFootInAir(LeftThighAngle, LeftTibiaAngle, ExoBackAngle, true);
 
         checkAngleLimits();
+        // Serial.print("R hip angle: ");
+        // Serial.print(toDegrees(RightHipAngle));
+        // Serial.print(" R hip torque: ");
+        // Serial.print(RightHipTorque);
         limitTorques();
     }
     else
@@ -97,12 +87,11 @@ void Logic::getOnGround()
 
 void Logic::calculateTorqueFootInAir(float thighAngle, float tibiaAngle, float backAngle, bool isLeft)
 {
-    // TODO : Test those equations to see if they are correct. I dont know if it's sin or cos that should be used
     float hipTorqueFromThigh = (M_THIGH * G) * sin(thighAngle) * L_THIGH / 2;
     float hipTorqueFromTibia = (M_TIBIA * G) * (sin(thighAngle) * L_THIGH + sin(tibiaAngle) * L_TIBIA / 2);
-    float hipTorque = hipTorqueFromThigh + hipTorqueFromTibia;
+    float hipTorque = hipTorqueFromThigh + hipTorqueFromTibia; // ok
 
-    float kneeTorque = -(M_TIBIA * G) * sin(tibiaAngle) * L_TIBIA / 2;
+    float kneeTorque = -(M_TIBIA * G) * sin(tibiaAngle) * L_TIBIA / 2; // ok
 
     if (isLeft)
     {
@@ -118,14 +107,12 @@ void Logic::calculateTorqueFootInAir(float thighAngle, float tibiaAngle, float b
 
 void Logic::calculateTorqueFootOnGround(float thighAngle, float tibiaAngle, float backAngle, bool isLeft)
 {
-    // TODO : Test those equations to see if they are correct. I dont know if it's sin or cos that should be used
+    float hipTorque = -(M_BACK * G) * sin(backAngle) * L_BACK / 2;
+    hipTorque = hipTorque / float(NbOnGround); // On divise par le nombre de pieds au sol parce que le poids peut être supporté par les deux pieds
 
-    float hipTorque = -(M_BACK * G) * cos(backAngle) * L_BACK / 2;
-    hipTorque *= 1 / NbOnGround; // On divise par le nombre de pieds au sol parce que le poids peut être supporté par les deux pieds
-
-    float kneeTorqueFromThigh = -(M_THIGH * G) * cos(thighAngle) * L_THIGH / 2;
-    float kneeTorqueFromBack = -(M_BACK * G) * (cos(backAngle) * L_BACK / 2 + cos(thighAngle) * L_THIGH);
-    kneeTorqueFromBack *= 1 / NbOnGround; // On divise par le nombre de pieds au sol parce que le poids peut être supporté par les deux pieds
+    float kneeTorqueFromThigh = -(M_THIGH * G) * sin(thighAngle) * L_THIGH / 2;
+    float kneeTorqueFromBack = -(M_BACK * G) * (sin(backAngle) * L_BACK / 2 + sin(thighAngle) * L_THIGH);
+    kneeTorqueFromBack = kneeTorqueFromBack / float(NbOnGround); // On divise par le nombre de pieds au sol parce que le poids peut être supporté par les deux pieds
     float kneeTorque = kneeTorqueFromThigh + kneeTorqueFromBack;
 
     if (isLeft)
@@ -179,7 +166,8 @@ void Logic::printTorque()
     Serial.print("  NeededTorqueLK: \t");
     Serial.print(LeftKneeTorque);
     Serial.print("  NeededTorqueRK: \t");
-    Serial.println(RightKneeTorque);
+    Serial.print(RightKneeTorque);
+
 }
 
 float Logic::toDegrees(float radians)
@@ -190,4 +178,21 @@ float Logic::toDegrees(float radians)
 float Logic::toRadian(float degree)
 {
     return degree * PI / 180;
+}
+
+template <typename T>
+void Logic::LimitMinMax(T &val, T cap)
+{
+    if (std::is_same<T, int>::value || std::is_same<T, float>::value)
+    {
+        if (val > cap)
+            val = cap;
+        else if (val < -cap)
+            val = -cap;
+    }
+    else
+    {
+        Serial.print("LimitMinMax Error - Invalid data type: ");
+        Serial.println(val);
+    }
 }
