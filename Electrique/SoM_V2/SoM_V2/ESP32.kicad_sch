@@ -2984,9 +2984,9 @@
 			)
 		)
 	)
-	(global_label "RESET_OTHERS"
+	(global_label "GPIO4{slash}RXD"
 		(shape input)
-		(at 77.47 71.12 180)
+		(at 77.47 53.34 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2994,9 +2994,9 @@
 			)
 			(justify right)
 		)
-		(uuid "38fdfe27-08b7-4e8f-9ccc-b3787110285e")
+		(uuid "3994eb94-d8f3-4032-8fd4-0ec8ecc950ae")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 60.515 71.12 0)
+			(at 63.72 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3094,7 +3094,7 @@
 			)
 		)
 	)
-	(global_label "CS_1"
+	(global_label "GPIO5{slash}TXD"
 		(shape input)
 		(at 77.47 55.88 180)
 		(fields_autoplaced yes)
@@ -3104,9 +3104,9 @@
 			)
 			(justify right)
 		)
-		(uuid "6106b668-8a88-4fe5-885f-26b127eda21e")
+		(uuid "5221c74a-2b1c-4e29-b4bb-f3599595143c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 69.8282 55.88 0)
+			(at 64.0224 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3266,28 +3266,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "SPI_CAN_ESP32"
-		(shape input)
-		(at 77.47 53.34 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "a2608f4c-34e0-4ebe-b9b4-cfaf32f5dbc6")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 59.7287 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 				(hide yes)
 			)
 		)

@@ -3743,6 +3743,10 @@
 		(at 254 62.23)
 		(uuid "4d26097b-cdee-482d-89a0-4afd68e46eed")
 	)
+	(no_connect
+		(at 236.22 31.75)
+		(uuid "7e2a3d6d-4a95-4ef0-939d-4eb815f82db6")
+	)
 	(wire
 		(pts
 			(xy 99.06 27.94) (xy 105.41 27.94)
@@ -4037,28 +4041,6 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "RESET_OTHERS"
-		(shape input)
-		(at 236.22 31.75 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "5b554363-1428-45e6-84db-7c20d42ae754")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 253.175 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 				(hide yes)
 			)
 		)
@@ -4383,7 +4365,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "201e9297-4bed-4a42-aa39-50598df267ae")
-		(property "Reference" "U1"
+		(property "Reference" "U201"
 			(at 220.98 21.59 0)
 			(effects
 				(font
@@ -4611,10 +4593,6 @@
 		)
 		(instances
 			(project "SoM_V2"
-				(path "/ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce/8e20c774-e159-4c82-b251-7add9faa2a44"
-					(reference "U1")
-					(unit 10)
-				)
 				(path "/ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce/fc7293f1-5a36-4fea-b330-faa9d597a61e"
 					(reference "U201")
 					(unit 10)
@@ -4709,7 +4687,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "1k"
 			(at 72.39 21.59 0)
 			(effects
 				(font
@@ -4996,7 +4974,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "1k"
 			(at 64.77 21.59 0)
 			(effects
 				(font
@@ -5058,7 +5036,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ced1f8ea-6d9b-4344-9d71-b7cd1e06f1b8")
-		(property "Reference" "U1"
+		(property "Reference" "U201"
 			(at 115.57 21.59 0)
 			(effects
 				(font
@@ -5286,10 +5264,6 @@
 		)
 		(instances
 			(project "SoM_V2"
-				(path "/ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce/8e20c774-e159-4c82-b251-7add9faa2a44"
-					(reference "U1")
-					(unit 9)
-				)
 				(path "/ecd44d9a-8113-48e2-a5bb-0de07ce8b9ce/fc7293f1-5a36-4fea-b330-faa9d597a61e"
 					(reference "U201")
 					(unit 9)
