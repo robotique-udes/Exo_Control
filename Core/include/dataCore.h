@@ -7,6 +7,7 @@
 #include "define.h"
 #include "enums.h"
 #include "relay.h"
+#include "structs.h"
 
 using namespace std;
 
@@ -40,6 +41,8 @@ private:
     float Imu_tibia_left = 0;
     float Imu_tibia_right = 0;
 
+    array<BNOStruct *, 5> bnoData;
+
     //In between settings
     bool motorEnabled;
     bool clutchEnabled;
@@ -56,7 +59,6 @@ private:
     int PWMRightHip = 0;
     int PWMLeftHip = 0;
     
-
     DataCore();
 
 public:
@@ -234,6 +236,20 @@ public:
     * @return Degree angle value
     */
     float getBnoAngles(EnumBnoAngle bno);
+
+    /**
+    * @brief Bno struct setter :)
+    * @param bno BNO title
+    * @param data Pointer to the structure
+    */
+    void setBnoStruct(EnumBnoPosition bno, BNOStruct* data);
+
+    /**
+    * @brief Bno struct getter :)
+    * @param bno Target bno
+    * @return struct
+    */
+    BNOStruct& getBnoStruct(EnumBnoPosition bno);
 
     // PWM
     /**

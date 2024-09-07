@@ -33,7 +33,6 @@ class BnoHandler {
         */
         void read();
 
-
         /**
         * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
         * @return True if at least one BNO is connected
@@ -73,5 +72,7 @@ class BnoHandler {
         BNOStruct getBNOData(EnumBnoPosition position);
 
         void printName(EnumBnoAngle position);
+
+        void printBNOData(EnumBnoPosition position);
 };
 #endif

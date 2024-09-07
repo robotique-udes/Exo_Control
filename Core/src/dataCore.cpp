@@ -16,6 +16,13 @@ DataCore::DataCore(){
 
     height = 180;
     motorPower = 2048;
+
+    // Refactor for nice
+    bnoData[0] = nullptr;
+    bnoData[1] = nullptr;
+    bnoData[2] = nullptr;
+    bnoData[3] = nullptr;
+    bnoData[4] = nullptr;
 }
 
 void DataCore::initialise(){
@@ -287,6 +294,14 @@ void DataCore::setBnoAngles(EnumBnoAngle bno, float angle)
     default:
         break;
     }
+}
+
+BNOStruct& DataCore::getBnoStruct(EnumBnoPosition bno) {
+    return *bnoData[static_cast<int>(bno)];
+}
+
+void DataCore::setBnoStruct(EnumBnoPosition bno, BNOStruct* data) {
+    bnoData[static_cast<int>(bno)] = data;
 }
 
 //PWM

@@ -90,7 +90,7 @@ void loop()
   motor.write();
 
   //--------------PRINTING BLOC-------------
-  bnoHandler->printBNOsData();
+  bnoHandler->printBNOsData(3,3);
   Serial.println("=====================================");
 
   

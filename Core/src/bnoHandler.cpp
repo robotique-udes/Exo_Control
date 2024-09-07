@@ -69,8 +69,11 @@ void BnoHandler::printBNOsStatus(int startIndex, int endIndex){
 
 void BnoHandler::printBNOsData(int startIndex, int endIndex){
     for (int i = startIndex; i<=endIndex; i++){
+        /**
         Serial.print("\tIMU "); printName(EnumBnoAngle(i)); Serial.print("\t");
         Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<EnumBnoAngle>(i)));
+        */
+        printBNOData(static_cast<EnumBnoPosition>(i));
     }
 }
 
@@ -142,4 +145,19 @@ void BnoHandler::printName(EnumBnoAngle position){
         Serial.print("Unknown");
         break;
     }
+}
+
+void BnoHandler::printBNOData(EnumBnoPosition position){
+    // Lets print lin_acceleration and acceleration pretty
+    BNOStruct data = BNOs[static_cast<int> (position)]->getData();
+    Serial.print("IMU "); printName(static_cast<EnumBnoAngle>(position)); Serial.print("\n");
+    Serial.print("Accel: ");
+    Serial.print(data.acceleration[0]); Serial.print("\t");
+    Serial.print(data.acceleration[1]); Serial.print("\t");
+    Serial.print(data.acceleration[2]); Serial.print("\t");
+    
+    Serial.print("L-Acc: "); 
+    Serial.print(data.lin_acceleration[0]); Serial.print("\t");
+    Serial.print(data.lin_acceleration[1]); Serial.print("\t");
+    Serial.print(data.lin_acceleration[2]); Serial.print("\n");
 }
