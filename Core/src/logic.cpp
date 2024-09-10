@@ -46,10 +46,6 @@ void Logic::neededTorque()
             calculateTorqueFootInAir(LeftThighAngle, LeftTibiaAngle, ExoBackAngle, true);
 
         checkAngleLimits();
-        // Serial.print("R hip angle: ");
-        // Serial.print(toDegrees(RightHipAngle));
-        // Serial.print(" R hip torque: ");
-        // Serial.print(RightHipTorque);
         limitTorques();
     }
     else

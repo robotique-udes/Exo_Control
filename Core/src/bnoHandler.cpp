@@ -46,6 +46,10 @@ void BnoHandler::read(){
     dataCore.setBnoAngles(EnumBnoAngle::HIP_L, getValAngle(EnumBnoAngle::HIP_L));
     dataCore.setBnoAngles(EnumBnoAngle::KNEE_R, getValAngle(EnumBnoAngle::KNEE_R));
     dataCore.setBnoAngles(EnumBnoAngle::KNEE_L, getValAngle(EnumBnoAngle::KNEE_L));
+
+    //Ground status
+    dataCore.setRightProxi(getOnGround(EnumBnoPosition::TIBIA_R));
+    dataCore.setRightProxi(getOnGround(EnumBnoPosition::TIBIA_L));
 }
 
 // Request data from all BNOs
@@ -75,6 +79,12 @@ void BnoHandler::printBNOsData(int startIndex, int endIndex){
         */
         printBNOData(static_cast<EnumBnoPosition>(i));
     }
+}
+
+bool BnoHandler::getOnGround(EnumBnoPosition position)
+{
+    BNOStruct data = BNOs[static_cast<int> (position)]->getData();
+    return data.acceleration[1] > ACCEL_THRESHOLD;
 }
 
 void BnoHandler::computeAngles() {
