@@ -2798,6 +2798,52 @@
 		)
 		(uuid "fd1bd545-bc73-4423-a18a-8733a050e9a1")
 	)
+	(rectangle
+		(start 200.66 13.97)
+		(end 281.94 124.46)
+		(stroke
+			(width 1)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 1b9ced7a-0037-46a6-a2d2-f770cb3dc9d6)
+	)
+	(rectangle
+		(start 12.7 12.7)
+		(end 136.144 100.33)
+		(stroke
+			(width 1)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 2ff079fe-80e8-4519-9821-5ceb62b3f704)
+	)
+	(text "Module ESP32-S3-MINI-U1\n"
+		(exclude_from_sim no)
+		(at 13.716 99.314 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8f4e1504-3d1a-4342-a0ad-dd36586bdaf9")
+	)
+	(text "Circuit de reset et de prog avec boutons"
+		(exclude_from_sim no)
+		(at 201.168 122.936 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9bdee368-90e2-4aae-9d76-d9b9df872353")
+	)
 	(text "Auto program:\nDTR RTS --> EN BOOT GPIO2\n 1   1       1   1     1\n 0   0       1   1     1\n 1   0       0   1     1\n 0   1       1   0     0"
 		(exclude_from_sim no)
 		(at 223.012 67.564 0)

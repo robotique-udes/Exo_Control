@@ -2732,7 +2732,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 103.505 76.835 270)
+		(at 103.505 76.835 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2741,21 +2741,21 @@
 		(fields_autoplaced yes)
 		(uuid "782afc2e-817e-4195-ad56-28ae7e05f3a0")
 		(property "Reference" "D201"
-			(at 106.68 73.9774 90)
+			(at 106.68 77.1524 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(property "Value" "GREEN"
-			(at 106.68 76.5174 90)
+			(at 106.68 79.6924 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
