@@ -23,6 +23,7 @@ class BnoHandler {
         DataCore& dataCore = DataCore::getInstance();
 
     public:
+        int offset = 0;
         /**
         * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
         */
@@ -71,8 +72,12 @@ class BnoHandler {
          */
         BNOStruct getBNOData(EnumBnoPosition position);
 
+        bool getOnGround(EnumBnoPosition position);
+
         void printName(EnumBnoAngle position);
 
         void printBNOData(EnumBnoPosition position);
+
+        void printGroundState();
 };
 #endif

@@ -49,7 +49,7 @@ void BnoHandler::read(){
 
     //Ground status
     dataCore.setRightProxi(getOnGround(EnumBnoPosition::TIBIA_R));
-    dataCore.setRightProxi(getOnGround(EnumBnoPosition::TIBIA_L));
+    dataCore.setLeftProxi(getOnGround(EnumBnoPosition::TIBIA_L));
 }
 
 // Request data from all BNOs
@@ -84,7 +84,8 @@ void BnoHandler::printBNOsData(int startIndex, int endIndex){
 bool BnoHandler::getOnGround(EnumBnoPosition position)
 {
     BNOStruct data = BNOs[static_cast<int> (position)]->getData();
-    return data.acceleration[1] > ACCEL_THRESHOLD;
+    Serial.print(data.lin_acceleration[1]);Serial.print("  \t");
+    return abs(data.lin_acceleration[1]) >= (ACCEL_THRESHOLD + offset);
 }
 
 void BnoHandler::computeAngles() {
@@ -170,4 +171,15 @@ void BnoHandler::printBNOData(EnumBnoPosition position){
     Serial.print(data.lin_acceleration[0]); Serial.print("\t");
     Serial.print(data.lin_acceleration[1]); Serial.print("\t");
     Serial.print(data.lin_acceleration[2]); Serial.print("\n");
+}
+
+void BnoHandler::printGroundState()
+{
+    Serial.print(" Right ground state: \t");
+    Serial.print(dataCore.getRightProxi());
+    Serial.print(" Left ground state: \t");
+    Serial.print(dataCore.getLeftProxi());
+    Serial.print(" Threshold: \t");
+    Serial.print(ACCEL_THRESHOLD + offset);
+
 }

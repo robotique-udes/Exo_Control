@@ -203,5 +203,13 @@ void Test::keyboardCommand()
     {
         dataCore.setAngleSource(FROM_ENCODER);
     }
+    else if (incomingByte == '[')
+    {
+      bnoHandler->offset += 10;
+    }
+    else if (incomingByte == ']')
+    {
+      bnoHandler->offset -= 10;
+    }
   }
 }

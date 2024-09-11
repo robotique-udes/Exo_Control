@@ -119,3 +119,5 @@
 #define MIN_ANGLE_HIP -30
 #define MAX_ANGLE_KNEE 130
 #define MIN_ANGLE_KNEE 0
+
+#define ACCEL_THRESHOLD 100

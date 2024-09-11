@@ -82,16 +82,18 @@ void loop()
   tester.keyboardCommand();
 
   //--------------LOGIC BLOC---------------
-  encoder.read();
+  // encoder.read();
   bnoHandler->read();
-  proxiHandler->read();
-  screen.update();
-  logicHandler.Update();
-  motor.write();
+  // proxiHandler->read();
+  // screen.update();
+  // logicHandler.Update();
+  // motor.write();
 
   //--------------PRINTING BLOC-------------
-  bnoHandler->printBNOsData(3,3);
-  Serial.println("=====================================");
+  // bnoHandler->printBNOsData(3,3);
+  bnoHandler->printGroundState();
+
+  Serial.println("");
 
   
 }
