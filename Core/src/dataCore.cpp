@@ -296,8 +296,8 @@ void DataCore::setBnoAngles(EnumBnoAngle bno, float angle)
     }
 }
 
-BNOStruct& DataCore::getBnoStruct(EnumBnoPosition bno) {
-    return *bnoData[static_cast<int>(bno)];
+BNOStruct* DataCore::getBnoStruct(EnumBnoPosition bno) {
+    return bnoData[static_cast<int>(bno)];
 }
 
 void DataCore::setBnoStruct(EnumBnoPosition bno, BNOStruct* data) {

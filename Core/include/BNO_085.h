@@ -131,6 +131,8 @@ class BNO_085 {
         */
         BNOStruct getData();
 
+        BNOStruct* getDataPointer();
+
         /**
         * Returns the time of the latest data.
         */

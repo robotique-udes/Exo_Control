@@ -249,7 +249,7 @@ public:
     * @param bno Target bno
     * @return struct
     */
-    BNOStruct& getBnoStruct(EnumBnoPosition bno);
+    BNOStruct* getBnoStruct(EnumBnoPosition bno);
 
     // PWM
     /**

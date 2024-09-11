@@ -131,6 +131,10 @@ BNOStruct BNO_085::getData() {
     return this->data;
 }
 
+BNOStruct* BNO_085::getDataPointer() {
+    return &(this->data);
+}
+
 void BNO_085::updateEuler() {
     float sqw = sq(this->data.quat[0]);
     float sqx = sq(this->data.quat[1]);

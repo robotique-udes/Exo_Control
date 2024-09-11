@@ -12,6 +12,10 @@ BnoHandler::BnoHandler(){
     BNOs[static_cast<int> (EnumBnoPosition::THIGH_R)]     = new BNO_085(EnumBnoPosition::THIGH_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4A);
     BNOs[static_cast<int> (EnumBnoPosition::TIBIA_R)]    = new BNO_085(EnumBnoPosition::TIBIA_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4B);
     BNOs[static_cast<int> (EnumBnoPosition::EXO_BACK)]  = new BNO_085(EnumBnoPosition::EXO_BACK, 0, &this->mux, 0x4A);
+
+    for (int i = 0; i < BNOs.size(); i++){
+        dataCore.setBnoStruct(static_cast<EnumBnoPosition>(i), BNOs[i]->getDataPointer());
+    }
 }
 
 // OPTIONAL: Check if a BNO is connected
@@ -118,6 +122,10 @@ float BnoHandler::getValAngle(EnumBnoAngle position){
 
 BNOStruct BnoHandler::getBNOData(EnumBnoPosition position){
     return BNOs[static_cast<int> (position)]->getData();
+}
+
+BNOStruct* BnoHandler::getBNODataPointer(EnumBnoPosition position){
+    return BNOs[static_cast<int> (position)]->getDataPointer();
 }
 
 //print name of angle

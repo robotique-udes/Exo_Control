@@ -72,6 +72,8 @@ class BnoHandler {
          */
         BNOStruct getBNOData(EnumBnoPosition position);
 
+        BNOStruct* getBNODataPointer(EnumBnoPosition position);
+
         bool getOnGround(EnumBnoPosition position);
 
         void printName(EnumBnoAngle position);
