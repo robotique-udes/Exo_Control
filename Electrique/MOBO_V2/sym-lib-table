@@ -1,5 +1,0 @@
-(sym_lib_table
-  (version 7)
-  (lib (name "connecteur_som_esp32")(type "KiCad")(uri "C:/Users/Jacob Turcotte/Documents/GitHub/Exo_Control/Electrique/Composantes_custom/connecteur_som_esp32.kicad_sym")(options "")(descr ""))
-  (lib (name "connecteur_m2_SoM_esp32_keyE")(type "KiCad")(uri "/home/jTurcotte/GitHub/Exo_Control/Electrique/Composantes_custom/connecteur_m2_SoM_esp32_keyE.kicad_sym")(options "")(descr ""))
-)
