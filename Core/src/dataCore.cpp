@@ -3,8 +3,8 @@
 DataCore *DataCore::instance;
 
 DataCore::DataCore(){
-    rightProxiState = false;
-    leftProxiState = false;
+    rightGrounded = false;
+    leftGrounded = false;
     motorEnabled = false;
     clutchEnabled = false;
     proximEnabled = true;
@@ -102,20 +102,20 @@ bool DataCore::getResetProxim(){
     return needResetProxim;
 }
 
-bool DataCore::getRightProxi(){
-    return rightProxiState;
+bool DataCore::getRightGrounded(){
+    return rightGrounded;
 }
 
-void DataCore::setRightProxi(bool state){
-    rightProxiState = state;
+void DataCore::setRightGrounded(bool state){
+    rightGrounded = state;
 }
 
-bool DataCore::getLeftProxi(){
-    return leftProxiState;
+bool DataCore::getLeftGrounded(){
+    return leftGrounded;
 }
 
-void DataCore::setLeftProxi(bool state){
-    leftProxiState = state;
+void DataCore::setLeftGrounded(bool state){
+    leftGrounded = state;
 }
 
 void DataCore::setResetProxim(bool reset){

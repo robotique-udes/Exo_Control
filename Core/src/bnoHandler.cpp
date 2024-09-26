@@ -12,6 +12,11 @@ BnoHandler::BnoHandler(){
     BNOs[static_cast<int> (EnumBnoPosition::THIGH_R)]     = new BNO_085(EnumBnoPosition::THIGH_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4A);
     BNOs[static_cast<int> (EnumBnoPosition::TIBIA_R)]    = new BNO_085(EnumBnoPosition::TIBIA_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4B);
     BNOs[static_cast<int> (EnumBnoPosition::EXO_BACK)]  = new BNO_085(EnumBnoPosition::EXO_BACK, 0, &this->mux, 0x4A);
+    bufferIndex = 0;
+    for(int i = 0; i < BUFFER_SIZE; i++)
+    {
+        linAccelBuffer[i]=0;
+    }
 
     for (int i = 0; i < BNOs.size(); i++){
         dataCore.setBnoStruct(static_cast<EnumBnoPosition>(i), BNOs[i]->getDataPointer());
@@ -52,8 +57,8 @@ void BnoHandler::read(){
     dataCore.setBnoAngles(EnumBnoAngle::KNEE_L, getValAngle(EnumBnoAngle::KNEE_L));
 
     //Ground status
-    dataCore.setRightProxi(getOnGround(EnumBnoPosition::TIBIA_R));
-    dataCore.setLeftProxi(getOnGround(EnumBnoPosition::TIBIA_L));
+    dataCore.setRightGrounded(getLinAccel(EnumBnoPosition::TIBIA_R));
+    dataCore.setLeftGrounded(getLinAccel(EnumBnoPosition::TIBIA_L));
 }
 
 // Request data from all BNOs
@@ -85,11 +90,31 @@ void BnoHandler::printBNOsData(int startIndex, int endIndex){
     }
 }
 
-bool BnoHandler::getOnGround(EnumBnoPosition position)
+void BnoHandler::updateBuffer(EnumBnoPosition position)
 {
     BNOStruct data = BNOs[static_cast<int> (position)]->getData();
-    Serial.print(data.lin_acceleration[1]);Serial.print("  \t");
-    return abs(data.lin_acceleration[1]) >= (ACCEL_THRESHOLD + offset);
+    linAccelBuffer[bufferIndex] = data.lin_acceleration[1];
+    if(bufferIndex < (BUFFER_SIZE-1))
+    {
+        bufferIndex++;
+    }
+    else
+    {
+        bufferIndex = 0;
+    }
+    //Serial.print(data.lin_acceleration[1]);Serial.print("  \t");
+}
+
+bool BnoHandler::getLinAccel(EnumBnoPosition position)
+{
+    float bufferAvg = 0;
+    updateBuffer(position);
+    for(int i=0; i<bufferIndex;i++)
+    {
+        bufferAvg += linAccelBuffer[i];
+    }
+    bufferAvg /= BUFFER_SIZE;
+    return bufferAvg > (ACCEL_THRESHOLD + offset);
 }
 
 void BnoHandler::computeAngles() {
@@ -184,9 +209,9 @@ void BnoHandler::printBNOData(EnumBnoPosition position){
 void BnoHandler::printGroundState()
 {
     Serial.print(" Right ground state: \t");
-    Serial.print(dataCore.getRightProxi());
+    Serial.print(dataCore.getRightGrounded());
     Serial.print(" Left ground state: \t");
-    Serial.print(dataCore.getLeftProxi());
+    Serial.print(dataCore.getLeftGrounded());
     Serial.print(" Threshold: \t");
     Serial.print(ACCEL_THRESHOLD + offset);
 

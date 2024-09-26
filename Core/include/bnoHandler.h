@@ -22,6 +22,15 @@ class BnoHandler {
         // Instance of dataCore
         DataCore& dataCore = DataCore::getInstance();
 
+        int bufferIndex;
+        float linAccelBuffer[BUFFER_SIZE];
+
+        /**
+         * @brief Write new value into buffer and increment pointer
+         * @param position EnumBnoPosition of the part
+         */
+        void updateBuffer(EnumBnoPosition position);
+
     public:
         int offset = 0;
         /**
@@ -74,7 +83,12 @@ class BnoHandler {
 
         BNOStruct* getBNODataPointer(EnumBnoPosition position);
 
-        bool getOnGround(EnumBnoPosition position);
+        /**
+         * @brief Compute linear acceleration from an average on linAccelBuffer
+         * @param position EnumBnoPosition of the part
+         * @return GroundedStatus
+         */
+        bool getLinAccel(EnumBnoPosition position);
 
         void printName(EnumBnoAngle position);
 

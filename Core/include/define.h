@@ -95,7 +95,6 @@
 
 //------ PROXIM ------
 #define PROXIM_REFRESH_RATE 4
-#define BUFFER_SIZE 6     
 #define GROUND_DISTANCE_RANGE 40
 
 
@@ -120,4 +119,6 @@
 #define MAX_ANGLE_KNEE 130
 #define MIN_ANGLE_KNEE 0
 
+//------ BNO
+#define BUFFER_SIZE 10
 #define ACCEL_THRESHOLD 100

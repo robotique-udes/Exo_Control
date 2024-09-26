@@ -76,8 +76,8 @@ void Logic::getAngles()
 
 void Logic::getOnGround()
 {
-    LeftOnGround = dataCore.getLeftProxi();
-    RightOnGround = dataCore.getRightProxi();
+    LeftOnGround = dataCore.getLeftGrounded();
+    RightOnGround = dataCore.getRightGrounded();
     NbOnGround = int(LeftOnGround) + int(RightOnGround);
 }
 

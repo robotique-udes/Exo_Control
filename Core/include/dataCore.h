@@ -18,8 +18,8 @@ private:
 
     // Ins
     // proxim
-    bool rightProxiState;
-    bool leftProxiState;
+    bool rightGrounded;
+    bool leftGrounded;
     bool proximEnabled;
     bool needResetProxim;
 
@@ -168,25 +168,25 @@ public:
     * @brief Right proxi getter
     * @return Right proxi state (1 if grounded, 0 if not)
     */
-    bool getRightProxi();
+    bool getRightGrounded();
 
     /**
     * @brief Left proxi getter
     * @return Left proxi state (1 if grounded, 0 if not)
     */
-    bool getLeftProxi();
+    bool getLeftGrounded();
 
     /**
     * @brief Right proxi state setter
     * @param state Current state (1 if grounded, 0 if not)
     */
-    void setRightProxi(bool state);
+    void setRightGrounded(bool state);
 
     /**
     * @brief left proxi state setter
     * @param state Current state (1 if grounded, 0 if not)
     */
-    void setLeftProxi(bool state);
+    void setLeftGrounded(bool state);
 
     // encoder
     /**
