@@ -118,7 +118,7 @@ bool BnoHandler::getLinAccel(EnumBnoPosition position)
         else if (position==EnumBnoPosition::TIBIA_R) bufferAvg += linAccelBufferRight[i];
     }
     bufferAvg /= BUFFER_SIZE;
-    return bufferAvg > (ACCEL_THRESHOLD + offset);
+    return bufferAvg < (ACCEL_THRESHOLD + offset);
 }
 
 void BnoHandler::computeAngles() {

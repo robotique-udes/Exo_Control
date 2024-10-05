@@ -5,7 +5,7 @@ DataCore *DataCore::instance;
 DataCore::DataCore(){
     rightGrounded = false;
     leftGrounded = false;
-    motorEnabled = false;
+    motorEnabled = true;
     clutchEnabled = false;
     proximEnabled = true;
     brightness = HIGH;
@@ -27,7 +27,7 @@ DataCore::DataCore(){
 
 void DataCore::initialise(){
     clutchEnabled = OFF;
-    motorEnabled = false;
+    motorEnabled = true;
     motorPower = 2048;
     needResetProxim = true;
     sonarState = FROM_IMU;

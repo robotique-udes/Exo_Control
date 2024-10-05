@@ -86,12 +86,14 @@ void loop()
   bnoHandler->read();
   // proxiHandler->read();
   // screen.update();
-  // logicHandler.Update();
+  logicHandler.Update();
   // motor.write();
 
   //--------------PRINTING BLOC-------------
   // bnoHandler->printBNOsData(3,3);
-  bnoHandler->printGroundState();
+  // bnoHandler->printGroundState();
+  // logicHandler.printTorque();
+  
 
   Serial.println("");
 

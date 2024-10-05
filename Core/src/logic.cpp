@@ -155,13 +155,13 @@ void Logic::resetTorque()
 
 void Logic::printTorque()
 {
-    Serial.print("  NeededTorqueHL: \t");
+    Serial.print("  TorqueLeftHip: \t");
     Serial.print(LeftHipTorque);
-    Serial.print("  NeededTorqueRH: \t");
+    Serial.print("  TorqueRightHip: \t");
     Serial.print(RightHipTorque);
-    Serial.print("  NeededTorqueLK: \t");
+    Serial.print("  TorqueLeftKnee: \t");
     Serial.print(LeftKneeTorque);
-    Serial.print("  NeededTorqueRK: \t");
+    Serial.print("  TorqueRightKnee: \t");
     Serial.print(RightKneeTorque);
 
 }
