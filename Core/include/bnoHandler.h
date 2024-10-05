@@ -22,8 +22,10 @@ class BnoHandler {
         // Instance of dataCore
         DataCore& dataCore = DataCore::getInstance();
 
-        int bufferIndex;
-        float linAccelBuffer[BUFFER_SIZE];
+        int bufferIndexLeft;
+        float linAccelBufferLeft[BUFFER_SIZE];
+        int bufferIndexRight;
+        float linAccelBufferRight[BUFFER_SIZE];
 
         /**
          * @brief Write new value into buffer and increment pointer

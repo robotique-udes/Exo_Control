@@ -12,10 +12,12 @@ BnoHandler::BnoHandler(){
     BNOs[static_cast<int> (EnumBnoPosition::THIGH_R)]     = new BNO_085(EnumBnoPosition::THIGH_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4A);
     BNOs[static_cast<int> (EnumBnoPosition::TIBIA_R)]    = new BNO_085(EnumBnoPosition::TIBIA_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4B);
     BNOs[static_cast<int> (EnumBnoPosition::EXO_BACK)]  = new BNO_085(EnumBnoPosition::EXO_BACK, 0, &this->mux, 0x4A);
-    bufferIndex = 0;
+    bufferIndexLeft = 0;
+    bufferIndexRight = 0;
     for(int i = 0; i < BUFFER_SIZE; i++)
     {
-        linAccelBuffer[i]=0;
+        linAccelBufferLeft[i]=0;
+        linAccelBufferRight[i]=0;
     }
 
     for (int i = 0; i < BNOs.size(); i++){
@@ -93,14 +95,15 @@ void BnoHandler::printBNOsData(int startIndex, int endIndex){
 void BnoHandler::updateBuffer(EnumBnoPosition position)
 {
     BNOStruct data = BNOs[static_cast<int> (position)]->getData();
-    linAccelBuffer[bufferIndex] = data.lin_acceleration[1];
-    if(bufferIndex < (BUFFER_SIZE-1))
-    {
-        bufferIndex++;
+    if (position==EnumBnoPosition::TIBIA_L){
+        linAccelBufferLeft[bufferIndexLeft] = data.lin_acceleration[1];
+        if(bufferIndexLeft < (BUFFER_SIZE-1)) bufferIndexLeft++;
+        else bufferIndexLeft = 0;
     }
-    else
-    {
-        bufferIndex = 0;
+    else if (position==EnumBnoPosition::TIBIA_R){
+        linAccelBufferRight[bufferIndexRight] = data.lin_acceleration[1];
+        if(bufferIndexRight < (BUFFER_SIZE-1)) bufferIndexRight++;
+        else bufferIndexRight = 0;
     }
     //Serial.print(data.lin_acceleration[1]);Serial.print("  \t");
 }
@@ -109,9 +112,10 @@ bool BnoHandler::getLinAccel(EnumBnoPosition position)
 {
     float bufferAvg = 0;
     updateBuffer(position);
-    for(int i=0; i<bufferIndex;i++)
+    for(int i=0; i<BUFFER_SIZE;i++)
     {
-        bufferAvg += linAccelBuffer[i];
+        if (position==EnumBnoPosition::TIBIA_L) bufferAvg += linAccelBufferLeft[i];
+        else if (position==EnumBnoPosition::TIBIA_R) bufferAvg += linAccelBufferRight[i];
     }
     bufferAvg /= BUFFER_SIZE;
     return bufferAvg > (ACCEL_THRESHOLD + offset);
