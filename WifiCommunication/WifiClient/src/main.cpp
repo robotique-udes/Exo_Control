@@ -33,14 +33,14 @@ void loop() {
   String message = "Hello there, my friend";
   unsigned char table[25];
 
-  for (size_t i = 0; i < 20; i++)
+  for (size_t i = 0; i < 22; i++)
   {
     table[i] = message[i];
   }
   
   // Send message to server
   UDP.beginPacket(serverIP, UDP_PORT_SEND);
-  UDP.write(table, 20);
+  UDP.write(table, 22);
   UDP.endPacket();
 
   Serial.println("Message sent: Hello there, my friend");

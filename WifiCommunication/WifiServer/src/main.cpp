@@ -80,8 +80,7 @@ int interface_WIFI_Read(int length)
 
   for(int i = 0; i < length; i++)
   {
-      Serial.print(packet[i]);
-      Serial.print(", ");
+      Serial.print((char)packet[i]);
   }
   Serial.println("\n");
 
@@ -112,8 +111,7 @@ int interface_WIFI_Send(unsigned char * packet, int length)
 
     for(int byte = 0; byte < length; byte++)
     {
-        Serial.print(packet[byte]);
-        Serial.print(", ");
+        Serial.print((char)packet[byte]);
     }
     Serial.println("");
 
