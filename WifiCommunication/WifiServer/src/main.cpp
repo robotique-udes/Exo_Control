@@ -14,8 +14,8 @@ IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress myIP;
 
-#define WIFI_SSID "MyWifi"
-#define WIFI_PASSWORD "123456789"
+#define WIFI_SSID "PlsDontIamTryingSomething"
+#define WIFI_PASSWORD "qwerty12345"
 
 
 /**
