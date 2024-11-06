@@ -28,12 +28,6 @@ enum class EnumBnoAngle
     KNEE_R     =   8
 };
 
-enum class EnumSonarState
-{
-    SQUAT,
-    WALK,
-};
-
 enum class EnumMotorPosition
 {
     HIP_R,

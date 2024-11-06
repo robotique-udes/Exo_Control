@@ -15,7 +15,6 @@
 #include "callbackSetup.h"
 #include "dataCore.h"
 #include "bnoHandler.h"
-#include "proxiHandler.h"
 #include "logic.h"
 
 Logic logicHandler;
@@ -27,7 +26,6 @@ BnoHandler *bnoHandler;
 QuadratureEncoder encoder;
 TouchScreen &screen = TouchScreen::getInstance();
 DataCore &settings = DataCore::getInstance();
-ProxiHandler *proxiHandler;
 
 
 //===============================================================================================================
@@ -47,12 +45,10 @@ void setup()
 
   // Setup devices using I2C
   bnoHandler = new BnoHandler();
-  proxiHandler = new ProxiHandler();
   pinExtender.begin();
   QuadratureEncoder::begin();
   tester.setMotor(&motor);
   tester.setEncoder(&encoder);
-  tester.setProxiHandler(proxiHandler);
   tester.setBNOHandler(bnoHandler);
   tester.setLogic(&logicHandler);
   pwmPinExtender.resetDevices();
@@ -63,10 +59,7 @@ void setup()
 
   relais.setAllRelay(OFF);
 
-  // Setup HMI
   setupCallbacks();
-  // imu01.IMUSetup(); // Comment if no IMU are in use
-  // imu01.wifiSetup(); // Comment if not using wifi com
 }
 
 void loop()
@@ -84,17 +77,16 @@ void loop()
   //--------------LOGIC BLOC---------------
   // encoder.read();
   bnoHandler->read();
-  // proxiHandler->read();
   // screen.update();
   logicHandler.Update();
   // motor.write();
 
   //--------------PRINTING BLOC-------------
-  // bnoHandler->printBNOsData(3,3);
-  // bnoHandler->printGroundState();
+  // bnoHandler->printBNOsStatus(0,4);
+  bnoHandler->printGroundState();
   // logicHandler.printTorque();
+  // logicHandler.IntegralPowerConsumption();
   
-
   Serial.println("");
 
   

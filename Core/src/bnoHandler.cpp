@@ -84,10 +84,6 @@ void BnoHandler::printBNOsStatus(int startIndex, int endIndex){
 
 void BnoHandler::printBNOsData(int startIndex, int endIndex){
     for (int i = startIndex; i<=endIndex; i++){
-        /**
-        Serial.print("\tIMU "); printName(EnumBnoAngle(i)); Serial.print("\t");
-        Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<EnumBnoAngle>(i)));
-        */
         printBNOData(static_cast<EnumBnoPosition>(i));
     }
 }
@@ -96,16 +92,15 @@ void BnoHandler::updateBuffer(EnumBnoPosition position)
 {
     BNOStruct data = BNOs[static_cast<int> (position)]->getData();
     if (position==EnumBnoPosition::TIBIA_L){
-        linAccelBufferLeft[bufferIndexLeft] = data.lin_acceleration[1];
+        linAccelBufferLeft[bufferIndexLeft] = abs(data.lin_acceleration[1]) < (ACCEL_THRESHOLD + offset);
         if(bufferIndexLeft < (BUFFER_SIZE-1)) bufferIndexLeft++;
         else bufferIndexLeft = 0;
     }
     else if (position==EnumBnoPosition::TIBIA_R){
-        linAccelBufferRight[bufferIndexRight] = data.lin_acceleration[1];
+        linAccelBufferRight[bufferIndexRight] = abs(data.lin_acceleration[1]) < (ACCEL_THRESHOLD + offset);
         if(bufferIndexRight < (BUFFER_SIZE-1)) bufferIndexRight++;
         else bufferIndexRight = 0;
     }
-    //Serial.print(data.lin_acceleration[1]);Serial.print("  \t");
 }
 
 bool BnoHandler::getLinAccel(EnumBnoPosition position)
@@ -118,7 +113,9 @@ bool BnoHandler::getLinAccel(EnumBnoPosition position)
         else if (position==EnumBnoPosition::TIBIA_R) bufferAvg += linAccelBufferRight[i];
     }
     bufferAvg /= BUFFER_SIZE;
-    return bufferAvg < (ACCEL_THRESHOLD + offset);
+    Serial.print(" Buffer avg: ");
+    Serial.print(bufferAvg);
+    return bufferAvg >= ACCEL_BUFFER_THRESHOLD;
 }
 
 void BnoHandler::computeAngles() {
@@ -212,10 +209,10 @@ void BnoHandler::printBNOData(EnumBnoPosition position){
 
 void BnoHandler::printGroundState()
 {
-    Serial.print(" Right ground state: \t");
-    Serial.print(dataCore.getRightGrounded());
     Serial.print(" Left ground state: \t");
     Serial.print(dataCore.getLeftGrounded());
+    Serial.print(" Right ground state: \t");
+    Serial.print(dataCore.getRightGrounded());
     Serial.print(" Threshold: \t");
     Serial.print(ACCEL_THRESHOLD + offset);
 

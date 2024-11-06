@@ -3,34 +3,21 @@
 DataCore *DataCore::instance;
 
 DataCore::DataCore(){
-    rightGrounded = false;
-    leftGrounded = false;
-    motorEnabled = true;
-    clutchEnabled = false;
-    proximEnabled = true;
+    
+    groundDetectEnable = true;
     brightness = HIGH;
-    needResetProxim = false;
-
-    sonarState = SQUAT_MODE;
-    angleSource = FROM_IMU;
-
     height = 180;
-    motorPower = 2048;
-
-    // Refactor for nice
-    bnoData[0] = nullptr;
-    bnoData[1] = nullptr;
-    bnoData[2] = nullptr;
-    bnoData[3] = nullptr;
-    bnoData[4] = nullptr;
+    initialise();
+    bnoData = {nullptr, nullptr, nullptr, nullptr, nullptr};
 }
 
 void DataCore::initialise(){
+    rightGrounded = false;
+    leftGrounded = false;
     clutchEnabled = OFF;
-    motorEnabled = true;
+    motorEnabled = false;
     motorPower = 2048;
     needResetProxim = true;
-    sonarState = FROM_IMU;
     angleSource = FROM_IMU;
     resetEncoder();
 }
@@ -51,31 +38,31 @@ bool DataCore::isClutchEnabled(){
     return clutchEnabled;
 }
 
-bool DataCore::isProximEnabled(){
-    return proximEnabled;
+bool DataCore::isGroundDetectEnable(){
+    return groundDetectEnable;
 }
 
 bool DataCore::isEncoderResetNeeded(){
     return needResetEncoder;
 }
 
+//TODO when hmi is refactored, change toggle to using input param
 void DataCore::setMotorEnabled(bool setMotorEnabled){
-    motorEnabled = !(motorEnabled);
-    Serial.print("\t Motor enable set to: ");
-    Serial.println(motorEnabled);
+    motorEnabled = setMotorEnabled;
+    Serial.print("Motor state: ");
+    Serial.println(isMotorEnabled());
 }
 
 void DataCore::setClutchEnabled(bool setClutchEnabled){
     clutchEnabled = !(clutchEnabled);
     relais.setAllRelay(clutchEnabled);
-    Serial.print("\t Clutch enable set to: ");
-    Serial.println(clutchEnabled);
+
 }
 
-void DataCore::setProximEnabled(bool setProximEnabled){
-    proximEnabled = !(proximEnabled);
+void DataCore::setGroundDetectEnable(bool setGroundDetectEnable){
+    groundDetectEnable = !(groundDetectEnable);
     Serial.print("\t Proxim enable set to: ");
-    Serial.println(proximEnabled);
+    Serial.println(groundDetectEnable);
 }
 
 bool DataCore::getAngleSource(){
@@ -344,6 +331,13 @@ void DataCore::setPWM(EnumMotorPosition motor, float pwm){
     default:
         break;
     }
+}
+
+void DataCore::printAngles(){
+    Serial.print("Knee left: ");
+    Serial.print(Imu_knee_left);
+    Serial.print("  Hip left: ");
+    Serial.print(Imu_hip_left);
 }
 
 

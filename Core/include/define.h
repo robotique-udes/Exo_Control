@@ -1,15 +1,10 @@
 
-// PINS SONAR
 
 //**********PAS LES BONNES PINS************
 #define SDA_PIN_GAUCHE 15
 #define SCL_PIN_GAUCHE 39
 #define SDA_PIN_DROIT 23
 #define SCL_PIN_DROIT 35
-//constant SONAR
-#define UNCERTAINTY 0.1
-#define LOW 0x0
-#define HIGH 0x1
 
 // ------------ MOTOR -------------
 #define K_RESSORT 0.25
@@ -67,8 +62,6 @@
 #define MOTEUR_GENOU_DROIT 1
 #define MOTEUR_HANCHE_GAUCHE 2
 #define MOTEUR_HANCHE_DROITE 3
-#define SONAR_GAUCHE 0
-#define SONAR_DROIT 1
 
 #define RELAIS_GENOU_GAUCHE 13
 #define RELAIS_GENOU_DROIT 14
@@ -115,10 +108,11 @@
 
 //------ MAX JOINT ROTATION ANGLE -------
 #define MAX_ANGLE_HIP 110
-#define MIN_ANGLE_HIP -30
-#define MAX_ANGLE_KNEE 130
+#define MIN_ANGLE_HIP 0
+#define MAX_ANGLE_KNEE 90
 #define MIN_ANGLE_KNEE 0
 
 //------ BNO
-#define BUFFER_SIZE 10
-#define ACCEL_THRESHOLD 100
+#define BUFFER_SIZE 8
+#define ACCEL_THRESHOLD 150
+#define ACCEL_BUFFER_THRESHOLD 0.5

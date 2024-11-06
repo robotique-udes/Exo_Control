@@ -18,13 +18,13 @@ void Logic::IntegralPowerConsumption()
 
     float totalpower = leftHipPower + rightHipPower + leftKneePower + rightKneePower;
 
-    Serial.print("  Power: ");
-    Serial.print(totalpower);
     totalEnergy += totalpower * (float)dt * MILLIS_TO_HOUR; // W*milisecond to Wh
     previousTimeBatterie = time;
+    Serial.print("  Power: ");
+    Serial.print(totalpower);
+    Serial.print("  Energy: ");
+    Serial.print(totalEnergy);
 }
-
-
 
 void Logic::neededTorque()
 {
@@ -32,8 +32,7 @@ void Logic::neededTorque()
     getAngles();
     getOnGround();
 
-
-    if (dataCore.isMotorEnabled() && NbOnGround > 0)
+    if (NbOnGround > 0)
     {
         if (RightOnGround)
             calculateTorqueFootOnGround(RightThighAngle, RightTibiaAngle, ExoBackAngle, false);
@@ -128,11 +127,11 @@ void Logic::checkAngleLimits()
     // Si on dépasse les angles max, on force le torque à 0
     if (LeftHipAngle > MAX_ANGLE_HIP && LeftHipTorque > 0 || LeftHipAngle < MIN_ANGLE_HIP && LeftHipTorque < 0)
         LeftHipTorque = 0;
-    else if (LeftKneeAngle > MAX_ANGLE_KNEE && LeftKneeTorque > 0 || LeftKneeAngle < MIN_ANGLE_KNEE && LeftKneeTorque < 0)
+    if (LeftKneeAngle > MAX_ANGLE_KNEE && LeftKneeTorque > 0 || LeftKneeAngle < MIN_ANGLE_KNEE && LeftKneeTorque < 0)
         LeftKneeTorque = 0;
-    else if (RightHipAngle > MAX_ANGLE_HIP && RightHipTorque > 0 || RightHipAngle < MIN_ANGLE_HIP && RightHipTorque < 0)
+    if (RightHipAngle > MAX_ANGLE_HIP && RightHipTorque > 0 || RightHipAngle < MIN_ANGLE_HIP && RightHipTorque < 0)
         RightHipTorque = 0;
-    else if (RightKneeAngle > MAX_ANGLE_KNEE && RightKneeTorque > 0 || RightKneeAngle < MIN_ANGLE_KNEE && RightKneeTorque < 0)
+    if (RightKneeAngle > MAX_ANGLE_KNEE && RightKneeTorque > 0 || RightKneeAngle < MIN_ANGLE_KNEE && RightKneeTorque < 0)
         RightKneeTorque = 0;
 }
 

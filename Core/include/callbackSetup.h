@@ -69,14 +69,8 @@ void callbackButtonResetEncoder(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
 }
 
-/**
- * @brief Callback for proxim's auto calibration button
- */
 void callbackButtonAutoCalibProxim(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
-    DataCore& settings = DataCore::getInstance();
-    settings.setResetProxim(true);
-    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
+    //obscelete
 }
 
 /**
@@ -97,23 +91,8 @@ void callbackButtonToggleAngleSource(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE : " + to_string(state));
 }
 
-/**
- * @brief Callback for proxim activation button
- */
 void callbackButtonToggleProxim(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM");
-
-    NexDSButton *button = static_cast<NexDSButton*>(ptr);
-
-    uint32_t state;
-
-    button->getValue(&state);
-
-    DataCore& settings = DataCore::getInstance();
-
-    settings.setProximEnabled(state);
-
-    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM : " + to_string(state));
+    //obscelete
 }
 
 /**
@@ -126,16 +105,7 @@ void callbackButtonTest(void *ptr){
     //...
 }
 
-/**
- * @brief Placeholder button if we need (has been assign to proxim's brightness setting)
- */
 void callbackButtonDev1(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
-    Serial.print("Switching brightness settings");
-    DataCore& settings = DataCore::getInstance();
-    settings.setBrightness();
-    
-    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
 }
 
 /**

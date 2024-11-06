@@ -6,7 +6,6 @@
 #include "define.h"
 #include "motor.h"
 #include "QuadratureEncoder.h"
-#include "proxiHandler.h"
 #include "bnoHandler.h"
 #include "dataCore.h"
 #include "logic.h"
@@ -37,12 +36,6 @@ public:
     */
     void setEncoder(QuadratureEncoder* encoder);
 
-    /**
-    * @brief Set proxi handler pointer for testing
-    * @param newHandler Pointer to proxim handler
-    */
-    void setProxiHandler(ProxiHandler* newHandler);
-
     void setBNOHandler(BnoHandler *newHandler);
 
     void setLogic(Logic *newLogic);
@@ -51,9 +44,9 @@ private:
     Relay relais;
     Motor* motor;
     QuadratureEncoder* encoder;
-    ProxiHandler* proxiHandler;
     BnoHandler *bnoHandler;
     Logic   *logicHandler;
+    bool motorState = false;
     long duration;
     double cm, inches;
     bool state=false;

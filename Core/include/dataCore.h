@@ -20,7 +20,7 @@ private:
     // proxim
     bool rightGrounded;
     bool leftGrounded;
-    bool proximEnabled;
+    bool groundDetectEnable;
     bool needResetProxim;
 
     // encoder
@@ -46,7 +46,6 @@ private:
     //In between settings
     bool motorEnabled;
     bool clutchEnabled;
-    bool sonarState;
     bool angleSource;
     bool brightness;
     int height;
@@ -91,15 +90,15 @@ public:
 
     /**
     * @brief Proxim enable setter
-    * @param setProximEnabled Proxim enable state
+    * @param setGroundDetectEnable Proxim enable state
     */
-    void setProximEnabled(bool setProximEnabled);
+    void setGroundDetectEnable(bool setGroundDetectEnable);
 
     /**
     * @brief Proxim enable getter
     * @return Proxim state
     */
-    bool isProximEnabled();
+    bool isGroundDetectEnable();
     
     /**
     * @brief Put all settings back to boot values
@@ -275,6 +274,8 @@ public:
     static DataCore &getInstance();
     DataCore(const DataCore &) = delete;
     DataCore &operator=(const DataCore &) = delete;
+
+    void printAngles();
 };
 
 #endif
