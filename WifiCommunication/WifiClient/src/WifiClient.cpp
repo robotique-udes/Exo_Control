@@ -7,30 +7,31 @@
 WifiClient::WifiClient() // Constructor
 {
   // WiFi credentials
-  const char* ssid = "PlsDontIamTryingSomething";  // WiFi network name
-  const char* password = "qwerty"; // WiFi network password
+  const char* ssid = "helloIAmUnder";  // WiFi network name
+  const char* password = "ItsTricky"; // WiFi network password
 
   // Connect to Wi-Fi
-  connect();
-
-  // IP address of the UDP server
-  IPAddress server_ip(192, 168, 1, 2);
-  serverIP = server_ip;
-
-  // Set up UDP
-  UDP.begin(localUdpPort);
-  Serial.println("UDP client started");
+  // connect();
 }
 
 
 void WifiClient::connect() // Connect to Wi-Fi
 {
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
+    while (!isConnected()) {
         delay(500);
         Serial.print(".");
     }
     Serial.println("\nConnected to WiFi!");
+
+    // IP address of the UDP server
+    IPAddress server_ip(192, 168, 1, 2);
+    serverIP = server_ip;
+
+    // Set up UDP
+    UDP.begin(localUdpPort);
+    Serial.println("UDP client started");
 }
 
 void WifiClient::disconnect() // Disconnect from Wi-Fi
@@ -43,7 +44,7 @@ void WifiClient::disconnect() // Disconnect from Wi-Fi
 void WifiClient::sendMessage(unsigned char data[]) // Send message to server
 {
   UDP.beginPacket(serverIP, UDP_PORT_SEND);
-  UDP.write(data, sizeof(data));
+  UDP.write(data, 22);
   UDP.endPacket();
   Serial.printf("UDP sent packet contents: %s\n", data);
 }

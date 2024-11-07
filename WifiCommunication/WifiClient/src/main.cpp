@@ -1,4 +1,4 @@
-#include <WifiClient.cpp>
+#include <WifiClient.h>
 
 // Create an instance of the WifiClient class
 WifiClient client;
@@ -6,6 +6,9 @@ WifiClient client;
 void setup() {
     // Start the Serial communication
     Serial.begin(115200);
+
+    // Connect to the Wi-Fi network
+    client.connect();
     
 }
 
@@ -21,6 +24,6 @@ void loop() {
     // Send the message
     client.sendMessage(table);
 
-    // Wait for 1 second before sending the next message
+    // Wait for 2 second before sending the next message
     delay(2000);
 }
