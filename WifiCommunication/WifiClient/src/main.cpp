@@ -1,50 +1,26 @@
-#include <WiFi.h>
-#include <WiFiUdp.h>
+#include <WifiClient.cpp>
 
-#define UDP_PORT_SEND 4210
-
-// WiFi credentials
-const char* ssid = "PlsDontIamTryingSomething";  // Replace with your WiFi network name
-const char* password = "qwerty12345";  // Replace with your WiFi network password
-
-// UDP
-WiFiUDP UDP;
-IPAddress serverIP(192, 168, 4, 2); // IP address of the UDP server
-unsigned int localUdpPort = 4211;  // Local port to receive responses (if needed)
+// Create an instance of the WifiClient class
+WifiClient client;
 
 void setup() {
-  // Start the Serial communication
-  Serial.begin(115200);
-
-  // Connect to Wi-Fi
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("\nConnected to WiFi!");
-
-  // Start UDP
-  UDP.begin(localUdpPort);
-  Serial.println("UDP client started");
+    // Start the Serial communication
+    Serial.begin(115200);
+    
 }
 
 void loop() {
-  String message = "Hello there, my friend";
-  unsigned char table[25];
+    String message = "Hello there, my friend";
+    unsigned char table[25];
 
-  for (size_t i = 0; i < 22; i++)
-  {
-    table[i] = message[i];
-  }
-  
-  // Send message to server
-  UDP.beginPacket(serverIP, UDP_PORT_SEND);
-  UDP.write(table, 22);
-  UDP.endPacket();
+    for (size_t i = 0; i < 22; i++)
+    {
+        table[i] = message[i];
+    }
 
-  Serial.println("Message sent: Hello there, my friend");
+    // Send the message
+    client.sendMessage(table);
 
-  // Wait for 1 second before sending the next message
-  delay(2000);
+    // Wait for 1 second before sending the next message
+    delay(2000);
 }
