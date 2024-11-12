@@ -7,9 +7,6 @@ void setup() {
     // Start the Serial communication
     Serial.begin(115200);
 
-    // Connect to the Wi-Fi network
-    client.connect();
-    
 }
 
 void loop() {

@@ -6,35 +6,35 @@
 
 WifiClient::WifiClient() // Constructor
 {
-  // WiFi credentials
-  const char* ssid = "helloIAmUnder";  // WiFi network name
-  const char* password = "ItsTricky"; // WiFi network password
-
   // Connect to Wi-Fi
-  // connect();
+  wifiConnect();
 }
 
 
-void WifiClient::connect() // Connect to Wi-Fi
+void WifiClient::wifiConnect() // Connect to Wi-Fi
 {
+    // IP address of the UDP server
+    IPAddress server_ip(192, 168, 4, 2);
+    serverIP = server_ip;
+
+    // WiFi mode
     WiFi.mode(WIFI_STA);
+
+    // Connect to Wi-Fi
     WiFi.begin(ssid, password);
+    Serial.printf("Attempting to connect to \"%s\" with password \"%s\".\n\n", ssid, password);
     while (!isConnected()) {
-        delay(500);
+        delay(750);
         Serial.print(".");
     }
-    Serial.println("\nConnected to WiFi!");
-
-    // IP address of the UDP server
-    IPAddress server_ip(192, 168, 1, 2);
-    serverIP = server_ip;
+    Serial.println("Connected to WiFi!");
 
     // Set up UDP
     UDP.begin(localUdpPort);
     Serial.println("UDP client started");
 }
 
-void WifiClient::disconnect() // Disconnect from Wi-Fi
+void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
 {
   WiFi.disconnect();
   Serial.println("Disconnected from WiFi.");
@@ -66,6 +66,20 @@ void WifiClient::receiveMessage(unsigned char data[]) // Receive message from se
 bool WifiClient::isConnected() // Check if connected to Wi-Fi
 {
     return WiFi.status() == WL_CONNECTED;
+}
+
+void WifiClient::wifiOff() // Turn off Wi-Fi to save power
+{
+    WifiClient::wifiDisconnect();
+    WiFi.mode(WIFI_OFF);
+    Serial.println("WiFi turned off.");
+}
+
+void WifiClient::wifiOn() // Turn on Wi-Fi
+{
+    WiFi.mode(WIFI_STA);
+    WifiClient::wifiConnect();
+    Serial.println("\nConnected to WiFi!");
 }
 
 
