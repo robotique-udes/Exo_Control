@@ -4,8 +4,8 @@
 #define UDP_PORT_SEND 4210
 
 // WiFi credentials
-const char* ssid = "PlsDontIamTryingSomething";  // Replace with your WiFi network name
-const char* password = "qwerty12345";  // Replace with your WiFi network password
+const char* ssid = "helloIAmUnder";  // Replace with your WiFi network name
+const char* password = "ItsTricky";  // Replace with your WiFi network password
 
 // UDP
 WiFiUDP UDP;
