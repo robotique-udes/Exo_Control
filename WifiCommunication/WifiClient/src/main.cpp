@@ -5,13 +5,14 @@ WifiClient client;
 
 void setup() {
     // Start the Serial communication
-    Serial.begin(115200);
-
+    // Serial.begin(115200)
+    client.wifiConnect();
+    
 }
 
 void loop() {
     String message = "Hello there, my friend";
-    unsigned char table[25];
+    unsigned char table[22];
 
     for (size_t i = 0; i < 22; i++)
     {

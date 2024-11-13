@@ -6,8 +6,7 @@
 
 WifiClient::WifiClient() // Constructor
 {
-  // Connect to Wi-Fi
-  wifiConnect();
+
 }
 
 
