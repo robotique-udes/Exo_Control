@@ -1,6 +1,5 @@
 #include <WifiClient.h>
 
-// Create an instance of the WifiClient class
 WifiClient client;
 
 void setup() {
