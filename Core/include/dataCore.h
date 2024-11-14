@@ -17,11 +17,10 @@ private:
     Relay relais;
 
     // Ins
-    // proxim
+    // ground contact detection
     bool rightGrounded;
     bool leftGrounded;
     bool groundDetectEnable;
-    bool needResetProxim;
 
     // encoder
     float encoder_knee_right = 0;
@@ -89,14 +88,14 @@ public:
     bool isMotorEnabled();
 
     /**
-    * @brief Proxim enable setter
-    * @param setGroundDetectEnable Proxim enable state
+    * @brief Ground detection setter
+    * @param setGroundDetectEnable Detection enable state
     */
     void setGroundDetectEnable(bool setGroundDetectEnable);
 
     /**
-    * @brief Proxim enable getter
-    * @return Proxim state
+    * @brief Ground detection getter
+    * @return Ground detection state
     */
     bool isGroundDetectEnable();
     
@@ -109,28 +108,6 @@ public:
     * @brief Set all encoder pulse values to 0
     */
     void resetEncoder();
-
-    /**
-    * @brief Toggle brightness mode for proxims
-    */
-    void setBrightness();
-    /**
-    * @brief Brightness getter
-    * @return Brightness state
-    */
-    bool getBrightness();
-
-    /**
-    * @brief Proxim reset getter
-    * @return Proxim reset state
-    */
-    bool getResetProxim();
-
-    /**
-    * @brief Proxim reset setter
-    * @param reset Proxim reset state
-    */
-    void setResetProxim(bool reset);
 
     /**
     * @brief Angle source getter
@@ -162,7 +139,6 @@ public:
     */
     void adjustMotorPower(int powerOffset);
 
-    // proxim
     /**
     * @brief Right proxi getter
     * @return Right proxi state (1 if grounded, 0 if not)

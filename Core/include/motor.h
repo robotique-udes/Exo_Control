@@ -5,7 +5,6 @@
 #include "define.h"
 #include "PinExtender.h"
 #include "dataCore.h"
-#include "ProxiSensor.h"
 #include "multiplex.h"
 
 class Motor

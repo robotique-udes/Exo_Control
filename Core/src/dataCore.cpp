@@ -17,7 +17,6 @@ void DataCore::initialise(){
     clutchEnabled = OFF;
     motorEnabled = false;
     motorPower = 2048;
-    needResetProxim = true;
     angleSource = FROM_IMU;
     resetEncoder();
 }
@@ -61,7 +60,7 @@ void DataCore::setClutchEnabled(bool setClutchEnabled){
 
 void DataCore::setGroundDetectEnable(bool setGroundDetectEnable){
     groundDetectEnable = !(groundDetectEnable);
-    Serial.print("\t Proxim enable set to: ");
+    Serial.print("\tGround detection set to: ");
     Serial.println(groundDetectEnable);
 }
 
@@ -73,20 +72,6 @@ void DataCore::setAngleSource(bool setAngleSource){
     angleSource = (setAngleSource);
     Serial.print("\t Angle source set to: ");
     Serial.println(angleSource);
-}
-
-
-//PROXIM
-bool DataCore::getBrightness(){
-    return brightness;
-}
-
-void DataCore::setBrightness(){
-    brightness = !(brightness);
-}
-
-bool DataCore::getResetProxim(){
-    return needResetProxim;
 }
 
 bool DataCore::getRightGrounded(){
@@ -103,10 +88,6 @@ bool DataCore::getLeftGrounded(){
 
 void DataCore::setLeftGrounded(bool state){
     leftGrounded = state;
-}
-
-void DataCore::setResetProxim(bool reset){
-    needResetProxim = reset;
 }
 
 //MOTOR POWER

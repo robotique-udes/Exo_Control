@@ -86,11 +86,6 @@
 #define RIGHT_MOUSTACHE_MUX_CHANNEL 2 
 #define I2C_CLOCK   400000L 
 
-//------ PROXIM ------
-#define PROXIM_REFRESH_RATE 4
-#define GROUND_DISTANCE_RANGE 40
-
-
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (800)
 

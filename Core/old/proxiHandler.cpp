@@ -9,12 +9,6 @@ ProxiHandler::ProxiHandler()
 
 void ProxiHandler::read()
 {
-    //check if proxim to reset trigger dist
-    if(dataCore.getResetProxim())
-    {
-        setTriggerDist();
-        dataCore.setResetProxim(false);
-    }
     dataCore.setRightGrounded(RightProxim->IsOnTheGround());
     dataCore.setLeftGrounded(LeftProxim->IsOnTheGround());
 }
