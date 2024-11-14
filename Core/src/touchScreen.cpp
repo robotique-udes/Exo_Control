@@ -9,11 +9,11 @@ TouchScreen::TouchScreen(){
     init = new NexButton(0, 6, "init");
 
     resetEncoder = new NexButton(1, 2, "resetEncoder");
-    autoCalibProxim = new NexButton(1, 3, "autoCalib");
+    autoCalib = new NexButton(1, 3, "autoCalib");
     powerSlider = new NexSlider(1, 6, "powerSlider");
 
     angleSource = new NexDSButton(2, 2, "angleSource");
-    proximToggle = new NexDSButton(2, 3, "proximToggle");
+    groundDetectionToggle = new NexDSButton(2, 3, "proximToggle"); //need to change the program on the screen first
     testExo = new NexButton(2, 4, "testExo");
 
     button1 = new NexButton(3, 2, "button1");
@@ -34,10 +34,10 @@ TouchScreen::TouchScreen(){
     listenList[1] = clutchToggle;
     listenList[2] = init;
     listenList[3] = resetEncoder;
-    listenList[4] = autoCalibProxim;
+    listenList[4] = autoCalib;
     listenList[5] = powerSlider;
     listenList[6] = angleSource;
-    listenList[7] = proximToggle;
+    listenList[7] = groundDetectionToggle;
     listenList[8] = testExo;
     listenList[9] = button1;
     listenList[10] = button2;
@@ -69,14 +69,14 @@ void TouchScreen::setCallback(EnumScreenCallback callback, void (*callbackFuncti
         case EnumScreenCallback::BUTTON_RESET_ENCODER:
             resetEncoder->attachPush(callbackFunction, resetEncoder);
         break;
-        case EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM:
-            autoCalibProxim->attachPush(callbackFunction, autoCalibProxim);
+        case EnumScreenCallback::BUTTON_AUTO_CALIB:
+            autoCalib->attachPush(callbackFunction, autoCalib);
         break;
         case EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE :
             angleSource->attachPush(callbackFunction, angleSource);
         break;
-        case EnumScreenCallback::BUTTON_TOGGLE_PROXIM :
-            proximToggle->attachPush(callbackFunction, proximToggle);
+        case EnumScreenCallback::BUTTON_TOGGLE_GROUND_DETECTION :
+            groundDetectionToggle->attachPush(callbackFunction, groundDetectionToggle);
         break;
         case EnumScreenCallback::BUTTON_TEST :
             testExo->attachPush(callbackFunction, testExo);

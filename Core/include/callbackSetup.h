@@ -69,7 +69,7 @@ void callbackButtonResetEncoder(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
 }
 
-void callbackButtonAutoCalibProxim(void *ptr){
+void callbackButtonAutoCalib(void *ptr){
     //obscelete
 }
 
@@ -91,7 +91,7 @@ void callbackButtonToggleAngleSource(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE : " + to_string(state));
 }
 
-void callbackButtonToggleProxim(void *ptr){
+void callbackButtonToggleGroundDetection(void *ptr){
     //obscelete
 }
 
@@ -175,9 +175,9 @@ void setupCallbacks(){
     screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_CLUTCH, &callbackButtonToggleClutch);
     screen.setCallback(EnumScreenCallback::BUTTON_INIT, &callbackButtonInit);
     screen.setCallback(EnumScreenCallback::BUTTON_RESET_ENCODER, &callbackButtonResetEncoder);
-    screen.setCallback(EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM, &callbackButtonAutoCalibProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_AUTO_CALIB, &callbackButtonAutoCalib);
     screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE, &callbackButtonToggleAngleSource);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_PROXIM, &callbackButtonToggleProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_GROUND_DETECTION, &callbackButtonToggleGroundDetection);
     screen.setCallback(EnumScreenCallback::BUTTON_TEST, &callbackButtonTest);
     screen.setCallback(EnumScreenCallback::BUTTON_DEV_1, &callbackButtonDev1);
     screen.setCallback(EnumScreenCallback::BUTTON_DEV_2, &callbackButtonDev2);
