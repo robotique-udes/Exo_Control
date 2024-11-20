@@ -1,7 +1,5 @@
-#include <String.h>
-#include "WiFiClient.h"
-#include "enums.h"
-
+#include "Wificlient.h"
+#include "WifiServer.h"
 #define UDP_PORT_SEND 4210
 
 
@@ -15,7 +13,7 @@ void WifiClient::wifiConnect() // Connect to Wi-Fi
 {
     // IP address of the UDP server
     IPAddress watch_ip(192, 168, 4, 2);
-    addIPAddress(watch_ip);
+    addIPAddress(watch_ip, IPType::WATCH);
 
     // WiFi mode
     WiFi.mode(WIFI_STA);
@@ -100,9 +98,10 @@ void WifiClient::handShake() // Handshake with server
 
 }
 
-void WifiClient::addIPAddress(IPAddress ip) // Add IP address to list
+void WifiClient::addIPAddress(IPAddress ip, IPType ID) // Add IP address to list
 {
-    IPsList[IPsListSize] = ip;
+    int index = (int)ID;
+    IPsList[index] = ip;
     IPsListSize++;
 }
 

@@ -2,6 +2,8 @@
 #define WifiClient_h
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include "enums.h"
+#include <ArduinoJson.h>
 
 
 class WifiClient 
@@ -14,7 +16,7 @@ class WifiClient
         void handShake();
         int IPsListSize = 0; // Number of IPs in the IPs_list
         IPAddress IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
-        void addIPAddress(IPAddress ip);
+        void addIPAddress(IPAddress ip, enum IPType ID);
         IPAddress getIP(enum IPType index);
     public:
         WifiClient();
