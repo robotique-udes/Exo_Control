@@ -20,10 +20,12 @@ private:
     IPAddress Subnet;
     IPAddress MyIP;
     
-
+    IPAddress IPsList[10]; // 0 - watch (self), 1 - exoskeleton, 2 - simulation, 3+ - other clients
 
     const char* ServerSSID;
     const char* ServerPassword;
+
+    void handShake();
 public:
     unsigned char lastMessage[255];
     int lastMessageLength;
@@ -35,6 +37,7 @@ public:
      int DataAvailable();
      int ReadData(int);
      int SendData(unsigned char * packet, int length);
+    IPAddress getIP(int index);
 };
 
 

@@ -1,4 +1,5 @@
-#include <WifiClient.h>
+#include "WifiClient.h"
+#include "enums.h"
 
 WifiClient client;
 
@@ -19,7 +20,7 @@ void loop() {
     }
 
     // Send the message
-    client.sendMessage(table);
+    client.sendMessage(table, IPType::WATCH);
 
     // Wait for 2 second before sending the next message
     delay(2000);

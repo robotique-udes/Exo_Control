@@ -121,3 +121,14 @@ int WifiServer::SendData(unsigned char * packet, int length)
  WifiServer::~ WifiServer()
 {
 }
+
+void WifiServer::handShake()
+{
+    // Send list of IPs
+
+}
+
+IPAddress WifiServer::getIP(int index)
+{
+    return IPsList[index];
+}
