@@ -1,5 +1,6 @@
 #include "WifiClient.h"
 #include "enums.h"
+#include "../libs/MessageBuilder.h"
 
 WifiClient client;
 
