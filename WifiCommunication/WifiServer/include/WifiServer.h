@@ -26,6 +26,7 @@ private:
     const char* ServerPassword;
 
     void handShake();
+    void onWiFiEvent(WiFiEvent_t event);
 public:
     unsigned char lastMessage[255];
     int lastMessageLength;
