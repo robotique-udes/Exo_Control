@@ -2,6 +2,7 @@
 #define MessageBuiler_h
 
 #define NB_DE_MESSAGE 1
+#include "enums.h"
 
 struct values
 {
