@@ -19,15 +19,28 @@
     MyIP = myIP;
 }
 
+void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
+    Serial.println("Device connected to the access point!");
+}
+
+void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) {
+    Serial.println("Device disconnected from the access point!");
+}
+
 int WifiServer::Initialise()
 {
-  if (!WiFi.softAP(ServerSSID, ServerPassword)) {
+  if (!WiFi.softAP(ServerSSID, ServerPassword)) 
+  {
     log_e("Soft AP creation failed.");
     return -1;
   }
-    WiFi.softAPConfig(Local_ip, Gateway, Subnet);
-    MyIP = WiFi.softAPIP();
-    
+
+  WiFi.softAPConfig(Local_ip, Gateway, Subnet);
+  MyIP = WiFi.softAPIP();    
+
+  WiFi.onEvent(WiFiStationConnected, ARDUINO_EVENT_WIFI_AP_STACONNECTED);
+  WiFi.onEvent(WiFiStationDisconnected, ARDUINO_EVENT_WIFI_AP_STADISCONNECTED);
+
   Serial.print("AP IP address: ");
   Serial.println(MyIP);
 
@@ -35,7 +48,6 @@ int WifiServer::Initialise()
   UDP.begin(UDP_PORT_RECEIVE);
   Serial.print("Listening on UDP port ");
   Serial.println(UDP_PORT_RECEIVE);
-
 
   return 0;
 }
