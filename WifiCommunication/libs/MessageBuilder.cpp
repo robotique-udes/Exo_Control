@@ -3,15 +3,34 @@
 
 void MessageBuilder::clearMessage()
 {
-    for (int i = 0; i < 255 * NB_DE_MESSAGE; i++)
+    for (int i = 0; i < 255 * NB_MESSAGE; i++)
     {
         message[i] = 0;
     }
 }
 
+void MessageBuilder::clearInfo()
+{
+    for (int i = 0; i < NB_BNO_ANGLE; i++)
+    {
+        bnoAngle[i].ID = NONE;  
+        bnoAngle[i].value = 0;
+    }
+    for (int i = 0; i < NB_BNO_POSITION; i++)
+    {
+        bnoPosition[i].ID = NONE;
+        bnoPosition[i].value = 0;
+    }
+    for (int i = 0; i < NB_MOTOR_POSITION; i++)
+    {
+        motorPosition[i].ID = NONE;
+        motorPosition[i].value = 0;
+    }
+}
+
 void MessageBuilder::add(unsigned char log[])
 {
-    for (int i = 0; i < 255 * NB_DE_MESSAGE; i++)
+    for (int i = 0; i < 255 * NB_MESSAGE; i++)
     {
         if (message[i] == 0)
         {
@@ -60,7 +79,7 @@ void MessageBuilder::add(EnumMotorPosition motor, float value)
     }
 }
 
-void MessageBuilder::genrateMessage()
+void MessageBuilder::buildMessage()
 {
     clearMessage();
     for (int i = 0; i < 9; i++)

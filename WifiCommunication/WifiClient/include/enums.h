@@ -12,7 +12,8 @@ enum class EnumBnoPosition
     THIGH_R    =   1,
     TIBIA_L    =   2,
     TIBIA_R    =   3,
-    EXO_BACK   =   4
+    EXO_BACK   =   4,
+    NONE       =   5
 };
 
 enum class EnumBnoAngle
@@ -25,7 +26,8 @@ enum class EnumBnoAngle
     HIP_L      =   5,
     HIP_R      =   6,
     KNEE_L     =   7,
-    KNEE_R     =   8
+    KNEE_R     =   8,
+    NONE       =   9
 };
 
 enum class EnumSonarState
@@ -39,7 +41,8 @@ enum class EnumMotorPosition
     HIP_R,
     HIP_L,
     KNEE_R,
-    KNEE_L
+    KNEE_L,
+    NONE
 };
 
 enum class EnumScreenCallback
