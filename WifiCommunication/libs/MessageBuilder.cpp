@@ -134,7 +134,7 @@ void MessageBuilder::buildMessage()
             motor_position["value"] = motorPosition[i].value;
         }
     }
-
+    serializeJson(doc, message);
 }
 
 void MessageBuilder::buildHandshake()
