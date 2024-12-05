@@ -1,5 +1,6 @@
 
 #include"WifiServer.h"
+#include <esp_wifi.h>
 
  WifiServer:: WifiServer(const char* ssid, const char* passphrase)
 {
@@ -19,6 +20,18 @@
 
 void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
     Serial.println("Device connected to the access point!");
+
+    //Fonctionne pas, fait cracher le esp32-s3
+    
+    // // Get the list of connected devices
+    // wifi_sta_list_t stationList;
+    // tcpip_adapter_sta_list_t adapterList;
+    // if (esp_wifi_ap_get_sta_list(&stationList) == ESP_OK &&
+    //     tcpip_adapter_get_sta_list(&stationList, &adapterList) == ESP_OK) {
+    //     for (int i = 0; i < adapterList.num; i++) {
+    //         Serial.printf("Device %d IP: %s\n", i + 1, adapterList.sta[i].ip);
+    //     }
+    // }
 }
 
 void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) {
@@ -30,6 +43,7 @@ void WifiServer::InitialiseIPList()
   for(int i = 0; i < IP_LIST_SIZE; i++)
   {
     IPsList[i].ipType = IPType::NONE;
+    IPsList[i].ipAdresse = IPAddress(0,0,0,0);
   }
 }
 
@@ -146,7 +160,14 @@ void WifiServer::handShake()
 
 }
 
-IPAddress WifiServer::getIP(int index)
+IPAddress WifiServer::getIP(IPType index)
 {
-    return IPsList[index];
+  for (int i = 0; i < IP_LIST_SIZE; i++)
+  {
+    if(IPsList[i].ipType == index)
+      return IPsList[i].ipAdresse;
+  }
+  
+  return nullptr;
+    
 }

@@ -8,6 +8,8 @@
 
 WifiServer wifiserver("helloIAmUnder", "ItsTricky");
 
+unsigned long previousMillis = 0; // Stores the last time a message was printed
+const unsigned long interval = 1000; // Interval between prints (1 second)
 
 unsigned char allo[4] = {'a','l','l','o'};
 
@@ -22,6 +24,13 @@ void setup() {
 
 void loop() {
 
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval) {
+      previousMillis = currentMillis;
+      Serial.println("1 second has pass");
+  }
+
   // Check if data is available
   int length = wifiserver.DataAvailable();
   if (length > 0) 
@@ -32,6 +41,3 @@ void loop() {
 
   delay(1);
 }
-
-
-
