@@ -3,7 +3,7 @@
 
 void MessageBuilder::clearMessage()
 {
-    for (int i = 0; i < 255 * NB_MESSAGE; i++)
+    for (int i = 0; i < MESSAGE_LENGTH; i++)
     {
         message[i] = 0;
     }
@@ -13,96 +13,85 @@ void MessageBuilder::clearInfo()
 {
     for (int i = 0; i < NB_BNO_ANGLE; i++)
     {
-        bnoAngle[i].ID = NONE;  
+        bnoAngle[i].ID = EnumBnoAngle::NONE;  
         bnoAngle[i].value = 0;
     }
     for (int i = 0; i < NB_BNO_POSITION; i++)
     {
-        bnoPosition[i].ID = NONE;
+        bnoPosition[i].ID = EnumBnoPosition::NONE;
         bnoPosition[i].value = 0;
     }
     for (int i = 0; i < NB_MOTOR_POSITION; i++)
     {
-        motorPosition[i].ID = NONE;
+        motorPosition[i].ID = EnumMotorPosition::NONE;
         motorPosition[i].value = 0;
     }
-}
-
-void MessageBuilder::add(unsigned char log[])
-{
-    for (int i = 0; i < 255 * NB_MESSAGE; i++)
+    for (int i = 0; i < LOG_LENGTH; i++)
     {
-        if (message[i] == 0)
-        {
-            message[i] = log[i];
-            break;
-        }
+        logMessage[i] = 0;
     }
 }
 
-void MessageBuilder::add(EnumBnoAngle angle, float value)
-{
-    for (int i = 0; i < 9; i++)
+void MessageBuilder::add(unsigned char log[LOG_LENGTH - 1])
+{   
+    int indexStart = 0;
+    bool logFull = true;
+    for (indexStart; indexStart < LOG_LENGTH - 1; indexStart++) // Find first empty index
     {
-        if (bnoAngle[i].ID == 0)
+        if (log[indexStart] == '\0')
         {
-            bnoAngle[i].ID = (int)angle;
-            bnoAngle[i].value = value;
+            logFull = false;
+            indexStart++; // Start writing after the null character
             break;
         }
     }
+    if (!logFull) // Check if log is full
+    {
+        int indexLog = 0;
+        for (indexStart; indexStart < LOG_LENGTH - 2; indexStart++) // Write log
+        {
+            logMessage[indexStart] = log[indexLog];
+            if (log[indexLog] == '\0') // Check if end of log
+            {
+                break;
+            }
+            indexLog++;
+        
+        }
+        logMessage[LOG_LENGTH - 1] = '\0'; // Add null character to end of log
+    }
+    logPlace = LOG_LENGTH - indexStart - 2; // Calculate remaining space in log
 }
 
-void MessageBuilder::add(EnumBnoPosition position, float value)
+int MessageBuilder::getLogPlace()
 {
-    for (int i = 0; i < 5; i++)
-    {
-        if (bnoPosition[i].ID == 0)
-        {
-            bnoPosition[i].ID = (int)position;
-            bnoPosition[i].value = value;
-            break;
-        }
-    }
+    return logPlace;
 }
 
-void MessageBuilder::add(EnumMotorPosition motor, float value)
+void MessageBuilder::add(EnumBnoAngle BNO, float value)
 {
-    for (int i = 0; i < 4; i++)
-    {
-        if (motorPosition[i].ID == 0)
-        {
-            motorPosition[i].ID = (int)motor;
-            motorPosition[i].value = value;
-            break;
-        }
-    }
+    int index = (int)BNO;
+    bnoAngle[index].ID = BNO;
+    bnoAngle[index].value = value;
+}
+
+void MessageBuilder::add(EnumBnoPosition BNO, float value)
+{
+    int index = (int)BNO;
+    bnoPosition[index].ID = BNO;
+    bnoPosition[index].value = value;
+}
+
+void MessageBuilder::add(EnumMotorPosition MOTOR, float value)
+{
+    int index = (int)MOTOR;
+    motorPosition[index].ID = MOTOR;
+    motorPosition[index].value = value;
 }
 
 void MessageBuilder::buildMessage()
 {
-    clearMessage();
-    for (int i = 0; i < 9; i++)
-    {
-        if (bnoAngle[i].ID != 0)
-        {
-            message[bnoAngle[i].ID] = bnoAngle[i].value;
-        }
-    }
-    for (int i = 0; i < 5; i++)
-    {
-        if (bnoPosition[i].ID != 0)
-        {
-            message[bnoPosition[i].ID] = bnoPosition[i].value;
-        }
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        if (motorPosition[i].ID != 0)
-        {
-            message[motorPosition[i].ID] = motorPosition[i].value;
-        }
-    }
+   // todo
 }
 
 unsigned char* MessageBuilder::getMessage()

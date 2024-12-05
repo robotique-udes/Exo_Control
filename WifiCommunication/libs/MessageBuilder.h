@@ -7,6 +7,8 @@
 #define NB_BNO_ANGLE 9
 #define NB_BNO_POSITION 5
 #define NB_MOTOR_POSITION 4
+#define MESSAGE_LENGTH 512
+#define LOG_LENGTH 128
 
 struct valuesBnoAngles
 {
@@ -29,20 +31,23 @@ struct valuesMotorPosition
 class MessageBuilder
 {
     private:
-        unsigned char message[255 * NB_MESSAGE];
+        unsigned char message[MESSAGE_LENGTH];
+        unsigned char logMessage[LOG_LENGTH];
         valuesBnoAngles bnoAngle[NB_BNO_ANGLE];
         valuesBnoPosition bnoPosition[NB_BNO_POSITION];
         valuesMotorPosition motorPosition[NB_MOTOR_POSITION];
+        int logPlace = 0;
         
     public:
         MessageBuilder();
         unsigned char* getMessage();
         void clearMessage();
         void clearInfo();
-        void add(unsigned char log[]);
-        void add(EnumBnoAngle angle, float value);
-        void add(EnumBnoPosition position, float value);
-        void add(EnumMotorPosition motor, float value);
+        void add(unsigned char log[LOG_LENGTH]);
+        int getLogPlace();
+        void add(EnumBnoAngle BNO, float value);
+        void add(EnumBnoPosition BNO, float value);
+        void add(EnumMotorPosition MOTOR, float value);
         void buildMessage();
 
 };
