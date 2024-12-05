@@ -49,7 +49,7 @@ public:
      int DataAvailable();
      int ReadData(int);
      int SendData(unsigned char * packet, int length);
-    IPAddress getIP(int index);
+    IPAddress getIP(IPType index);
 };
 
 
