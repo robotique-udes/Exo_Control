@@ -3,8 +3,17 @@
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include "enums.h"
 
 #define UDP_PORT_RECEIVE 4210
+#define IP_LIST_SIZE 10
+
+struct IpTypeList
+{
+    IPType ipType;
+    IPAddress ipAdresse;
+};
+
 
 class  WifiServer
 {
@@ -20,13 +29,15 @@ private:
     IPAddress Subnet;
     IPAddress MyIP;
     
-    IPAddress IPsList[10]; // 0 - watch (self), 1 - exoskeleton, 2 - simulation, 3+ - other clients
+    IpTypeList IPsList[IP_LIST_SIZE]; // 0 - watch (self), 1 - exoskeleton, 2 - simulation, 3+ - other clients
 
     const char* ServerSSID;
     const char* ServerPassword;
 
     void handShake();
     void onWiFiEvent(WiFiEvent_t event);
+    void InitialiseIPList();
+
 public:
     unsigned char lastMessage[255];
     int lastMessageLength;
