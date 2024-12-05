@@ -9,8 +9,6 @@
     IPAddress local_ip(192, 168, 4, 2);
     Local_ip = local_ip;
 
-
-
     IPAddress gateway(192, 168, 4, 1);
     Gateway = gateway;
     IPAddress subnet(255, 255, 255, 0);
@@ -25,6 +23,14 @@ void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
 
 void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) {
     Serial.println("Device disconnected from the access point!");
+}
+
+void WifiServer::InitialiseIPList()
+{
+  for(int i = 0; i < IP_LIST_SIZE; i++)
+  {
+    IPsList[i].ipType = IPType::NONE;
+  }
 }
 
 int WifiServer::Initialise()
