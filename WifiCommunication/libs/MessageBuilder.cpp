@@ -68,30 +68,91 @@ int MessageBuilder::getLogPlace()
     return logPlace;
 }
 
-void MessageBuilder::add(EnumBnoAngle BNO, float value)
+void MessageBuilder::add(EnumBnoAngle BNO_NAME, float value)
 {
-    int index = (int)BNO;
-    bnoAngle[index].ID = BNO;
+    int index = (int)BNO_NAME;
+    bnoAngle[index].ID = BNO_NAME;
     bnoAngle[index].value = value;
 }
 
-void MessageBuilder::add(EnumBnoPosition BNO, float value)
+void MessageBuilder::add(EnumBnoPosition BNO_NAME, float value)
 {
-    int index = (int)BNO;
-    bnoPosition[index].ID = BNO;
+    int index = (int)BNO_NAME;
+    bnoPosition[index].ID = BNO_NAME;
     bnoPosition[index].value = value;
 }
 
-void MessageBuilder::add(EnumMotorPosition MOTOR, float value)
+void MessageBuilder::add(EnumMotorPosition MOTOR_NAME, float value)
 {
-    int index = (int)MOTOR;
-    motorPosition[index].ID = MOTOR;
+    int index = (int)MOTOR_NAME;
+    motorPosition[index].ID = MOTOR_NAME;
     motorPosition[index].value = value;
+}
+
+void MessageBuilder::add(EnumIPType IP_NAME, IPAddress value)
+{
+    int index = (int)IP_NAME;
+    ipAddress[index].ID = IP_NAME;
+    ipAddress[index].value = value;
 }
 
 void MessageBuilder::buildMessage()
 {
-   // todo
+    clearMessage();
+    // make a message using json
+    DynamicJsonDocument doc(MESSAGE_LENGTH);
+    doc["log"] = logMessage;
+    JsonArray bnoAngles = doc.createNestedArray("bnoAngles");
+    for (int i = 0; i < NB_BNO_ANGLE; i++)
+    {
+        if (bnoAngle[i].ID != EnumBnoAngle::NONE)
+        {
+            JsonObject angle = bnoAngles.createNestedObject();
+            angle["ID"] = (int)bnoAngle[i].ID;
+            angle["value"] = bnoAngle[i].value;
+        }
+    }
+
+    JsonArray bnoPositions = doc.createNestedArray("bnoPositions");
+    for (int i = 0; i < NB_BNO_POSITION; i++)
+    {
+        if (bnoPosition[i].ID != EnumBnoPosition::NONE)
+        {
+            JsonObject bno_position = bnoPositions.createNestedObject();
+            bno_position["ID"] = (int)bnoPosition[i].ID;
+            bno_position["value"] = bnoPosition[i].value;
+        }
+    }
+
+    JsonArray motorPositions = doc.createNestedArray("motorPositions");
+    for (int i = 0; i < NB_MOTOR_POSITION; i++)
+    {
+        if (motorPosition[i].ID != EnumMotorPosition::NONE)
+        {
+            JsonObject motor_position = motorPositions.createNestedObject();
+            motor_position["ID"] = (int)motorPosition[i].ID;
+            motor_position["value"] = motorPosition[i].value;
+        }
+    }
+
+}
+
+void MessageBuilder::buildHandshake()
+{
+    clearMessage();
+    // make a handshake using json
+    DynamicJsonDocument doc(MESSAGE_LENGTH);
+    JsonArray ipAddresses = doc.createNestedArray("ipAddresses");
+    for (int i = 0; i < NB_IP; i++)
+    {
+        if (ipAddress[i].ID != EnumIPType::NONE)
+        {
+            JsonObject ip_address = ipAddresses.createNestedObject();
+            ip_address["ID"] = (int)ipAddress[i].ID;
+            ip_address["value"] = ipAddress[i].value.toString();
+        }
+    }
+    serializeJson(doc, message);
 }
 
 unsigned char* MessageBuilder::getMessage()

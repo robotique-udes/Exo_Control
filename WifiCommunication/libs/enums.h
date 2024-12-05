@@ -63,7 +63,7 @@ enum class EnumScreenCallback
     SLIDER_MOTOR_POWER,
 };
 
-enum class IPType
+enum class EnumIPType
 {
     WATCH,
     EXOSKELETON,

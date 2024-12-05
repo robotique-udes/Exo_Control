@@ -16,11 +16,11 @@ class WifiClient
         void handShake();
         int IPsListSize = 0; // Number of IPs in the IPs_list
         IPAddress IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
-        void addIPAddress(IPAddress ip, enum IPType ID);
-        IPAddress getIP(enum IPType index);
+        void addIPAddress(IPAddress ip, EnumIPType ID);
+        IPAddress getIP(EnumIPType index);
     public:
         WifiClient();
-        void sendMessage(unsigned char data[], enum IPType address);
+        void sendMessage(unsigned char data[], EnumIPType address);
         void receiveMessage(unsigned char data[]);	
         bool isConnected();
         void wifiConnect(); 

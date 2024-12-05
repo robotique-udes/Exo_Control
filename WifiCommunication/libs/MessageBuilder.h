@@ -2,30 +2,39 @@
 #define MessageBuiler_h
 
 #include "enums.h"
+#include <WiFi.h>
+#include <ArduinoJson.h>
 
 #define NB_MESSAGE 1
 #define NB_BNO_ANGLE 9
 #define NB_BNO_POSITION 5
 #define NB_MOTOR_POSITION 4
+#define NB_IP 10
 #define MESSAGE_LENGTH 512
 #define LOG_LENGTH 128
 
-struct valuesBnoAngles
+struct structBnoAngles
 {
     EnumBnoAngle ID;
     float value;
 };
 
-struct valuesBnoPosition
+struct structBnoPosition
 {
     EnumBnoPosition ID;
     float value;
 };
 
-struct valuesMotorPosition
+struct structMotorPosition
 {
     EnumMotorPosition ID;
     float value;
+};
+
+struct structIPAddress
+{
+    EnumIPType ID;
+    IPAddress value;
 };
 
 class MessageBuilder
@@ -33,10 +42,11 @@ class MessageBuilder
     private:
         unsigned char message[MESSAGE_LENGTH];
         unsigned char logMessage[LOG_LENGTH];
-        valuesBnoAngles bnoAngle[NB_BNO_ANGLE];
-        valuesBnoPosition bnoPosition[NB_BNO_POSITION];
-        valuesMotorPosition motorPosition[NB_MOTOR_POSITION];
-        int logPlace = 0;
+        structBnoAngles bnoAngle[NB_BNO_ANGLE];
+        structBnoPosition bnoPosition[NB_BNO_POSITION];
+        structMotorPosition motorPosition[NB_MOTOR_POSITION];
+        structIPAddress ipAddress[NB_IP];
+        int logPlace = 127;
         
     public:
         MessageBuilder();
@@ -45,10 +55,12 @@ class MessageBuilder
         void clearInfo();
         void add(unsigned char log[LOG_LENGTH]);
         int getLogPlace();
-        void add(EnumBnoAngle BNO, float value);
-        void add(EnumBnoPosition BNO, float value);
-        void add(EnumMotorPosition MOTOR, float value);
+        void add(EnumBnoAngle BNO_NAME, float value);
+        void add(EnumBnoPosition BNO_NAME, float value);
+        void add(EnumMotorPosition MOTOR_NAME, float value);
+        void add(EnumIPType IP_NAME, IPAddress value);
         void buildMessage();
+        void buildHandshake();
 
 };
 

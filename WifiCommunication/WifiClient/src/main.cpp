@@ -19,7 +19,7 @@ void loop() {
     }
 
     // Send the message
-    client.sendMessage(table, IPType::WATCH);
+    client.sendMessage(table, EnumIPType::WATCH);
 
     // Wait for 2 second before sending the next message
     delay(2000);
