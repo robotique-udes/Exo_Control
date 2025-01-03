@@ -27,8 +27,8 @@ void loop() {
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
-      Serial.println("1 second has pass");
+    previousMillis = currentMillis;
+    Serial.println("1 second has pass");
   }
 
   // Check if data is available
@@ -40,4 +40,10 @@ void loop() {
   }
 
   delay(1);
+}
+
+
+void TestSendConnectedPeople()
+{
+  
 }

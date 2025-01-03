@@ -24,3 +24,17 @@ void loop() {
     // Wait for 2 second before sending the next message
     delay(2000);
 }
+
+
+
+//1- On commence par recevoir du serveur les personnes qui sont accessible
+//2- Il faut envoyer qui on est apres
+
+
+void FonctionTest1Communication()
+{
+    //Receive 
+    //then send
+
+    
+}

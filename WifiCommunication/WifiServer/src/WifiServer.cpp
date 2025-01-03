@@ -23,15 +23,33 @@ void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
 
     //Fonctionne pas, fait cracher le esp32-s3
     
-    // // Get the list of connected devices
-    // wifi_sta_list_t stationList;
-    // tcpip_adapter_sta_list_t adapterList;
-    // if (esp_wifi_ap_get_sta_list(&stationList) == ESP_OK &&
-    //     tcpip_adapter_get_sta_list(&stationList, &adapterList) == ESP_OK) {
-    //     for (int i = 0; i < adapterList.num; i++) {
-    //         Serial.printf("Device %d IP: %s\n", i + 1, adapterList.sta[i].ip);
-    //     }
-    // }
+    // Get the list of connected devices
+    wifi_sta_list_t stationList;
+    tcpip_adapter_sta_list_t adapterList;
+    Serial.println("Initialize variables");
+
+    if (esp_wifi_ap_get_sta_list(&stationList) == ESP_OK)
+    {
+      Serial.println("esp_wifi_ap_get_sta_list is ok");
+
+      if(tcpip_adapter_get_sta_list(&stationList, &adapterList) == ESP_OK)
+      {
+        for (int i = 0; i < adapterList.num; i++) {
+            Serial.printf("Device %d IP: %s\n", i + 1, adapterList.sta[i].ip);
+        }
+
+      }
+      else
+      {
+        Serial.println("Esp tcpip is not ok");
+      }
+    }
+    else
+    {
+      Serial.println("Esp is not ok");
+    }
+
+    
 }
 
 void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) {
@@ -42,7 +60,7 @@ void WifiServer::InitialiseIPList()
 {
   for(int i = 0; i < IP_LIST_SIZE; i++)
   {
-    IPsList[i].ipType = IPType::NONE;
+    IPsList[i].ipType = EnumIPType::NONE;
     IPsList[i].ipAdresse = IPAddress(0,0,0,0);
   }
 }
@@ -108,8 +126,8 @@ int WifiServer::ReadData(int length)
 
   for(int i = 0; i < length; i++)
   {
-        lastMessage[i] = (char)packet[i];
-      Serial.print((char)packet[i]);
+    lastMessage[i] = (char)packet[i];
+    Serial.print((char)packet[i]);
   }
   Serial.println("\n");
 
@@ -160,7 +178,7 @@ void WifiServer::handShake()
 
 }
 
-IPAddress WifiServer::getIP(IPType index)
+IPAddress WifiServer::getIP(EnumIPType index)
 {
   for (int i = 0; i < IP_LIST_SIZE; i++)
   {

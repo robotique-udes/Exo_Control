@@ -10,7 +10,7 @@
 
 struct IpTypeList
 {
-    IPType ipType;
+    EnumIPType ipType;
     IPAddress ipAdresse;
 };
 
@@ -29,7 +29,7 @@ private:
     IPAddress Subnet;
     IPAddress MyIP;
     
-    IpTypeList IPsList[IP_LIST_SIZE]; // 0 - watch (self), 1 - exoskeleton, 2 - simulation, 3+ - other clients
+    IpTypeList IPsList[IP_LIST_SIZE];
 
     const char* ServerSSID;
     const char* ServerPassword;
@@ -49,7 +49,7 @@ public:
      int DataAvailable();
      int ReadData(int);
      int SendData(unsigned char * packet, int length);
-    IPAddress getIP(IPType index);
+    IPAddress getIP(EnumIPType index);
 };
 
 
