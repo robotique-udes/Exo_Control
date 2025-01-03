@@ -1,5 +1,6 @@
 #include "Wificlient.h"
 #include "WifiServer.h"
+#include <stdexcept>
 #define UDP_PORT_SEND 4210
 
 
@@ -21,7 +22,8 @@ void WifiClient::wifiConnect() // Connect to Wi-Fi
     // Connect to Wi-Fi
     WiFi.begin(ssid, password);
     Serial.printf("Attempting to connect to \"%s\" with password \"%s\".\n\n", ssid, password);
-    while (!isConnected()) {
+    while (!isConnected()) 
+    {
         delay(750);
         Serial.print(".");
     }
@@ -45,7 +47,26 @@ void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
 void WifiClient::sendMessage(unsigned char data[], EnumIPType address) // Send message to server
 {
   UDP.beginPacket(getIP(address), UDP_PORT_SEND);
-  UDP.write(data, 22); // TODO change 22 to size of data
+  // find size of data
+  int size = 0;
+  while (true)
+  {
+    try 
+    {
+        if (data[size] == '\0')
+        {
+            break;
+        }
+
+    } 
+    catch (const std::exception& e) 
+    {
+        throw new std::range_error("Data not containing a null character.");
+    }
+    size++;
+  } 
+
+  UDP.write(data, size);
   UDP.endPacket();
   Serial.printf("UDP sent packet contents: %s\n", data);
 }
