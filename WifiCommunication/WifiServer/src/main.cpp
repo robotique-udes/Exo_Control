@@ -6,7 +6,7 @@
 #include "MessageBuilder.h"
 
 
-WifiServer wifiserver("helloIAmUnder", "ItsTricky");
+WifiServer* wifiserver;
 
 unsigned long previousMillis = 0; // Stores the last time a message was printed
 const unsigned long interval = 1000; // Interval between prints (1 second)
@@ -17,9 +17,9 @@ void setup() {
   Serial.begin(115200);
   // Connect to Wifi network.
   delay(3000);
-  wifiserver.Initialise();
 
-  
+  wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+  wifiserver->Initialise();  
 }
 
 void loop() {
@@ -32,11 +32,11 @@ void loop() {
   }
 
   // Check if data is available
-  int length = wifiserver.DataAvailable();
+  int length = wifiserver->DataAvailable();
   if (length > 0) 
   {  
-    wifiserver.ReadData(length);
-    wifiserver.SendData(wifiserver.lastMessage, wifiserver.lastMessageLength);
+    wifiserver->ReadData(length);
+    wifiserver->SendData(wifiserver->lastMessage, wifiserver->lastMessageLength);
   }
 
   delay(1);
@@ -45,5 +45,42 @@ void loop() {
 
 void TestSendConnectedPeople()
 {
-  
+
 }
+
+
+// #include <WiFi.h>
+// #include "esp_wifi.h"
+// void setup()
+// {
+//   Serial.begin(115200);
+//   WiFi.softAP("MyESP32AP"); 
+// }
+
+// void loop() {
+//   wifi_sta_list_t wifi_sta_list;
+//   tcpip_adapter_sta_list_t adapter_sta_list;
+//   memset(&wifi_sta_list, 0, sizeof(wifi_sta_list));
+//   memset(&adapter_sta_list, 0, sizeof(adapter_sta_list));
+//   esp_wifi_ap_get_sta_list(&wifi_sta_list);
+//   tcpip_adapter_get_sta_list(&wifi_sta_list, &adapter_sta_list);
+//   for (int i = 0; i < adapter_sta_list.num; i++) 
+//   {
+//     tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
+//     Serial.print("station nr ");
+//     Serial.println(i);
+//     Serial.print("MAC: ");
+//     for(int i = 0; i< 6; i++)
+//     {
+//       Serial.printf("%02X", station.mac[i]);
+//       if(i<5)
+//         Serial.print(":");
+//     }
+    
+//     ip4_addr_t addresse;
+//     addresse.addr = station.ip.addr; 
+//     Serial.print("\nIP: ");
+//     Serial.println(ip4addr_ntoa(&(addresse)));
+//   } 
+//   Serial.println("-----------");  delay(5000); 
+// }

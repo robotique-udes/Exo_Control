@@ -2,7 +2,19 @@
 #include"WifiServer.h"
 #include <esp_wifi.h>
 
- WifiServer:: WifiServer(const char* ssid, const char* passphrase)
+WifiServer* WifiServer::wifiInstance = nullptr;
+
+WifiServer* WifiServer::GetInstance(char* ssid, char* passphrase)
+{
+  if(wifiInstance == nullptr)
+  {
+    wifiInstance = new WifiServer(ssid, passphrase);
+  }
+
+  return wifiInstance;
+}
+
+WifiServer:: WifiServer(char* ssid, char* passphrase)
 {
     ServerSSID = ssid;
     ServerPassword = passphrase;
@@ -24,32 +36,78 @@ void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
     //Fonctionne pas, fait cracher le esp32-s3
     
     // Get the list of connected devices
-    wifi_sta_list_t stationList;
-    tcpip_adapter_sta_list_t adapterList;
-    Serial.println("Initialize variables");
+    // wifi_sta_list_t stationList;
+    // tcpip_adapter_sta_list_t adapterList;
+    // Serial.println("Initialize variables");
 
-    if (esp_wifi_ap_get_sta_list(&stationList) == ESP_OK)
+    // if (esp_wifi_ap_get_sta_list(&stationList) == ESP_OK)
+    // {
+    //   Serial.println("esp_wifi_ap_get_sta_list is ok");
+
+    //   if(tcpip_adapter_get_sta_list(&stationList, &adapterList) == ESP_OK)
+    //   {
+    //     for (int i = 0; i < adapterList.num; i++) {
+    //         Serial.printf("Device %d IP: %s\n", i + 1, adapterList.sta[i].ip);
+    //     }
+
+    //   }
+    //   else
+    //   {
+    //     Serial.println("Esp tcpip is not ok");
+    //   }
+    // }
+    // else
+    // {
+    //   Serial.println("Esp is not ok");
+    // }
+}
+
+void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info){
+  wifi_sta_list_t wifi_sta_list;
+  tcpip_adapter_sta_list_t adapter_sta_list;
+  memset(&wifi_sta_list, 0, sizeof(wifi_sta_list));
+  memset(&adapter_sta_list, 0, sizeof(adapter_sta_list));
+  esp_wifi_ap_get_sta_list(&wifi_sta_list);
+  tcpip_adapter_get_sta_list(&wifi_sta_list, &adapter_sta_list);
+  WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+  //Will need to check for only new people connected
+  for (int i = 0; i < adapter_sta_list.num; i++) 
+  {
+    tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
+    Serial.print("station nr ");
+    Serial.println(i);
+    Serial.print("MAC: ");
+    for(int i = 0; i< 6; i++)
     {
-      Serial.println("esp_wifi_ap_get_sta_list is ok");
-
-      if(tcpip_adapter_get_sta_list(&stationList, &adapterList) == ESP_OK)
-      {
-        for (int i = 0; i < adapterList.num; i++) {
-            Serial.printf("Device %d IP: %s\n", i + 1, adapterList.sta[i].ip);
-        }
-
-      }
-      else
-      {
-        Serial.println("Esp tcpip is not ok");
-      }
+      Serial.printf("%02X", station.mac[i]);
+      wifiserver->IPsList->mac[i] = station.mac[i];
+      if(i<5)
+        Serial.print(":");
     }
-    else
-    {
-      Serial.println("Esp is not ok");
-    }
+    
+    ip4_addr_t addresse;
+    addresse.addr = station.ip.addr; 
+    Serial.print("\nIP: ");
+    Serial.println(ip4addr_ntoa(&(addresse)));
 
     
+    wifiserver->IPsList->ipAdresse = IPAddress(addresse.addr);
+    wifiserver->IPsList->ipType = EnumIPType::NONE;
+    
+  } 
+  
+}
+
+void WifiServer::newClientConnection(IpTypeList newClient)
+{
+  IPsList[numClient] = newClient;
+  numClient++;
+}
+
+void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("Station connected IP Add = ");
+  Serial.println(IPAddress(info.got_ip.ip_info.ip.addr)); 
+  Serial.println();
 }
 
 void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) {
@@ -58,8 +116,14 @@ void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info
 
 void WifiServer::InitialiseIPList()
 {
+  numClient = 0;
   for(int i = 0; i < IP_LIST_SIZE; i++)
   {
+    for(int j = 0; j < 6; j++)
+    {
+      IPsList[i].mac[j] = 0;
+    }
+    
     IPsList[i].ipType = EnumIPType::NONE;
     IPsList[i].ipAdresse = IPAddress(0,0,0,0);
   }
@@ -78,6 +142,7 @@ int WifiServer::Initialise()
 
   WiFi.onEvent(WiFiStationConnected, ARDUINO_EVENT_WIFI_AP_STACONNECTED);
   WiFi.onEvent(WiFiStationDisconnected, ARDUINO_EVENT_WIFI_AP_STADISCONNECTED);
+  WiFi.onEvent(WiFiStationAssignation, WiFiEvent_t::ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED);
 
   Serial.print("AP IP address: ");
   Serial.println(MyIP);

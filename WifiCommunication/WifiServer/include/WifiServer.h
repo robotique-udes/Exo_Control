@@ -12,24 +12,20 @@ struct IpTypeList
 {
     EnumIPType ipType;
     IPAddress ipAdresse;
+    uint8_t mac[6];
 };
 
-
-class  WifiServer
+class WifiServer
 {
 private:
     WiFiUDP UDP;
     char packet[255];
-    //char reply[] = "Packet received!";
-
-    // WiFiServer server(80);
-    // WiFiClient client;
     IPAddress Local_ip;
     IPAddress Gateway;
     IPAddress Subnet;
     IPAddress MyIP;
     
-    IpTypeList IPsList[IP_LIST_SIZE];
+    uint8_t numClient;
 
     const char* ServerSSID;
     const char* ServerPassword;
@@ -37,23 +33,32 @@ private:
     void handShake();
     void onWiFiEvent(WiFiEvent_t event);
     void InitialiseIPList();
+    void newClientConnection(IpTypeList newClient);
+
+    // Private constructors to prevent instantiation from outside
+    WifiServer();
+    WifiServer(char* ssid, char* passphrase);
+
+    // Deleted copy constructor and assignment operator for singleton pattern
+    WifiServer(const WifiServer&) = delete;
+    WifiServer& operator=(const WifiServer&) = delete;
+
+    static WifiServer* wifiInstance;
 
 public:
+    IpTypeList IPsList[IP_LIST_SIZE];
     unsigned char lastMessage[255];
     int lastMessageLength;
 
+    // Static method to access the singleton instance
+    static WifiServer* GetInstance(char* ssid, char* passphrase);
 
-     WifiServer(const char* ssid, const char* passphrase);
-    ~ WifiServer();
-     int Initialise();
-     int DataAvailable();
-     int ReadData(int);
-     int SendData(unsigned char * packet, int length);
+    ~WifiServer();
+    int Initialise();
+    int DataAvailable();
+    int ReadData(int);
+    int SendData(unsigned char* packet, int length);
     IPAddress getIP(EnumIPType index);
 };
-
-
-
-
 
 #endif
