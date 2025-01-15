@@ -2,6 +2,11 @@
 #include "MessageBuilder.h"
 
 
+MessageBuilder::MessageBuilder()
+{
+    
+}
+
 void MessageBuilder::clearMessage()
 {
     for (int i = 0; i < MESSAGE_LENGTH; i++)

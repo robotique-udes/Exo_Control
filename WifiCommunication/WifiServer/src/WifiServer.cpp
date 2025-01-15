@@ -69,6 +69,7 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
   memset(&adapter_sta_list, 0, sizeof(adapter_sta_list));
   esp_wifi_ap_get_sta_list(&wifi_sta_list);
   tcpip_adapter_get_sta_list(&wifi_sta_list, &adapter_sta_list);
+
   WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
   //Will need to check for only new people connected
   for (int i = 0; i < adapter_sta_list.num; i++) 
@@ -77,11 +78,12 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
     Serial.print("station nr ");
     Serial.println(i);
     Serial.print("MAC: ");
-    for(int i = 0; i< 6; i++)
-    {
-      Serial.printf("%02X", station.mac[i]);
-      wifiserver->IPsList->mac[i] = station.mac[i];
-      if(i<5)
+    
+    for(int j = 0; j< 6; j++)
+    { //Adding the users info
+      Serial.printf("%02X", station.mac[j]);
+      wifiserver->IPsList[i].mac[j] = station.mac[j];
+      if(j<5)
         Serial.print(":");
     }
     
@@ -90,18 +92,19 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
     Serial.print("\nIP: ");
     Serial.println(ip4addr_ntoa(&(addresse)));
 
-    
-    wifiserver->IPsList->ipAdresse = IPAddress(addresse.addr);
-    wifiserver->IPsList->ipType = EnumIPType::NONE;
-    
+    //Adding the users info
+    wifiserver->IPsList[i].ipAdresse = IPAddress(addresse.addr);
+    wifiserver->IPsList[i].ipType = EnumIPType::NONE;
   } 
   
+  wifiserver->numClient = adapter_sta_list.num;
+
 }
 
 void WifiServer::newClientConnection(IpTypeList newClient)
 {
-  IPsList[numClient] = newClient;
-  numClient++;
+  // IPsList[numClient] = newClient;
+  // numClient++;
 }
 
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info){
@@ -240,7 +243,15 @@ int WifiServer::SendData(unsigned char * packet, int length)
 void WifiServer::handShake()
 {
     // Send list of IPs
+    MessageBuilder message;
+    for(int i = 0; i < numClient; i++)
+    {
+      message.add(IPsList->ipType, IPsList->ipAdresse);
+    }
 
+    message.buildHandshake();
+    unsigned char* mess = message.getMessage();
+    SendData(mess, 20);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)
@@ -252,5 +263,4 @@ IPAddress WifiServer::getIP(EnumIPType index)
   }
   
   return nullptr;
-    
 }
