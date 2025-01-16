@@ -47,6 +47,7 @@ class MessageBuilder
         structMotorPosition motorPosition[NB_MOTOR_POSITION];
         structIPAddress ipAddress[NB_IP];
         int logPlace = 127;
+        int lengthMessage;
         
     public:
         MessageBuilder();
@@ -59,7 +60,7 @@ class MessageBuilder
         void add(EnumBnoPosition BNO_NAME, float value);
         void add(EnumMotorPosition MOTOR_NAME, float value);
         void add(EnumIPType IP_NAME, IPAddress value);
-        void buildMessage();
-        void buildHandshake();
+        int buildMessage();
+        int buildHandshake();
 };
 #endif
