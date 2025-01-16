@@ -249,9 +249,9 @@ void WifiServer::handShake()
       message.add(IPsList->ipType, IPsList->ipAdresse);
     }
 
-    int length = message.buildHandshake();
+    message.buildHandshake();
     unsigned char* mess = message.getMessage();
-    SendData(mess, length);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
+    SendData(mess, 20);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)

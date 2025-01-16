@@ -4,7 +4,7 @@
 
 MessageBuilder::MessageBuilder()
 {
-    length = 0;
+    
 }
 
 void MessageBuilder::clearMessage()
@@ -102,7 +102,7 @@ void MessageBuilder::add(EnumIPType IP_NAME, IPAddress value)
     ipAddress[index].value = value;
 }
 
-int MessageBuilder::buildMessage()
+void MessageBuilder::buildMessage()
 {
     clearMessage();
     // make a message using json
@@ -138,11 +138,10 @@ int MessageBuilder::buildMessage()
             motor_position["value"] = motorPosition[i].value;
         }
     }
-
-    return length = serializeJson(doc, message);
+    serializeJson(doc, message);
 }
 
-int MessageBuilder::buildHandshake()
+void MessageBuilder::buildHandshake()
 {
     clearMessage();
     // make a handshake using json
@@ -157,8 +156,7 @@ int MessageBuilder::buildHandshake()
             ip_address["value"] = ipAddress[i].value.toString();
         }
     }
-
-    return length = serializeJson(doc, message);
+    serializeJson(doc, message);
 }
 
 unsigned char* MessageBuilder::getMessage()
