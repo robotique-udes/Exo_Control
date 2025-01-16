@@ -29,7 +29,7 @@ private:
     const char* ServerSSID;
     const char* ServerPassword;
 
-    
+    void handShake();
     void onWiFiEvent(WiFiEvent_t event);
     void InitialiseIPList();
     void newClientConnection(IpTypeList newClient);
@@ -49,12 +49,10 @@ public:
     unsigned char lastMessage[255];
     int lastMessageLength;
     uint8_t numClient;
-    bool SendHandShake;
     // Static method to access the singleton instance
     static WifiServer* GetInstance(char* ssid, char* passphrase);
 
     ~WifiServer();
-    void handShake();
     int Initialise();
     int DataAvailable();
     int ReadData(int);

@@ -31,13 +31,6 @@ void loop() {
     Serial.println("1 second has pass");
   }
 
-  if(wifiserver->SendHandShake)
-  {
-    wifiserver->SendHandShake = false;
-    wifiserver->handShake();
-    Serial.println("HandShake has been sent...");
-  }
-
   // Check if data is available
   int length = wifiserver->DataAvailable();
   if (length > 0) 
