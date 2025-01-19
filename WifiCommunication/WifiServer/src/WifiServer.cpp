@@ -18,6 +18,7 @@ WifiServer:: WifiServer(char* ssid, char* passphrase)
 {
     ServerSSID = ssid;
     ServerPassword = passphrase;
+    readyToSendHandShake = 0;
 
     IPAddress local_ip(192, 168, 4, 2);
     Local_ip = local_ip;
@@ -96,7 +97,7 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
     wifiserver->IPsList[i].ipAdresse = IPAddress(addresse.addr);
     wifiserver->IPsList[i].ipType = EnumIPType::NONE;
   } 
-  
+  wifiserver->readyToSendHandShake = 1;
   wifiserver->numClient = adapter_sta_list.num;
 
 }
@@ -244,14 +245,14 @@ void WifiServer::handShake()
 {
     // Send list of IPs
     MessageBuilder message;
-    for(int i = 0; i < numClient; i++)
-    {
-      message.add(IPsList->ipType, IPsList->ipAdresse);
-    }
+    // for(int i = 0; i < numClient; i++)
+    // {
+    //   message.add(IPsList->ipType, IPsList->ipAdresse);
+    // }
 
-    int val = message.buildHandshake();
-    unsigned char* mess = message.getMessage();
-    SendData(mess, val);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
+    // int val = message.buildHandshake();
+    // unsigned char* mess = message.getMessage();
+    // SendData(mess, val);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)
@@ -263,4 +264,10 @@ IPAddress WifiServer::getIP(EnumIPType index)
   }
   
   return nullptr;
+}
+
+
+void WifiServer::DoAFlip()
+{
+  this->handShake();
 }

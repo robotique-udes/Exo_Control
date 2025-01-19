@@ -3,7 +3,8 @@
 // #define UDP_PORT_RECEIVE 4210
 #include"Arduino.h"
 #include"WifiServer.h"
-#include "MessageBuilder.h"
+#include "MessageBuilder/MessageBuilder.h"
+#include "enums.h"
 
 
 WifiServer* wifiserver;
@@ -29,6 +30,13 @@ void loop() {
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     Serial.println("1 second has pass");
+  }
+
+  if(wifiserver->readyToSendHandShake)
+  {
+    wifiserver->readyToSendHandShake = 0;
+    // wifiserver->DoAFlip();
+    MessageBuilder message;
   }
 
   // Check if data is available

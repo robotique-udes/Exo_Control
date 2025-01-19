@@ -4,7 +4,7 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include "enums.h"
-#include "MessageBuilder.h"
+#include "MessageBuilder/MessageBuilder.h"
 
 #define UDP_PORT_RECEIVE 4210
 #define IP_LIST_SIZE 10
@@ -49,6 +49,7 @@ public:
     unsigned char lastMessage[255];
     int lastMessageLength;
     uint8_t numClient;
+    unsigned char readyToSendHandShake;
     // Static method to access the singleton instance
     static WifiServer* GetInstance(char* ssid, char* passphrase);
 
@@ -58,6 +59,7 @@ public:
     int ReadData(int);
     int SendData(unsigned char* packet, int length);
     IPAddress getIP(EnumIPType index);
+    void DoAFlip();
 };
 
 #endif

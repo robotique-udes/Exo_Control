@@ -159,7 +159,7 @@ int MessageBuilder::buildHandshake()
     }
 
     lengthMessage = serializeJson(doc, message);
-    return lengthMessage
+    return lengthMessage;
 }
 
 unsigned char* MessageBuilder::getMessage()

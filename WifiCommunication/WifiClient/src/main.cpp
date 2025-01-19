@@ -1,4 +1,5 @@
 #include "WifiClient.h"
+#include "MessageBuilder/MessageBuilder.h"
 
 WifiClient client;
 
