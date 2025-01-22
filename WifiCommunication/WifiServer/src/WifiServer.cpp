@@ -33,34 +33,6 @@ WifiServer:: WifiServer(char* ssid, char* passphrase)
 
 void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
     Serial.println("Device connected to the access point!");
-
-    //Fonctionne pas, fait cracher le esp32-s3
-    
-    // Get the list of connected devices
-    // wifi_sta_list_t stationList;
-    // tcpip_adapter_sta_list_t adapterList;
-    // Serial.println("Initialize variables");
-
-    // if (esp_wifi_ap_get_sta_list(&stationList) == ESP_OK)
-    // {
-    //   Serial.println("esp_wifi_ap_get_sta_list is ok");
-
-    //   if(tcpip_adapter_get_sta_list(&stationList, &adapterList) == ESP_OK)
-    //   {
-    //     for (int i = 0; i < adapterList.num; i++) {
-    //         Serial.printf("Device %d IP: %s\n", i + 1, adapterList.sta[i].ip);
-    //     }
-
-    //   }
-    //   else
-    //   {
-    //     Serial.println("Esp tcpip is not ok");
-    //   }
-    // }
-    // else
-    // {
-    //   Serial.println("Esp is not ok");
-    // }
 }
 
 void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info){
@@ -169,7 +141,7 @@ int WifiServer::DataAvailable()
 {
   int longueur = UDP.parsePacket();
   //Serial.println(longueur);
-    return longueur;
+  return longueur;
 }
 
 int WifiServer::ReadData(int length)
@@ -245,14 +217,14 @@ void WifiServer::handShake()
 {
     // Send list of IPs
     MessageBuilder message;
-    // for(int i = 0; i < numClient; i++)
-    // {
-    //   message.add(IPsList->ipType, IPsList->ipAdresse);
-    // }
+    for(int i = 0; i < numClient; i++)
+    {
+      message.add(IPsList->ipType, IPsList->ipAdresse);
+    }
 
-    // int val = message.buildHandshake();
-    // unsigned char* mess = message.getMessage();
-    // SendData(mess, val);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
+    int val = message.buildHandshake();
+    unsigned char* mess = message.getMessage();
+    SendData(mess, val);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)
@@ -266,8 +238,50 @@ IPAddress WifiServer::getIP(EnumIPType index)
   return nullptr;
 }
 
-
 void WifiServer::DoAFlip()
 {
   this->handShake();
+}
+
+/// @brief Trying to find key in dictionary. Return value 0 == good, -1 failed conversion, -2 not found
+/// @param BNO_NAME 
+/// @param value 
+/// @return 
+int WifiServer::retrieveInformation(EnumBnoAngle BNO_NAME, float* value)
+{
+  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(EnumBnoAngle::THIGH_L));
+
+  if (unifiedMap.find(key) != unifiedMap.end()) 
+  {
+    try
+    {
+      Serial.println(unifiedMap[key].c_str());
+      *value = std::stof(unifiedMap[key].c_str());
+    }
+    catch(const std::invalid_argument &e)
+    {
+      Serial.println("Conversion to float failed...");
+      return -1;
+    }
+       
+    return 0;
+  }
+
+  Serial.println("Key not found!");
+  return -2;  
+}
+
+int WifiServer::retrieveInformation(EnumBnoPosition BNO_NAME, float* value)
+{
+  return 0;
+}
+
+int WifiServer::retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value)
+{
+  return 0;
+}
+
+int WifiServer::retrieveInformation(EnumIPType IP_NAME, IPAddress* value)
+{
+  return 0;
 }

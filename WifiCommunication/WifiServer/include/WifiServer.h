@@ -3,6 +3,8 @@
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <map>
+#include <string>
 #include "enums.h"
 #include "MessageBuilder/MessageBuilder.h"
 
@@ -25,6 +27,7 @@ private:
     IPAddress Gateway;
     IPAddress Subnet;
     IPAddress MyIP;
+    std::map<std::pair<std::string, int>, std::string> unifiedMap;
 
     const char* ServerSSID;
     const char* ServerPassword;
@@ -60,6 +63,11 @@ public:
     int SendData(unsigned char* packet, int length);
     IPAddress getIP(EnumIPType index);
     void DoAFlip();
+
+    int retrieveInformation(EnumBnoAngle BNO_NAME, float* value);
+    int retrieveInformation(EnumBnoPosition BNO_NAME, float* value);
+    int retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value);
+    int retrieveInformation(EnumIPType IP_NAME, IPAddress* value);
 };
 
 #endif

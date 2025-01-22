@@ -35,8 +35,7 @@ void loop() {
   if(wifiserver->readyToSendHandShake)
   {
     wifiserver->readyToSendHandShake = 0;
-    // wifiserver->DoAFlip();
-    MessageBuilder message;
+    wifiserver->DoAFlip();
   }
 
   // Check if data is available
@@ -45,6 +44,9 @@ void loop() {
   {  
     wifiserver->ReadData(length);
     wifiserver->SendData(wifiserver->lastMessage, wifiserver->lastMessageLength);
+    float val;
+    wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &val);
+    Serial.printf("valeur obtenu: %2f", val);
   }
 
   delay(1);
@@ -55,40 +57,3 @@ void TestSendConnectedPeople()
 {
 
 }
-
-
-// #include <WiFi.h>
-// #include "esp_wifi.h"
-// void setup()
-// {
-//   Serial.begin(115200);
-//   WiFi.softAP("MyESP32AP"); 
-// }
-
-// void loop() {
-//   wifi_sta_list_t wifi_sta_list;
-//   tcpip_adapter_sta_list_t adapter_sta_list;
-//   memset(&wifi_sta_list, 0, sizeof(wifi_sta_list));
-//   memset(&adapter_sta_list, 0, sizeof(adapter_sta_list));
-//   esp_wifi_ap_get_sta_list(&wifi_sta_list);
-//   tcpip_adapter_get_sta_list(&wifi_sta_list, &adapter_sta_list);
-//   for (int i = 0; i < adapter_sta_list.num; i++) 
-//   {
-//     tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
-//     Serial.print("station nr ");
-//     Serial.println(i);
-//     Serial.print("MAC: ");
-//     for(int i = 0; i< 6; i++)
-//     {
-//       Serial.printf("%02X", station.mac[i]);
-//       if(i<5)
-//         Serial.print(":");
-//     }
-    
-//     ip4_addr_t addresse;
-//     addresse.addr = station.ip.addr; 
-//     Serial.print("\nIP: ");
-//     Serial.println(ip4addr_ntoa(&(addresse)));
-//   } 
-//   Serial.println("-----------");  delay(5000); 
-// }
