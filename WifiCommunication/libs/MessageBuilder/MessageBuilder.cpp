@@ -138,8 +138,8 @@ int MessageBuilder::buildMessage()
             motor_position["value"] = motorPosition[i].value;
         }
     }
-    lengthMessage = serializeJson(doc, message);
-    return lengthMessage;
+
+    return lengthMessage = serializeJson(doc, message);
 }
 
 int MessageBuilder::buildHandshake()
@@ -158,8 +158,7 @@ int MessageBuilder::buildHandshake()
         }
     }
 
-    lengthMessage = serializeJson(doc, message);
-    return lengthMessage
+    return lengthMessage = serializeJson(doc, message);
 }
 
 unsigned char* MessageBuilder::getMessage()

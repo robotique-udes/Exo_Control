@@ -3,8 +3,10 @@
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <map>
+#include <string>
 #include "enums.h"
-#include "MessageBuilder.h"
+#include "MessageBuilder/MessageBuilder.h"
 
 #define UDP_PORT_RECEIVE 4210
 #define IP_LIST_SIZE 10
@@ -25,6 +27,7 @@ private:
     IPAddress Gateway;
     IPAddress Subnet;
     IPAddress MyIP;
+    std::map<std::pair<std::string, int>, std::string> unifiedMap;
 
     const char* ServerSSID;
     const char* ServerPassword;
@@ -49,6 +52,7 @@ public:
     unsigned char lastMessage[255];
     int lastMessageLength;
     uint8_t numClient;
+    unsigned char readyToSendHandShake;
     // Static method to access the singleton instance
     static WifiServer* GetInstance(char* ssid, char* passphrase);
 
@@ -58,6 +62,12 @@ public:
     int ReadData(int);
     int SendData(unsigned char* packet, int length);
     IPAddress getIP(EnumIPType index);
+    void DoAFlip();
+
+    int retrieveInformation(EnumBnoAngle BNO_NAME, float* value);
+    int retrieveInformation(EnumBnoPosition BNO_NAME, float* value);
+    int retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value);
+    int retrieveInformation(EnumIPType IP_NAME, IPAddress* value);
 };
 
 #endif
