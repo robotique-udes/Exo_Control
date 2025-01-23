@@ -106,6 +106,12 @@ void WifiClient::wifiOn() // Turn on Wi-Fi
 
 void WifiClient::handShake() // Handshake with server
 {
+    // Send connection request
+    unsigned char connection_request[] = "Connection request";
+    MessageBuilder message = MessageBuilder();
+    message.add(connection_request);
+    
+
     // Receive IP addresses
     unsigned char IPs[255];
     receiveMessage(IPs);
