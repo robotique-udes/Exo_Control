@@ -138,6 +138,12 @@ int MessageBuilder::buildMessage()
             motor_position["value"] = motorPosition[i].value;
         }
     }
+    JsonArray logs = doc.createNestedArray("logs");
+    if (getLogPlace() < LOG_LENGTH - 2)
+    {
+        JsonObject log = logs.createNestedObject();
+        log["log"] = logMessage;
+    }
 
     return lengthMessage = serializeJson(doc, message);
 }
@@ -156,6 +162,12 @@ int MessageBuilder::buildHandshake()
             ip_address["ID"] = (int)ipAddress[i].ID;
             ip_address["value"] = ipAddress[i].value.toString();
         }
+    }
+    JsonArray logs = doc.createNestedArray("logs");
+    if (getLogPlace() < LOG_LENGTH - 2)
+    {
+        JsonObject log = logs.createNestedObject();
+        log["log"] = logMessage;
     }
 
     return lengthMessage = serializeJson(doc, message);
