@@ -146,7 +146,7 @@ int WifiServer::DataAvailable()
 
 int WifiServer::ReadData(int length)
 {
-  unsigned char packet[200];
+  unsigned char packet[800];
   int len = UDP.read(packet, length);
   lastMessageLength = len;
   if (len > 0)
@@ -219,12 +219,18 @@ void WifiServer::handShake()
     MessageBuilder message;
     for(int i = 0; i < numClient; i++)
     {
-      message.add(IPsList->ipType, IPsList->ipAdresse);
+      Serial.print(i);
+      Serial.print(" NumClient: ");
+      Serial.println(numClient);
+
+      Serial.println((int)IPsList[i].ipType);
+      Serial.println(IPsList[i].ipAdresse);
+      message.add(EnumBnoPosition::EXO_BACK, 2.5);
     }
 
-    int val = message.buildHandshake();
-    unsigned char* mess = message.getMessage();
-    SendData(mess, val);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
+    // int val = message.buildHandshake();
+    // unsigned char* mess = message.getMessage();
+    // SendData(mess, val);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)

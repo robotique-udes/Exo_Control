@@ -44,9 +44,9 @@ void loop() {
   {  
     wifiserver->ReadData(length);
     wifiserver->SendData(wifiserver->lastMessage, wifiserver->lastMessageLength);
-    float val;
-    wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &val);
-    Serial.printf("valeur obtenu: %2f", val);
+    // float val;
+    // wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &val);
+    // Serial.printf("valeur obtenu: %2f", val);
   }
 
   delay(1);

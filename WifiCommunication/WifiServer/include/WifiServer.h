@@ -49,7 +49,7 @@ private:
 
 public:
     IpTypeList IPsList[IP_LIST_SIZE];
-    unsigned char lastMessage[255];
+    unsigned char lastMessage[800];
     int lastMessageLength;
     uint8_t numClient;
     unsigned char readyToSendHandShake;
