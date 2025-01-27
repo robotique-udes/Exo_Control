@@ -12,8 +12,6 @@ WifiServer* wifiserver;
 unsigned long previousMillis = 0; // Stores the last time a message was printed
 const unsigned long interval = 1000; // Interval between prints (1 second)
 
-unsigned char allo[4] = {'a','l','l','o'};
-
 void setup() {
   Serial.begin(115200);
   // Connect to Wifi network.

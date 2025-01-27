@@ -5,6 +5,15 @@
 MessageBuilder::MessageBuilder()
 {
     lengthMessage = 0;
+
+    IPAddress value = IPAddress();
+    
+    indexStructIPAddressTest = 0;
+    for(int i = 0; i < NB_IP; i++)
+    {
+        ipAddress[i].ID = EnumIPType::NONE;
+        ipAddress[i].value = value;
+    }
 }
 
 void MessageBuilder::clearMessage()
@@ -95,11 +104,11 @@ void MessageBuilder::add(EnumMotorPosition MOTOR_NAME, float value)
     motorPosition[index].value = value;
 }
 
-void MessageBuilder::add(EnumIPType IP_NAME, IPAddress value)
+void MessageBuilder::add(EnumIPType IP_NAME, IPAddress* value)
 {
-    int index = (int)IP_NAME;
-    ipAddress[index].ID = IP_NAME;
-    ipAddress[index].value = value;
+    ipAddress[indexStructIPAddressTest].ID = IP_NAME;
+    ipAddress[indexStructIPAddressTest].value = *value;
+    indexStructIPAddressTest++;  
 }
 
 int MessageBuilder::buildMessage()
@@ -138,14 +147,8 @@ int MessageBuilder::buildMessage()
             motor_position["value"] = motorPosition[i].value;
         }
     }
-    JsonArray logs = doc.createNestedArray("logs");
-    if (getLogPlace() < LOG_LENGTH - 2)
-    {
-        JsonObject log = logs.createNestedObject();
-        log["log"] = logMessage;
-    }
-
-    return lengthMessage = serializeJson(doc, message);
+    lengthMessage = serializeJson(doc, message);
+    return lengthMessage;
 }
 
 int MessageBuilder::buildHandshake()
@@ -156,18 +159,16 @@ int MessageBuilder::buildHandshake()
     JsonArray ipAddresses = doc.createNestedArray("ipAddresses");
     for (int i = 0; i < NB_IP; i++)
     {
+        Serial.print("ipAddress[i].ID: ");
+        Serial.println((int)ipAddress[i].ID);
         if (ipAddress[i].ID != EnumIPType::NONE)
         {
             JsonObject ip_address = ipAddresses.createNestedObject();
             ip_address["ID"] = (int)ipAddress[i].ID;
+            String cal =  castUint32ToStringIP(ipAddress[i].ipAdd32);
+            //ip_address["value"] = castUint32ToStringIP(ipAddress[i].ipAdd32);
             ip_address["value"] = ipAddress[i].value.toString();
         }
-    }
-    JsonArray logs = doc.createNestedArray("logs");
-    if (getLogPlace() < LOG_LENGTH - 2)
-    {
-        JsonObject log = logs.createNestedObject();
-        log["log"] = logMessage;
     }
 
     return lengthMessage = serializeJson(doc, message);
@@ -176,4 +177,18 @@ int MessageBuilder::buildHandshake()
 unsigned char* MessageBuilder::getMessage()
 {
     return message;
+}
+
+void MessageBuilder::add(EnumIPType IP_NAME, uint32_t address)
+{
+    ipAddress[indexStructIPAddressTest].ID = IP_NAME;
+    ipAddress[indexStructIPAddressTest].ipAdd32 = address;
+    indexStructIPAddressTest++;    
+}
+
+String MessageBuilder::castUint32ToStringIP(uint32_t val) {
+    return String(val & 0xFF) + "." +
+           String((val >> 8) & 0xFF) + "." +
+           String((val >> 16) & 0xFF) + "." +
+           String((val >> 24) & 0xFF);
 }

@@ -15,6 +15,7 @@ struct IpTypeList
 {
     EnumIPType ipType;
     IPAddress ipAdresse;
+    ip4_addr_t ipAdd;
     uint8_t mac[6];
 };
 

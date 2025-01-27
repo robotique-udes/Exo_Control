@@ -67,7 +67,8 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
 
     //Adding the users info
     wifiserver->IPsList[i].ipAdresse = IPAddress(addresse.addr);
-    wifiserver->IPsList[i].ipType = EnumIPType::NONE;
+    wifiserver->IPsList[i].ipAdd = addresse;
+    wifiserver->IPsList[i].ipType = EnumIPType::UNKNOWN_TYPE;
   } 
   wifiserver->readyToSendHandShake = 1;
   wifiserver->numClient = adapter_sta_list.num;
@@ -216,7 +217,10 @@ int WifiServer::SendData(unsigned char * packet, int length)
 void WifiServer::handShake()
 {
     // Send list of IPs
-    MessageBuilder message;
+    unsigned char connection_request[] = "Connection request";
+    MessageBuilder message = MessageBuilder();
+    message.add(connection_request);
+    Serial.println("Starting the handShake");
     for(int i = 0; i < numClient; i++)
     {
       Serial.print(i);
@@ -226,11 +230,22 @@ void WifiServer::handShake()
       Serial.println((int)IPsList[i].ipType);
       Serial.println(IPsList[i].ipAdresse);
       message.add(EnumBnoPosition::EXO_BACK, 2.5);
+      //message.add(IPsList[i].ipType, IPsList[i].ipAdd.addr);
+      message.add(IPsList[i].ipType, &IPsList[i].ipAdresse);
     }
 
-    // int val = message.buildHandshake();
-    // unsigned char* mess = message.getMessage();
-    // SendData(mess, val);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
+    Serial.println("Finished with the IPs, now going to build and send this bitch");
+    int length = message.buildHandshake();
+    unsigned char* mess = message.getMessage();
+
+    Serial.print("Message built: ");
+    for(int i = 0; i < length; i++)
+    {
+      Serial.print((char)mess[i]);
+    }
+
+    Serial.println("\n\n\nEnd of message");
+    SendData(mess, length);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)
@@ -247,6 +262,7 @@ IPAddress WifiServer::getIP(EnumIPType index)
 void WifiServer::DoAFlip()
 {
   this->handShake();
+  Serial.println("Finished hand shake");
 }
 
 /// @brief Trying to find key in dictionary. Return value 0 == good, -1 failed conversion, -2 not found

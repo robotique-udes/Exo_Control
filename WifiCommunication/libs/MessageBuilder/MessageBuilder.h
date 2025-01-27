@@ -35,6 +35,7 @@ struct structIPAddress
 {
     EnumIPType ID;
     IPAddress value;
+    uint32_t ipAdd32;
 };
 
 class MessageBuilder
@@ -46,8 +47,12 @@ class MessageBuilder
         structBnoPosition bnoPosition[NB_BNO_POSITION];
         structMotorPosition motorPosition[NB_MOTOR_POSITION];
         structIPAddress ipAddress[NB_IP];
+        int indexStructIPAddressTest;
+
         int logPlace = 127;
         int lengthMessage;
+
+        String castUint32ToStringIP(uint32_t val);
         
     public:
         MessageBuilder();
@@ -59,7 +64,8 @@ class MessageBuilder
         void add(EnumBnoAngle BNO_NAME, float value);
         void add(EnumBnoPosition BNO_NAME, float value);
         void add(EnumMotorPosition MOTOR_NAME, float value);
-        void add(EnumIPType IP_NAME, IPAddress value);
+        void add(EnumIPType IP_NAME, IPAddress *value);
+        void add(EnumIPType IP_NAME, uint32_t address);
         int buildMessage();
         int buildHandshake();
 };
