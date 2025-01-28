@@ -47,6 +47,9 @@ class MessageBuilder
         structBnoPosition bnoPosition[NB_BNO_POSITION];
         structMotorPosition motorPosition[NB_MOTOR_POSITION];
         structIPAddress ipAddress[NB_IP];
+        int indexStructBnoAngles;
+        int indexStructBnoPosition;
+        int indexStructMotorPosition;
         int indexStructIPAddressTest;
 
         int logPlace = 127;

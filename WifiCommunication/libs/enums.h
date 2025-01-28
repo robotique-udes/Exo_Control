@@ -77,6 +77,7 @@ enum class EnumIPType
     CLIENT_7,
     CLIENT_8,
     CLIENT_9,
+    UNKNOWN_TYPE,
     NONE
 };
 #endif

@@ -85,23 +85,22 @@ int MessageBuilder::getLogPlace()
 
 void MessageBuilder::add(EnumBnoAngle BNO_NAME, float value)
 {
-    int index = (int)BNO_NAME;
-    bnoAngle[index].ID = BNO_NAME;
-    bnoAngle[index].value = value;
+    bnoAngle[indexStructBnoAngles].ID = BNO_NAME;
+    bnoAngle[indexStructBnoAngles].value = value;
+    indexStructBnoAngles++;
 }
 
 void MessageBuilder::add(EnumBnoPosition BNO_NAME, float value)
 {
-    int index = (int)BNO_NAME;
-    bnoPosition[index].ID = BNO_NAME;
-    bnoPosition[index].value = value;
+    bnoPosition[indexStructBnoPosition].ID = BNO_NAME;
+    bnoPosition[indexStructBnoPosition].value = value;
+    indexStructBnoPosition++;
 }
 
 void MessageBuilder::add(EnumMotorPosition MOTOR_NAME, float value)
 {
-    int index = (int)MOTOR_NAME;
-    motorPosition[index].ID = MOTOR_NAME;
-    motorPosition[index].value = value;
+    motorPosition[indexStructMotorPosition].ID = MOTOR_NAME;
+    motorPosition[indexStructMotorPosition].value = value;
 }
 
 void MessageBuilder::add(EnumIPType IP_NAME, IPAddress* value)
@@ -118,7 +117,7 @@ int MessageBuilder::buildMessage()
     DynamicJsonDocument doc(MESSAGE_LENGTH);
     doc["log"] = logMessage;
     JsonArray bnoAngles = doc.createNestedArray("bnoAngles");
-    for (int i = 0; i < NB_BNO_ANGLE; i++)
+    for (int i = 0; i < indexStructBnoAngles; i++)
     {
         if (bnoAngle[i].ID != EnumBnoAngle::NONE)
         {
@@ -128,7 +127,7 @@ int MessageBuilder::buildMessage()
         }
     }
     JsonArray bnoPositions = doc.createNestedArray("bnoPositions");
-    for (int i = 0; i < NB_BNO_POSITION; i++)
+    for (int i = 0; i < indexStructBnoPosition; i++)
     {
         if (bnoPosition[i].ID != EnumBnoPosition::NONE)
         {
@@ -138,7 +137,7 @@ int MessageBuilder::buildMessage()
         }
     }
     JsonArray motorPositions = doc.createNestedArray("motorPositions");
-    for (int i = 0; i < NB_MOTOR_POSITION; i++)
+    for (int i = 0; i < indexStructMotorPosition; i++)
     {
         if (motorPosition[i].ID != EnumMotorPosition::NONE)
         {
