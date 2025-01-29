@@ -1,3 +1,5 @@
+#ifndef STRUCTS_H
+#define STRUCTS_H
 using namespace std;
 #include <array>
 #include <stdint.h>
@@ -15,3 +17,5 @@ struct BNOStruct
     array<int16_t, 3> lin_acceleration; // Stored as X, Y, Z
     int16_t time; // Timestamp of the data, based on the BNO's internal clock
 };
+
+#endif

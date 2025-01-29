@@ -12,6 +12,17 @@ BnoHandler::BnoHandler(){
     BNOs[static_cast<int> (EnumBnoPosition::THIGH_R)]     = new BNO_085(EnumBnoPosition::THIGH_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4A);
     BNOs[static_cast<int> (EnumBnoPosition::TIBIA_R)]    = new BNO_085(EnumBnoPosition::TIBIA_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4B);
     BNOs[static_cast<int> (EnumBnoPosition::EXO_BACK)]  = new BNO_085(EnumBnoPosition::EXO_BACK, 0, &this->mux, 0x4A);
+    bufferIndexLeft = 0;
+    bufferIndexRight = 0;
+    for(int i = 0; i < BUFFER_SIZE; i++)
+    {
+        linAccelBufferLeft[i]=0;
+        linAccelBufferRight[i]=0;
+    }
+
+    for (int i = 0; i < BNOs.size(); i++){
+        dataCore.setBnoStruct(static_cast<EnumBnoPosition>(i), BNOs[i]->getDataPointer());
+    }
 }
 
 // OPTIONAL: Check if a BNO is connected
@@ -46,6 +57,10 @@ void BnoHandler::read(){
     dataCore.setBnoAngles(EnumBnoAngle::HIP_L, getValAngle(EnumBnoAngle::HIP_L));
     dataCore.setBnoAngles(EnumBnoAngle::KNEE_R, getValAngle(EnumBnoAngle::KNEE_R));
     dataCore.setBnoAngles(EnumBnoAngle::KNEE_L, getValAngle(EnumBnoAngle::KNEE_L));
+
+    //Ground status
+    dataCore.setRightGrounded(getLinAccel(EnumBnoPosition::TIBIA_R));
+    dataCore.setLeftGrounded(getLinAccel(EnumBnoPosition::TIBIA_L));
 }
 
 // Request data from all BNOs
@@ -69,9 +84,38 @@ void BnoHandler::printBNOsStatus(int startIndex, int endIndex){
 
 void BnoHandler::printBNOsData(int startIndex, int endIndex){
     for (int i = startIndex; i<=endIndex; i++){
-        Serial.print("\tIMU "); printName(EnumBnoAngle(i)); Serial.print("\t");
-        Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<EnumBnoAngle>(i)));
+        printBNOData(static_cast<EnumBnoPosition>(i));
     }
+}
+
+void BnoHandler::updateBuffer(EnumBnoPosition position)
+{
+    BNOStruct data = BNOs[static_cast<int> (position)]->getData();
+    if (position==EnumBnoPosition::TIBIA_L){
+        linAccelBufferLeft[bufferIndexLeft] = abs(data.lin_acceleration[1]) < (ACCEL_THRESHOLD + offset);
+        if(bufferIndexLeft < (BUFFER_SIZE-1)) bufferIndexLeft++;
+        else bufferIndexLeft = 0;
+    }
+    else if (position==EnumBnoPosition::TIBIA_R){
+        linAccelBufferRight[bufferIndexRight] = abs(data.lin_acceleration[1]) < (ACCEL_THRESHOLD + offset);
+        if(bufferIndexRight < (BUFFER_SIZE-1)) bufferIndexRight++;
+        else bufferIndexRight = 0;
+    }
+}
+
+bool BnoHandler::getLinAccel(EnumBnoPosition position)
+{
+    float bufferAvg = 0;
+    updateBuffer(position);
+    for(int i=0; i<BUFFER_SIZE;i++)
+    {
+        if (position==EnumBnoPosition::TIBIA_L) bufferAvg += linAccelBufferLeft[i];
+        else if (position==EnumBnoPosition::TIBIA_R) bufferAvg += linAccelBufferRight[i];
+    }
+    bufferAvg /= BUFFER_SIZE;
+    Serial.print(" Buffer avg: ");
+    Serial.print(bufferAvg);
+    return bufferAvg >= ACCEL_BUFFER_THRESHOLD;
 }
 
 void BnoHandler::computeAngles() {
@@ -104,6 +148,10 @@ float BnoHandler::getValAngle(EnumBnoAngle position){
 
 BNOStruct BnoHandler::getBNOData(EnumBnoPosition position){
     return BNOs[static_cast<int> (position)]->getData();
+}
+
+BNOStruct* BnoHandler::getBNODataPointer(EnumBnoPosition position){
+    return BNOs[static_cast<int> (position)]->getDataPointer();
 }
 
 //print name of angle
@@ -142,4 +190,30 @@ void BnoHandler::printName(EnumBnoAngle position){
         Serial.print("Unknown");
         break;
     }
+}
+
+void BnoHandler::printBNOData(EnumBnoPosition position){
+    // Lets print lin_acceleration and acceleration pretty
+    BNOStruct data = BNOs[static_cast<int> (position)]->getData();
+    Serial.print("IMU "); printName(static_cast<EnumBnoAngle>(position)); Serial.print("\n");
+    Serial.print("Accel: ");
+    Serial.print(data.acceleration[0]); Serial.print("\t");
+    Serial.print(data.acceleration[1]); Serial.print("\t");
+    Serial.print(data.acceleration[2]); Serial.print("\t");
+    
+    Serial.print("L-Acc: "); 
+    Serial.print(data.lin_acceleration[0]); Serial.print("\t");
+    Serial.print(data.lin_acceleration[1]); Serial.print("\t");
+    Serial.print(data.lin_acceleration[2]); Serial.print("\n");
+}
+
+void BnoHandler::printGroundState()
+{
+    Serial.print(" Left ground state: \t");
+    Serial.print(dataCore.getLeftGrounded());
+    Serial.print(" Right ground state: \t");
+    Serial.print(dataCore.getRightGrounded());
+    Serial.print(" Threshold: \t");
+    Serial.print(ACCEL_THRESHOLD + offset);
+
 }

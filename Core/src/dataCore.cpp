@@ -3,25 +3,20 @@
 DataCore *DataCore::instance;
 
 DataCore::DataCore(){
-    motorEnabled = false;
-    clutchEnabled = false;
-    proximEnabled = true;
+    
+    groundDetectEnable = true;
     brightness = HIGH;
-    needResetProxim = false;
-
-    sonarState = SQUAT_MODE;
-    angleSource = FROM_IMU;
-
     height = 180;
-    motorPower = 2048;
+    initialise();
+    bnoData = {nullptr, nullptr, nullptr, nullptr, nullptr};
 }
 
 void DataCore::initialise(){
+    rightGrounded = false;
+    leftGrounded = false;
     clutchEnabled = OFF;
     motorEnabled = false;
     motorPower = 2048;
-    needResetProxim = true;
-    sonarState = FROM_IMU;
     angleSource = FROM_IMU;
     resetEncoder();
 }
@@ -42,31 +37,31 @@ bool DataCore::isClutchEnabled(){
     return clutchEnabled;
 }
 
-bool DataCore::isProximEnabled(){
-    return proximEnabled;
+bool DataCore::isGroundDetectEnable(){
+    return groundDetectEnable;
 }
 
 bool DataCore::isEncoderResetNeeded(){
     return needResetEncoder;
 }
 
+//TODO when hmi is refactored, change toggle to using input param
 void DataCore::setMotorEnabled(bool setMotorEnabled){
-    motorEnabled = !(motorEnabled);
-    Serial.print("\t Motor enable set to: ");
-    Serial.println(motorEnabled);
+    motorEnabled = setMotorEnabled;
+    Serial.print("Motor state: ");
+    Serial.println(isMotorEnabled());
 }
 
 void DataCore::setClutchEnabled(bool setClutchEnabled){
     clutchEnabled = !(clutchEnabled);
     relais.setAllRelay(clutchEnabled);
-    Serial.print("\t Clutch enable set to: ");
-    Serial.println(clutchEnabled);
+
 }
 
-void DataCore::setProximEnabled(bool setProximEnabled){
-    proximEnabled = !(proximEnabled);
-    Serial.print("\t Proxim enable set to: ");
-    Serial.println(proximEnabled);
+void DataCore::setGroundDetectEnable(bool setGroundDetectEnable){
+    groundDetectEnable = !(groundDetectEnable);
+    Serial.print("\tGround detection set to: ");
+    Serial.println(groundDetectEnable);
 }
 
 bool DataCore::getAngleSource(){
@@ -79,38 +74,20 @@ void DataCore::setAngleSource(bool setAngleSource){
     Serial.println(angleSource);
 }
 
-
-//PROXIM
-bool DataCore::getBrightness(){
-    return brightness;
+bool DataCore::getRightGrounded(){
+    return rightGrounded;
 }
 
-void DataCore::setBrightness(){
-    brightness = !(brightness);
+void DataCore::setRightGrounded(bool state){
+    rightGrounded = state;
 }
 
-bool DataCore::getResetProxim(){
-    return needResetProxim;
+bool DataCore::getLeftGrounded(){
+    return leftGrounded;
 }
 
-bool DataCore::getRightProxi(){
-    return rightProxiState;
-}
-
-void DataCore::setRightProxi(bool state){
-    rightProxiState = state;
-}
-
-bool DataCore::getLeftProxi(){
-    return leftProxiState;
-}
-
-void DataCore::setLeftProxi(bool state){
-    leftProxiState = state;
-}
-
-void DataCore::setResetProxim(bool reset){
-    needResetProxim = reset;
+void DataCore::setLeftGrounded(bool state){
+    leftGrounded = state;
 }
 
 //MOTOR POWER
@@ -287,6 +264,14 @@ void DataCore::setBnoAngles(EnumBnoAngle bno, float angle)
     }
 }
 
+BNOStruct* DataCore::getBnoStruct(EnumBnoPosition bno) {
+    return bnoData[static_cast<int>(bno)];
+}
+
+void DataCore::setBnoStruct(EnumBnoPosition bno, BNOStruct* data) {
+    bnoData[static_cast<int>(bno)] = data;
+}
+
 //PWM
 float DataCore::getPWM(EnumMotorPosition motor){
     switch (motor)
@@ -327,6 +312,13 @@ void DataCore::setPWM(EnumMotorPosition motor, float pwm){
     default:
         break;
     }
+}
+
+void DataCore::printAngles(){
+    Serial.print("Knee left: ");
+    Serial.print(Imu_knee_left);
+    Serial.print("  Hip left: ");
+    Serial.print(Imu_hip_left);
 }
 
 

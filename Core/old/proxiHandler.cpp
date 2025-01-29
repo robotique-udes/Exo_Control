@@ -9,14 +9,8 @@ ProxiHandler::ProxiHandler()
 
 void ProxiHandler::read()
 {
-    //check if proxim to reset trigger dist
-    if(dataCore.getResetProxim())
-    {
-        setTriggerDist();
-        dataCore.setResetProxim(false);
-    }
-    dataCore.setRightProxi(RightProxim->IsOnTheGround());
-    dataCore.setLeftProxi(LeftProxim->IsOnTheGround());
+    dataCore.setRightGrounded(RightProxim->IsOnTheGround());
+    dataCore.setLeftGrounded(LeftProxim->IsOnTheGround());
 }
 
 void ProxiHandler::setTriggerDist(){
@@ -26,7 +20,7 @@ void ProxiHandler::setTriggerDist(){
 
 void ProxiHandler::print(){
     Serial.print("\t RIGHT PROXIM: ");
-    Serial.print(dataCore.getRightProxi());
+    Serial.print(dataCore.getRightGrounded());
     Serial.print("\t LEFT PROXIM: ");
-    Serial.println(dataCore.getLeftProxi());
+    Serial.println(dataCore.getLeftGrounded());
 }

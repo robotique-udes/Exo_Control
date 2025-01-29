@@ -25,10 +25,12 @@ void Motor::setPins()
 
 void Motor::write()
 {
-  motorSetSpeed(MOTEUR_GENOU_GAUCHE, dataCore.getPWM(EnumMotorPosition::KNEE_L));
-  motorSetSpeed(MOTEUR_GENOU_DROIT, dataCore.getPWM(EnumMotorPosition::KNEE_R));
-  motorSetSpeed(MOTEUR_HANCHE_GAUCHE, dataCore.getPWM(EnumMotorPosition::HIP_L));
-  motorSetSpeed(MOTEUR_HANCHE_DROITE, dataCore.getPWM(EnumMotorPosition::HIP_R));
+  if(dataCore.isMotorEnabled()){
+    motorSetSpeed(MOTEUR_GENOU_GAUCHE, dataCore.getPWM(EnumMotorPosition::KNEE_L));
+    motorSetSpeed(MOTEUR_GENOU_DROIT, dataCore.getPWM(EnumMotorPosition::KNEE_R));
+    motorSetSpeed(MOTEUR_HANCHE_GAUCHE, dataCore.getPWM(EnumMotorPosition::HIP_L));
+    motorSetSpeed(MOTEUR_HANCHE_DROITE, dataCore.getPWM(EnumMotorPosition::HIP_R));
+  }
 }
 
 void Motor::motorSetSpeed(int ID, int val)

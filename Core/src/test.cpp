@@ -11,10 +11,6 @@ void Test::setEncoder(QuadratureEncoder *newEncoder)
     encoder = newEncoder;
 }
 
-void Test::setProxiHandler(ProxiHandler *newProxiHandler)
-{
-    proxiHandler = newProxiHandler;
-}
 
 void Test::setBNOHandler(BnoHandler *newHandler)
 {
@@ -177,17 +173,10 @@ void Test::keyboardCommand()
       Serial.println("Reset Encoder Genou Gauche");
       encoder->resetPosition(EnumMotorPosition::KNEE_L);
     }
-    else if (incomingByte == '-')
-    {
-      Serial.println("Reset Encoder Genou Gauche");
-      proxiHandler->setTriggerDist();
-    }
     else if (incomingByte == 'm')
     {
       Serial.println("Encoder:");
       encoder->printEncoder();
-      Serial.println("Proxim: ");
-      proxiHandler->print();
       Serial.println("BNOs");
       bnoHandler->printBNOsStatus();
       Serial.println("Torque: ");
@@ -202,6 +191,19 @@ void Test::keyboardCommand()
     else if (incomingByte == 'b')
     {
         dataCore.setAngleSource(FROM_ENCODER);
+    }
+    else if (incomingByte == '[')
+    {
+      bnoHandler->offset -= 10;
+    }
+    else if (incomingByte == ']')
+    {
+      bnoHandler->offset += 10;
+    }
+    else if (incomingByte == 't')
+    {
+      motorState = !(motorState);
+      dataCore.setMotorEnabled(motorState);
     }
   }
 }

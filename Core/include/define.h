@@ -1,15 +1,10 @@
 
-// PINS SONAR
 
 //**********PAS LES BONNES PINS************
 #define SDA_PIN_GAUCHE 15
 #define SCL_PIN_GAUCHE 39
 #define SDA_PIN_DROIT 23
 #define SCL_PIN_DROIT 35
-//constant SONAR
-#define UNCERTAINTY 0.1
-#define LOW 0x0
-#define HIGH 0x1
 
 // ------------ MOTOR -------------
 #define K_RESSORT 0.25
@@ -20,10 +15,12 @@
 #define KP 2.5
 #define KI 0
 #define KD 0
-#define HIGH_TORQUE 100
+#define HIGHEST_KNEE_TORQUE 38.0f
+#define HIGHEST_HIP_TORQUE 48.0f
 #define MOTOR_KM 1.27
 #define MOTOR_W_PER_NM_HIP 30.72
 #define MOTOR_W_PER_NM_KNEE 52.57
+#define MILLIS_TO_HOUR 0.001 / 3600.0
 
 #define MOTEUR_GENOU_GAUCHE 0
 #define MOTEUR_GENOU_DROIT 1
@@ -50,13 +47,13 @@
 #define PIN_MD_GEN_DRO_CT 35 // Pin de current sensing pour le moteur du genou droit
 
 // LONGUEURS
-#define LH 0.5  // longueur haut du corps
-#define LF 0.4  // longueur femur
-#define LT 0.4  // longueur tibia
 #define G 9.81  // gravité
-#define MH 25.0 // Masse haut du corps/2
-#define MF 3.0  // Masse femur
-#define MT 3.0  // Masse tibia
+#define M_BACK 25.0 // Masse du haut du corps
+#define M_THIGH 3.0 // Masse de la cuisse
+#define M_TIBIA 3.0 // Masse du tibia
+#define L_BACK 0.5 // Longueur du haut du corps
+#define L_THIGH 0.4 // Longueur de la cuisse
+#define L_TIBIA 0.4 // Longueur du tibia
 
 #define ClockWise 1
 #define CounterClockWise -1
@@ -65,8 +62,6 @@
 #define MOTEUR_GENOU_DROIT 1
 #define MOTEUR_HANCHE_GAUCHE 2
 #define MOTEUR_HANCHE_DROITE 3
-#define SONAR_GAUCHE 0
-#define SONAR_DROIT 1
 
 #define RELAIS_GENOU_GAUCHE 13
 #define RELAIS_GENOU_DROIT 14
@@ -91,12 +86,6 @@
 #define RIGHT_MOUSTACHE_MUX_CHANNEL 2 
 #define I2C_CLOCK   400000L 
 
-//------ PROXIM ------
-#define PROXIM_REFRESH_RATE 4
-#define BUFFER_SIZE 6     
-#define GROUND_DISTANCE_RANGE 40
-
-
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (800)
 
@@ -111,3 +100,14 @@
 #define FROM_ENCODER 1
 #define MOTOR_INCREASE 5
 #define PULSES_PER_REVOLUTION 925
+
+//------ MAX JOINT ROTATION ANGLE -------
+#define MAX_ANGLE_HIP 110
+#define MIN_ANGLE_HIP 0
+#define MAX_ANGLE_KNEE 90
+#define MIN_ANGLE_KNEE 0
+
+//------ BNO
+#define BUFFER_SIZE 8
+#define ACCEL_THRESHOLD 150
+#define ACCEL_BUFFER_THRESHOLD 0.5

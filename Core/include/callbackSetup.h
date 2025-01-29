@@ -69,14 +69,8 @@ void callbackButtonResetEncoder(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_RESET_ENCODER");
 }
 
-/**
- * @brief Callback for proxim's auto calibration button
- */
-void callbackButtonAutoCalibProxim(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
-    DataCore& settings = DataCore::getInstance();
-    settings.setResetProxim(true);
-    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM");
+void callbackButtonAutoCalib(void *ptr){
+    //obscelete
 }
 
 /**
@@ -97,23 +91,8 @@ void callbackButtonToggleAngleSource(void *ptr){
     screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE : " + to_string(state));
 }
 
-/**
- * @brief Callback for proxim activation button
- */
-void callbackButtonToggleProxim(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM");
-
-    NexDSButton *button = static_cast<NexDSButton*>(ptr);
-
-    uint32_t state;
-
-    button->getValue(&state);
-
-    DataCore& settings = DataCore::getInstance();
-
-    settings.setProximEnabled(state);
-
-    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_TOGGLE_PROXIM : " + to_string(state));
+void callbackButtonToggleGroundDetection(void *ptr){
+    //obscelete
 }
 
 /**
@@ -126,16 +105,7 @@ void callbackButtonTest(void *ptr){
     //...
 }
 
-/**
- * @brief Placeholder button if we need (has been assign to proxim's brightness setting)
- */
 void callbackButtonDev1(void *ptr){
-    Serial.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
-    Serial.print("Switching brightness settings");
-    DataCore& settings = DataCore::getInstance();
-    settings.setBrightness();
-    
-    screenForCallbacks.println("Pressed EnumScreenCallback::BUTTON_DEV_1");
 }
 
 /**
@@ -205,9 +175,9 @@ void setupCallbacks(){
     screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_CLUTCH, &callbackButtonToggleClutch);
     screen.setCallback(EnumScreenCallback::BUTTON_INIT, &callbackButtonInit);
     screen.setCallback(EnumScreenCallback::BUTTON_RESET_ENCODER, &callbackButtonResetEncoder);
-    screen.setCallback(EnumScreenCallback::BUTTON_AUTO_CALIB_PROXIM, &callbackButtonAutoCalibProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_AUTO_CALIB, &callbackButtonAutoCalib);
     screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_ANGLE_SOURCE, &callbackButtonToggleAngleSource);
-    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_PROXIM, &callbackButtonToggleProxim);
+    screen.setCallback(EnumScreenCallback::BUTTON_TOGGLE_GROUND_DETECTION, &callbackButtonToggleGroundDetection);
     screen.setCallback(EnumScreenCallback::BUTTON_TEST, &callbackButtonTest);
     screen.setCallback(EnumScreenCallback::BUTTON_DEV_1, &callbackButtonDev1);
     screen.setCallback(EnumScreenCallback::BUTTON_DEV_2, &callbackButtonDev2);

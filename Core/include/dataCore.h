@@ -7,6 +7,7 @@
 #include "define.h"
 #include "enums.h"
 #include "relay.h"
+#include "structs.h"
 
 using namespace std;
 
@@ -16,11 +17,10 @@ private:
     Relay relais;
 
     // Ins
-    // proxim
-    bool rightProxiState = false;
-    bool leftProxiState = false;
-    bool proximEnabled;
-    bool needResetProxim;
+    // ground contact detection
+    bool rightGrounded;
+    bool leftGrounded;
+    bool groundDetectEnable;
 
     // encoder
     float encoder_knee_right = 0;
@@ -40,10 +40,11 @@ private:
     float Imu_tibia_left = 0;
     float Imu_tibia_right = 0;
 
+    array<BNOStruct *, 5> bnoData;
+
     //In between settings
     bool motorEnabled;
     bool clutchEnabled;
-    bool sonarState;
     bool angleSource;
     bool brightness;
     int height;
@@ -56,7 +57,6 @@ private:
     int PWMRightHip = 0;
     int PWMLeftHip = 0;
     
-
     DataCore();
 
 public:
@@ -88,16 +88,16 @@ public:
     bool isMotorEnabled();
 
     /**
-    * @brief Proxim enable setter
-    * @param setProximEnabled Proxim enable state
+    * @brief Ground detection setter
+    * @param setGroundDetectEnable Detection enable state
     */
-    void setProximEnabled(bool setProximEnabled);
+    void setGroundDetectEnable(bool setGroundDetectEnable);
 
     /**
-    * @brief Proxim enable getter
-    * @return Proxim state
+    * @brief Ground detection getter
+    * @return Ground detection state
     */
-    bool isProximEnabled();
+    bool isGroundDetectEnable();
     
     /**
     * @brief Put all settings back to boot values
@@ -108,28 +108,6 @@ public:
     * @brief Set all encoder pulse values to 0
     */
     void resetEncoder();
-
-    /**
-    * @brief Toggle brightness mode for proxims
-    */
-    void setBrightness();
-    /**
-    * @brief Brightness getter
-    * @return Brightness state
-    */
-    bool getBrightness();
-
-    /**
-    * @brief Proxim reset getter
-    * @return Proxim reset state
-    */
-    bool getResetProxim();
-
-    /**
-    * @brief Proxim reset setter
-    * @param reset Proxim reset state
-    */
-    void setResetProxim(bool reset);
 
     /**
     * @brief Angle source getter
@@ -161,30 +139,29 @@ public:
     */
     void adjustMotorPower(int powerOffset);
 
-    // proxim
     /**
     * @brief Right proxi getter
     * @return Right proxi state (1 if grounded, 0 if not)
     */
-    bool getRightProxi();
+    bool getRightGrounded();
 
     /**
     * @brief Left proxi getter
     * @return Left proxi state (1 if grounded, 0 if not)
     */
-    bool getLeftProxi();
+    bool getLeftGrounded();
 
     /**
     * @brief Right proxi state setter
     * @param state Current state (1 if grounded, 0 if not)
     */
-    void setRightProxi(bool state);
+    void setRightGrounded(bool state);
 
     /**
     * @brief left proxi state setter
     * @param state Current state (1 if grounded, 0 if not)
     */
-    void setLeftProxi(bool state);
+    void setLeftGrounded(bool state);
 
     // encoder
     /**
@@ -235,6 +212,20 @@ public:
     */
     float getBnoAngles(EnumBnoAngle bno);
 
+    /**
+    * @brief Bno struct setter :)
+    * @param bno BNO title
+    * @param data Pointer to the structure
+    */
+    void setBnoStruct(EnumBnoPosition bno, BNOStruct* data);
+
+    /**
+    * @brief Bno struct getter :)
+    * @param bno Target bno
+    * @return struct
+    */
+    BNOStruct* getBnoStruct(EnumBnoPosition bno);
+
     // PWM
     /**
     * @brief PWM setter
@@ -259,6 +250,8 @@ public:
     static DataCore &getInstance();
     DataCore(const DataCore &) = delete;
     DataCore &operator=(const DataCore &) = delete;
+
+    void printAngles();
 };
 
 #endif

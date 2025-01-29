@@ -28,12 +28,6 @@ enum class EnumBnoAngle
     KNEE_R     =   8
 };
 
-enum class EnumSonarState
-{
-    SQUAT,
-    WALK,
-};
-
 enum class EnumMotorPosition
 {
     HIP_R,
@@ -48,9 +42,9 @@ enum class EnumScreenCallback
     BUTTON_TOGGLE_CLUTCH,
     BUTTON_INIT,
     BUTTON_RESET_ENCODER,
-    BUTTON_AUTO_CALIB_PROXIM,
+    BUTTON_AUTO_CALIB,
     BUTTON_TOGGLE_ANGLE_SOURCE,
-    BUTTON_TOGGLE_PROXIM,
+    BUTTON_TOGGLE_GROUND_DETECTION,
     BUTTON_TEST,
     BUTTON_DEV_1,
     BUTTON_DEV_2,

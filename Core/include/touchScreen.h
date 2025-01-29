@@ -20,12 +20,12 @@ private:
 
     // Page Calib
     NexButton *resetEncoder;
-    NexButton *autoCalibProxim;
+    NexButton *autoCalib;
     NexSlider *powerSlider;
 
     // Page debug
     NexDSButton *angleSource;
-    NexDSButton *proximToggle;
+    NexDSButton *groundDetectionToggle;
     NexButton *testExo;
 
     // Page dev

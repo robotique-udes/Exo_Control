@@ -6,15 +6,6 @@ class Logic
 {
 private:
     DataCore &dataCore = DataCore::getInstance();
-    // PID variables (Unused at the moment)
-    float ErrorCurrentRightKnee = 0.0;
-    float ErrorCurrentLeftKnee = 0.0;
-    float IntegralRightKnee = 0.0;
-    float IntegralLeftKnee = 0.0;
-    float DerivativeRightKnee = 0.0;
-    float DerivativeLeftKnee = 0.0;
-    float PreviousErrorRightKnee = 0.0;
-    float PreviousErrorLeftKnee = 0.0;
 
     // Torques
     float LeftHipTorque = 0.0;
@@ -22,22 +13,72 @@ private:
     float LeftKneeTorque = 0.0;
     float RightKneeTorque = 0.0;
 
-    // Currents (Unused at the moment)
-    float RightKneeNeededCurrent = 0.0;
-    float LeftKneeNeededCurrent = 0.0;
-    float RightHipNeededCurrent = 0.0;
-    float LeftHipNeededCurrent = 0.0;
-    float RightKneeMeasuredCurrent = 0.0;
-    float LeftKneeMeasuredCurrent = 0.0;
-    float RightHipMeasuredCurrent = 0.0;
-    float LeftHipMeasuredCurrent = 0.0;
-
-    // BATTERY ESTIMATION   
+    // BATTERY ESTIMATION
     unsigned long previousTimeBatterie = 0;
 
-public:
+    // Angles
+    float LeftHipAngle = 0;
+    float LeftKneeAngle = 0;
+    float RightHipAngle = 0;
+    float RightKneeAngle = 0;
+    float LeftThighAngle = 0;
+    float RightThighAngle = 0;
+    float LeftTibiaAngle = 0;
+    float RightTibiaAngle = 0;
+    float ExoBackAngle = 0;
 
-    // BATTERY ESTIMATION   
+    // On ground
+    bool LeftOnGround = false; // True if the left foot is on the ground
+    bool RightOnGround = false; // True if the right foot is on the ground
+    int NbOnGround = 0; // Number of feet on the ground
+
+public:
+    // -------------------------- TORQUE CALCULATION --------------------------
+    /**
+     * @brief Compute needed torque using either angles from encoders or IMUs
+     */
+    void neededTorque();
+
+    /**
+     * @brief Compute torque needed to keep the foot in the air
+     * @param thighAngle Angle of the thigh
+     * @param tibiaAngle Angle of the tibia
+     * @param backAngle Angle of the back
+     * @param isLeft True if the foot is the left one
+     */
+    void calculateTorqueFootInAir(float thighAngle, float tibiaAngle, float backAngle, bool isLeft);
+
+    /**
+     * @brief Compute torque needed counteract gravity when the foot is on the ground
+     * @param thighAngle Angle of the thigh
+     * @param tibiaAngle Angle of the tibia
+     * @param backAngle Angle of the back
+     * @param isLeft True if the foot is the left one
+     */
+    void calculateTorqueFootOnGround(float thighAngle, float tibiaAngle, float backAngle, bool isLeft);
+
+    /**
+     * @brief Check if the angles are within the limits
+     */
+    void checkAngleLimits();
+
+    /**
+     * @brief Limit the torque to the max value of the motor
+     */
+    void limitTorques();
+
+    // -------------------------- GETTERS --------------------------
+    /**
+     * @brief Get angles from encoders or IMUs
+     */
+    void getAngles();
+
+    /**
+     * @brief Get the number of feet on the ground
+     */
+    void getOnGround();
+
+    // -------------------------- BATTERY ESTIMATION --------------------------
     float totalEnergy = 0.0;
     void IntegralPowerConsumption();
     /**
@@ -45,18 +86,14 @@ public:
      */
     void Update();
 
+    // -------------------------- UTILITIES --------------------------
     /**
      * @brief Cap input value to max/min value
      * @param val Value to map (float or int)
-     * @param max max/min reachable value (float or int)
+     * @param cap max/min reachable value (float or int)
      */
     template <typename T>
     void LimitMinMax(T &val, T cap);
-
-    /**
-     * @brief Compute needed torque using either angles from encoders or IMUs
-     */
-    void neededTorque();
 
     /**
      * @brief Print computed needed torque
@@ -64,31 +101,23 @@ public:
     void printTorque();
 
     /**
-     * @brief Compute PID on needed current ---UNUSED---
+     * @brief Set all torques to 0
      */
-    void PIDCurrent();
+    void resetTorque();
 
     /**
-     * @brief Compute needed current ---UNUSED---
+     * @brief Convert degree to radian equivalent
+     * @param degrees Input degree value
+     * @return Radian equivalent of the input degree
      */
-    void neededCurrent();
+    float toDegrees(float degrees);
 
     /**
-     * @brief Map torque to PWM and update value in dataCore
-     */
-    void PIDCurrentPrealable();
-
-    /**
-     * @brief Convert degree in radian equivalent
+     * @brief Convert radian to degree equivalent
      * @param radians Input radian value
+     * @return Degree equivalent of the input radian
      */
-    float toDegrees(float radians);
-
-    /**
-     * @brief Convert radian in degree equivalent
-     * @param radians Input degree value
-     */
-    float toRadian(float degree);
+    float toRadian(float radians);
 };
 
 #endif
