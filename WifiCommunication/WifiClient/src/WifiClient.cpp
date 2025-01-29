@@ -83,6 +83,7 @@ void WifiClient::receiveMessage(unsigned char data[]) // Receive message from se
       Serial.printf("UDP recieved packet contents: %s\n", incomingPacket);
   }
   data = incomingPacket;
+  DynamicJsonDocument dataDoc = MessageBuilder().deserializeMessage(data);
 }
 
 bool WifiClient::isConnected() // Check if connected to Wi-Fi
@@ -106,12 +107,6 @@ void WifiClient::wifiOn() // Turn on Wi-Fi
 
 void WifiClient::handShake() // Handshake with server
 {
-    // Send connection request
-    unsigned char connection_request[] = "Connection request";
-    MessageBuilder message = MessageBuilder();
-    message.add(connection_request);
-    
-
     // Receive IP addresses
     unsigned char IPs[255];
     receiveMessage(IPs);
@@ -120,8 +115,12 @@ void WifiClient::handShake() // Handshake with server
     // TODO
 
     // Send connection confirmation
-    unsigned char confirmation[22] = "Connection confirmed";
-    sendMessage(confirmation, EnumIPType::WATCH);
+    unsigned char connection_confirmed[] = "Connection confirmed";
+    MessageBuilder handshake = MessageBuilder();
+    handshake.add(connection_confirmed);
+    handshake.add(EnumIPType::WATCH, getIP(EnumIPType::WATCH));
+    handshake.buildHandshake();
+    sendMessage(handshake.getMessage(), EnumIPType::WATCH);
 
 }
 

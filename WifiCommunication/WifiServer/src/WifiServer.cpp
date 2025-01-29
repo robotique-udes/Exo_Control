@@ -1,6 +1,7 @@
 
 #include"WifiServer.h"
 #include <esp_wifi.h>
+#include <arduinoJson.h>
 
 WifiServer* WifiServer::wifiInstance = nullptr;
 
@@ -107,14 +108,14 @@ void WifiServer::InitialiseIPList()
 
 int WifiServer::Initialise()
 {
-  if (!WiFi.softAP(ServerSSID, ServerPassword)) 
+  if (!WiFi.softAP(ServerSSID, ServerPassword))
   {
     log_e("Soft AP creation failed.");
     return -1;
   }
 
   WiFi.softAPConfig(Local_ip, Gateway, Subnet);
-  MyIP = WiFi.softAPIP();    
+  MyIP = WiFi.softAPIP();
 
   WiFi.onEvent(WiFiStationConnected, ARDUINO_EVENT_WIFI_AP_STACONNECTED);
   WiFi.onEvent(WiFiStationDisconnected, ARDUINO_EVENT_WIFI_AP_STADISCONNECTED);

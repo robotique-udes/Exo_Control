@@ -3,6 +3,7 @@
 #include "enums.h"
 #include <WiFi.h>
 #include <ArduinoJson.h>
+#include <map>
 
 #define NB_MESSAGE 1
 #define NB_BNO_ANGLE 9
@@ -62,5 +63,6 @@ class MessageBuilder
         void add(EnumIPType IP_NAME, IPAddress value);
         int buildMessage();
         int buildHandshake();
+        static DynamicJsonDocument deserializeMessage(unsigned char message[]);
 };
 #endif
