@@ -10,6 +10,8 @@
 
 #define UDP_PORT_RECEIVE 4210
 #define IP_LIST_SIZE 10
+#define INTERVAL_1SEC 1000
+#define INTERVAL_10ms 10
 
 struct IpTypeList
 {
@@ -69,6 +71,8 @@ public:
     int retrieveInformation(EnumBnoPosition BNO_NAME, float* value);
     int retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value);
     int retrieveInformation(EnumIPType IP_NAME, IPAddress* value);
+
+    static void upDate();
 };
 
 #endif

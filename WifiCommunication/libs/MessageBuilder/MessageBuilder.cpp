@@ -45,6 +45,11 @@ void MessageBuilder::clearInfo()
     {
         logMessage[i] = 0;
     }
+
+    indexStructBnoAngles = 0;
+    indexStructBnoPosition = 0;
+    indexStructMotorPosition = 0;
+    indexStructIPAddressTest = 0;
 }
 
 void MessageBuilder::add(unsigned char log[LOG_LENGTH - 1])
@@ -101,6 +106,7 @@ void MessageBuilder::add(EnumMotorPosition MOTOR_NAME, float value)
 {
     motorPosition[indexStructMotorPosition].ID = MOTOR_NAME;
     motorPosition[indexStructMotorPosition].value = value;
+    indexStructMotorPosition++;
 }
 
 void MessageBuilder::add(EnumIPType IP_NAME, IPAddress* value)

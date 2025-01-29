@@ -29,6 +29,10 @@ WifiServer:: WifiServer(char* ssid, char* passphrase)
     Subnet = subnet;
     IPAddress myIP;
     MyIP = myIP;
+
+    //Adding the users info
+    this->IPsList[0].ipAdresse = local_ip;
+    this->IPsList[0].ipType = EnumIPType::WATCH;
 }
 
 void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
@@ -66,29 +70,27 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
     Serial.println(ip4addr_ntoa(&(addresse)));
 
     //Adding the users info
-    wifiserver->IPsList[i].ipAdresse = IPAddress(addresse.addr);
-    wifiserver->IPsList[i].ipAdd = addresse;
-    wifiserver->IPsList[i].ipType = EnumIPType::UNKNOWN_TYPE;
+    wifiserver->IPsList[i+1].ipAdresse = IPAddress(addresse.addr);
+    wifiserver->IPsList[i+1].ipAdd = addresse;
+    wifiserver->IPsList[i+1].ipType = EnumIPType::UNKNOWN_TYPE;
   } 
+
   wifiserver->readyToSendHandShake = 1;
-  wifiserver->numClient = adapter_sta_list.num;
-
+  wifiserver->numClient = adapter_sta_list.num + 1;
 }
 
-void WifiServer::newClientConnection(IpTypeList newClient)
+void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
 {
-  // IPsList[numClient] = newClient;
-  // numClient++;
-}
-
-void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info){
   Serial.println("Station connected IP Add = ");
   Serial.println(IPAddress(info.got_ip.ip_info.ip.addr)); 
   Serial.println();
 }
 
-void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) {
+void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) 
+{
     Serial.println("Device disconnected from the access point!");
+    WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+    wifiserver->numClient--;
 }
 
 void WifiServer::InitialiseIPList()
@@ -185,7 +187,6 @@ int WifiServer::SendData(unsigned char * packet, int length)
     Serial.print("UDP.remotePort(): ");
     Serial.println(UDP.remotePort());
 
-
     Serial.print("myIP: ");
     Serial.println(MyIP);
 
@@ -229,23 +230,13 @@ void WifiServer::handShake()
 
       Serial.println((int)IPsList[i].ipType);
       Serial.println(IPsList[i].ipAdresse);
-      message.add(EnumBnoPosition::EXO_BACK, 2.5);
       //message.add(IPsList[i].ipType, IPsList[i].ipAdd.addr);
       message.add(IPsList[i].ipType, &IPsList[i].ipAdresse);
     }
 
-    Serial.println("Finished with the IPs, now going to build and send this bitch");
     int length = message.buildHandshake();
     unsigned char* mess = message.getMessage();
-
-    Serial.print("Message built: ");
-    for(int i = 0; i < length; i++)
-    {
-      Serial.print((char)mess[i]);
-    }
-
-    Serial.println("\n\n\nEnd of message");
-    SendData(mess, length);//Probablement pas la bonne chose pour get le length, il faudra checker quoi faire
+    SendData(mess, length);
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)
@@ -271,7 +262,7 @@ void WifiServer::DoAFlip()
 /// @return 
 int WifiServer::retrieveInformation(EnumBnoAngle BNO_NAME, float* value)
 {
-  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(EnumBnoAngle::THIGH_L));
+  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(BNO_NAME));
 
   if (unifiedMap.find(key) != unifiedMap.end()) 
   {
@@ -295,15 +286,99 @@ int WifiServer::retrieveInformation(EnumBnoAngle BNO_NAME, float* value)
 
 int WifiServer::retrieveInformation(EnumBnoPosition BNO_NAME, float* value)
 {
-  return 0;
+  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(BNO_NAME));
+
+  if (unifiedMap.find(key) != unifiedMap.end()) 
+  {
+    try
+    {
+      Serial.println(unifiedMap[key].c_str());
+      *value = std::stof(unifiedMap[key].c_str());
+    }
+    catch(const std::invalid_argument &e)
+    {
+      Serial.println("Conversion to float failed...");
+      return -1;
+    }
+       
+    return 0;
+  }
+
+  Serial.println("Key not found!");
+  return -2;  
 }
 
 int WifiServer::retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value)
 {
-  return 0;
+  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(MOTOR_NAME));
+
+  if (unifiedMap.find(key) != unifiedMap.end()) 
+  {
+    try
+    {
+      Serial.println(unifiedMap[key].c_str());
+      *value = std::stof(unifiedMap[key].c_str());
+    }
+    catch(const std::invalid_argument &e)
+    {
+      Serial.println("Conversion to float failed...");
+      return -1;
+    }
+       
+    return 0;
+  }
+
+  Serial.println("Key not found!");
+  return -2;  
 }
 
 int WifiServer::retrieveInformation(EnumIPType IP_NAME, IPAddress* value)
 {
-  return 0;
+  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(IP_NAME));
+
+  if (unifiedMap.find(key) != unifiedMap.end()) 
+  {
+    try
+    {
+      Serial.println(unifiedMap[key].c_str());
+      IPAddress val = IPAddress();
+      val.fromString(unifiedMap[key].c_str());
+      *value = val;
+    }
+    catch(const std::invalid_argument &e)
+    {
+      Serial.println("Conversion to float failed...");
+      return -1;
+    }
+       
+    return 0;
+  }
+
+  Serial.println("Key not found!");
+  return -2;  
+}
+
+void WifiServer::upDate()
+{
+  static unsigned long previousMillis = 0; // Stores the last time a message was printed
+  WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+  unsigned long currentMillis = millis();
+
+  if(currentMillis - previousMillis >= INTERVAL_10ms)
+  {
+    previousMillis = currentMillis;
+
+    int length = wifiserver->DataAvailable();//Check for new informations
+    if (length > 0) 
+    {  
+      wifiserver->ReadData(length);
+      //update the values
+    }
+
+    if(wifiserver->readyToSendHandShake)//Send the handShakes
+    {
+      wifiserver->readyToSendHandShake = 0;
+      wifiserver->handShake();
+    }
+  }
 }
