@@ -176,6 +176,9 @@ int WifiServer::ReadData(int length)
   }
   Serial.println("\n");
 
+  // Deserialize the message
+  deserializeMessage(packet);
+
   return length;
 }
 
@@ -217,7 +220,7 @@ int WifiServer::SendData(unsigned char * packet, int length)
 }
 
 void WifiServer::handShake()
-{
+{-
     // Send list of IPs
     unsigned char connection_request[] = "Connection request";
     MessageBuilder message = MessageBuilder();
@@ -232,7 +235,7 @@ void WifiServer::handShake()
       Serial.println((int)IPsList[i].ipType);
       Serial.println(IPsList[i].ipAdresse);
       //message.add(IPsList[i].ipType, IPsList[i].ipAdd.addr);
-      message.add(IPsList[i].ipType, &IPsList[i].ipAdresse);
+      message.add(IPsList[i].ipType, &(IPsList[i].ipAdresse));
     }
 
     int length = message.buildHandshake();
@@ -382,4 +385,56 @@ void WifiServer::upDate()
       wifiserver->handShake();
     }
   }
+}
+
+void WifiServer::deserializeMessage(unsigned char message[])
+{
+    Serial.println("Unified Map updated.");
+
+    // deserialize message into a map
+    DynamicJsonDocument doc(MESSAGE_LENGTH);
+    deserializeJson(doc, message);
+
+    // extract data from message
+    std::pair<std::string, int> key;
+    std::string value;
+
+    // log
+    JsonArray log = doc["logs"];
+    key = std::make_pair(std::string("log"), 0);
+    value = log[0].as<std::string>();
+    unifiedMap[key] = value;
+    // bnoAngles
+    JsonArray bnoAngles = doc["bnoAngles"];
+    for (int i = 0; i < bnoAngles.size(); i++)
+    {
+        key = std::make_pair(std::string("ba"), static_cast<int>(bnoAngles[i]["ID"]));
+        value = bnoAngles[i]["value"].as<std::string>();
+        unifiedMap[key] = value;
+    }
+    // bnoPositions
+    JsonArray bnoPositions = doc["bnoPositions"];
+    for (int i = 0; i < bnoPositions.size(); i++)
+    {
+        key = std::make_pair(std::string("bp"), static_cast<int>(bnoPositions[i]["ID"]));
+        value = bnoPositions[i]["value"].as<std::string>();
+        unifiedMap[key] = value;
+    }
+    // motorPositions
+    JsonArray motorPositions = doc["motorPositions"];
+    for (int i = 0; i < motorPositions.size(); i++)
+    {
+        key = std::make_pair(std::string("mp"), static_cast<int>(motorPositions[i]["ID"]));
+        value = motorPositions[i]["value"].as<std::string>();
+        unifiedMap[key] = value;
+    }
+    // IP addresses
+    JsonArray ipAddresses = doc["ipAddresses"];
+    for (int i = 0; i < ipAddresses.size(); i++)
+    {
+        key = std::make_pair(std::string("ip"), static_cast<int>(ipAddresses[i]["ID"]));
+        value = ipAddresses[i]["value"].as<std::string>();
+        unifiedMap[key] = value;
+    }
+
 }

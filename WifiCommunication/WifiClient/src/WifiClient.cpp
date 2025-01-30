@@ -117,8 +117,15 @@ void WifiClient::handShake() // Handshake with server
     receiveMessage(IPs);
     deserializeMessage(IPs);    
 
-    // Set IP addresses
-    IPsList[0] = dataMap[std::make_pair('ip', 0)];
+    // Set IP addresses (CAN BE CHANGED)
+    std::pair<std::string, int> key = std::make_pair(std::string("ip"), static_cast<int>(EnumIPType::WATCH));
+    std::string watch_ip = dataMap[key];
+    // convert string to const char*
+    const char* watch_ip_char = watch_ip.c_str();
+    // convert string to IP address
+    IPAddress watch_ip_address;
+    watch_ip_address.fromString(watch_ip_char);
+    IPsList[0] = watch_ip_address;
 
     // Send connection confirmation
     unsigned char confirmation[22] = "Connection confirmed";
@@ -140,37 +147,52 @@ IPAddress WifiClient::getIP(EnumIPType address) // Get IP address from list
 
 void WifiClient::deserializeMessage(unsigned char message[])
 {
+    Serial.println("Data Map updated.");
+
     // deserialize message into a map
     DynamicJsonDocument doc(MESSAGE_LENGTH);
     deserializeJson(doc, message);
 
-    std::map<std::pair<unsigned char, int>, unsigned char> dataMap;
+    // extract data from message
+    std::pair<std::string, int> key;
+    std::string value;
+
     // log
     JsonArray log = doc["logs"];
-    dataMap[std::make_pair('log', 0)] = log[0];
+    key = std::make_pair(std::string("log"), 0);
+    value = log[0].as<std::string>();
+    dataMap[key] = value;
     // bnoAngles
     JsonArray bnoAngles = doc["bnoAngles"];
     for (int i = 0; i < bnoAngles.size(); i++)
     {
-        dataMap[std::make_pair('ba', bnoAngles[i]["ID"].as<int>())] = bnoAngles[i]["value"];
+        key = std::make_pair(std::string("ba"), static_cast<int>(bnoAngles[i]["ID"]));
+        value = bnoAngles[i]["value"].as<std::string>();
+        dataMap[key] = value;
     }
     // bnoPositions
     JsonArray bnoPositions = doc["bnoPositions"];
     for (int i = 0; i < bnoPositions.size(); i++)
     {
-        dataMap[std::make_pair('bp', bnoPositions[i]["ID"].as<int>())] = bnoPositions[i]["value"];
+        key = std::make_pair(std::string("bp"), static_cast<int>(bnoPositions[i]["ID"]));
+        value = bnoPositions[i]["value"].as<std::string>();
+        dataMap[key] = value;
     }
     // motorPositions
     JsonArray motorPositions = doc["motorPositions"];
     for (int i = 0; i < motorPositions.size(); i++)
     {
-        dataMap[std::make_pair('mp', motorPositions[i]["ID"].as<int>())] = motorPositions[i]["value"];
+        key = std::make_pair(std::string("mp"), static_cast<int>(motorPositions[i]["ID"]));
+        value = motorPositions[i]["value"].as<std::string>();
+        dataMap[key] = value;
     }
     // IP addresses
     JsonArray ipAddresses = doc["ipAddresses"];
     for (int i = 0; i < ipAddresses.size(); i++)
     {
-        dataMap[std::make_pair('ip', ipAddresses[i]["ID"].as<int>())] = ipAddresses[i]["value"];
+        key = std::make_pair(std::string("ip"), static_cast<int>(ipAddresses[i]["ID"]));
+        value = ipAddresses[i]["value"].as<std::string>();
+        dataMap[key] = value;
     }
 
 }

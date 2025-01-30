@@ -39,6 +39,7 @@ private:
     void onWiFiEvent(WiFiEvent_t event);
     void InitialiseIPList();
     void newClientConnection(IpTypeList newClient);
+    void deserializeMessage(unsigned char message[]);
 
     // Private constructors to prevent instantiation from outside
     WifiServer();

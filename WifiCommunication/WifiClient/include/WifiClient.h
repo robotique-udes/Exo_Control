@@ -19,7 +19,7 @@ class WifiClient
         IPAddress IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
         void addIPAddress(IPAddress ip, EnumIPType ID);
         IPAddress getIP(EnumIPType index);
-        std::map<std::pair<std::string, int>, unsigned char> dataMap;
+        std::map<std::pair<std::string, int>, std::string> dataMap;
         void deserializeMessage(unsigned char message[]);
     public:
         WifiClient();
