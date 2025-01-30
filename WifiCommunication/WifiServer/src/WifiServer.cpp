@@ -49,7 +49,7 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
 
   WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
   //Will need to check for only new people connected
-  for (int i = 0; i < adapter_sta_list.num; i++) 
+  for (int i = 0; i < adapter_sta_list.num && i < IP_LIST_SIZE; i++) 
   {
     tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
     Serial.print("station nr ");
