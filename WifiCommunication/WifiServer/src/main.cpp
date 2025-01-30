@@ -12,8 +12,6 @@ WifiServer* wifiserver;
 unsigned long previousMillis = 0; // Stores the last time a message was printed
 const unsigned long interval = 1000; // Interval between prints (1 second)
 
-unsigned char allo[4] = {'a','l','l','o'};
-
 void setup() {
   Serial.begin(115200);
   // Connect to Wifi network.
@@ -44,9 +42,9 @@ void loop() {
   {  
     wifiserver->ReadData(length);
     wifiserver->SendData(wifiserver->lastMessage, wifiserver->lastMessageLength);
-    float val;
-    wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &val);
-    Serial.printf("valeur obtenu: %2f", val);
+    // float val;
+    // wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &val);
+    // Serial.printf("valeur obtenu: %2f", val);
   }
 
   delay(1);

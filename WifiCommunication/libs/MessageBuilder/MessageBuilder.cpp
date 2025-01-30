@@ -5,6 +5,15 @@
 MessageBuilder::MessageBuilder()
 {
     lengthMessage = 0;
+
+    IPAddress value = IPAddress();
+    
+    indexStructIPAddressTest = 0;
+    for(int i = 0; i < NB_IP; i++)
+    {
+        ipAddress[i].ID = EnumIPType::NONE;
+        ipAddress[i].value = value;
+    }
 }
 
 void MessageBuilder::clearMessage()
@@ -36,6 +45,11 @@ void MessageBuilder::clearInfo()
     {
         logMessage[i] = 0;
     }
+
+    indexStructBnoAngles = 0;
+    indexStructBnoPosition = 0;
+    indexStructMotorPosition = 0;
+    indexStructIPAddressTest = 0;
 }
 
 void MessageBuilder::add(unsigned char log[LOG_LENGTH - 1])
@@ -76,30 +90,30 @@ int MessageBuilder::getLogPlace()
 
 void MessageBuilder::add(EnumBnoAngle BNO_NAME, float value)
 {
-    int index = (int)BNO_NAME;
-    bnoAngle[index].ID = BNO_NAME;
-    bnoAngle[index].value = value;
+    bnoAngle[indexStructBnoAngles].ID = BNO_NAME;
+    bnoAngle[indexStructBnoAngles].value = value;
+    indexStructBnoAngles++;
 }
 
 void MessageBuilder::add(EnumBnoPosition BNO_NAME, float value)
 {
-    int index = (int)BNO_NAME;
-    bnoPosition[index].ID = BNO_NAME;
-    bnoPosition[index].value = value;
+    bnoPosition[indexStructBnoPosition].ID = BNO_NAME;
+    bnoPosition[indexStructBnoPosition].value = value;
+    indexStructBnoPosition++;
 }
 
 void MessageBuilder::add(EnumMotorPosition MOTOR_NAME, float value)
 {
-    int index = (int)MOTOR_NAME;
-    motorPosition[index].ID = MOTOR_NAME;
-    motorPosition[index].value = value;
+    motorPosition[indexStructMotorPosition].ID = MOTOR_NAME;
+    motorPosition[indexStructMotorPosition].value = value;
+    indexStructMotorPosition++;
 }
 
-void MessageBuilder::add(EnumIPType IP_NAME, IPAddress value)
+void MessageBuilder::add(EnumIPType IP_NAME, IPAddress* value)
 {
-    int index = (int)IP_NAME;
-    ipAddress[index].ID = IP_NAME;
-    ipAddress[index].value = value;
+    ipAddress[indexStructIPAddressTest].ID = IP_NAME;
+    ipAddress[indexStructIPAddressTest].value = *value;
+    indexStructIPAddressTest++;  
 }
 
 int MessageBuilder::buildMessage()
@@ -109,7 +123,7 @@ int MessageBuilder::buildMessage()
     DynamicJsonDocument doc(MESSAGE_LENGTH);
     doc["log"] = logMessage;
     JsonArray bnoAngles = doc.createNestedArray("bnoAngles");
-    for (int i = 0; i < NB_BNO_ANGLE; i++)
+    for (int i = 0; i < indexStructBnoAngles; i++)
     {
         if (bnoAngle[i].ID != EnumBnoAngle::NONE)
         {
@@ -119,7 +133,7 @@ int MessageBuilder::buildMessage()
         }
     }
     JsonArray bnoPositions = doc.createNestedArray("bnoPositions");
-    for (int i = 0; i < NB_BNO_POSITION; i++)
+    for (int i = 0; i < indexStructBnoPosition; i++)
     {
         if (bnoPosition[i].ID != EnumBnoPosition::NONE)
         {
@@ -129,7 +143,7 @@ int MessageBuilder::buildMessage()
         }
     }
     JsonArray motorPositions = doc.createNestedArray("motorPositions");
-    for (int i = 0; i < NB_MOTOR_POSITION; i++)
+    for (int i = 0; i < indexStructMotorPosition; i++)
     {
         if (motorPosition[i].ID != EnumMotorPosition::NONE)
         {
@@ -138,14 +152,8 @@ int MessageBuilder::buildMessage()
             motor_position["value"] = motorPosition[i].value;
         }
     }
-    JsonArray logs = doc.createNestedArray("logs");
-    if (getLogPlace() < LOG_LENGTH - 2)
-    {
-        JsonObject log = logs.createNestedObject();
-        log["log"] = logMessage;
-    }
-
-    return lengthMessage = serializeJson(doc, message);
+    lengthMessage = serializeJson(doc, message);
+    return lengthMessage;
 }
 
 int MessageBuilder::buildHandshake()
@@ -156,18 +164,16 @@ int MessageBuilder::buildHandshake()
     JsonArray ipAddresses = doc.createNestedArray("ipAddresses");
     for (int i = 0; i < NB_IP; i++)
     {
+        Serial.print("ipAddress[i].ID: ");
+        Serial.println((int)ipAddress[i].ID);
         if (ipAddress[i].ID != EnumIPType::NONE)
         {
             JsonObject ip_address = ipAddresses.createNestedObject();
             ip_address["ID"] = (int)ipAddress[i].ID;
+            String cal =  castUint32ToStringIP(ipAddress[i].ipAdd32);
+            //ip_address["value"] = castUint32ToStringIP(ipAddress[i].ipAdd32);
             ip_address["value"] = ipAddress[i].value.toString();
         }
-    }
-    JsonArray logs = doc.createNestedArray("logs");
-    if (getLogPlace() < LOG_LENGTH - 2)
-    {
-        JsonObject log = logs.createNestedObject();
-        log["log"] = logMessage;
     }
 
     return lengthMessage = serializeJson(doc, message);
@@ -191,37 +197,28 @@ MessageBuilder::deserializeMessage(unsigned char message[])
     deserializeJson(doc, message);
 
     std::map<std::pair<unsigned char, int>, unsigned char> map;
+    // log
+    JsonArray log = doc["logs"];
+    map[std::make_pair('log', 0)] = log[0];
+    // bnoAngles
     JsonArray bnoAngles = doc["bnoAngles"];
-    std::map<int, float> angle;
     for (int i = 0; i < bnoAngles.size(); i++)
     {
-        angle[(int)bnoAngles[i]["ID"]] = bnoAngles[i]["value"];
+        map[std::make_pair('ba', bnoAngles[i]["ID"].as<int>())] = bnoAngles[i]["value"];
     }
-    unsigned char name1[20] = "bnoAngles";
-    map[name1] = angle;
-
+    // bnoPositions
     JsonArray bnoPositions = doc["bnoPositions"];
-    std::map<int, float> position;
     for (int i = 0; i < bnoPositions.size(); i++)
     {
-        position[(int)bnoPositions[i]["ID"]] = bnoPositions[i]["value"];
+        map[std::make_pair('bp', bnoPositions[i]["ID"].as<int>())] = bnoPositions[i]["value"];
     }
-    unsigned char name2[20] = "bnoPositions";
-    map[name2] = position;
-
+    // motorPositions
     JsonArray motorPositions = doc["motorPositions"];
-    std::map<int, float> motor;
     for (int i = 0; i < motorPositions.size(); i++)
     {
-        motor[(int)motorPositions[i]["ID"]] = motorPositions[i]["value"];
+        map[std::make_pair('mp', motorPositions[i]["ID"].as<int>())] = motorPositions[i]["value"];
     }
-    unsigned char name3[20] = "motorPositions";
-    map[name3] = motor;
-    
-    JsonArray logs = doc["logs"];
-    std::map<int, float> log;
-    unsigned char name4[20] = "logs";
-    map[name4] = logs;
+
     
     return map;
 

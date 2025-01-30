@@ -83,7 +83,6 @@ void WifiClient::receiveMessage(unsigned char data[]) // Receive message from se
       Serial.printf("UDP recieved packet contents: %s\n", incomingPacket);
   }
   data = incomingPacket;
-  DynamicJsonDocument dataDoc = MessageBuilder().deserializeMessage(data);
 }
 
 bool WifiClient::isConnected() // Check if connected to Wi-Fi
@@ -107,20 +106,23 @@ void WifiClient::wifiOn() // Turn on Wi-Fi
 
 void WifiClient::handShake() // Handshake with server
 {
+    // Send connection request
+    unsigned char connection_request[] = "Connection request";
+    MessageBuilder message = MessageBuilder();
+    message.add(connection_request);
+    
+
     // Receive IP addresses
     unsigned char IPs[255];
     receiveMessage(IPs);
+    deserializeMessage(IPs);    
 
     // Set IP addresses
-    // TODO
+    IPsList[0] = dataMap[std::make_pair('ip', 0)];
 
     // Send connection confirmation
-    unsigned char connection_confirmed[] = "Connection confirmed";
-    MessageBuilder handshake = MessageBuilder();
-    handshake.add(connection_confirmed);
-    handshake.add(EnumIPType::WATCH, getIP(EnumIPType::WATCH));
-    handshake.buildHandshake();
-    sendMessage(handshake.getMessage(), EnumIPType::WATCH);
+    unsigned char confirmation[22] = "Connection confirmed";
+    sendMessage(confirmation, EnumIPType::WATCH);
 
 }
 
@@ -134,6 +136,43 @@ void WifiClient::addIPAddress(IPAddress ip, EnumIPType ID) // Add IP address to 
 IPAddress WifiClient::getIP(EnumIPType address) // Get IP address from list
 {
     return IPsList[(int)address];
+}
+
+void WifiClient::deserializeMessage(unsigned char message[])
+{
+    // deserialize message into a map
+    DynamicJsonDocument doc(MESSAGE_LENGTH);
+    deserializeJson(doc, message);
+
+    std::map<std::pair<unsigned char, int>, unsigned char> dataMap;
+    // log
+    JsonArray log = doc["logs"];
+    dataMap[std::make_pair('log', 0)] = log[0];
+    // bnoAngles
+    JsonArray bnoAngles = doc["bnoAngles"];
+    for (int i = 0; i < bnoAngles.size(); i++)
+    {
+        dataMap[std::make_pair('ba', bnoAngles[i]["ID"].as<int>())] = bnoAngles[i]["value"];
+    }
+    // bnoPositions
+    JsonArray bnoPositions = doc["bnoPositions"];
+    for (int i = 0; i < bnoPositions.size(); i++)
+    {
+        dataMap[std::make_pair('bp', bnoPositions[i]["ID"].as<int>())] = bnoPositions[i]["value"];
+    }
+    // motorPositions
+    JsonArray motorPositions = doc["motorPositions"];
+    for (int i = 0; i < motorPositions.size(); i++)
+    {
+        dataMap[std::make_pair('mp', motorPositions[i]["ID"].as<int>())] = motorPositions[i]["value"];
+    }
+    // IP addresses
+    JsonArray ipAddresses = doc["ipAddresses"];
+    for (int i = 0; i < ipAddresses.size(); i++)
+    {
+        dataMap[std::make_pair('ip', ipAddresses[i]["ID"].as<int>())] = ipAddresses[i]["value"];
+    }
+
 }
 
 

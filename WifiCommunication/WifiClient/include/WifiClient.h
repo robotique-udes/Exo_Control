@@ -2,6 +2,7 @@
 #define WifiClient_h
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <map>
 #include "enums.h"
 #include "MessageBuilder/MessageBuilder.h"
              
@@ -18,6 +19,8 @@ class WifiClient
         IPAddress IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
         void addIPAddress(IPAddress ip, EnumIPType ID);
         IPAddress getIP(EnumIPType index);
+        std::map<std::pair<std::string, int>, unsigned char> dataMap;
+        void deserializeMessage(unsigned char message[]);
     public:
         WifiClient();
         void sendMessage(unsigned char data[], EnumIPType address);

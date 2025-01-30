@@ -10,11 +10,14 @@
 
 #define UDP_PORT_RECEIVE 4210
 #define IP_LIST_SIZE 10
+#define INTERVAL_1SEC 1000
+#define INTERVAL_10ms 10
 
 struct IpTypeList
 {
     EnumIPType ipType;
     IPAddress ipAdresse;
+    ip4_addr_t ipAdd;
     uint8_t mac[6];
 };
 
@@ -49,7 +52,7 @@ private:
 
 public:
     IpTypeList IPsList[IP_LIST_SIZE];
-    unsigned char lastMessage[255];
+    unsigned char lastMessage[800];
     int lastMessageLength;
     uint8_t numClient;
     unsigned char readyToSendHandShake;
@@ -68,6 +71,8 @@ public:
     int retrieveInformation(EnumBnoPosition BNO_NAME, float* value);
     int retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value);
     int retrieveInformation(EnumIPType IP_NAME, IPAddress* value);
+
+    static void upDate();
 };
 
 #endif
