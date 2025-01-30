@@ -183,47 +183,46 @@ unsigned char* MessageBuilder::getMessage()
     return message;
 }
 
-DynamicJsonDocument MessageBuilder::deserializeMessage(unsigned char message[])
+std::map<std::pair<unsigned char, int>, unsigned char> 
+MessageBuilder::deserializeMessage(unsigned char message[])
 {
     // deserialize message into a map
     DynamicJsonDocument doc(MESSAGE_LENGTH);
     deserializeJson(doc, message);
 
-    return doc;
+    std::map<std::pair<unsigned char, int>, unsigned char> map;
+    JsonArray bnoAngles = doc["bnoAngles"];
+    std::map<int, float> angle;
+    for (int i = 0; i < bnoAngles.size(); i++)
+    {
+        angle[(int)bnoAngles[i]["ID"]] = bnoAngles[i]["value"];
+    }
+    unsigned char name1[20] = "bnoAngles";
+    map[name1] = angle;
 
-    // std::map<unsigned char[20], std::map<int, float>> map;
-    // JsonArray bnoAngles = doc["bnoAngles"];
-    // std::map<int, float> angle;
-    // for (int i = 0; i < bnoAngles.size(); i++)
-    // {
-    //     angle[(int)bnoAngles[i]["ID"]] = bnoAngles[i]["value"];
-    // }
-    // unsigned char name1[20] = "bnoAngles";
-    // map[name1] = angle;
+    JsonArray bnoPositions = doc["bnoPositions"];
+    std::map<int, float> position;
+    for (int i = 0; i < bnoPositions.size(); i++)
+    {
+        position[(int)bnoPositions[i]["ID"]] = bnoPositions[i]["value"];
+    }
+    unsigned char name2[20] = "bnoPositions";
+    map[name2] = position;
 
-    // JsonArray bnoPositions = doc["bnoPositions"];
-    // std::map<int, float> position;
-    // for (int i = 0; i < bnoPositions.size(); i++)
-    // {
-    //     position[(int)bnoPositions[i]["ID"]] = bnoPositions[i]["value"];
-    // }
-    // unsigned char name2[20] = "bnoPositions";
-    // map[name2] = position;
-
-    // JsonArray motorPositions = doc["motorPositions"];
-    // std::map<int, float> motor;
-    // for (int i = 0; i < motorPositions.size(); i++)
-    // {
-    //     motor[(int)motorPositions[i]["ID"]] = motorPositions[i]["value"];
-    // }
-    // unsigned char name3[20] = "motorPositions";
-    // map[name3] = motor;
+    JsonArray motorPositions = doc["motorPositions"];
+    std::map<int, float> motor;
+    for (int i = 0; i < motorPositions.size(); i++)
+    {
+        motor[(int)motorPositions[i]["ID"]] = motorPositions[i]["value"];
+    }
+    unsigned char name3[20] = "motorPositions";
+    map[name3] = motor;
     
-    // JsonArray logs = doc["logs"];
-    // std::map<int, float> log;
-    // unsigned char name4[20] = "logs";
-    // map[name4] = logs;
+    JsonArray logs = doc["logs"];
+    std::map<int, float> log;
+    unsigned char name4[20] = "logs";
+    map[name4] = logs;
     
-    // return map;
+    return map;
 
 }
