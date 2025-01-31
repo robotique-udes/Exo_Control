@@ -220,7 +220,7 @@ int WifiServer::SendData(unsigned char * packet, int length)
 }
 
 void WifiServer::handShake()
-{-
+{
     // Send list of IPs
     unsigned char connection_request[] = "Connection request";
     MessageBuilder message = MessageBuilder();
@@ -436,5 +436,4 @@ void WifiServer::deserializeMessage(unsigned char message[])
         value = ipAddresses[i]["value"].as<std::string>();
         unifiedMap[key] = value;
     }
-
 }
