@@ -177,7 +177,7 @@ int WifiServer::ReadData(int length)
   Serial.println("\n");
 
   // Deserialize the message
-  deserializeMessage(packet);
+  deserializeMessage(packet, length);
 
   return length;
 }
@@ -266,7 +266,7 @@ void WifiServer::DoAFlip()
 /// @return 
 int WifiServer::retrieveInformation(EnumBnoAngle BNO_NAME, float* value)
 {
-  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(BNO_NAME));
+  auto key = std::make_pair(ENUM_BNO_ANGLE, static_cast<int>(BNO_NAME));
 
   if (unifiedMap.find(key) != unifiedMap.end()) 
   {
@@ -290,7 +290,7 @@ int WifiServer::retrieveInformation(EnumBnoAngle BNO_NAME, float* value)
 
 int WifiServer::retrieveInformation(EnumBnoPosition BNO_NAME, float* value)
 {
-  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(BNO_NAME));
+  auto key = std::make_pair(ENUM_BNO_POSITION, static_cast<int>(BNO_NAME));
 
   if (unifiedMap.find(key) != unifiedMap.end()) 
   {
@@ -314,7 +314,7 @@ int WifiServer::retrieveInformation(EnumBnoPosition BNO_NAME, float* value)
 
 int WifiServer::retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value)
 {
-  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(MOTOR_NAME));
+  auto key = std::make_pair(ENUM_MOTOR_POSITION, static_cast<int>(MOTOR_NAME));
 
   if (unifiedMap.find(key) != unifiedMap.end()) 
   {
@@ -338,7 +338,7 @@ int WifiServer::retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value)
 
 int WifiServer::retrieveInformation(EnumIPType IP_NAME, IPAddress* value)
 {
-  auto key = std::make_pair(std::string("EnumBnoAngle"), static_cast<int>(IP_NAME));
+  auto key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(IP_NAME));
 
   if (unifiedMap.find(key) != unifiedMap.end()) 
   {
@@ -387,12 +387,12 @@ void WifiServer::upDate()
   }
 }
 
-void WifiServer::deserializeMessage(unsigned char message[])
+void WifiServer::deserializeMessage(unsigned char message[], int length)
 {
     Serial.println("Unified Map updated.");
 
     // deserialize message into a map
-    DynamicJsonDocument doc(MESSAGE_LENGTH);
+    DynamicJsonDocument doc(length);
     deserializeJson(doc, message);
 
     // extract data from message
@@ -408,15 +408,17 @@ void WifiServer::deserializeMessage(unsigned char message[])
     JsonArray bnoAngles = doc["bnoAngles"];
     for (int i = 0; i < bnoAngles.size(); i++)
     {
-        key = std::make_pair(std::string("ba"), static_cast<int>(bnoAngles[i]["ID"]));
+        key = std::make_pair(ENUM_BNO_ANGLE, static_cast<int>(bnoAngles[i]["ID"]));
         value = bnoAngles[i]["value"].as<std::string>();
+        Serial.print("Key: ");
+        Serial.print(key.first.c_str());
         unifiedMap[key] = value;
     }
     // bnoPositions
     JsonArray bnoPositions = doc["bnoPositions"];
     for (int i = 0; i < bnoPositions.size(); i++)
     {
-        key = std::make_pair(std::string("bp"), static_cast<int>(bnoPositions[i]["ID"]));
+        key = std::make_pair(ENUM_BNO_POSITION, static_cast<int>(bnoPositions[i]["ID"]));
         value = bnoPositions[i]["value"].as<std::string>();
         unifiedMap[key] = value;
     }
@@ -424,7 +426,7 @@ void WifiServer::deserializeMessage(unsigned char message[])
     JsonArray motorPositions = doc["motorPositions"];
     for (int i = 0; i < motorPositions.size(); i++)
     {
-        key = std::make_pair(std::string("mp"), static_cast<int>(motorPositions[i]["ID"]));
+        key = std::make_pair(ENUM_MOTOR_POSITION, static_cast<int>(motorPositions[i]["ID"]));
         value = motorPositions[i]["value"].as<std::string>();
         unifiedMap[key] = value;
     }
@@ -432,8 +434,18 @@ void WifiServer::deserializeMessage(unsigned char message[])
     JsonArray ipAddresses = doc["ipAddresses"];
     for (int i = 0; i < ipAddresses.size(); i++)
     {
-        key = std::make_pair(std::string("ip"), static_cast<int>(ipAddresses[i]["ID"]));
+        key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(ipAddresses[i]["ID"]));
         value = ipAddresses[i]["value"].as<std::string>();
         unifiedMap[key] = value;
+    }
+
+     Serial.println("Contents of the map:");
+    for (const auto& entry : unifiedMap) {
+        Serial.print("Key: (");
+        Serial.print(entry.first.first.c_str()); // Convert std::string to C-style string for Serial.print
+        Serial.print(", ");
+        Serial.print(entry.first.second);
+        Serial.print(") -> Value: ");
+        Serial.println(entry.second.c_str());
     }
 }

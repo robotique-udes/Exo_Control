@@ -13,6 +13,11 @@
 #define INTERVAL_1SEC 1000
 #define INTERVAL_10ms 10
 
+#define ENUM_BNO_ANGLE "EnumBnoAngle"
+#define ENUM_BNO_POSITION "EnumBnoPosition"
+#define ENUM_MOTOR_POSITION "EnumMotorPosition"
+#define ENUM_IP_TYPE "EnumIpType"
+
 struct IpTypeList
 {
     EnumIPType ipType;
@@ -39,7 +44,7 @@ private:
     void onWiFiEvent(WiFiEvent_t event);
     void InitialiseIPList();
     void newClientConnection(IpTypeList newClient);
-    void deserializeMessage(unsigned char message[]);
+    
 
     // Private constructors to prevent instantiation from outside
     WifiServer();
@@ -72,6 +77,8 @@ public:
     int retrieveInformation(EnumBnoPosition BNO_NAME, float* value);
     int retrieveInformation(EnumMotorPosition MOTOR_NAME, float* value);
     int retrieveInformation(EnumIPType IP_NAME, IPAddress* value);
+
+    void deserializeMessage(unsigned char message[], int length);
 
     static void upDate();
 };

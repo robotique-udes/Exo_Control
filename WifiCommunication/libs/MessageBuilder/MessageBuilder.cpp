@@ -14,6 +14,7 @@ MessageBuilder::MessageBuilder()
         ipAddress[i].ID = EnumIPType::NONE;
         ipAddress[i].value = value;
     }
+    clearInfo();
 }
 
 void MessageBuilder::clearMessage()
@@ -123,6 +124,7 @@ int MessageBuilder::buildMessage()
     DynamicJsonDocument doc(MESSAGE_LENGTH);
     doc["log"] = logMessage;
     JsonArray bnoAngles = doc.createNestedArray("bnoAngles");
+    Serial.println("bnoAngles NestedArray");
     for (int i = 0; i < indexStructBnoAngles; i++)
     {
         if (bnoAngle[i].ID != EnumBnoAngle::NONE)
@@ -133,8 +135,11 @@ int MessageBuilder::buildMessage()
         }
     }
     JsonArray bnoPositions = doc.createNestedArray("bnoPositions");
+    Serial.println("bnoPositions NestedArray");
+    Serial.print(indexStructBnoPosition);
     for (int i = 0; i < indexStructBnoPosition; i++)
     {
+        Serial.print(i);
         if (bnoPosition[i].ID != EnumBnoPosition::NONE)
         {
             JsonObject bno_position = bnoPositions.createNestedObject();
@@ -152,6 +157,7 @@ int MessageBuilder::buildMessage()
             motor_position["value"] = motorPosition[i].value;
         }
     }
+
     lengthMessage = serializeJson(doc, message);
     return lengthMessage;
 }
@@ -181,45 +187,19 @@ int MessageBuilder::buildHandshake()
 
 unsigned char* MessageBuilder::getMessage()
 {
-    Serial.print("Message: ");
-    for (int i = 0; i < lengthMessage; i++)
-    {
-        Serial.print((char) message[i]);
-    }
     return message;
 }
 
-std::map<std::pair<unsigned char, int>, unsigned char> 
-MessageBuilder::deserializeMessage(unsigned char message[])
+void MessageBuilder::add(EnumIPType IP_NAME, uint32_t address)
 {
-    // deserialize message into a map
-    DynamicJsonDocument doc(MESSAGE_LENGTH);
-    deserializeJson(doc, message);
+    ipAddress[indexStructIPAddressTest].ID = IP_NAME;
+    ipAddress[indexStructIPAddressTest].ipAdd32 = address;
+    indexStructIPAddressTest++;    
+}
 
-    std::map<std::pair<unsigned char, int>, unsigned char> map;
-    // log
-    JsonArray log = doc["logs"];
-    map[std::make_pair('log', 0)] = log[0];
-    // bnoAngles
-    JsonArray bnoAngles = doc["bnoAngles"];
-    for (int i = 0; i < bnoAngles.size(); i++)
-    {
-        map[std::make_pair('ba', bnoAngles[i]["ID"].as<int>())] = bnoAngles[i]["value"];
-    }
-    // bnoPositions
-    JsonArray bnoPositions = doc["bnoPositions"];
-    for (int i = 0; i < bnoPositions.size(); i++)
-    {
-        map[std::make_pair('bp', bnoPositions[i]["ID"].as<int>())] = bnoPositions[i]["value"];
-    }
-    // motorPositions
-    JsonArray motorPositions = doc["motorPositions"];
-    for (int i = 0; i < motorPositions.size(); i++)
-    {
-        map[std::make_pair('mp', motorPositions[i]["ID"].as<int>())] = motorPositions[i]["value"];
-    }
-
-    
-    return map;
-
+String MessageBuilder::castUint32ToStringIP(uint32_t val) {
+    return String(val & 0xFF) + "." +
+           String((val >> 8) & 0xFF) + "." +
+           String((val >> 16) & 0xFF) + "." +
+           String((val >> 24) & 0xFF);
 }
