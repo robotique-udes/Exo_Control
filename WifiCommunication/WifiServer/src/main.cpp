@@ -74,5 +74,25 @@ void TestDeserializeData()
   int length = message.buildMessage();
   Serial.println("Build message finished");
   wifiserver->deserializeMessage(message.getMessage(), length);
+  float exoBack = 0;
+  if(wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &exoBack) >= 0)
+  {
+    Serial.print("exoback: ");
+    Serial.println(exoBack);
+  }
+  else
+  {
+    Serial.println("No value found for EXO_BACK");
+  }
+
+  if(wifiserver->retrieveInformation(EnumBnoAngle::HIP_L, &exoBack) >= 0)
+  {
+    Serial.print("HIP_L: ");
+    Serial.println(exoBack);
+  }
+  else
+  {
+    Serial.println("No value found for HIP_L");
+  }
 
 }

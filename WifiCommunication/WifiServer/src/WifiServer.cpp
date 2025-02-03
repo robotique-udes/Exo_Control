@@ -401,9 +401,19 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
 
     // log
     JsonArray log = doc["logs"];
-    key = std::make_pair(std::string("log"), 0);
-    value = log[0].as<std::string>();
-    unifiedMap[key] = value;
+    serializeJson(log, Serial);
+    Serial.println("\n\n LOGS \n\n");
+
+    JsonArray logs = doc["logs"];
+    for (int i = 0; i < logs.size(); i++)
+    {
+        key = std::make_pair("logs", static_cast<int>(logs[i]["ID"]));
+        value = logs[i]["value"].as<std::string>();
+        Serial.print("Key: ");
+        Serial.print(key.first.c_str());
+        unifiedMap[key] = value;
+    }
+
     // bnoAngles
     JsonArray bnoAngles = doc["bnoAngles"];
     for (int i = 0; i < bnoAngles.size(); i++)
@@ -414,6 +424,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
         Serial.print(key.first.c_str());
         unifiedMap[key] = value;
     }
+
     // bnoPositions
     JsonArray bnoPositions = doc["bnoPositions"];
     for (int i = 0; i < bnoPositions.size(); i++)
@@ -422,6 +433,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
         value = bnoPositions[i]["value"].as<std::string>();
         unifiedMap[key] = value;
     }
+
     // motorPositions
     JsonArray motorPositions = doc["motorPositions"];
     for (int i = 0; i < motorPositions.size(); i++)
@@ -430,6 +442,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
         value = motorPositions[i]["value"].as<std::string>();
         unifiedMap[key] = value;
     }
+
     // IP addresses
     JsonArray ipAddresses = doc["ipAddresses"];
     for (int i = 0; i < ipAddresses.size(); i++)
@@ -439,10 +452,10 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
         unifiedMap[key] = value;
     }
 
-     Serial.println("Contents of the map:");
+    Serial.println("Contents of the map:");
     for (const auto& entry : unifiedMap) {
         Serial.print("Key: (");
-        Serial.print(entry.first.first.c_str()); // Convert std::string to C-style string for Serial.print
+        Serial.print(entry.first.first.c_str());
         Serial.print(", ");
         Serial.print(entry.first.second);
         Serial.print(") -> Value: ");

@@ -4,7 +4,7 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 
-#define NB_MESSAGE 1
+#define NB_LOGS 10
 #define NB_BNO_ANGLE 9
 #define NB_BNO_POSITION 5
 #define NB_MOTOR_POSITION 4
@@ -42,7 +42,7 @@ class MessageBuilder
 {
     private:
         unsigned char message[MESSAGE_LENGTH];
-        unsigned char logMessage[LOG_LENGTH];
+        unsigned char logMessage[NB_LOGS][LOG_LENGTH];
         structBnoAngles bnoAngle[NB_BNO_ANGLE];
         structBnoPosition bnoPosition[NB_BNO_POSITION];
         structMotorPosition motorPosition[NB_MOTOR_POSITION];
@@ -54,6 +54,7 @@ class MessageBuilder
 
         int logPlace = 127;
         int lengthMessage;
+        int nbrLogs = 0;
 
         String castUint32ToStringIP(uint32_t val);
         

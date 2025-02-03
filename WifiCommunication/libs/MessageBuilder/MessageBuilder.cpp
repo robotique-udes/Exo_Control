@@ -42,9 +42,12 @@ void MessageBuilder::clearInfo()
         motorPosition[i].ID = EnumMotorPosition::NONE;
         motorPosition[i].value = 0;
     }
-    for (int i = 0; i < LOG_LENGTH; i++)
+    for (int i = 0; i < NB_LOGS; i++)
     {
-        logMessage[i] = 0;
+        for (int j = 0; j < LOG_LENGTH; j++)
+        {
+            logMessage[i][j] = 0;
+        }
     }
 
     indexStructBnoAngles = 0;
@@ -53,35 +56,16 @@ void MessageBuilder::clearInfo()
     indexStructIPAddressTest = 0;
 }
 
-void MessageBuilder::add(unsigned char log[LOG_LENGTH - 1])
+void MessageBuilder::add(unsigned char *log)
 {   
-    int indexStart = 0;
-    bool logFull = true;
-    for (indexStart; indexStart < LOG_LENGTH - 1; indexStart++) // Find first empty index
+    if (nbrLogs >= NB_LOGS)
+        return;
+
+    for (int i = 0; i < LOG_LENGTH; i++)
     {
-        if (log[indexStart] == '\0')
-        {
-            logFull = false;
-            indexStart++; // Start writing after the null character
-            break;
-        }
+        logMessage[nbrLogs][i] = log[i];
     }
-    if (!logFull) // Check if log is full
-    {
-        int indexLog = 0;
-        for (indexStart; indexStart < LOG_LENGTH - 2; indexStart++) // Write log
-        {
-            logMessage[indexStart] = log[indexLog];
-            if (log[indexLog] == '\0') // Check if end of log
-            {
-                break;
-            }
-            indexLog++;
-        
-        }
-        logMessage[LOG_LENGTH - 1] = '\0'; // Add null character to end of log
-    }
-    logPlace = LOG_LENGTH - indexStart - 2; // Calculate remaining space in log
+    nbrLogs++;
 }
 
 int MessageBuilder::getLogPlace()
@@ -122,7 +106,15 @@ int MessageBuilder::buildMessage()
     clearMessage();
     // make a message using json
     DynamicJsonDocument doc(MESSAGE_LENGTH);
-    doc["log"] = logMessage;
+
+    JsonArray logs = doc.createNestedArray("logs");
+    for (int i = 0; i < nbrLogs; i++)
+    {
+        JsonObject log = logs.createNestedObject();
+        log["ID"] = i;
+        log["value"] = String((char*)logMessage[i]);  
+    }
+
     JsonArray bnoAngles = doc.createNestedArray("bnoAngles");
     Serial.println("bnoAngles NestedArray");
     for (int i = 0; i < indexStructBnoAngles; i++)
@@ -134,6 +126,7 @@ int MessageBuilder::buildMessage()
             angle["value"] = bnoAngle[i].value;
         }
     }
+
     JsonArray bnoPositions = doc.createNestedArray("bnoPositions");
     Serial.println("bnoPositions NestedArray");
     Serial.print(indexStructBnoPosition);
@@ -159,6 +152,7 @@ int MessageBuilder::buildMessage()
     }
 
     lengthMessage = serializeJson(doc, message);
+    serializeJson(doc, Serial);
     return lengthMessage;
 }
 
