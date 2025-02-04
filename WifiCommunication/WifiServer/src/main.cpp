@@ -18,7 +18,7 @@ void setup() {
   // Connect to Wifi network.
   delay(3000);
 
-  wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+  wifiserver = WifiServer::GetInstance();
   wifiserver->Initialise();  
 }
 
@@ -36,11 +36,13 @@ void loop() {
     Serial.println("   1 second has pass");
   }
 
-  if(test && compteur >5)
-  {
-    test = false;
-    TestDeserializeData();
-  }
+  WifiServer::upDate();
+
+  // if(test && compteur >5)
+  // {
+  //   test = false;
+  //   TestDeserializeData();
+  // }
 
   // if(wifiserver->readyToSendHandShake)
   // {
@@ -75,6 +77,7 @@ void TestDeserializeData()
   Serial.println("Build message finished");
   wifiserver->deserializeMessage(message.getMessage(), length);
   float exoBack = 0;
+
   if(wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &exoBack) >= 0)
   {
     Serial.print("exoback: ");

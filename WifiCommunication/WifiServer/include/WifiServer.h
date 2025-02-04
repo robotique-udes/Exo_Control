@@ -8,6 +8,9 @@
 #include "enums.h"
 #include "MessageBuilder/MessageBuilder.h"
 
+#define SSID "helloIAmUnder"
+#define PASS_PHRASE "ItsTricky"
+
 #define UDP_PORT_RECEIVE 4210
 #define IP_LIST_SIZE 10
 #define INTERVAL_1SEC 1000
@@ -63,7 +66,7 @@ public:
     uint8_t numClient;
     unsigned char readyToSendHandShake;
     // Static method to access the singleton instance
-    static WifiServer* GetInstance(char* ssid, char* passphrase);
+    static WifiServer* GetInstance();
 
     ~WifiServer();
     int Initialise();

@@ -5,11 +5,11 @@
 
 WifiServer* WifiServer::wifiInstance = nullptr;
 
-WifiServer* WifiServer::GetInstance(char* ssid, char* passphrase)
+WifiServer* WifiServer::GetInstance()
 {
   if(wifiInstance == nullptr)
   {
-    wifiInstance = new WifiServer(ssid, passphrase);
+    wifiInstance = new WifiServer(SSID, PASS_PHRASE);
   }
 
   return wifiInstance;
@@ -48,7 +48,7 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
   esp_wifi_ap_get_sta_list(&wifi_sta_list);
   tcpip_adapter_get_sta_list(&wifi_sta_list, &adapter_sta_list);
 
-  WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+  WifiServer* wifiserver = WifiServer::GetInstance();
   //Will need to check for only new people connected
   for (int i = 0; i < adapter_sta_list.num && i < IP_LIST_SIZE; i++) 
   {
@@ -90,7 +90,7 @@ void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
 void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info) 
 {
     Serial.println("Device disconnected from the access point!");
-    WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+    WifiServer* wifiserver = WifiServer::GetInstance();
     wifiserver->numClient--;
 }
 
@@ -365,7 +365,7 @@ int WifiServer::retrieveInformation(EnumIPType IP_NAME, IPAddress* value)
 void WifiServer::upDate()
 {
   static unsigned long previousMillis = 0; // Stores the last time a message was printed
-  WifiServer* wifiserver = WifiServer::GetInstance("helloIAmUnder", "ItsTricky");
+  WifiServer* wifiserver = WifiServer::GetInstance();
   unsigned long currentMillis = millis();
 
   if(currentMillis - previousMillis >= INTERVAL_10ms)
