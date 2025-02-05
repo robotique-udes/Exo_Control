@@ -65,6 +65,7 @@ class MessageBuilder
         void clearInfo();
         void add(unsigned char log[LOG_LENGTH]);
         int getLogPlace();
+        int getMessageLength();
         void add(EnumBnoAngle BNO_NAME, float value);
         void add(EnumBnoPosition BNO_NAME, float value);
         void add(EnumMotorPosition MOTOR_NAME, float value);
