@@ -44,32 +44,13 @@ void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
 }
 
 
-void WifiClient::sendMessage(unsigned char data[], EnumIPType address) // Send message to server
+void WifiClient::sendMessage(int data_lenght, unsigned char data[], EnumIPType address) // Send message to server
 {
     IPAddress watch_ip(192, 168, 4, 2);//The get ip is broken
-  UDP.beginPacket(watch_ip, UDP_PORT_SEND);
-  // find size of data
-  int size = 0;
-  while (true)
-  {
-    try 
-    {
-        if (data[size] == '\0')
-        {
-            break;
-        }
-
-    } 
-    catch (const std::exception& e) 
-    {
-        throw new std::range_error("Data not containing a null character.");
-    }
-    size++;
-  } 
-
-  UDP.write(data, size);
-  UDP.endPacket();
-  Serial.printf("UDP sent packet contents: %s\n", data);
+    UDP.beginPacket(watch_ip, UDP_PORT_SEND);
+    UDP.write(data, data_lenght);
+    UDP.endPacket();
+    Serial.printf("UDP sent packet contents: %s\n", data);
 }
 
 void WifiClient::receiveMessage(unsigned char data[]) // Receive message from server
@@ -130,7 +111,7 @@ void WifiClient::handShake() // Handshake with server
 
     // Send connection confirmation
     unsigned char confirmation[22] = "Connection confirmed";
-    sendMessage(confirmation, EnumIPType::WATCH);
+    sendMessage(22, confirmation, EnumIPType::WATCH);
 
 }
 

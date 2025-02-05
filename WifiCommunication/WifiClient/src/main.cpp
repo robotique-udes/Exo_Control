@@ -7,6 +7,7 @@ void setup() {
     // Start the Serial communication
     // Serial.begin(115200)
     client.wifiConnect();
+    delay(2000);
     
 }
 
@@ -20,7 +21,7 @@ void loop() {
     }
 
     // Send the message
-    client.sendMessage(table, EnumIPType::WATCH);
+    client.sendMessage(22, table, EnumIPType::WATCH);
 
     // Wait for 2 second before sending the next message
     delay(2000);

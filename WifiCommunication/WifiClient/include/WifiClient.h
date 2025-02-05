@@ -27,7 +27,7 @@ class WifiClient
         void deserializeMessage(unsigned char message[]);
     public:
         WifiClient();
-        void sendMessage(unsigned char data[], EnumIPType address);
+        void sendMessage(int data_lenght, unsigned char data[], EnumIPType address);
         void receiveMessage(unsigned char data[]);	
         bool isConnected();
         void wifiConnect(); 
