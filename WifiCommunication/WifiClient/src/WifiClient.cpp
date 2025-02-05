@@ -46,7 +46,8 @@ void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
 
 void WifiClient::sendMessage(unsigned char data[], EnumIPType address) // Send message to server
 {
-  UDP.beginPacket(getIP(address), UDP_PORT_SEND);
+    IPAddress watch_ip(192, 168, 4, 2);//The get ip is broken
+  UDP.beginPacket(watch_ip, UDP_PORT_SEND);
   // find size of data
   int size = 0;
   while (true)
@@ -118,7 +119,7 @@ void WifiClient::handShake() // Handshake with server
     deserializeMessage(IPs);    
 
     // Set IP addresses (CAN BE CHANGED)
-    std::pair<std::string, int> key = std::make_pair(std::string("ip"), static_cast<int>(EnumIPType::WATCH));
+    std::pair<std::string, int> key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(EnumIPType::WATCH));
     std::string watch_ip = dataMap[key];
     // convert string to const char*
     const char* watch_ip_char = watch_ip.c_str();
@@ -159,14 +160,24 @@ void WifiClient::deserializeMessage(unsigned char message[])
 
     // log
     JsonArray log = doc["logs"];
-    key = std::make_pair(std::string("log"), 0);
-    value = log[0].as<std::string>();
-    dataMap[key] = value;
+    serializeJson(log, Serial);
+    Serial.println("\n\n LOGS \n\n");
+
+    JsonArray logs = doc["logs"];
+    for (int i = 0; i < logs.size(); i++)
+    {
+        key = std::make_pair("logs", static_cast<int>(logs[i]["ID"]));
+        value = logs[i]["value"].as<std::string>();
+        Serial.print("Key: ");
+        Serial.print(key.first.c_str());
+        dataMap[key] = value;
+    }
+
     // bnoAngles
     JsonArray bnoAngles = doc["bnoAngles"];
     for (int i = 0; i < bnoAngles.size(); i++)
     {
-        key = std::make_pair(std::string("ba"), static_cast<int>(bnoAngles[i]["ID"]));
+        key = std::make_pair(ENUM_BNO_ANGLE, static_cast<int>(bnoAngles[i]["ID"]));
         value = bnoAngles[i]["value"].as<std::string>();
         dataMap[key] = value;
     }
@@ -174,7 +185,7 @@ void WifiClient::deserializeMessage(unsigned char message[])
     JsonArray bnoPositions = doc["bnoPositions"];
     for (int i = 0; i < bnoPositions.size(); i++)
     {
-        key = std::make_pair(std::string("bp"), static_cast<int>(bnoPositions[i]["ID"]));
+        key = std::make_pair(ENUM_BNO_POSITION, static_cast<int>(bnoPositions[i]["ID"]));
         value = bnoPositions[i]["value"].as<std::string>();
         dataMap[key] = value;
     }
@@ -182,7 +193,7 @@ void WifiClient::deserializeMessage(unsigned char message[])
     JsonArray motorPositions = doc["motorPositions"];
     for (int i = 0; i < motorPositions.size(); i++)
     {
-        key = std::make_pair(std::string("mp"), static_cast<int>(motorPositions[i]["ID"]));
+        key = std::make_pair(ENUM_MOTOR_POSITION, static_cast<int>(motorPositions[i]["ID"]));
         value = motorPositions[i]["value"].as<std::string>();
         dataMap[key] = value;
     }
@@ -190,7 +201,7 @@ void WifiClient::deserializeMessage(unsigned char message[])
     JsonArray ipAddresses = doc["ipAddresses"];
     for (int i = 0; i < ipAddresses.size(); i++)
     {
-        key = std::make_pair(std::string("ip"), static_cast<int>(ipAddresses[i]["ID"]));
+        key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(ipAddresses[i]["ID"]));
         value = ipAddresses[i]["value"].as<std::string>();
         dataMap[key] = value;
     }

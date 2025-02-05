@@ -6,6 +6,10 @@
 #include "enums.h"
 #include "MessageBuilder/MessageBuilder.h"
              
+#define ENUM_BNO_ANGLE "EnumBnoAngle"
+#define ENUM_BNO_POSITION "EnumBnoPosition"
+#define ENUM_MOTOR_POSITION "EnumMotorPosition"
+#define ENUM_IP_TYPE "EnumIpType"
 
 class WifiClient 
 {

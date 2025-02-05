@@ -373,6 +373,8 @@ void WifiServer::upDate()
     previousMillis = currentMillis;
 
     int length = wifiserver->DataAvailable();//Check for new informations
+    // Serial.print("Length data received: ");
+    // Serial.println(length);
     if (length > 0) 
     {  
       wifiserver->ReadData(length);
