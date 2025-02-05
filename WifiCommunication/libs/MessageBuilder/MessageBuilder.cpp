@@ -73,6 +73,11 @@ int MessageBuilder::getLogPlace()
     return logPlace;
 }
 
+int MessageBuilder::getMessageLength()
+{
+    return lengthMessage;
+}
+
 void MessageBuilder::add(EnumBnoAngle BNO_NAME, float value)
 {
     bnoAngle[indexStructBnoAngles].ID = BNO_NAME;
