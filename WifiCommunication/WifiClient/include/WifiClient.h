@@ -16,6 +16,7 @@ class WifiClient
     private:
         const char* ssid = "helloIAmUnder";  // WiFi network name
         const char* password = "ItsTricky"; // WiFi network password
+        int lenght_message_recieved = 0;
         WiFiUDP UDP;
         unsigned int localUdpPort = 4211;  // Local port to receive responses
         void handShake();
@@ -24,7 +25,8 @@ class WifiClient
         void addIPAddress(IPAddress ip, EnumIPType ID);
         IPAddress getIP(EnumIPType index);
         std::map<std::pair<std::string, int>, std::string> dataMap;
-        void deserializeMessage(unsigned char message[]);
+        void deserializeMessage(unsigned char message[], int length);
+        int dataAvailable();
     public:
         WifiClient();
         void sendMessage(int data_lenght, unsigned char data[], EnumIPType address);

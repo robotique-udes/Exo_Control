@@ -12,9 +12,6 @@ WifiClient::WifiClient() // Constructor
 
 void WifiClient::wifiConnect() // Connect to Wi-Fi
 {
-    // IP address of the UDP server
-    IPAddress watch_ip(192, 168, 4, 2);
-    addIPAddress(watch_ip, EnumIPType::WATCH);
 
     // WiFi mode
     WiFi.mode(WIFI_STA);
@@ -46,23 +43,27 @@ void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
 
 void WifiClient::sendMessage(int data_lenght, unsigned char data[], EnumIPType address) // Send message to server
 {
-    IPAddress watch_ip(192, 168, 4, 2);//The get ip is broken
-    UDP.beginPacket(watch_ip, UDP_PORT_SEND);
+    UDP.beginPacket(getIP(EnumIPType::WATCH), UDP_PORT_SEND);
     UDP.write(data, data_lenght);
     UDP.endPacket();
     Serial.printf("UDP sent packet contents: %s\n", data);
 }
 
+int WifiClient::dataAvailable() // Check if data is available
+{
+    return lenght_message_recieved = UDP.parsePacket();
+}
+
 void WifiClient::receiveMessage(unsigned char data[]) // Receive message from server
 {
-  unsigned char incomingPacket[255];
-  int packetSize = UDP.parsePacket();
-  if (packetSize) {
-      int len = UDP.read(incomingPacket, 255);
-      if (len > 0) {
-          incomingPacket[len] = 0;
-      }
-      Serial.printf("UDP recieved packet contents: %s\n", incomingPacket);
+  unsigned char incomingPacket[lenght_message_recieved + 1];
+  if (lenght_message_recieved) 
+  {
+    int len = UDP.read(incomingPacket, lenght_message_recieved);
+    if (len > 0) {
+        incomingPacket[len] = 0;
+    }
+    Serial.printf("UDP recieved packet contents: %s\n", incomingPacket);
   }
   data = incomingPacket;
 }
@@ -87,17 +88,20 @@ void WifiClient::wifiOn() // Turn on Wi-Fi
 }
 
 void WifiClient::handShake() // Handshake with server
-{
-    // Send connection request
-    unsigned char connection_request[] = "Connection request";
-    MessageBuilder message = MessageBuilder();
-    message.add(connection_request);
-    
+{   
 
     // Receive IP addresses
-    unsigned char IPs[255];
+    int longueur_ips = 0;
+    while (!longueur_ips) 
+    {
+        longueur_ips = dataAvailable();
+        delay(800);
+        Serial.print("Waiting for IP addresses... lentgh recieved : ");
+        Serial.println(longueur_ips); 
+    }
+    unsigned char IPs[longueur_ips];
     receiveMessage(IPs);
-    deserializeMessage(IPs);    
+    deserializeMessage(IPs, longueur_ips);
 
     // Set IP addresses (CAN BE CHANGED)
     std::pair<std::string, int> key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(EnumIPType::WATCH));
@@ -127,12 +131,12 @@ IPAddress WifiClient::getIP(EnumIPType address) // Get IP address from list
     return IPsList[(int)address];
 }
 
-void WifiClient::deserializeMessage(unsigned char message[])
+void WifiClient::deserializeMessage(unsigned char message[], int length)
 {
     Serial.println("Data Map updated.");
 
     // deserialize message into a map
-    DynamicJsonDocument doc(MESSAGE_LENGTH);
+    DynamicJsonDocument doc(length);
     deserializeJson(doc, message);
 
     // extract data from message
@@ -141,8 +145,8 @@ void WifiClient::deserializeMessage(unsigned char message[])
 
     // log
     JsonArray log = doc["logs"];
-    serializeJson(log, Serial);
-    Serial.println("\n\n LOGS \n\n");
+    // serializeJson(log, Serial);
+    // Serial.println("\n\n LOGS \n\n");
 
     JsonArray logs = doc["logs"];
     for (int i = 0; i < logs.size(); i++)
@@ -160,8 +164,11 @@ void WifiClient::deserializeMessage(unsigned char message[])
     {
         key = std::make_pair(ENUM_BNO_ANGLE, static_cast<int>(bnoAngles[i]["ID"]));
         value = bnoAngles[i]["value"].as<std::string>();
+        Serial.print("Key: ");
+        Serial.print(key.first.c_str());
         dataMap[key] = value;
     }
+
     // bnoPositions
     JsonArray bnoPositions = doc["bnoPositions"];
     for (int i = 0; i < bnoPositions.size(); i++)
@@ -170,6 +177,7 @@ void WifiClient::deserializeMessage(unsigned char message[])
         value = bnoPositions[i]["value"].as<std::string>();
         dataMap[key] = value;
     }
+
     // motorPositions
     JsonArray motorPositions = doc["motorPositions"];
     for (int i = 0; i < motorPositions.size(); i++)
@@ -178,6 +186,7 @@ void WifiClient::deserializeMessage(unsigned char message[])
         value = motorPositions[i]["value"].as<std::string>();
         dataMap[key] = value;
     }
+
     // IP addresses
     JsonArray ipAddresses = doc["ipAddresses"];
     for (int i = 0; i < ipAddresses.size(); i++)
@@ -187,6 +196,15 @@ void WifiClient::deserializeMessage(unsigned char message[])
         dataMap[key] = value;
     }
 
+    Serial.println("Contents of the map:");
+    for (const auto& entry : dataMap) {
+        Serial.print("Key: (");
+        Serial.print(entry.first.first.c_str());
+        Serial.print(", ");
+        Serial.print(entry.first.second);
+        Serial.print(") -> Value: ");
+        Serial.println(entry.second.c_str());
+    }
 }
 
 
