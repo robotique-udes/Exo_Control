@@ -112,6 +112,9 @@ void WifiClient::handShake() // Handshake with server
     IPAddress watch_ip_address;
     watch_ip_address.fromString(watch_ip_char);
     IPsList[0] = watch_ip_address;
+    Serial.print("Watch IP form ips list: ");
+    Serial.print(IPsList[0]);
+    Serial.println(".");
 
     // Send connection confirmation
     unsigned char confirmation[22] = "Connection confirmed";

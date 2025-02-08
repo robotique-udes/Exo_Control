@@ -194,11 +194,11 @@ int WifiServer::SendData(unsigned char * packet, int length)
     Serial.print("myIP: ");
     Serial.println(MyIP);
 
-    UDP.beginPacket(UDP.remoteIP(), 4211);
+    UDP.beginPacket(IPAddress(192, 168, 4, 3), 4211); // À RENDRE MODULABLE
     Serial.print("Sending packet to ");
     Serial.print(UDP.remoteIP());
     Serial.print(" on port ");
-    Serial.print(4211);
+    Serial.print(UDP.remotePort());
     Serial.print(":  size: ");
     Serial.print(length);
     Serial.print("\n\n");
@@ -240,6 +240,7 @@ void WifiServer::handShake()
 
     int length = message.buildHandshake();
     unsigned char* mess = message.getMessage();
+    delay(1000); // À CHANGER
     SendData(mess, length);
 }
 
