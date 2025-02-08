@@ -106,12 +106,20 @@ void WifiClient::handShake() // Handshake with server
     // Set IP addresses (CAN BE CHANGED)
     std::pair<std::string, int> key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(EnumIPType::WATCH));
     std::string watch_ip = dataMap[key];
+
     // convert string to const char*
     const char* watch_ip_char = watch_ip.c_str();
-    // convert string to IP address
+
+    // print IP address input
+    Serial.print("Watch IP dataMap: ");
+    Serial.print(watch_ip_char);
+    Serial.println(".");
+
+    // convert const char* to IPAddress
     IPAddress watch_ip_address;
     watch_ip_address.fromString(watch_ip_char);
-    IPsList[0] = watch_ip_address;
+
+    // print IP address output
     Serial.print("Watch IP form ips list: ");
     Serial.print(IPsList[0]);
     Serial.println(".");
@@ -139,18 +147,14 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     Serial.println("Data Map updated.");
 
     // deserialize message into a map
-    DynamicJsonDocument doc(length);
+    JsonDocument doc;
     deserializeJson(doc, message);
 
     // extract data from message
     std::pair<std::string, int> key;
     std::string value;
 
-    // log
-    JsonArray log = doc["logs"];
-    // serializeJson(log, Serial);
-    // Serial.println("\n\n LOGS \n\n");
-
+    // logs
     JsonArray logs = doc["logs"];
     for (int i = 0; i < logs.size(); i++)
     {
@@ -191,11 +195,11 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     }
 
     // IP addresses
-    JsonArray ipAddresses = doc["ipAddresses"];
-    for (int i = 0; i < ipAddresses.size(); i++)
+    JsonArray IPs = doc["IPs"];
+    for (int i = 0; i < IPs.size(); i++)
     {
-        key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(ipAddresses[i]["ID"]));
-        value = ipAddresses[i]["value"].as<std::string>();
+        key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(IPs[i]["ID"]));
+        value = IPs[i]["value"].as<std::string>();
         dataMap[key] = value;
     }
 
@@ -208,6 +212,7 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
         Serial.print(") -> Value: ");
         Serial.println(entry.second.c_str());
     }
+    Serial.println(".");
 }
 
 
