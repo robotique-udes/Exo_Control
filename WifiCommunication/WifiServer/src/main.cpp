@@ -36,13 +36,13 @@ void loop() {
     Serial.println("   1 second has pass");
   }
 
-  WifiServer::upDate();
+  // WifiServer::upDate();
 
-  // if(test && compteur >5)
-  // {
-  //   test = false;
-  //   TestDeserializeData();
-  // }
+  if(test && compteur >5)
+  {
+    test = false;
+    TestDeserializeData();
+  }
 
   // if(wifiserver->readyToSendHandShake)
   // {
@@ -98,4 +98,14 @@ void TestDeserializeData()
     Serial.println("No value found for HIP_L");
   }
 
+  Serial.println("\n\n\n\ngoing to make the IP adresse");
+
+  MessageBuilder message2 = MessageBuilder();
+  IPAddress ipAdd(192, 168, 4, 3);
+  message2.add(EnumIPType::EXOSKELETON, ipAdd);
+  Serial.println("Going to build the message");
+  length = message2.buildHandshake();
+  Serial.println("Build message finished");
+  wifiserver->deserializeMessage(message2.getMessage(), length);
+  Serial.print("Finished");
 }

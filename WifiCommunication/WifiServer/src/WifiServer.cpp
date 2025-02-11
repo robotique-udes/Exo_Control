@@ -20,6 +20,7 @@ WifiServer:: WifiServer(char* ssid, char* passphrase)
     ServerSSID = ssid;
     ServerPassword = passphrase;
     readyToSendHandShake = 0;
+    timerBeforeSendinghandShake = 0;
 
     IPAddress local_ip(192, 168, 4, 2);
     Local_ip = local_ip;
@@ -196,7 +197,7 @@ int WifiServer::SendData(unsigned char * packet, int length)
 
     UDP.beginPacket(IPAddress(192, 168, 4, 3), 4211); // À RENDRE MODULABLE
     Serial.print("Sending packet to ");
-    Serial.print(UDP.remoteIP());
+    Serial.print(test);
     Serial.print(" on port ");
     Serial.print(UDP.remotePort());
     Serial.print(":  size: ");
@@ -384,6 +385,7 @@ void WifiServer::upDate()
 
     if(wifiserver->readyToSendHandShake)//Send the handShakes
     {
+      delay(1000);
       wifiserver->readyToSendHandShake = 0;
       wifiserver->handShake();
     }
@@ -393,6 +395,12 @@ void WifiServer::upDate()
 void WifiServer::deserializeMessage(unsigned char message[], int length)
 {
     Serial.println("Unified Map updated.");
+    Serial.println(length);
+    for(int byte = 0; byte < length; byte++)
+    {
+        Serial.print((char)message[byte]);
+    }
+    Serial.println("");
 
     // deserialize message into a map
     DynamicJsonDocument doc(length);

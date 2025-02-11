@@ -65,6 +65,7 @@ public:
     int lastMessageLength;
     uint8_t numClient;
     unsigned char readyToSendHandShake;
+    unsigned char timerBeforeSendinghandShake;
     // Static method to access the singleton instance
     static WifiServer* GetInstance();
 
