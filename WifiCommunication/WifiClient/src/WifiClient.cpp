@@ -196,6 +196,8 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
 
     // IP addresses
     JsonArray IPs = doc["IPs"];
+    Serial.print("IPs size: ");
+    Serial.println(IPs.size());
     for (int i = 0; i < IPs.size(); i++)
     {
         key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(IPs[i]["ID"]));

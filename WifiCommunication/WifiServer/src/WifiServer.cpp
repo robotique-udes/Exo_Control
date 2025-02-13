@@ -237,8 +237,9 @@ void WifiServer::handShake()
       //message.add(IPsList[i].ipType, IPsList[i].ipAdd.addr);
       message.add(IPsList[i].ipType, &(IPsList[i].ipAdresse));
     }
+    message.add(EnumBnoAngle::HIP_L, 0.0);
 
-    int length = message.buildHandshake();
+    int length = message.buildMessage();
     unsigned char* mess = message.getMessage();
     delay(1000); // À CHANGER
     SendData(mess, length);
