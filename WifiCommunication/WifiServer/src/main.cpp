@@ -36,29 +36,12 @@ void loop() {
     Serial.println("   1 second has pass");
   }
 
-  // WifiServer::upDate();
+  WifiServer::upDate();
 
-  if(test && compteur >5)
-  {
-    test = false;
-    TestDeserializeData();
-  }
-
-  // if(wifiserver->readyToSendHandShake)
+  // if(test && compteur >5)
   // {
-  //   wifiserver->readyToSendHandShake = 0;
-  //   wifiserver->DoAFlip();
-  // }
-
-  // // Check if data is available
-  // int length = wifiserver->DataAvailable();
-  // if (length > 0) 
-  // {  
-  //   wifiserver->ReadData(length);
-  //   wifiserver->SendData(wifiserver->lastMessage, wifiserver->lastMessageLength);
-  //   // float val;
-  //   // wifiserver->retrieveInformation(EnumBnoAngle::EXO_BACK, &val);
-  //   // Serial.printf("valeur obtenu: %2f", val);
+  //   test = false;
+  //   TestDeserializeData();
   // }
 
   delay(1);
@@ -102,7 +85,7 @@ void TestDeserializeData()
 
   MessageBuilder message2 = MessageBuilder();
   IPAddress ipAdd(192, 168, 4, 3);
-  message2.add(EnumIPType::EXOSKELETON, ipAdd);
+  message2.add(EnumIPType::EXOSKELETON, &ipAdd);
   Serial.println("Going to build the message");
   length = message2.buildHandshake();
   Serial.println("Build message finished");

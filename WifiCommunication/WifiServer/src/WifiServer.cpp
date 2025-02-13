@@ -197,7 +197,7 @@ int WifiServer::SendData(unsigned char * packet, int length)
 
     UDP.beginPacket(IPAddress(192, 168, 4, 3), 4211); // À RENDRE MODULABLE
     Serial.print("Sending packet to ");
-    Serial.print(test);
+    Serial.print(IPAddress(192, 168, 4, 3).toString());
     Serial.print(" on port ");
     Serial.print(UDP.remotePort());
     Serial.print(":  size: ");
