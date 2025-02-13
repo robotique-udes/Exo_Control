@@ -34,7 +34,7 @@ struct structMotorPosition
 struct structIPAddress
 {
     EnumIPType ID;
-    IPAddress value;
+    String value;
     uint32_t ipAdd32;
 };
 
@@ -70,7 +70,6 @@ class MessageBuilder
         void add(EnumBnoPosition BNO_NAME, float value);
         void add(EnumMotorPosition MOTOR_NAME, float value);
         void add(EnumIPType IP_NAME, IPAddress *value);
-        void add(EnumIPType IP_NAME, uint32_t address);
         int buildMessage();
         int buildHandshake();
 };
