@@ -6,22 +6,18 @@ WifiClient client;
 void setup() {
     // Start the Serial communication
     Serial.begin(115200);
-    
+    client.wifiConnect();
 }
 
 void loop() {
     // Connect the client after 5 seconds
-    unsigned long time = millis();
     static unsigned long time_passed_init = millis();
     static unsigned long time_passed_second = millis();
     static unsigned long timme_pasted_send = millis();
+    unsigned long time = millis();
 
-    if (time - time_passed_init >= 5000  && !client.isConnected())
-    {
-        client.wifiConnect();
-        time_passed_second = millis();
-    }
-    else if (time - timme_pasted_send >= 2000)
+
+    if (time - timme_pasted_send >= 2000)
     {
         
         String message = "Hello there, my friend";
