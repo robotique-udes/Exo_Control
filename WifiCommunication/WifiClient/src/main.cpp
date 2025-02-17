@@ -5,7 +5,8 @@ WifiClient client;
 
 void setup() {
     // Start the Serial communication
-    Serial.begin(115200);
+    Serial.begin(115200);    
+    delay(5000);
     client.wifiConnect();
 }
 

@@ -43,7 +43,9 @@ void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
 
 void WifiClient::sendMessage(int data_lenght, unsigned char data[], EnumIPType address) // Send message to server
 {
-    UDP.beginPacket(getIP(EnumIPType::WATCH), UDP_PORT_SEND);
+    IPAddress sendingAddress;
+    sendingAddress.fromString(IPsList[(int)EnumIPType::WATCH].c_str());
+    UDP.beginPacket(sendingAddress, UDP_PORT_SEND);
     UDP.write(data, data_lenght);
     UDP.endPacket();
     Serial.printf("UDP sent packet contents: %s\n", data);
@@ -64,8 +66,12 @@ void WifiClient::receiveMessage(unsigned char data[]) // Receive message from se
         incomingPacket[len] = 0;
     }
     Serial.printf("UDP recieved packet contents: %s\n", incomingPacket);
+
+    for(int i = 0; i < lenght_message_recieved; i++)
+    {
+        data[i] = incomingPacket[i];
+    }
   }
-  data = incomingPacket;
 }
 
 bool WifiClient::isConnected() // Check if connected to Wi-Fi
@@ -94,8 +100,8 @@ void WifiClient::handShake() // Handshake with server
     int longueur_ips = 0;
     while (!longueur_ips) 
     {
-        longueur_ips = dataAvailable();
         delay(800);
+        longueur_ips = dataAvailable();
         Serial.print("Waiting for IP addresses... lentgh recieved : ");
         Serial.println(longueur_ips); 
     }
@@ -106,6 +112,7 @@ void WifiClient::handShake() // Handshake with server
     // Set IP addresses (CAN BE CHANGED)
     std::pair<std::string, int> key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(EnumIPType::WATCH));
     std::string watch_ip = dataMap[key];
+    IPsList[(int)EnumIPType::WATCH] = watch_ip;
 
     // convert string to const char*
     const char* watch_ip_char = watch_ip.c_str();
@@ -118,11 +125,6 @@ void WifiClient::handShake() // Handshake with server
     // convert const char* to IPAddress
     IPAddress watch_ip_address;
     watch_ip_address.fromString(watch_ip_char);
-
-    // print IP address output
-    Serial.print("Watch IP form ips list: ");
-    Serial.print(IPsList[0]);
-    Serial.println(".");
 
     // Send connection confirmation
     unsigned char confirmation[22] = "Connection confirmed";
@@ -137,18 +139,19 @@ void WifiClient::addIPAddress(IPAddress ip, EnumIPType ID) // Add IP address to 
     IPsListSize++;
 }
 
-IPAddress WifiClient::getIP(EnumIPType address) // Get IP address from list
+std::string WifiClient::getIP(EnumIPType address) // Get IP address from list
 {
     return IPsList[(int)address];
 }
 
 void WifiClient::deserializeMessage(unsigned char message[], int length)
 {
-    Serial.println("Data Map updated.");
+    Serial.println("Data Map update");
 
     // deserialize message into a map
     JsonDocument doc;
     deserializeJson(doc, message);
+    serializeJson(doc, Serial);
 
     // extract data from message
     std::pair<std::string, int> key;
@@ -195,7 +198,7 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     }
 
     // IP addresses
-    JsonArray IPs = doc["IPs"];
+    JsonArray IPs = doc[ENUM_IP_TYPE];
     Serial.print("IPs size: ");
     Serial.println(IPs.size());
     for (int i = 0; i < IPs.size(); i++)

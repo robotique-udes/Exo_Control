@@ -1,6 +1,10 @@
 
 #include "MessageBuilder.h"
 
+#define ENUM_BNO_ANGLE "EnumBnoAngle"
+#define ENUM_BNO_POSITION "EnumBnoPosition"
+#define ENUM_MOTOR_POSITION "EnumMotorPosition"
+#define ENUM_IP_TYPE "EnumIpType"
 
 MessageBuilder::MessageBuilder()
 {
@@ -99,11 +103,11 @@ void MessageBuilder::add(EnumMotorPosition MOTOR_NAME, float value)
 
 void MessageBuilder::add(EnumIPType IP_NAME, IPAddress* value)
 {
-    // Serial.print(indexStructIPAddressTest);
-    // Serial.print("  Adding Ip address");
-    // Serial.print((char)IP_NAME);
-    // Serial.print("     ");
-    // Serial.println(value->toString());
+    Serial.print(indexStructIPAddressTest);
+    Serial.print("  Adding Ip address");
+    Serial.print((char)IP_NAME);
+    Serial.print("     ");
+    Serial.println(value->toString());
     ipAddress[indexStructIPAddressTest].ID = IP_NAME;
     ipAddress[indexStructIPAddressTest].value = value->toString();
     indexStructIPAddressTest++;  
@@ -169,7 +173,7 @@ int MessageBuilder::buildHandshake()
     clearMessage();
     // make a handshake using json
     DynamicJsonDocument doc(MESSAGE_LENGTH);
-    JsonArray ipAddresses = doc.createNestedArray("ipAddresses");
+    JsonArray ipAddresses = doc.createNestedArray(ENUM_IP_TYPE);
     for (int i = 0; i < NB_IP; i++)
     {
         Serial.print("ipAddress[i].ID: ");

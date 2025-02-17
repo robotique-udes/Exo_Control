@@ -21,9 +21,9 @@ class WifiClient
         unsigned int localUdpPort = 4211;  // Local port to receive responses
         void handShake();
         int IPsListSize = 0; // Number of IPs in the IPs_list
-        IPAddress IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
+        std::string IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
         void addIPAddress(IPAddress ip, EnumIPType ID);
-        IPAddress getIP(EnumIPType index);
+        std::string getIP(EnumIPType index);
         std::map<std::pair<std::string, int>, std::string> dataMap;
         void deserializeMessage(unsigned char message[], int length);
         int dataAvailable();
