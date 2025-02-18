@@ -151,14 +151,14 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     // deserialize message into a map
     JsonDocument doc;
     deserializeJson(doc, message);
-    serializeJson(doc, Serial);
+    //serializeJson(doc, Serial);
 
     // extract data from message
     std::pair<std::string, int> key;
     std::string value;
 
     // logs
-    JsonArray logs = doc["logs"];
+    JsonArray logs = doc[NESTED_LOGS];
     for (int i = 0; i < logs.size(); i++)
     {
         key = std::make_pair("logs", static_cast<int>(logs[i]["ID"]));
@@ -169,7 +169,7 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     }
 
     // bnoAngles
-    JsonArray bnoAngles = doc["bnoAngles"];
+    JsonArray bnoAngles = doc[NESTED_BNO_ANGLES];
     for (int i = 0; i < bnoAngles.size(); i++)
     {
         key = std::make_pair(ENUM_BNO_ANGLE, static_cast<int>(bnoAngles[i]["ID"]));
@@ -180,7 +180,7 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     }
 
     // bnoPositions
-    JsonArray bnoPositions = doc["bnoPositions"];
+    JsonArray bnoPositions = doc[NESTED_BNO_POSITIONS];
     for (int i = 0; i < bnoPositions.size(); i++)
     {
         key = std::make_pair(ENUM_BNO_POSITION, static_cast<int>(bnoPositions[i]["ID"]));
@@ -189,7 +189,7 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     }
 
     // motorPositions
-    JsonArray motorPositions = doc["motorPositions"];
+    JsonArray motorPositions = doc[NESTED_BNO_MOTEUR];
     for (int i = 0; i < motorPositions.size(); i++)
     {
         key = std::make_pair(ENUM_MOTOR_POSITION, static_cast<int>(motorPositions[i]["ID"]));
@@ -198,9 +198,7 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     }
 
     // IP addresses
-    JsonArray IPs = doc[ENUM_IP_TYPE];
-    Serial.print("IPs size: ");
-    Serial.println(IPs.size());
+    JsonArray IPs = doc[NESTED_IP_TYPE];
     for (int i = 0; i < IPs.size(); i++)
     {
         key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(IPs[i]["ID"]));

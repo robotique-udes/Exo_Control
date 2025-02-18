@@ -255,12 +255,6 @@ IPAddress WifiServer::getIP(EnumIPType index)
   return nullptr;
 }
 
-void WifiServer::DoAFlip()
-{
-  this->handShake();
-  Serial.println("Finished hand shake");
-}
-
 /// @brief Trying to find key in dictionary. Return value 0 == good, -1 failed conversion, -2 not found
 /// @param BNO_NAME 
 /// @param value 
@@ -409,12 +403,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     std::pair<std::string, int> key;
     std::string value;
 
-    // log
-    JsonArray log = doc["logs"];
-    serializeJson(log, Serial);
-    Serial.println("\n\n LOGS \n\n");
-
-    JsonArray logs = doc["logs"];
+    JsonArray logs = doc[NESTED_LOGS];
     for (int i = 0; i < logs.size(); i++)
     {
         key = std::make_pair("logs", static_cast<int>(logs[i]["ID"]));
@@ -425,7 +414,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     }
 
     // bnoAngles
-    JsonArray bnoAngles = doc["bnoAngles"];
+    JsonArray bnoAngles = doc[NESTED_BNO_ANGLES];
     for (int i = 0; i < bnoAngles.size(); i++)
     {
         key = std::make_pair(ENUM_BNO_ANGLE, static_cast<int>(bnoAngles[i]["ID"]));
@@ -436,7 +425,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     }
 
     // bnoPositions
-    JsonArray bnoPositions = doc["bnoPositions"];
+    JsonArray bnoPositions = doc[NESTED_BNO_POSITIONS];
     for (int i = 0; i < bnoPositions.size(); i++)
     {
         key = std::make_pair(ENUM_BNO_POSITION, static_cast<int>(bnoPositions[i]["ID"]));
@@ -445,7 +434,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     }
 
     // motorPositions
-    JsonArray motorPositions = doc["motorPositions"];
+    JsonArray motorPositions = doc[NESTED_BNO_MOTEUR];
     for (int i = 0; i < motorPositions.size(); i++)
     {
         key = std::make_pair(ENUM_MOTOR_POSITION, static_cast<int>(motorPositions[i]["ID"]));
@@ -454,7 +443,7 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     }
 
     // IP addresses
-    JsonArray ipAddresses = doc["ipAddresses"];
+    JsonArray ipAddresses = doc[NESTED_IP_TYPE];
     for (int i = 0; i < ipAddresses.size(); i++)
     {
         key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(ipAddresses[i]["ID"]));

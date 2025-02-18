@@ -75,7 +75,6 @@ public:
     int ReadData(int);
     int SendData(unsigned char* packet, int length);
     IPAddress getIP(EnumIPType index);
-    void DoAFlip();
 
     int retrieveInformation(EnumBnoAngle BNO_NAME, float* value);
     int retrieveInformation(EnumBnoPosition BNO_NAME, float* value);

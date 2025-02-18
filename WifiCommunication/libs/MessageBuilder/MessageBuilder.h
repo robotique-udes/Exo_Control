@@ -4,6 +4,12 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 
+#define NESTED_LOGS "logs"
+#define NESTED_BNO_ANGLES "bnoAngles"
+#define NESTED_BNO_POSITIONS "bnoPositions"
+#define NESTED_BNO_MOTEUR "motorPositions"
+#define NESTED_IP_TYPE "IP_Type"
+
 #define NB_LOGS 10
 #define NB_BNO_ANGLE 9
 #define NB_BNO_POSITION 5

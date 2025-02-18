@@ -119,7 +119,7 @@ int MessageBuilder::buildMessage()
     // make a message using json
     DynamicJsonDocument doc(MESSAGE_LENGTH);
 
-    JsonArray logs = doc.createNestedArray("logs");
+    JsonArray logs = doc.createNestedArray(NESTED_LOGS);
     for (int i = 0; i < nbrLogs; i++)
     {
         JsonObject log = logs.createNestedObject();
@@ -127,7 +127,7 @@ int MessageBuilder::buildMessage()
         log["value"] = String((char*)logMessage[i]);  
     }
 
-    JsonArray bnoAngles = doc.createNestedArray("bnoAngles");
+    JsonArray bnoAngles = doc.createNestedArray(NESTED_BNO_ANGLES);
     Serial.println("bnoAngles NestedArray");
     for (int i = 0; i < indexStructBnoAngles; i++)
     {
@@ -139,7 +139,7 @@ int MessageBuilder::buildMessage()
         }
     }
 
-    JsonArray bnoPositions = doc.createNestedArray("bnoPositions");
+    JsonArray bnoPositions = doc.createNestedArray(NESTED_BNO_POSITIONS);
     Serial.println("bnoPositions NestedArray");
     Serial.print(indexStructBnoPosition);
     for (int i = 0; i < indexStructBnoPosition; i++)
@@ -152,7 +152,7 @@ int MessageBuilder::buildMessage()
             bno_position["value"] = bnoPosition[i].value;
         }
     }
-    JsonArray motorPositions = doc.createNestedArray("motorPositions");
+    JsonArray motorPositions = doc.createNestedArray(NESTED_BNO_MOTEUR);
     for (int i = 0; i < indexStructMotorPosition; i++)
     {
         if (motorPosition[i].ID != EnumMotorPosition::NONE)
@@ -176,17 +176,11 @@ int MessageBuilder::buildHandshake()
     JsonArray ipAddresses = doc.createNestedArray(ENUM_IP_TYPE);
     for (int i = 0; i < NB_IP; i++)
     {
-        Serial.print("ipAddress[i].ID: ");
-        Serial.print((int)ipAddress[i].ID);
-        Serial.print("    ");
-        Serial.println(ipAddress[i].value);
         if (ipAddress[i].ID != EnumIPType::NONE)
         {
             JsonObject ip_address = ipAddresses.createNestedObject();
             ip_address["ID"] = (int)ipAddress[i].ID;
-            //String cal =  castUint32ToStringIP(ipAddress[i].value);
             ip_address["value"] = ipAddress[i].value;
-            //ip_address["value"] = ipAddress[i].value.toString();
         }
     }
 
