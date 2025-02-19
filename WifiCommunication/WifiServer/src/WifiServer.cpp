@@ -183,26 +183,26 @@ int WifiServer::ReadData(int length)
   return length;
 }
 
-int WifiServer::SendData(unsigned char * packet, int length)
+int WifiServer::SendData(unsigned char * packet, int length, IPAddress ipAddress)
 {
         // Send return packet
-    Serial.print("UDP.remoteIP(): ");
-    Serial.println(UDP.remoteIP());
+    // Serial.print("UDP.remoteIP(): ");
+    // Serial.println(UDP.remoteIP());
 
-    Serial.print("UDP.remotePort(): ");
-    Serial.println(UDP.remotePort());
+    // Serial.print("UDP.remotePort(): ");
+    // Serial.println(UDP.remotePort());
 
-    Serial.print("myIP: ");
-    Serial.println(MyIP);
+    // Serial.print("myIP: ");
+    // Serial.println(MyIP);
 
-    UDP.beginPacket(IPAddress(192, 168, 4, 3), 4211); // À RENDRE MODULABLE
-    Serial.print("Sending packet to ");
-    Serial.print(IPAddress(192, 168, 4, 3).toString());
-    Serial.print(" on port ");
-    Serial.print(UDP.remotePort());
-    Serial.print(":  size: ");
-    Serial.print(length);
-    Serial.print("\n\n");
+    UDP.beginPacket(ipAddress, 4211); // À RENDRE MODULABLE
+    // Serial.print("Sending packet to ");
+    // Serial.print(ipAddress.toString());
+    // Serial.print(" on port ");
+    // Serial.print(UDP.remotePort());
+    // Serial.print(":  size: ");
+    // Serial.print(length);
+    // Serial.print("\n\n");
 
     for(int byte = 0; byte < length; byte++)
     {
@@ -222,26 +222,26 @@ int WifiServer::SendData(unsigned char * packet, int length)
 
 void WifiServer::handShake()
 {
-    // Send list of IPs
-    unsigned char connection_request[] = "Connection request";
-    MessageBuilder message = MessageBuilder();
-    message.add(connection_request);
-    Serial.println("Starting the handShake");
-    for(int i = 0; i < numClient; i++)
+  // Send list of IPs
+  unsigned char connection_request[] = "Connection request";
+  MessageBuilder message = MessageBuilder();
+  message.add(connection_request);
+  Serial.println("Starting the handShake");
+  for(int i = 0; i < numClient; i++)
+  {
+    message.add(IPsList[i].ipType, &(IPsList[i].ipAdresse));
+  }
+
+  int length = message.buildHandshake();
+  unsigned char* mess = message.getMessage();
+
+  for(int j = 0; j < IP_LIST_SIZE; j++)
+  {
+    if(IPsList[j].ipType == EnumIPType::UNKNOWN_TYPE)
     {
-      Serial.print(i);
-      Serial.print(" NumClient: ");
-      Serial.println(numClient);
-
-      Serial.println((int)IPsList[i].ipType);
-      Serial.println(IPsList[i].ipAdresse);
-      //message.add(IPsList[i].ipType, IPsList[i].ipAdd.addr);
-      message.add(IPsList[i].ipType, &(IPsList[i].ipAdresse));
+      SendData(mess, length, IPsList[j].ipAdresse);
     }
-
-    int length = message.buildHandshake();
-    unsigned char* mess = message.getMessage();
-    SendData(mess, length);
+  }
 }
 
 IPAddress WifiServer::getIP(EnumIPType index)
@@ -446,9 +446,17 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     JsonArray ipAddresses = doc[NESTED_IP_TYPE];
     for (int i = 0; i < ipAddresses.size(); i++)
     {
-        key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(ipAddresses[i]["ID"]));
-        value = ipAddresses[i]["value"].as<std::string>();
-        unifiedMap[key] = value;
+      key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(ipAddresses[i]["ID"]));
+      value = ipAddresses[i]["value"].as<std::string>();
+      unifiedMap[key] = value;
+
+      for(int j = 0; j < IP_LIST_SIZE; j++)
+      {
+        if(IPsList[j].ipType == EnumIPType::UNKNOWN_TYPE && IPsList[j].ipAdresse.toString() == value.c_str())
+        {
+          IPsList[j].ipType = static_cast<EnumIPType>(ipAddresses[i]["ID"]);
+        }
+      }
     }
 
     Serial.println("Contents of the map:");

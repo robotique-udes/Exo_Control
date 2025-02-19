@@ -128,7 +128,16 @@ void WifiClient::handShake() // Handshake with server
 
     // Send connection confirmation
     unsigned char confirmation[22] = "Connection confirmed";
-    sendMessage(22, confirmation, EnumIPType::WATCH);
+    MessageBuilder message = MessageBuilder();
+    message.add(confirmation);
+    Serial.println("Starting the handShake");
+    IPAddress test;
+    test.fromString(IPsList[(int)EnumIPType::EXOSKELETON].c_str());
+    message.add(EnumIPType::WATCH, &test);
+
+    int length = message.buildHandshake();
+    unsigned char* mess = message.getMessage();
+    sendMessage(length, mess, EnumIPType::WATCH);
 
 }
 

@@ -73,7 +73,7 @@ public:
     int Initialise();
     int DataAvailable();
     int ReadData(int);
-    int SendData(unsigned char* packet, int length);
+    int SendData(unsigned char* packet, int length, IPAddress ipAddress);
     IPAddress getIP(EnumIPType index);
 
     int retrieveInformation(EnumBnoAngle BNO_NAME, float* value);
