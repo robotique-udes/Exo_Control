@@ -78,7 +78,7 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
   } 
 
   wifiserver->readyToSendHandShake = 1;
-  wifiserver->numClient = adapter_sta_list.num + 1;
+  wifiserver->numClient = adapter_sta_list.num + 1;//+1 for me(the watch)
 }
 
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
@@ -144,40 +144,18 @@ int WifiServer::Initialise()
  */
 int WifiServer::DataAvailable()
 {
-  int longueur = UDP.parsePacket();
-  //Serial.println(longueur);
-  return longueur;
+  return UDP.parsePacket();
 }
 
 int WifiServer::ReadData(int length)
 {
   unsigned char packet[800];
   int len = UDP.read(packet, length);
-  lastMessageLength = len;
   if (len > 0)
   {
     packet[len] = '\0';
   }
 
-// Get the sender's IP and port
-  IPAddress senderIP = UDP.remoteIP();
-  int senderPort = UDP.remotePort();
-
-  Serial.print("Packet received from IP: ");
-  Serial.println(senderIP);
-  Serial.print("Port: ");
-  Serial.println(senderPort);
-
-  Serial.print("Packet received: ");
-
-  for(int i = 0; i < length; i++)
-  {
-    lastMessage[i] = (char)packet[i];
-    Serial.print((char)packet[i]);
-  }
-  Serial.println("\n");
-
-  // Deserialize the message
   deserializeMessage(packet, length);
 
   return length;
@@ -185,35 +163,27 @@ int WifiServer::ReadData(int length)
 
 int WifiServer::SendData(unsigned char * packet, int length, IPAddress ipAddress)
 {
-        // Send return packet
-    // Serial.print("UDP.remoteIP(): ");
-    // Serial.println(UDP.remoteIP());
+  UDP.beginPacket(ipAddress, UDP_PORT_SEND);
+  UDP.write(packet, length);
+  UDP.endPacket();
 
-    // Serial.print("UDP.remotePort(): ");
-    // Serial.println(UDP.remotePort());
+  return 0;
+}
 
-    // Serial.print("myIP: ");
-    // Serial.println(MyIP);
+int WifiServer::SendData(unsigned char * packet, int length, EnumIPType ipType)
+{
+  IPAddress address;
+  int errorCode = this->retrieveInformation(ipType, &address);
+  if(errorCode != 0)
+  {
+    return errorCode;
+  }
 
-    UDP.beginPacket(ipAddress, 4211); // À RENDRE MODULABLE
-    // Serial.print("Sending packet to ");
-    // Serial.print(ipAddress.toString());
-    // Serial.print(" on port ");
-    // Serial.print(UDP.remotePort());
-    // Serial.print(":  size: ");
-    // Serial.print(length);
-    // Serial.print("\n\n");
+  UDP.beginPacket(address, UDP_PORT_SEND);
+  UDP.write(packet, length);
+  UDP.endPacket();
 
-    for(int byte = 0; byte < length; byte++)
-    {
-        Serial.print((char)packet[byte]);
-    }
-    Serial.println("Sent");
-
-    UDP.write(packet, length);
-    UDP.endPacket();
-    //Serial.println("Sent :)");
-    return 0;
+  return 0;
 }
 
  WifiServer::~ WifiServer()
@@ -226,6 +196,7 @@ void WifiServer::handShake()
   unsigned char connection_request[] = "Connection request";
   MessageBuilder message = MessageBuilder();
   message.add(connection_request);
+
   Serial.println("Starting the handShake");
   for(int i = 0; i < numClient; i++)
   {
@@ -242,17 +213,6 @@ void WifiServer::handShake()
       SendData(mess, length, IPsList[j].ipAdresse);
     }
   }
-}
-
-IPAddress WifiServer::getIP(EnumIPType index)
-{
-  for (int i = 0; i < IP_LIST_SIZE; i++)
-  {
-    if(IPsList[i].ipType == index)
-      return IPsList[i].ipAdresse;
-  }
-  
-  return nullptr;
 }
 
 /// @brief Trying to find key in dictionary. Return value 0 == good, -1 failed conversion, -2 not found
@@ -387,14 +347,6 @@ void WifiServer::upDate()
 
 void WifiServer::deserializeMessage(unsigned char message[], int length)
 {
-    Serial.println("Unified Map updated.");
-    Serial.println(length);
-    for(int byte = 0; byte < length; byte++)
-    {
-        Serial.print((char)message[byte]);
-    }
-    Serial.println("");
-
     // deserialize message into a map
     DynamicJsonDocument doc(length);
     deserializeJson(doc, message);
@@ -408,8 +360,6 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     {
         key = std::make_pair("logs", static_cast<int>(logs[i]["ID"]));
         value = logs[i]["value"].as<std::string>();
-        Serial.print("Key: ");
-        Serial.print(key.first.c_str());
         unifiedMap[key] = value;
     }
 
@@ -419,8 +369,6 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     {
         key = std::make_pair(ENUM_BNO_ANGLE, static_cast<int>(bnoAngles[i]["ID"]));
         value = bnoAngles[i]["value"].as<std::string>();
-        Serial.print("Key: ");
-        Serial.print(key.first.c_str());
         unifiedMap[key] = value;
     }
 
@@ -455,9 +403,6 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
         if(IPsList[j].ipType == EnumIPType::UNKNOWN_TYPE && IPsList[j].ipAdresse.toString() == value.c_str())
         {
           IPsList[j].ipType = static_cast<EnumIPType>(static_cast<int>(ipAddresses[i]["ID"]));
-          Serial.print((int)IPsList[j].ipType);
-          Serial.print(" ");
-          Serial.println(IPsList[j].ipAdresse.toString());
         }
       }
     }

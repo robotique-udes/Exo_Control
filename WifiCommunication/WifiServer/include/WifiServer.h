@@ -12,6 +12,7 @@
 #define PASS_PHRASE "ItsTricky"
 
 #define UDP_PORT_RECEIVE 4210
+#define UDP_PORT_SEND 4211
 #define IP_LIST_SIZE 10
 #define INTERVAL_1SEC 1000
 #define INTERVAL_10ms 10
@@ -61,8 +62,6 @@ private:
 
 public:
     IpTypeList IPsList[IP_LIST_SIZE];
-    unsigned char lastMessage[800];
-    int lastMessageLength;
     uint8_t numClient;
     unsigned char readyToSendHandShake;
     unsigned char timerBeforeSendinghandShake;
@@ -74,7 +73,7 @@ public:
     int DataAvailable();
     int ReadData(int);
     int SendData(unsigned char* packet, int length, IPAddress ipAddress);
-    IPAddress getIP(EnumIPType index);
+    int SendData(unsigned char * packet, int length, EnumIPType ipType);
 
     int retrieveInformation(EnumBnoAngle BNO_NAME, float* value);
     int retrieveInformation(EnumBnoPosition BNO_NAME, float* value);
