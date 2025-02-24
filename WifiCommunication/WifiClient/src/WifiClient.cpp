@@ -114,6 +114,12 @@ void WifiClient::handShake() // Handshake with server
     std::string watch_ip = dataMap[key];
     IPsList[(int)EnumIPType::WATCH] = watch_ip;
 
+    //Set IP Exo
+    key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(EnumIPType::UNKNOWN_TYPE));
+    std::string exo_ip = dataMap[key];
+
+    IPsList[(int)EnumIPType::EXOSKELETON] = exo_ip;
+
     // convert string to const char*
     const char* watch_ip_char = watch_ip.c_str();
 
@@ -133,7 +139,7 @@ void WifiClient::handShake() // Handshake with server
     Serial.println("Starting the handShake");
     IPAddress test;
     test.fromString(IPsList[(int)EnumIPType::EXOSKELETON].c_str());
-    message.add(EnumIPType::WATCH, &test);
+    message.add(EnumIPType::EXOSKELETON, &test);
 
     int length = message.buildHandshake();
     unsigned char* mess = message.getMessage();
@@ -208,10 +214,14 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
 
     // IP addresses
     JsonArray IPs = doc[NESTED_IP_TYPE];
+    Serial.print(IPs.size());
+    Serial.println(" IP List:");
     for (int i = 0; i < IPs.size(); i++)
     {
         key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(IPs[i]["ID"]));
         value = IPs[i]["value"].as<std::string>();
+        Serial.print("Value: ");
+        Serial.println(value.c_str());
         dataMap[key] = value;
     }
 

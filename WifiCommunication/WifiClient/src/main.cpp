@@ -37,6 +37,19 @@ void loop() {
     {
         Serial.println("1 second passed");
         time_passed_second = millis();
+        
+        int longueur_ips = 0;
+
+        longueur_ips = client.dataAvailable();
+        if(longueur_ips > 0)
+        {
+            Serial.print("Message Received: ");
+            Serial.println(longueur_ips); 
+            unsigned char IPs[longueur_ips];
+            client.receiveMessage(IPs);
+            client.deserializeMessage(IPs, longueur_ips);  
+        }
+        
     }
 }
 

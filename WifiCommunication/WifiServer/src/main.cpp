@@ -7,6 +7,7 @@
 #include "enums.h"
 
 void TestDeserializeData();
+void TestSendingtoExo();
 
 WifiServer* wifiserver;
 
@@ -44,9 +45,36 @@ void loop() {
   //   TestDeserializeData();
   // }
 
+  if(test && compteur > 42)
+  {
+    test = false;
+    TestSendingtoExo();
+  }
+
   delay(1);
 }
 
+void TestSendingtoExo()
+{
+  MessageBuilder message = MessageBuilder();
+  unsigned char confirmation[32] = "Hello this is the first message";
+  message.add(confirmation);
+  message.add(EnumBnoPosition::THIGH_L, 42.2);
+  Serial.println("Going to build the message");
+  int length = message.buildMessage();
+  Serial.println("Build message finished");
+  IPAddress address;
+  wifiserver->retrieveInformation(EnumIPType::EXOSKELETON, &address);
+  wifiserver->SendData(message.getMessage(), length, address);
+  Serial.print("Message to: ");
+  Serial.println(address.toString());
+  unsigned char *mess = message.getMessage();
+  for(int i = 0; i < length; i++)
+  {
+    Serial.print((char)mess[i]);
+  }
+  Serial.println("Message Sent");
+}
 
 void TestDeserializeData()
 {

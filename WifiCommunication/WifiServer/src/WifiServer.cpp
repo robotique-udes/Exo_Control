@@ -208,7 +208,7 @@ int WifiServer::SendData(unsigned char * packet, int length, IPAddress ipAddress
     {
         Serial.print((char)packet[byte]);
     }
-    Serial.println("");
+    Serial.println("Sent");
 
     UDP.write(packet, length);
     UDP.endPacket();
@@ -454,7 +454,10 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
       {
         if(IPsList[j].ipType == EnumIPType::UNKNOWN_TYPE && IPsList[j].ipAdresse.toString() == value.c_str())
         {
-          IPsList[j].ipType = static_cast<EnumIPType>(ipAddresses[i]["ID"]);
+          IPsList[j].ipType = static_cast<EnumIPType>(static_cast<int>(ipAddresses[i]["ID"]));
+          Serial.print((int)IPsList[j].ipType);
+          Serial.print(" ");
+          Serial.println(IPsList[j].ipAdresse.toString());
         }
       }
     }

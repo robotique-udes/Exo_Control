@@ -25,9 +25,9 @@ class WifiClient
         void addIPAddress(IPAddress ip, EnumIPType ID);
         std::string getIP(EnumIPType index);
         std::map<std::pair<std::string, int>, std::string> dataMap;
+    public:
         void deserializeMessage(unsigned char message[], int length);
         int dataAvailable();
-    public:
         WifiClient();
         void sendMessage(int data_lenght, unsigned char data[], EnumIPType address);
         void receiveMessage(unsigned char data[]);	

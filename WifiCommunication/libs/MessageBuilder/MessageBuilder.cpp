@@ -173,7 +173,7 @@ int MessageBuilder::buildHandshake()
     clearMessage();
     // make a handshake using json
     DynamicJsonDocument doc(MESSAGE_LENGTH);
-    JsonArray ipAddresses = doc.createNestedArray(ENUM_IP_TYPE);
+    JsonArray ipAddresses = doc.createNestedArray(NESTED_IP_TYPE);
     for (int i = 0; i < NB_IP; i++)
     {
         if (ipAddress[i].ID != EnumIPType::NONE)
