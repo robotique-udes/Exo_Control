@@ -1,6 +1,3 @@
-// #include <WiFi.h>
-// #include <WiFiUdp.h>
-// #define UDP_PORT_RECEIVE 4210
 #include"Arduino.h"
 #include"WifiServer.h"
 #include "MessageBuilder/MessageBuilder.h"
