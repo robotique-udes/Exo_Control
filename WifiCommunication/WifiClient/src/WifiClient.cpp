@@ -46,6 +46,10 @@ void WifiClient::sendMessage(int data_lenght, unsigned char data[], EnumIPType a
     IPAddress sendingAddress;
     sendingAddress.fromString(IPsList[(int)EnumIPType::WATCH].c_str());
     UDP.beginPacket(sendingAddress, UDP_PORT_SEND);
+    for (int i = 0; i < data_lenght; i++)
+    {
+        UDP.write(data[i]);
+    }
     UDP.write(data, data_lenght);
     UDP.endPacket();
     Serial.printf("UDP sent packet contents: %s\n", data);
@@ -133,7 +137,7 @@ void WifiClient::handShake() // Handshake with server
     watch_ip_address.fromString(watch_ip_char);
 
     // Send connection confirmation
-    unsigned char confirmation[22] = "Connection confirmed";
+    const char confirmation[22] = "Connection confirmed";
     MessageBuilder message = MessageBuilder();
     message.add(confirmation);
     Serial.println("Starting the handShake");

@@ -14,24 +14,20 @@ void loop() {
     // Connect the client after 5 seconds
     static unsigned long time_passed_init = millis();
     static unsigned long time_passed_second = millis();
-    static unsigned long timme_pasted_send = millis();
+    static unsigned long time_pasted_send = millis();
     unsigned long time = millis();
 
 
-    if (time - timme_pasted_send >= 2000)
+    if (time - time_pasted_send >= 2000)
     {
         
-        String message = "Hello there, my friend";
-        unsigned char table[22];
-    
-        for (size_t i = 0; i < 22; i++)
-        {
-            table[i] = message[i];
-        }
+        MessageBuilder message = MessageBuilder();
+        message.add("Helloooo, it's me");
+        message.buildMessage();
     
         // Send the message
-        client.sendMessage(22, table, EnumIPType::WATCH);
-        timme_pasted_send = millis();
+        client.sendMessage(22, message.getMessage(), EnumIPType::WATCH);
+        time_pasted_send = millis();
     }
     if (time - time_passed_second >= 1000)
     {
