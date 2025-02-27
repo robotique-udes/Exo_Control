@@ -58,14 +58,14 @@ void MessageBuilder::clearInfo()
     indexStructIPAddressTest = 0;
 }
 
-void MessageBuilder::add(unsigned char *log)
+void MessageBuilder::add(const char *log)
 {   
     if (nbrLogs >= NB_LOGS)
         return;
 
     for (int i = 0; i < LOG_LENGTH; i++)
     {
-        logMessage[nbrLogs][i] = log[i];
+        logMessage[nbrLogs][i] = static_cast<unsigned char>(log[i]);
     }
     nbrLogs++;
 }
@@ -128,7 +128,7 @@ int MessageBuilder::buildMessage()
     }
 
     JsonArray bnoAngles = doc.createNestedArray(NESTED_BNO_ANGLES);
-    Serial.println("bnoAngles NestedArray");
+    // Serial.println("bnoAngles NestedArray");
     for (int i = 0; i < indexStructBnoAngles; i++)
     {
         if (bnoAngle[i].ID != EnumBnoAngle::NONE)
@@ -140,7 +140,7 @@ int MessageBuilder::buildMessage()
     }
 
     JsonArray bnoPositions = doc.createNestedArray(NESTED_BNO_POSITIONS);
-    Serial.println("bnoPositions NestedArray");
+    // Serial.println("bnoPositions NestedArray");
     Serial.print(indexStructBnoPosition);
     for (int i = 0; i < indexStructBnoPosition; i++)
     {
@@ -165,6 +165,7 @@ int MessageBuilder::buildMessage()
 
     lengthMessage = serializeJson(doc, message);
     serializeJson(doc, Serial);
+    Serial.println("");
     return lengthMessage;
 }
 

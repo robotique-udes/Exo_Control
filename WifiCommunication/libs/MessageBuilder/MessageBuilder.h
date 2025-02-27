@@ -69,7 +69,7 @@ class MessageBuilder
         unsigned char* getMessage();
         void clearMessage();
         void clearInfo();
-        void add(unsigned char log[LOG_LENGTH]);
+        void add(const char log[LOG_LENGTH]);
         int getLogPlace();
         int getMessageLength();
         void add(EnumBnoAngle BNO_NAME, float value);
