@@ -46,10 +46,12 @@ void WifiClient::sendMessage(int data_lenght, unsigned char data[], EnumIPType a
     IPAddress sendingAddress;
     sendingAddress.fromString(IPsList[(int)EnumIPType::WATCH].c_str());
     UDP.beginPacket(sendingAddress, UDP_PORT_SEND);
+    Serial.println("Sending message to server...");
     for (int i = 0; i < data_lenght; i++)
     {
-        UDP.write(data[i]);
+        Serial.print((char)data[i]);
     }
+    Serial.println();
     UDP.write(data, data_lenght);
     UDP.endPacket();
     Serial.printf("UDP sent packet contents: %s\n", data);

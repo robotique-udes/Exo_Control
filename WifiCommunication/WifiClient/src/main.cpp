@@ -26,7 +26,7 @@ void loop() {
         message.buildMessage();
     
         // Send the message
-        client.sendMessage(22, message.getMessage(), EnumIPType::WATCH);
+        client.sendMessage(message.getMessageLength(), message.getMessage(), EnumIPType::WATCH);
         time_pasted_send = millis();
     }
     if (time - time_passed_second >= 1000)
