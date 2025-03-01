@@ -6,6 +6,7 @@ Motor::Motor()
 {
 }
 
+
 Motor::~Motor()
 {
 }
@@ -198,3 +199,12 @@ float Motor::uint_to_float(unsigned int x_int, float x_min, float x_max, int bit
     return pgg;
 }
 
+enum EnumMotorPosition Motor::getMotorPosition()
+{
+  return motorPosition;
+}
+
+void Motor::setMotorPosition(EnumMotorPosition position)
+{
+  this->motorPosition = position;
+}

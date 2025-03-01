@@ -30,10 +30,10 @@ enum class EnumBnoAngle
 
 enum class EnumMotorPosition
 {
-    HIP_R,
-    HIP_L,
-    KNEE_R,
-    KNEE_L
+    HIP_R  = 0,
+    HIP_L  = 1,
+    KNEE_R = 2,
+    KNEE_L = 3
 };
 
 enum class EnumScreenCallback

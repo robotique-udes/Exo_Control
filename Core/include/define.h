@@ -56,6 +56,10 @@
 #define PIN_MD_GEN_GAU_CT 34 // Pin de current sensing pour le moteur du genou gauche
 #define PIN_MD_GEN_DRO_CT 35 // Pin de current sensing pour le moteur du genou droit
 
+#define NB_MOTORS 4         //nombre de moteurs sur l'exo
+#define TEMP_THRESHOLD 75   // la temperature max que les moteur peuvent atteindre
+#define SHUT_DOWN_SPEED 1   // decay of torque in Nm/s when shutting down
+
 // LONGUEURS
 #define G 9.81  // gravité
 #define M_BACK 25.0 // Masse du haut du corps
