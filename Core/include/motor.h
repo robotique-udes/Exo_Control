@@ -6,12 +6,16 @@
 #include "PinExtender.h"
 #include "dataCore.h"
 #include "multiplex.h"
+#include "ESP32-TWAI-CAN.hpp"
 
 class Motor
 {
 private:
     //DataCore instanciation
     DataCore& dataCore = DataCore::getInstance();
+    CanFrame msg;
+    float temperature; 
+    int motorId;
 
 public:
     Motor();
@@ -22,27 +26,32 @@ public:
      */
     void setPins();
 
-    /**
-     * @brief Send PWM value to motors by calling motor speed for every motor
-     */
-    void write();
+    void sendCanMessage(CanFrame* msg);
 
-    /**
-     * @brief Send PWM value to a specific motor
-     * @param ID motor ID ranging from 0 to 3
-     * @param val PWM value from -4096 to 4096
-     */
-    void motorSetSpeed(int ID, int val);
+    void receiveCanMessage(CanFrame* msg);
 
-    /**
-     * @brief Test function for I don't know what, ask Edouard
-     */
-    void testFuncSetPwnHigh();
+    void enterMode();
 
-    /**
-     * @brief Print computed needed PWM
-     */
-    void printPMW();
+    void exitMode();
+
+    void zeroSet();
+
+    void packCmd(float position, float velocity, float kp, float kd, float torque);
+
+    void unpackReply();
+
+    void sendCommand(MotorMode mode,float value); 
+
+    int getTemperature();   
+
+    void setMotorId(int id);
+
+    int getMotorId();
+
+    unsigned int float_to_uint(float x, float x_min, float x_max, int bits);
+
+    float uint_to_float(unsigned int x_int, float x_min, float x_max, int bits);
+
 };
 
 #endif

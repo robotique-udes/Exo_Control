@@ -21,6 +21,16 @@
 #define MOTOR_W_PER_NM_HIP 30.72
 #define MOTOR_W_PER_NM_KNEE 52.57
 #define MILLIS_TO_HOUR 0.001 / 3600.0
+#define P_MAX 12.5f
+#define P_MIN -12.5f
+#define V_MIN -50.0f
+#define V_MAX 50.0f 
+#define KP_MIN 0.0f
+#define KP_MAX 500.0f
+#define KD_MIN 0.0f
+#define KD_MAX 5.0f
+#define T_MIN -65.0f  
+#define T_MAX 65.0f 
 
 #define MOTEUR_GENOU_GAUCHE 0
 #define MOTEUR_GENOU_DROIT 1

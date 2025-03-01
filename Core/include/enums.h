@@ -54,4 +54,10 @@ enum class EnumScreenCallback
     SLIDER_MOTOR_POWER,
 };
 
+enum MotorMode
+{
+    TORQUE = 1,
+    VELOCITY = 2,
+    POSITION = 3
+};
 #endif
