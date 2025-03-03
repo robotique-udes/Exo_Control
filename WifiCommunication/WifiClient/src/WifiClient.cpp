@@ -3,26 +3,49 @@
 #include <stdexcept>
 #define UDP_PORT_SEND 4210
 
+WifiClient* WifiClient::clientInstance = nullptr;
+
+WifiClient* WifiClient::GetInstance()
+{
+  if(clientInstance == nullptr)
+  {
+    clientInstance = new WifiClient();
+  }
+
+  return clientInstance;
+}
 
 WifiClient::WifiClient() // Constructor
 {
-
+    
 }
 
 
 void WifiClient::wifiConnect() // Connect to Wi-Fi
 {
+    static unsigned long previousMillisConnected =  millis(); // coundown to connect to wifi
+    static unsigned long previousMillisDot =  millis(); // Stores the last time a dot was printed
+    unsigned long currentMillis =  millis(); // Stores the current time
 
     // WiFi mode
     WiFi.mode(WIFI_STA);
 
-    // Connect to Wi-Fi
+    // Try to connect for 5 seconds
     WiFi.begin(ssid, password);
     Serial.printf("Attempting to connect to \"%s\" with password \"%s\".\n\n", ssid, password);
-    while (!isConnected()) 
+    while (WiFi.status() != WL_CONNECTED)
     {
-        delay(750);
-        Serial.print(".");
+        currentMillis = millis();
+        if (currentMillis - previousMillisDot >= 1000)
+        {
+            Serial.print(".");
+            previousMillisDot = currentMillis;
+        }
+        else if (currentMillis - previousMillisConnected >= 5000)
+        {
+            Serial.println("Failed to connect to WiFi.");
+            return;
+        }
     }
     Serial.println("Connected to WiFi!");
 
@@ -36,13 +59,23 @@ void WifiClient::wifiConnect() // Connect to Wi-Fi
 
 void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
 {
-  WiFi.disconnect();
-  Serial.println("Disconnected from WiFi.");
+    if (!isConnected()) 
+    {
+        Serial.println("Client not connected to wifi server.");
+        return;
+    }
+    WiFi.disconnect();
+    Serial.println("Client disconnected from the wifi server.");
 }
 
 
 void WifiClient::sendMessage(int data_lenght, unsigned char data[], EnumIPType address) // Send message to server
 {
+    if (!isConnected()) 
+    {
+        Serial.println("Client not connected to wifi server.");
+        return;
+    }
     IPAddress sendingAddress;
     sendingAddress.fromString(IPsList[(int)EnumIPType::WATCH].c_str());
     UDP.beginPacket(sendingAddress, UDP_PORT_SEND);
@@ -62,22 +95,30 @@ int WifiClient::dataAvailable() // Check if data is available
     return lenght_message_recieved = UDP.parsePacket();
 }
 
-void WifiClient::receiveMessage(unsigned char data[]) // Receive message from server
+void WifiClient::receiveMessage() // Receive message from server
 {
-  unsigned char incomingPacket[lenght_message_recieved + 1];
-  if (lenght_message_recieved) 
-  {
-    int len = UDP.read(incomingPacket, lenght_message_recieved);
-    if (len > 0) {
-        incomingPacket[len] = 0;
-    }
-    Serial.printf("UDP recieved packet contents: %s\n", incomingPacket);
-
-    for(int i = 0; i < lenght_message_recieved; i++)
+    if (!isConnected()) 
     {
-        data[i] = incomingPacket[i];
+        Serial.println("Client not connected to wifi server.");
+        return;
     }
-  }
+    unsigned char incomingPacket[lenght_message_recieved + 1];
+    if (lenght_message_recieved) 
+    {
+        int len = UDP.read(incomingPacket, lenght_message_recieved);
+        if (len > 0) {
+            incomingPacket[len] = 0;
+        }
+        Serial.printf("UDP recieved packet contents: %s\n", incomingPacket);
+
+        for(int i = 0; i < lenght_message_recieved; i++)
+        {
+            message_recieved[i] = incomingPacket[i];
+        }
+    }
+
+    deserializeMessage(incomingPacket, lenght_message_recieved);
+
 }
 
 bool WifiClient::isConnected() // Check if connected to Wi-Fi
@@ -103,17 +144,17 @@ void WifiClient::handShake() // Handshake with server
 {   
 
     // Receive IP addresses
-    int longueur_ips = 0;
-    while (!longueur_ips) 
+    int longueur_ips = dataAvailable();
+    if (!longueur_ips) 
     {
-        delay(800);
-        longueur_ips = dataAvailable();
-        Serial.print("Waiting for IP addresses... lentgh recieved : ");
+        Serial.print("HandShake - Waiting for IP addresses... lentgh recieved : ");
         Serial.println(longueur_ips); 
+        delay(800);
+        return;
     }
     unsigned char IPs[longueur_ips];
-    receiveMessage(IPs);
-    deserializeMessage(IPs, longueur_ips);
+    receiveMessage();
+    deserializeMessage(message_recieved, longueur_ips);
 
     // Set IP addresses (CAN BE CHANGED)
     std::pair<std::string, int> key = std::make_pair(ENUM_IP_TYPE, static_cast<int>(EnumIPType::WATCH));
@@ -151,6 +192,7 @@ void WifiClient::handShake() // Handshake with server
     unsigned char* mess = message.getMessage();
     sendMessage(length, mess, EnumIPType::WATCH);
 
+    handShakeDone = true;
 }
 
 void WifiClient::addIPAddress(IPAddress ip, EnumIPType ID) // Add IP address to list
@@ -243,4 +285,29 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
     Serial.println(".");
 }
 
+void WifiClient::upDate()
+{
+    // Connect to the wifi server automatically, if not connected, then sends a handshake.
+    // Must be called in a loop, checks if there's a new message from the server every 2 seconds.
+    WifiClient* wificlient = WifiClient::GetInstance();
+    static unsigned long previousMillis =  millis();
+    unsigned long currentTime = millis();
+
+    if (!wificlient->isConnected()) 
+    {
+        wificlient->wifiConnect();
+    }
+    else if (!wificlient->isConnected() && !wificlient->handShakeDone)
+    {
+        wificlient->handShake();
+    }
+    else if (currentTime - previousMillis >= 2000)
+    {
+        wificlient->receiveMessage();
+    }
+}
+
+WifiClient::~ WifiClient()
+{
+}
 
