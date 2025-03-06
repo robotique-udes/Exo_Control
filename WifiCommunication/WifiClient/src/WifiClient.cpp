@@ -303,7 +303,12 @@ void WifiClient::upDate()
     }
     else if (currentTime - previousMillis >= 2000)
     {
-        wificlient->receiveMessage();
+        wificlient->dataAvailable();
+        if (wificlient->lenght_message_recieved > 0)
+        {
+            wificlient->receiveMessage();
+        }
+        previousMillis = currentTime;
     }
 }
 
