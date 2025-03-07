@@ -22,6 +22,7 @@ WifiServer:: WifiServer(char* ssid, char* passphrase)
     readyToSendHandShake = 0;
     timerBeforeSendinghandShake = 0;
 
+
     IPAddress local_ip(192, 168, 4, 2);
     Local_ip = local_ip;
 
@@ -154,6 +155,12 @@ int WifiServer::ReadData(int length)
   if (len > 0)
   {
     packet[len] = '\0';
+  }
+
+  Serial.println("Raw Data:");
+  for(int i = 0; i < length; i++)
+  {
+    Serial.print((char)packet[i]);
   }
 
   deserializeMessage(packet, length);
@@ -338,9 +345,14 @@ void WifiServer::upDate()
 
     if(wifiserver->readyToSendHandShake)//Send the handShakes
     {
-      delay(5000);
-      wifiserver->readyToSendHandShake = 0;
-      wifiserver->handShake();
+      wifiserver->timerBeforeSendinghandShake++;
+
+      if(wifiserver->timerBeforeSendinghandShake >= INTERVAL_BEFORE_SEND_HANDSHAKE)
+      {
+        wifiserver->timerBeforeSendinghandShake = 0;
+        wifiserver->readyToSendHandShake = 0;
+        wifiserver->handShake();
+      }
     }
   }
 }
@@ -350,7 +362,10 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
     // deserialize message into a map
     DynamicJsonDocument doc(length);
     deserializeJson(doc, message);
+    Serial.println("Json: ");
+    serializeJson(doc, Serial);
 
+    Serial.println("\n\n");
     // extract data from message
     std::pair<std::string, int> key;
     std::string value;

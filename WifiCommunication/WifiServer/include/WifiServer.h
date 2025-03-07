@@ -16,6 +16,7 @@
 #define IP_LIST_SIZE 10
 #define INTERVAL_1SEC 1000
 #define INTERVAL_10ms 10
+#define INTERVAL_BEFORE_SEND_HANDSHAKE 300
 
 #define ENUM_BNO_ANGLE "EnumBnoAngle"
 #define ENUM_BNO_POSITION "EnumBnoPosition"
@@ -43,6 +44,7 @@ private:
 
     const char* ServerSSID;
     const char* ServerPassword;
+    int timerBeforeSendinghandShake;
 
     void handShake();
     void onWiFiEvent(WiFiEvent_t event);
@@ -64,7 +66,7 @@ public:
     IpTypeList IPsList[IP_LIST_SIZE];
     uint8_t numClient;
     unsigned char readyToSendHandShake;
-    unsigned char timerBeforeSendinghandShake;
+    
     // Static method to access the singleton instance
     static WifiServer* GetInstance();
 
