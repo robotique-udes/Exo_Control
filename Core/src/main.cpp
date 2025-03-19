@@ -17,15 +17,16 @@
 #include "bnoHandler.h"
 #include "logic.h"
 
-Logic logicHandler;
-Test tester;
-Relay relais;
-Motor motor;
+//Logic logicHandler;
+//Test tester;
+//Relay relais;
+//Motor motor;
 // Handler must be a pointer because Wire needs to be instanciated
-BnoHandler *bnoHandler;
-QuadratureEncoder encoder;
-TouchScreen &screen = TouchScreen::getInstance();
-DataCore &settings = DataCore::getInstance();
+//BnoHandler *bnoHandler;
+//QuadratureEncoder encoder;
+//TouchScreen &screen = TouchScreen::getInstance();
+//DataCore &settings = DataCore::getInstance();
+Motor testMoteur;
 
 
 //===============================================================================================================
@@ -36,35 +37,55 @@ void setup()
 {
   Serial.begin(115200);
   nexInit();
+  pinMode(CAN_TX, OUTPUT);
+  pinMode(CAN_RX, OUTPUT);
+  ESP32Can.setPins(CAN_TX, CAN_RX);
 
-  Serial2.begin(9600, SERIAL_8N1, 16, 17);
+  // set Rx/Tx queue
+  ESP32Can.setRxQueueSize(5);
+  ESP32Can.setTxQueueSize(5);
+
+  ESP32Can.setSpeed(ESP32Can.convertSpeed(1000));//CAN Speed: 1 MHZ
+
+  if(ESP32Can.begin()) {
+      Serial.println("CAN bus started!");
+      Serial.println("CAN bus started!!!");
+  } else {
+      Serial.println("CAN bus failed!");
+  }
+  //Serial2.begin(9600, SERIAL_8N1, 16, 17);
 
   // IMU setup
-  Wire.setPins(MAIN_I2C_SDA, MAIN_I2C_SCL);
-  Wire.begin();
+  //Wire.setPins(MAIN_I2C_SDA, MAIN_I2C_SCL);
+  //Wire.begin();
 
   // Setup devices using I2C
-  bnoHandler = new BnoHandler();
-  pinExtender.begin();
-  QuadratureEncoder::begin();
-  tester.setMotor(&motor);
-  tester.setEncoder(&encoder);
-  tester.setBNOHandler(bnoHandler);
-  tester.setLogic(&logicHandler);
-  pwmPinExtender.resetDevices();
-  pwmPinExtender.init();
+  //bnoHandler = new BnoHandler();
+  //pinExtender.begin();
+  //QuadratureEncoder::begin();
+  //tester.setMotor(&motor);
+  //tester.setEncoder(&encoder);
+  //tester.setBNOHandler(bnoHandler);
+  //tester.setLogic(&logicHandler);
+  //pwmPinExtender.resetDevices();
+  //pwmPinExtender.init();
 
-  motor.setPins();
-  relais.setPins();
+  //motor.setPins();
+  //relais.setPins();
 
-  relais.setAllRelay(OFF);
+  //relais.setAllRelay(OFF);
 
-  setupCallbacks();
+  //setupCallbacks();
+  testMoteur.setMotorId(2);
+  testMoteur.enterMode();
+  testMoteur.zeroSet();
+
 }
 
 void loop()
 {
 
+  testMoteur.sendCommand(TORQUE,2);
   //--------------Test BLOC----------------
 
   // motor->motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
@@ -72,22 +93,23 @@ void loop()
   // motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 4000);
   // motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 4000);
   // tester.testRelay();
-  tester.keyboardCommand();
+  //tester.keyboardCommand();
+
 
   //--------------LOGIC BLOC---------------
   // encoder.read();
-  bnoHandler->read();
+  //bnoHandler->read();
   // screen.update();
-  logicHandler.Update();
+  //logicHandler.Update();
   // motor.write();
 
   //--------------PRINTING BLOC-------------
   // bnoHandler->printBNOsStatus(0,4);
-  bnoHandler->printGroundState();
+  //bnoHandler->printGroundState();
   // logicHandler.printTorque();
   // logicHandler.IntegralPowerConsumption();
   
-  Serial.println("");
+  //Serial.println("");
 
   
 }

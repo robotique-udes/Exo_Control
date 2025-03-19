@@ -124,7 +124,7 @@ void Motor::packCmd(float position, float velocity, float kp, float kd, float to
     msg.ss = 1;
     msg.data_length_code = 8;
 }
-
+// 
 void Motor::unpackReply(){
     unsigned int id = msg.data[0];
     unsigned int position_int = (msg.data[1] << 8) | msg.data[2];
@@ -133,6 +133,7 @@ void Motor::unpackReply(){
     temperature = msg.data[6]-40;
 }
 
+//
 void Motor::sendCommand(MotorMode mode,float value){
   switch (mode)
   {
@@ -159,14 +160,17 @@ void Motor::sendCommand(MotorMode mode,float value){
   }
 } 
 
+//
 int Motor::getTemperature(){
   return temperature;
 }
 
+//
 void Motor::setMotorId(int id){
   motorId = id;
 }
 
+//
 int Motor::getMotorId(){
   return motorId;
 }
