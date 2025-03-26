@@ -7,8 +7,6 @@
 #define SCL_PIN_DROIT 35
 
 // ------------ MOTOR -------------
-#define CAN_TX		5
-#define CAN_RX		4
 #define K_RESSORT 0.25
 #define DIST_CM 0.245
 #define MASSE 0.366

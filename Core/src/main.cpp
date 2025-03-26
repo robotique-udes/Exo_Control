@@ -17,6 +17,9 @@
 #include "bnoHandler.h"
 #include "logic.h"
 
+#define CAN_TX		5 //to do 
+#define CAN_RX		4 //to do 
+
 //Logic logicHandler;
 //Test tester;
 //Relay relais;
@@ -37,7 +40,7 @@ void setup()
 {
   Serial.begin(115200);
   nexInit();
-  pinMode(CAN_TX, OUTPUT);
+  pinMode(CAN_TX, OUTPUT); 
   pinMode(CAN_RX, OUTPUT);
   ESP32Can.setPins(CAN_TX, CAN_RX);
 
@@ -53,6 +56,9 @@ void setup()
   } else {
       Serial.println("CAN bus failed!");
   }
+  // À ajouter dans la classe moteur 
+
+
   //Serial2.begin(9600, SERIAL_8N1, 16, 17);
 
   // IMU setup
