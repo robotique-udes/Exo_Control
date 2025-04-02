@@ -291,8 +291,17 @@ void WifiClient::upDate()
     // Must be called in a loop, checks if there's a new message from the server every 2 seconds.
     WifiClient* wificlient = WifiClient::GetInstance();
     static unsigned long previousMillis =  millis();
+    static unsigned long secondPassed = millis(); // Stores the last time a second was passed
     unsigned long currentTime = millis();
+    static int timePassed = 0;
 
+    if (currentTime - secondPassed >= 1000)
+    {
+        timePassed++;
+        Serial.print(timePassed);
+        Serial.print("    ");
+        secondPassed = currentTime;
+    }
     if (!wificlient->isConnected()) 
     {
         wificlient->wifiConnect();
