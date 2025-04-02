@@ -202,7 +202,7 @@ void WifiServer::handShake()
   // Send list of IPs
   unsigned char connection_request[] = "Connection request";
   MessageBuilder message = MessageBuilder();
-  message.add(connection_request);
+  message.add("Connection request");
 
   Serial.println("Starting the handShake");
   for(int i = 0; i < numClient; i++)

@@ -55,7 +55,7 @@ void TestSendingtoExo()
 {
   MessageBuilder message = MessageBuilder();
   unsigned char confirmation[32] = "Hello this is the first message";
-  message.add(confirmation);
+  message.add("Hello this is the first message");
   message.add(EnumBnoPosition::THIGH_L, 42.2);
   Serial.println("Going to build the message");
   int length = message.buildMessage();
@@ -77,7 +77,7 @@ void TestDeserializeData()
 {
   MessageBuilder message = MessageBuilder();
   unsigned char confirmation[16] = "this is my logs";
-  message.add(confirmation);
+  message.add("this is my logs");
   message.add(EnumBnoAngle::EXO_BACK, 42.5);
   message.add(EnumBnoPosition::THIGH_L, 78.5);
   Serial.println("Going to build the message");
