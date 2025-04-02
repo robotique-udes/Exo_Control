@@ -297,7 +297,7 @@ void WifiClient::upDate()
     {
         wificlient->wifiConnect();
     }
-    else if (!wificlient->isConnected() && !wificlient->handShakeDone)
+    else if (wificlient->isConnected() && !wificlient->handShakeDone)
     {
         wificlient->handShake();
     }
