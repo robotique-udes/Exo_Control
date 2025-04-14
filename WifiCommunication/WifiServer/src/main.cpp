@@ -62,10 +62,11 @@ void setupBackground()
   lv_style_set_radius(&style_base, 10);
   lv_style_set_bg_opa(&style_base, LV_OPA_COVER);
   lv_style_set_bg_color(&style_base, lv_palette_main(LV_PALETTE_NONE));
+
   lv_obj_t *obj = lv_obj_create(lv_scr_act());
   lv_obj_add_style(obj, &style_base, 0);
   lv_obj_center(obj);
-  lv_obj_set_size(obj, 270, 270);
+  lv_obj_set_size(obj, 243, 243);
 }
 
 void setupLabel()
