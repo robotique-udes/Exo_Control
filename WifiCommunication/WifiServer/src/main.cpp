@@ -7,6 +7,8 @@
 #define GREY  0x5AEB
 
 #define BUTTON_SIZE 35
+#define ROW1 75
+#define ROW2 150
 
 #include <LilyGoLib.h> // Hardware-specific library
 #include <LV_Helper.h>
@@ -34,10 +36,10 @@ void btn_event_cb(lv_event_t *e)
     }
 }
 
-void makeButtons()
+void makeButtons_Row1()
 {
   lv_obj_t *btn = lv_btn_create(lv_scr_act());                /*Add a button the current screen*/
-  lv_obj_set_pos(btn, 200, 100);                                /*Set its position*/
+  lv_obj_set_pos(btn, 200, ROW1);                                /*Set its position*/
   lv_obj_set_size(btn, BUTTON_SIZE, BUTTON_SIZE);                              /*Set its size*/
   lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
 
@@ -46,7 +48,28 @@ void makeButtons()
   lv_obj_center(label);
 
   lv_obj_t *btn2 = lv_btn_create(lv_scr_act());                /*Add a button the current screen*/
-  lv_obj_set_pos(btn2, 150, 100);                                /*Set its position*/
+  lv_obj_set_pos(btn2, 150, ROW1);                                /*Set its position*/
+  lv_obj_set_size(btn2, BUTTON_SIZE, BUTTON_SIZE);                              /*Set its size*/
+  lv_obj_add_event_cb(btn2, btn_event_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
+
+  lv_obj_t *label2 = lv_label_create(btn2); /*Add a label to the button*/
+  lv_label_set_text(label2, "-");     /*Set the labels text*/
+  lv_obj_center(label2);
+}
+
+void makeButtons_Row2()
+{
+  lv_obj_t *btn = lv_btn_create(lv_scr_act());                /*Add a button the current screen*/
+  lv_obj_set_pos(btn, 200, ROW2);                                /*Set its position*/
+  lv_obj_set_size(btn, BUTTON_SIZE, BUTTON_SIZE);                              /*Set its size*/
+  lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
+
+  lv_obj_t *label = lv_label_create(btn); /*Add a label to the button*/
+  lv_label_set_text(label, "+");     /*Set the labels text*/
+  lv_obj_center(label);
+
+  lv_obj_t *btn2 = lv_btn_create(lv_scr_act());                /*Add a button the current screen*/
+  lv_obj_set_pos(btn2, 150, ROW2);                                /*Set its position*/
   lv_obj_set_size(btn2, BUTTON_SIZE, BUTTON_SIZE);                              /*Set its size*/
   lv_obj_add_event_cb(btn2, btn_event_cb, LV_EVENT_ALL, NULL); /*Assign a callback to the button*/
 
@@ -69,7 +92,7 @@ void setupBackground()
   lv_obj_set_size(obj, 243, 243);
 }
 
-void setupLabel()
+void setupLabel_Row1()
 {
   static lv_style_t style_base;
   lv_style_init(&style_base);
@@ -79,7 +102,32 @@ void setupLabel()
 
   lv_obj_t *la = lv_label_create(lv_scr_act());
   lv_obj_add_style(la, &style_base, 0);
-  lv_obj_set_pos(la, 10, 100);  
+  lv_obj_set_pos(la, 10, ROW1-20); 
+  lv_label_set_text(la, "Poids:");
+
+  lv_obj_t *tb = lv_textarea_create(lv_scr_act());
+  lv_obj_add_style(tb, &style_base, 0);
+  lv_obj_set_pos(tb, 10, ROW1);  
+  lv_obj_set_size(tb, 125, BUTTON_SIZE);
+}
+
+void setupLabel_Row2()
+{
+  static lv_style_t style_base;
+  lv_style_init(&style_base);
+  lv_style_set_radius(&style_base, 10);
+  lv_style_set_bg_opa(&style_base, LV_OPA_COVER);
+  lv_style_set_bg_color(&style_base, lv_color_white());
+
+  lv_obj_t *la = lv_label_create(lv_scr_act());
+  lv_obj_add_style(la, &style_base, 0);
+  lv_obj_set_pos(la, 10, ROW2-20); 
+  lv_label_set_text(la, "Grandeur:");
+
+  lv_obj_t *tb = lv_textarea_create(lv_scr_act());
+  lv_obj_add_style(tb, &style_base, 0);
+  lv_obj_set_pos(tb, 10, ROW2);  
+  lv_obj_set_size(tb, 125, BUTTON_SIZE);
 }
 
 void setup() {
@@ -94,8 +142,10 @@ void setup() {
 
   beginLvglHelper();
   setupBackground();
-  setupLabel();
-  makeButtons();
+  setupLabel_Row1();
+  setupLabel_Row2();
+  makeButtons_Row1();
+  makeButtons_Row2();
 }
 
 bool test = true;
