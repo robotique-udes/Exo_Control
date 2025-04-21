@@ -40,6 +40,16 @@ void btn_event_add(lv_event_t *e)
       sprintf(buffer, "%d", value);
 
       lv_textarea_set_text(textArea, buffer);
+      WifiServer* wifi = WifiServer::GetInstance();
+      Serial.println("Going to send message on press");
+
+      MessageBuilder message;
+      message.add(EnumInformations::MASSE, static_cast<float>(value));
+      int length = message.buildMessage();
+      Serial.print("Message length ");
+      Serial.println(length);
+
+      wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
   }
 }
 
@@ -58,6 +68,11 @@ void btn_event_remove(lv_event_t *e)
       sprintf(buffer, "%d", value);
 
       lv_textarea_set_text(textArea, buffer);
+      MessageBuilder message;
+      message.add(EnumInformations::HEIGHT, static_cast<float>(value));
+      int length = message.buildMessage();
+
+      wifiserver->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
   }
 }
 

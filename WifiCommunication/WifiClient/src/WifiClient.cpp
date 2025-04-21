@@ -260,6 +260,15 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
         dataMap[key] = value;
     }
 
+    // informations
+    JsonArray infos = doc[NESTED_INFORMATIONS];
+    for (int i = 0; i < infos.size(); i++)
+    {
+        key = std::make_pair(ENUM_INFO_TYPE, static_cast<int>(infos[i]["ID"]));
+        value = infos[i]["value"].as<std::string>();
+        dataMap[key] = value;
+    }
+
     // IP addresses
     JsonArray IPs = doc[NESTED_IP_TYPE];
     Serial.print(IPs.size());
@@ -288,7 +297,7 @@ void WifiClient::deserializeMessage(unsigned char message[], int length)
 void WifiClient::upDate()
 {
     // Connect to the wifi server automatically, if not connected, then sends a handshake.
-    // Must be called in a loop, checks if there's a new message from the server every 2 seconds.
+    // Must be called in a loop, checks if there's a new message from the server every 20 milliSeconds.
     WifiClient* wificlient = WifiClient::GetInstance();
     static unsigned long previousMillis =  millis();
     static unsigned long secondPassed = millis(); // Stores the last time a second was passed
@@ -310,7 +319,7 @@ void WifiClient::upDate()
     {
         wificlient->handShake();
     }
-    else if (currentTime - previousMillis >= 2000)
+    else if (currentTime - previousMillis >= 20)
     {
         wificlient->dataAvailable();
         if (wificlient->lenght_message_recieved > 0)

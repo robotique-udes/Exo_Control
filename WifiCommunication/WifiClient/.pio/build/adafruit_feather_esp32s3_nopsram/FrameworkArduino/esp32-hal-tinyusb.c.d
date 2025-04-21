@@ -41,7 +41,6 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/ledc_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/mpu_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/twai_caps.h \
- C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/uart_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/rtc_io_reg.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/usb_serial_jtag_reg.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/gpio_types.h \
@@ -123,6 +122,7 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-matrix.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
+ C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/uart_types.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/variants/adafruit_feather_esp32s3_nopsram/pins_arduino.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch.h \
@@ -149,7 +149,6 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/common/tusb_verify.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/common/tusb_types.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/common/tusb_debug.h \
- C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/common/tusb_timeout.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/osal/osal.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/common/tusb_common.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/osal/osal_freertos.h \
@@ -177,6 +176,7 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/class/dfu/dfu.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/arduino_tinyusb/tinyusb/src/class/dfu/dfu_device.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/esp32s3/include/hal/usb_serial_jtag_ll.h \
+ C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/system_struct.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/usb_serial_jtag_struct.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/esp32s3/include/hal/usb_phy_ll.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/rtc_cntl_struct.h \

@@ -10,6 +10,7 @@
 #define ENUM_BNO_POSITION "EnumBnoPosition"
 #define ENUM_MOTOR_POSITION "EnumMotorPosition"
 #define ENUM_IP_TYPE "EnumIpType"
+#define ENUM_INFO_TYPE "EnumInfoType"
 
 class WifiClient 
 {

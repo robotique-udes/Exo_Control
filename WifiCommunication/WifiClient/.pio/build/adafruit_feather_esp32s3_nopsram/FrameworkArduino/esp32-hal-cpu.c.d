@@ -46,7 +46,6 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/ledc_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/mpu_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/twai_caps.h \
- C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/uart_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/cpu_types.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/esp32s3/include/hal/cpu_ll.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/xtensa/esp32s3/include/xtensa/config/extreg.h \
@@ -95,6 +94,7 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-matrix.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
+ C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/uart_types.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/variants/adafruit_feather_esp32s3_nopsram/pins_arduino.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch.h \

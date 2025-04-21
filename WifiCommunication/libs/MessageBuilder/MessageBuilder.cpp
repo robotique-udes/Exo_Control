@@ -1,10 +1,4 @@
-
 #include "MessageBuilder.h"
-
-#define ENUM_BNO_ANGLE "EnumBnoAngle"
-#define ENUM_BNO_POSITION "EnumBnoPosition"
-#define ENUM_MOTOR_POSITION "EnumMotorPosition"
-#define ENUM_IP_TYPE "EnumIpType"
 
 MessageBuilder::MessageBuilder()
 {
@@ -56,6 +50,7 @@ void MessageBuilder::clearInfo()
     indexStructBnoPosition = 0;
     indexStructMotorPosition = 0;
     indexStructIPAddressTest = 0;
+    indexStructInformations = 0;
 }
 
 void MessageBuilder::add(const char *log)
@@ -99,6 +94,13 @@ void MessageBuilder::add(EnumMotorPosition MOTOR_NAME, float value)
     motorPosition[indexStructMotorPosition].ID = MOTOR_NAME;
     motorPosition[indexStructMotorPosition].value = value;
     indexStructMotorPosition++;
+}
+
+void MessageBuilder::add(EnumInformations INFO_NAME, float value)
+{
+    structInfo[indexStructInformations].ID = INFO_NAME;
+    structInfo[indexStructInformations].value = value;
+    indexStructInformations++;
 }
 
 void MessageBuilder::add(EnumIPType IP_NAME, IPAddress* value)
@@ -160,6 +162,17 @@ int MessageBuilder::buildMessage()
             JsonObject motor_position = motorPositions.createNestedObject();
             motor_position["ID"] = (int)motorPosition[i].ID;
             motor_position["value"] = motorPosition[i].value;
+        }
+    }
+
+    JsonArray informations = doc.createNestedArray(NESTED_INFORMATIONS);
+    for (int i = 0; i < indexStructMotorPosition; i++)
+    {
+        if (structInfo[i].ID != EnumInformations::NONE)
+        {
+            JsonObject information = informations.createNestedObject();
+            information["ID"] = (int)structInfo[i].ID;
+            information["value"] = structInfo[i].value;
         }
     }
 

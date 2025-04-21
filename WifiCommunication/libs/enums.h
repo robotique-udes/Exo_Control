@@ -47,6 +47,13 @@ enum class EnumMotorPosition
     NONE
 };
 
+enum class EnumInformations
+{
+    MASSE,
+    HEIGHT,
+    NONE
+};
+
 enum class EnumScreenCallback
 {
     BUTTON_TOGGLE_MOTOR,

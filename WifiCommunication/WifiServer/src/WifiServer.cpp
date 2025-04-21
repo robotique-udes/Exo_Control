@@ -405,6 +405,15 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
         unifiedMap[key] = value;
     }
 
+    // informations
+    JsonArray infos = doc[NESTED_INFORMATIONS];
+    for (int i = 0; i < infos.size(); i++)
+    {
+        key = std::make_pair(ENUM_INFO_TYPE, static_cast<int>(infos[i]["ID"]));
+        value = infos[i]["value"].as<std::string>();
+        unifiedMap[key] = value;
+    }
+
     // IP addresses
     JsonArray ipAddresses = doc[NESTED_IP_TYPE];
     for (int i = 0; i < ipAddresses.size(); i++)

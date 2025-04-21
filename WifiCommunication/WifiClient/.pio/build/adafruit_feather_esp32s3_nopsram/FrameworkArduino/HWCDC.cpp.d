@@ -47,7 +47,6 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/ledc_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/mpu_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/twai_caps.h \
- C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/uart_caps.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/cpu_types.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/esp32s3/include/hal/cpu_ll.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/xtensa/esp32s3/include/xtensa/config/extreg.h \
@@ -114,6 +113,7 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/lwip/lwip/src/include/lwip/def.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/lwip/lwip/src/include/lwip/ip6_zone.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/lwip/include/apps/dhcpserver/dhcpserver.h \
+ C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/lwip/lwip/src/include/lwip/err.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_netif/include/esp_netif_sta_list.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/USBCDC.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/Stream.h \
@@ -137,6 +137,7 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/log/include/esp_log_internal.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-matrix.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
+ C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/uart_types.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/variants/adafruit_feather_esp32s3_nopsram/pins_arduino.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch.h \
@@ -160,5 +161,6 @@
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_ringbuf/include/freertos/ringbuf.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/periph_defs.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/esp32s3/include/hal/usb_serial_jtag_ll.h \
+ C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/system_struct.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/usb_serial_jtag_reg.h \
  C:/Users/gratt/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/soc/esp32s3/include/soc/usb_serial_jtag_struct.h
