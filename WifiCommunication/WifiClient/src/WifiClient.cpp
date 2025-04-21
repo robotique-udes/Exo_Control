@@ -23,38 +23,23 @@ WifiClient::WifiClient() // Constructor
 
 void WifiClient::wifiConnect() // Connect to Wi-Fi
 {
-    static unsigned long previousMillisConnected =  millis(); // coundown to connect to wifi
-    static unsigned long previousMillisDot =  millis(); // Stores the last time a dot was printed
-    unsigned long currentMillis =  millis(); // Stores the current time
-
-    // WiFi mode
-    WiFi.mode(WIFI_STA);
-
-    // Try to connect for 5 seconds
-    WiFi.begin(ssid, password);
-    Serial.printf("Attempting to connect to \"%s\" with password \"%s\".\n\n", ssid, password);
-    while (WiFi.status() != WL_CONNECTED)
+    if(!tryingToConnect)
     {
-        currentMillis = millis();
-        if (currentMillis - previousMillisDot >= 1000)
-        {
-            Serial.print(".");
-            previousMillisDot = currentMillis;
-        }
-        else if (currentMillis - previousMillisConnected >= 5000)
-        {
-            Serial.println("Failed to connect to WiFi.");
-            return;
-        }
+        // WiFi mode
+        WiFi.mode(WIFI_STA);
+
+        WiFi.begin(ssid, password);
+        Serial.printf("Attempting to connect to \"%s\" with password \"%s\".\n\n", ssid, password);
+        tryingToConnect = true;
     }
-    Serial.println("Connected to WiFi!");
-
-    // Set up UDP
-    UDP.begin(localUdpPort);
-    Serial.println("UDP client started");
-
-    // Handshake with server
-    handShake();
+    
+    
+    if(WiFi.status() != WL_CONNECTED)
+    {
+        handShakeDone = false;
+        Serial.print("Not connected");
+        return;
+    }
 }
 
 void WifiClient::wifiDisconnect() // Disconnect from Wi-Fi
@@ -142,7 +127,6 @@ void WifiClient::wifiOn() // Turn on Wi-Fi
 
 void WifiClient::handShake() // Handshake with server
 {   
-
     // Receive IP addresses
     int longueur_ips = dataAvailable();
     if (!longueur_ips) 
@@ -301,6 +285,7 @@ void WifiClient::upDate()
     WifiClient* wificlient = WifiClient::GetInstance();
     static unsigned long previousMillis =  millis();
     static unsigned long secondPassed = millis(); // Stores the last time a second was passed
+    static unsigned long timerChallengeDoesNotWork = millis();
     unsigned long currentTime = millis();
     static int timePassed = 0;
 
@@ -311,15 +296,26 @@ void WifiClient::upDate()
         Serial.print("    ");
         secondPassed = currentTime;
     }
-    if (!wificlient->isConnected()) 
+
+    if (!wificlient->isConnected() && currentTime - timerChallengeDoesNotWork >= 1000) 
     {
+        timerChallengeDoesNotWork = currentTime;
         wificlient->wifiConnect();
     }
     else if (wificlient->isConnected() && !wificlient->handShakeDone)
     {
+        Serial.println("Connected to WiFi!");
+        // Set up UDP
+        if(wificlient->tryingToConnect)
+        {
+            wificlient->UDP.begin(wificlient->localUdpPort);
+            Serial.println("UDP client started");
+        }
+        
+        wificlient->tryingToConnect = false;
         wificlient->handShake();
     }
-    else if (currentTime - previousMillis >= 20)
+    else if (currentTime - previousMillis >= 20 && wificlient->handShakeDone)
     {
         wificlient->dataAvailable();
         if (wificlient->lenght_message_recieved > 0)
