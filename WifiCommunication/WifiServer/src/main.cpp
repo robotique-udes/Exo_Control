@@ -124,7 +124,7 @@ void setupRow1()
   lv_obj_add_event_cb(btn2, btn_event_remove, LV_EVENT_ALL, tb);
 
   lv_obj_t *label2 = lv_label_create(btn2); 
-  lv_label_set_text(label2, "-");     
+  lv_label_set_text(label2, "-");
   lv_obj_center(label2);
 }
 
