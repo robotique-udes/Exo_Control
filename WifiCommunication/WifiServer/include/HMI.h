@@ -5,9 +5,12 @@
 #define DEFAULT_MASSE "170"
 #define DEFAULT_HEIGHT "150"
 
-#define BUTTON_SIZE 35
-#define ROW1 75
-#define ROW2 150
+#define INCREMENT_BUTTON_SIZE 50
+#define TITLE_SIZE_W 150
+#define TITLE_SIZE_H 50
+#define LABEL_SIZE_W 100
+#define LABEL_SIZE_H 35
+#define ROW 75
 
 #define BLACK 0x0000
 #define WHITE 0xFFFF
@@ -15,13 +18,21 @@
 
 struct page_exo_settings
 {
+    lv_obj_t * tile_left;
+
     lv_obj_t * label_mass;
+    lv_obj_t * label_mass_value;
     lv_obj_t * btn_add_mass;
     lv_obj_t * btn_sub_mass;
+    lv_obj_t * label_add_mass;
+    lv_obj_t * label_sub_mass;
 
     lv_obj_t * label_height;
+    lv_obj_t * label_height_value;
     lv_obj_t * btn_add_height;
     lv_obj_t * btn_sub_height;
+    lv_obj_t * label_add_height;
+    lv_obj_t * label_sub_height;
 
     lv_obj_t * label_motor_power;
     lv_obj_t * slider_motor_power;
@@ -35,6 +46,7 @@ struct page_exo_settings
 
 struct page_menu
 {
+    lv_obj_t * tile_middle;
     lv_obj_t * label_menu;
     lv_obj_t * label_connection;
     lv_obj_t * btn_watch_settings;
@@ -42,8 +54,9 @@ struct page_menu
 
 struct page_info
 {
+    lv_obj_t * tile_right;
     lv_obj_t * label_exo_battery;
-    lv_obj_t * label_watch_battery;
+    lv_obj_t * label_watch_battery; 
 };
 
 struct page_watch_settings
@@ -71,27 +84,26 @@ struct page_profiles
 class HMI
 {
     private:
-        page_exo_settings exo_settings;
+        lv_style_t * style_base;
+
         page_menu menu;
+        page_exo_settings exo_settings;
         page_info info;
         page_watch_settings watch_settings;
         page_profiles profiles;
 
-        lv_obj_t * screen_exo_settings;
-        lv_obj_t * screen_menu;
-        lv_obj_t * screen_info;
+        lv_obj_t * tile_view;
         lv_obj_t * screen_watch_settings;
         lv_obj_t * screen_profiles;
 
-        
-    
-    public:
-        HMI();
-        void setup();
+        void setupStyle();
         void setupExoSettings();
         void setupMenu();
         void setupInfo();
         void setupWatchSettings();
         void setupProfiles();
         
+    public:
+        HMI();
+        void setup();
 };
