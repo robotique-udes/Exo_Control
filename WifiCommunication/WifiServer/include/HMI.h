@@ -18,7 +18,8 @@
 
 struct page_exo_settings
 {
-    lv_obj_t * tile_left;
+    
+    lv_obj_t * tile_2;
 
     lv_obj_t * label_mass;
     lv_obj_t * label_mass_value;
@@ -46,7 +47,7 @@ struct page_exo_settings
 
 struct page_menu
 {
-    lv_obj_t * tile_middle;
+    lv_obj_t * tile_0;
     lv_obj_t * label_menu;
     lv_obj_t * label_connection;
     lv_obj_t * btn_watch_settings;
@@ -54,7 +55,7 @@ struct page_menu
 
 struct page_info
 {
-    lv_obj_t * tile_right;
+    lv_obj_t * tile_1;
     lv_obj_t * label_exo_battery;
     lv_obj_t * label_watch_battery; 
 };
@@ -84,7 +85,7 @@ struct page_profiles
 class HMI
 {
     private:
-        lv_style_t * style_base;
+        //lv_style_t * style_base;
 
         page_menu menu;
         page_exo_settings exo_settings;
@@ -97,6 +98,7 @@ class HMI
         lv_obj_t * screen_profiles;
 
         void setupStyle();
+        void setupBackground();
         void setupExoSettings();
         void setupMenu();
         void setupInfo();
