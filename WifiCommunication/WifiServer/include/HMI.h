@@ -2,6 +2,8 @@
 #include <LilyGoLib.h> // Hardware-specific library
 #include <LV_Helper.h>
 
+// #include <WifiServer.h>
+
 #define DEFAULT_MASSE "170"
 #define DEFAULT_HEIGHT "150"
 
@@ -11,6 +13,8 @@
 #define LABEL_SIZE_W 100
 #define LABEL_SIZE_H 35
 #define ROW 75
+
+#define CONNECTION_TIME_LAPSE 800
 
 #define BLACK 0x0000
 #define WHITE 0xFFFF
@@ -27,6 +31,13 @@ struct page_exo_settings
     lv_obj_t * btn_sub_mass;
     lv_obj_t * label_add_mass;
     lv_obj_t * label_sub_mass;
+
+    lv_obj_t * label_charge_mass;
+    lv_obj_t * label_charge_mass_value;
+    lv_obj_t * btn_add_charge_mass;
+    lv_obj_t * btn_sub_charge_mass;
+    lv_obj_t * label_add_charge_mass;
+    lv_obj_t * label_sub_charge_mass;
 
     lv_obj_t * label_height;
     lv_obj_t * label_height_value;
@@ -97,15 +108,46 @@ class HMI
         lv_obj_t * screen_watch_settings;
         lv_obj_t * screen_profiles;
 
+        float mass = 0.0;
+        float charge_mass = 0.0;
+        float height = 0.0;
+        float motor_power = 0.0;
+        bool SAE_SI = false;
+        bool is_connected_exo = false;
+        float battery_exo = 0.0;
+        float battery_watch = 0.0;
+        float brightness = 0.0;
+        float sound = 0.0;
+
+        //WifiServer * wifiserver = WifiServer::GetInstance();
+
+        void setupTileView();
         void setupStyle();
-        void setupBackground();
         void setupExoSettings();
         void setupMenu();
         void setupInfo();
         void setupWatchSettings();
         void setupProfiles();
+
+        void addMass();
+        void subMass();
+        void updateMassLabel();
+        void addChargeMass();
+        void subChargeMass();
+        void updateChargeMassLabel();
+        void addHeight();
+        void subHeight();
+        void updateSAE_SI();
+        void updateHeightLabel();
+        void updateMotorPowerLabel();
+        void updateBatteryLabel();
+        void updateBrightnessLabel();
+        void updateSoundLabel();
+        void updateConnectionLabel();
+
         
     public:
         HMI();
         void setup();
+        void update();
 };

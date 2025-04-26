@@ -1,31 +1,31 @@
 #include "HMI.h"
 
+HMI * watch_interface;
+
 void setup() {
-    Serial.begin(115200);
-    // Connect to Wifi network.
-    delay(3000);
-  
-    watch.begin();
-    beginLvglHelper();
+  Serial.begin(115200);
+  delay(3000);
 
-    HMI watch_interface = HMI();
-    watch_interface.setup();
+  watch.begin();
+  watch_interface = new HMI();
+
+}
   
-  }
-  
-  void loop() 
+void loop() 
+{
+  static unsigned long previousMillis = 0; // Stores the last time a message was printed
+  unsigned long currentMillis = millis();
+  static int compteur = 0;
+
+  if (currentMillis - previousMillis >= 1000) 
   {
-    static unsigned long previousMillis = 0; // Stores the last time a message was printed
-    unsigned long currentMillis = millis();
-    static int compteur = 0;
-
-    if (currentMillis - previousMillis >= 1000) 
-    {
-        previousMillis = currentMillis;
-        compteur++;
-        Serial.print(compteur);
-        Serial.println("   1 second has pass");
-    }
-    lv_task_handler();
-
+      previousMillis = currentMillis;
+      compteur++;
+      Serial.print(compteur);
+      Serial.println("   1 second has pass");
   }
+
+  // update the watch interface
+  watch_interface->update();
+
+}
