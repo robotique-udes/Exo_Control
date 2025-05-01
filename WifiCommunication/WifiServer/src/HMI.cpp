@@ -52,11 +52,13 @@ void HMI::setupMenu()
     // Create the menu screen objects
     menu.label_menu = lv_label_create(menu.tile_0);
     lv_label_set_text(menu.label_menu, "Exo Control");
+    lv_obj_set_style_text_color(menu.label_menu, lv_color_white(), 0);
     // lv_obj_add_style(menu.label_menu, style_base, 0);
     lv_obj_set_size(menu.label_menu, TITLE_SIZE_W, TITLE_SIZE_H);
     
     menu.label_connection = lv_label_create(menu.tile_0);
     lv_label_set_text(menu.label_connection, "Connecting...");
+    lv_obj_set_style_text_color(menu.label_connection, lv_color_white(), 0);
     // lv_obj_add_style(menu.label_connection, style_base, 0);
     lv_obj_set_size(menu.label_connection, TITLE_SIZE_W, LABEL_SIZE_H);
     
@@ -77,11 +79,13 @@ void HMI::setupExoSettings()
     // ------------------------------------------mass related objects------------------------------------------------
     exo_settings.label_mass = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_mass, "Mass");
+    lv_obj_set_style_text_color(exo_settings.label_mass, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_mass, style_base, 0);
     lv_obj_set_size(exo_settings.label_mass, LABEL_SIZE_W, LABEL_SIZE_H);
     
     exo_settings.label_mass_value = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_mass_value, "0.0 kg");
+    lv_obj_set_style_text_color(exo_settings.label_mass_value, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_mass_value, style_base, 0);
     lv_obj_set_size(exo_settings.label_mass_value, LABEL_SIZE_W, LABEL_SIZE_H);
     
@@ -102,11 +106,13 @@ void HMI::setupExoSettings()
     // ------------------------------------------charge mass related objects------------------------------------------------
     exo_settings.label_charge_mass = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_charge_mass, "Charge Mass");
+    lv_obj_set_style_text_color(exo_settings.label_charge_mass, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_charge_mass, style_base, 0);
     lv_obj_set_size(exo_settings.label_charge_mass, LABEL_SIZE_W, LABEL_SIZE_H);
 
     exo_settings.label_charge_mass_value = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_charge_mass_value, "0.0 kg");
+    lv_obj_set_style_text_color(exo_settings.label_charge_mass_value, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_charge_mass_value, style_base, 0);
     lv_obj_set_size(exo_settings.label_charge_mass_value, LABEL_SIZE_W, LABEL_SIZE_H);
 
@@ -127,11 +133,13 @@ void HMI::setupExoSettings()
     // ------------------------------------------height related objects------------------------------------------------
     exo_settings.label_height = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_height, "Height");
+    lv_obj_set_style_text_color(exo_settings.label_height, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_height, style_base, 0);
     lv_obj_set_size(exo_settings.label_height, LABEL_SIZE_W, LABEL_SIZE_H);
 
     exo_settings.label_height_value = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_height_value, "0.0 m");
+    lv_obj_set_style_text_color(exo_settings.label_height_value, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_height_value, style_base, 0);
     lv_obj_set_size(exo_settings.label_height_value, LABEL_SIZE_W, LABEL_SIZE_H);
 
@@ -152,6 +160,7 @@ void HMI::setupExoSettings()
     // ------------------------------------------motor power related objects------------------------------------------------
     exo_settings.label_motor_power = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_motor_power, "Motor Power");
+    lv_obj_set_style_text_color(exo_settings.label_motor_power, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_motor_power, style_base, 0);
     lv_obj_set_size(exo_settings.label_motor_power, LABEL_SIZE_W, LABEL_SIZE_H);
 
@@ -192,11 +201,13 @@ void HMI::setupInfo()
     // Create the info screen objects
     info.label_exo_battery = lv_label_create(info.tile_1);
     lv_label_set_text(info.label_exo_battery, "Exo Battery: 100%");
+    lv_obj_set_style_text_color(info.label_exo_battery, lv_color_white(), 0);
     // lv_obj_add_style(info.label_exo_battery, style_base, 0);
     lv_obj_set_size(info.label_exo_battery, LABEL_SIZE_W, LABEL_SIZE_H);
 
     info.label_watch_battery = lv_label_create(info.tile_1);
     lv_label_set_text(info.label_watch_battery, "Watch Battery: 100%");
+    lv_obj_set_style_text_color(info.label_watch_battery, lv_color_white(), 0);
     // lv_obj_add_style(info.label_watch_battery, style_base, 0);
     lv_obj_set_size(info.label_watch_battery, LABEL_SIZE_W, LABEL_SIZE_H);
 
@@ -210,50 +221,74 @@ void HMI::setupProfiles()
     Serial.println("HMI setupProfiles called");
 }
 
+void HMI::updateBatteryLabel()
+{
+    // Get the current battery value of the watch
+    int battery_watch = watch.getBatteryPercent();
+    
+    // Update the battery labels with the current values
+    char buffer[30];
+    sprintf(buffer, "Watch Battery: %d %%", battery_watch);
+    lv_label_set_text(info.label_watch_battery, buffer);
+}
+
 void HMI::update()
 {
     // Call this function in the main loop to update the HMI. The HMI will handle the display by itself.
-    Serial.println("HMI update called");
+    //Serial.println("HMI update called");
     // time count
     static unsigned long previousMillisConnection = 0; 
+    static unsigned long previousMillisBattery = 0;
     unsigned long currentMillis = millis();
+    //Serial.println(currentMillis);
+    WifiServer * wifiserver = WifiServer::GetInstance();
 
     // update the connection status
     if (currentMillis - previousMillisConnection >= CONNECTION_TIME_LAPSE)
     {
+        //Serial.println(previousMillisConnection);
         previousMillisConnection = currentMillis;
         // Get the exoskeleton connection to the watch status
-        if (true)
+        //Serial.println("HMI update called: connected to exoskeleton");
+        char * text = lv_label_get_text(menu.label_connection);
+        // update the connection label
+        if (true) // TODO: replace with the actual connection status check
         {
-            Serial.println("HMI update called: connected to exoskeleton");
-            const char * text = lv_label_get_text(menu.label_connection);
-            // update the connection label
-            if (strcmp(text, "Connecting"))
+            if (strcmp(text, "Connecting") == 0)
             {
                 lv_label_set_text(menu.label_connection, "Connecting.");
             }
-            else if (strcmp(text, "Connecting."))
+            if (strcmp(text, "Connecting") == 0)
+            {
+                lv_label_set_text(menu.label_connection, "Connecting.");
+            }
+            else if (strcmp(text, "Connecting.") == 0)
             {
                 lv_label_set_text(menu.label_connection, "Connecting..");
             }
-            else if (strcmp(text, "Connecting.."))
+            else if (strcmp(text, "Connecting..") == 0)
             {
                 lv_label_set_text(menu.label_connection, "Connecting...");
             }
-            else if (strcmp(text, "Connecting..."))
+            else if (strcmp(text, "Connecting...") == 0)
             {
                 lv_label_set_text(menu.label_connection, "Connecting");
             }
             else
             {
-                lv_label_set_text(menu.label_connection, "Connected");
+                lv_label_set_text(menu.label_connection, "Unknown error");
             }
-
         }
         else 
         {
             lv_label_set_text(menu.label_connection, "Connected");
         }
+    }
+
+    if (currentMillis - previousMillisBattery >= BATTERY_TIME_LAPSE)
+    {
+        previousMillisBattery = currentMillis;
+        updateBatteryLabel();
     }
 
     lv_task_handler();

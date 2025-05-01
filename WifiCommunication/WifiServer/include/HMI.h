@@ -1,6 +1,7 @@
 
 #include <LilyGoLib.h> // Hardware-specific library
 #include <LV_Helper.h>
+#include "WiFiServer.h"
 
 // #include <WifiServer.h>
 
@@ -15,6 +16,7 @@
 #define ROW 75
 
 #define CONNECTION_TIME_LAPSE 800
+#define BATTERY_TIME_LAPSE 30000
 
 #define BLACK 0x0000
 #define WHITE 0xFFFF
@@ -114,8 +116,6 @@ class HMI
         float motor_power = 0.0;
         bool SAE_SI = false;
         bool is_connected_exo = false;
-        float battery_exo = 0.0;
-        float battery_watch = 0.0;
         float brightness = 0.0;
         float sound = 0.0;
 

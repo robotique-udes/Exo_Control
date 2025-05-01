@@ -9,6 +9,8 @@ void setup() {
   watch.begin();
   watch_interface = new HMI();
 
+  WifiServer::GetInstance()->Initialise();
+
 }
   
 void loop() 
@@ -24,6 +26,8 @@ void loop()
       Serial.print(compteur);
       Serial.println("   1 second has pass");
   }
+
+  WifiServer::upDate();
 
   // update the watch interface
   watch_interface->update();
