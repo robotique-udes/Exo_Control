@@ -7,13 +7,13 @@
 #include <string>
 #include "enums.h"
 #include "MessageBuilder/MessageBuilder.h"
+#include <vector>
 
 #define SSID "helloIAmUnder"
 #define PASS_PHRASE "ItsTricky"
 
 #define UDP_PORT_RECEIVE 4210
 #define UDP_PORT_SEND 4211
-#define IP_LIST_SIZE 10
 #define INTERVAL_1SEC 1000
 #define INTERVAL_10ms 10
 #define INTERVAL_BEFORE_SEND_HANDSHAKE 300
@@ -28,7 +28,6 @@ struct IpTypeList
 {
     EnumIPType ipType;
     IPAddress ipAdresse;
-    ip4_addr_t ipAdd;
     uint8_t mac[6];
 };
 
@@ -49,7 +48,6 @@ private:
 
     void handShake();
     void onWiFiEvent(WiFiEvent_t event);
-    void InitialiseIPList();
     void newClientConnection(IpTypeList newClient);
     
 
@@ -64,8 +62,7 @@ private:
     static WifiServer* wifiInstance;
 
 public:
-    IpTypeList IPsList[IP_LIST_SIZE];
-    uint8_t numClient;
+    std::vector<IpTypeList> IPsListVector;
     unsigned char readyToSendHandShake;
     
     // Static method to access the singleton instance

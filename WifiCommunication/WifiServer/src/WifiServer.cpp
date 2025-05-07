@@ -34,8 +34,31 @@ WifiServer:: WifiServer(char* ssid, char* passphrase)
     MyIP = myIP;
 
     //Adding the users info
-    this->IPsList[0].ipAdresse = local_ip;
-    this->IPsList[0].ipType = EnumIPType::WATCH;
+    IpTypeList newClient = { EnumIPType::WATCH, local_ip, NULL};
+    this->IPsListVector.push_back(newClient);
+}
+
+bool CheckMacAddressInList(WifiServer* wifiserver, uint8_t* mac, int *positionInList = nullptr)
+{
+  for(int i = 1; i < wifiserver->IPsListVector.size(); i++)//i=1 for the server info in the list[0]
+  {
+    bool perfectMatch = true;
+    *positionInList = i;
+
+    for(int j = 0; j < 6; j++)
+    {
+      if(wifiserver->IPsListVector.at(i).mac[j] != mac[j])
+      {
+        perfectMatch = false;
+        break;
+      }
+    }
+
+    if(perfectMatch == true)
+      return true;
+  }
+
+  return false;
 }
 
 void WiFiStationConnected(arduino_event_id_t event, arduino_event_info_t info) {
@@ -52,9 +75,24 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
 
   WifiServer* wifiserver = WifiServer::GetInstance();
   //Will need to check for only new people connected
-  for (int i = 0; i < adapter_sta_list.num && i < IP_LIST_SIZE; i++) 
+  for (int i = 0; i < adapter_sta_list.num && i < wifiserver->IPsListVector.size(); i++) 
   {
     tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
+    IpTypeList newClient;
+
+    if(CheckMacAddressInList(wifiserver, station.mac))
+    {
+      Serial.print("MAC: ");
+      for(int j = 0; j< 6; j++)
+      {
+        Serial.printf("%02X", station.mac[j]);
+        if(j<5)
+          Serial.print(":");
+      }
+      Serial.println("This user is already part of the list.");
+      continue;
+    }
+
     Serial.print("station nr ");
     Serial.println(i);
     Serial.print("MAC: ");
@@ -62,7 +100,7 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
     for(int j = 0; j< 6; j++)
     { //Adding the users info
       Serial.printf("%02X", station.mac[j]);
-      wifiserver->IPsList[i].mac[j] = station.mac[j];
+      newClient.mac[j] = station.mac[j];
       if(j<5)
         Serial.print(":");
     }
@@ -73,14 +111,15 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
     Serial.println(ip4addr_ntoa(&(addresse)));
 
     //Adding the users info
-    wifiserver->IPsList[i+1].ipAdresse = IPAddress(addresse.addr);
-    wifiserver->IPsList[i+1].ipAdd = addresse;
-    wifiserver->IPsList[i+1].ipType = EnumIPType::UNKNOWN_TYPE;
+    newClient.ipType = EnumIPType::UNKNOWN_TYPE;
+    newClient.ipAdresse = IPAddress(addresse.addr);
+    wifiserver->IPsListVector.push_back(newClient);
   } 
 
   wifiserver->readyToSendHandShake = 1;
-  wifiserver->numClient = adapter_sta_list.num + 1;//+1 for me(the watch)
 }
+
+
 
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
 {
@@ -93,22 +132,32 @@ void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info
 {
     Serial.println("Device disconnected from the access point!");
     WifiServer* wifiserver = WifiServer::GetInstance();
-    wifiserver->numClient--;
-}
 
-void WifiServer::InitialiseIPList()
-{
-  numClient = 0;
-  for(int i = 0; i < IP_LIST_SIZE; i++)
-  {
-    for(int j = 0; j < 6; j++)
+    uint8_t* mac = info.wifi_ap_stadisconnected.mac;
+
+    for (int i = 1; i < wifiserver->IPsListVector.size(); i++) 
     {
-      IPsList[i].mac[j] = 0;
+      Serial.print("station nr ");
+      Serial.println(i);
+      Serial.print("MAC: ");
+      
+      for(int j = 0; j< 6; j++)
+      { //Adding the users info
+        Serial.printf("%02X", mac[j]);
+        if(j<5)
+          Serial.print(":");
+      }
+
+      int positionList = -1;
+      if(CheckMacAddressInList(wifiserver, mac))
+      {
+        Serial.println("This user disconnected and will be removed");
+        wifiserver->IPsListVector.erase(wifiserver->IPsListVector.begin() + positionList);
+
+        break;
+      }
     }
-    
-    IPsList[i].ipType = EnumIPType::NONE;
-    IPsList[i].ipAdresse = IPAddress(0,0,0,0);
-  }
+
 }
 
 int WifiServer::Initialise()
@@ -205,19 +254,19 @@ void WifiServer::handShake()
   message.add("Connection request");
 
   Serial.println("Starting the handShake");
-  for(int i = 0; i < numClient; i++)
+  for(int i = 0; i < IPsListVector.size(); i++)
   {
-    message.add(IPsList[i].ipType, &(IPsList[i].ipAdresse));
+    message.add(IPsListVector.at(i).ipType, &(IPsListVector.at(i).ipAdresse));
   }
 
   int length = message.buildHandshake();
   unsigned char* mess = message.getMessage();
 
-  for(int j = 0; j < IP_LIST_SIZE; j++)
+  for(int j = 0; j < IPsListVector.size(); j++)
   {
-    if(IPsList[j].ipType == EnumIPType::UNKNOWN_TYPE)
+    if(IPsListVector.at(j).ipType == EnumIPType::UNKNOWN_TYPE)
     {
-      SendData(mess, length, IPsList[j].ipAdresse);
+      SendData(mess, length, IPsListVector.at(j).ipAdresse);
     }
   }
 }
@@ -307,9 +356,9 @@ int WifiServer::retrieveInformation(EnumIPType IP_NAME, IPAddress* value)
     try
     {
       Serial.println(unifiedMap[key].c_str());
-      IPAddress val = IPAddress();
-      val.fromString(unifiedMap[key].c_str());
-      *value = val;
+      IPAddress newClient = IPAddress();
+      newClient.fromString(unifiedMap[key].c_str());
+      *value = newClient;
     }
     catch(const std::invalid_argument &e)
     {
@@ -422,11 +471,11 @@ void WifiServer::deserializeMessage(unsigned char message[], int length)
       value = ipAddresses[i]["value"].as<std::string>();
       unifiedMap[key] = value;
 
-      for(int j = 0; j < IP_LIST_SIZE; j++)
+      for(int j = 0; j < IPsListVector.size(); j++)
       {
-        if(IPsList[j].ipType == EnumIPType::UNKNOWN_TYPE && IPsList[j].ipAdresse.toString() == value.c_str())
+        if(IPsListVector.at(j).ipType == EnumIPType::UNKNOWN_TYPE && IPsListVector.at(j).ipAdresse.toString() == value.c_str())
         {
-          IPsList[j].ipType = static_cast<EnumIPType>(static_cast<int>(ipAddresses[i]["ID"]));
+          IPsListVector.at(j).ipType = static_cast<EnumIPType>(static_cast<int>(ipAddresses[i]["ID"]));
         }
       }
     }
