@@ -7,6 +7,8 @@ void addChargeMassEvent(lv_event_t *e);
 void subChargeMassEvent(lv_event_t *e);
 void addHeightEvent(lv_event_t *e);
 void subHeightEvent(lv_event_t *e);
+void toggle_SAE_SI_Event(lv_event_t *e);
+void resetEvent(lv_event_t *e);
 
 
 // HMI class implementation
@@ -96,6 +98,28 @@ void HMI::setupExoSettings()
 {
     Serial.println("HMI setupExoSettings called");
     // Create the exo settings screen objects
+
+    // title, sae_si toggle button and reset button
+    exo_settings.label_title = lv_label_create(exo_settings.tile_2);
+    lv_label_set_text(exo_settings.label_title, "Exo Settings");
+    lv_obj_set_style_text_color(exo_settings.label_title, lv_color_white(), 0);
+    // lv_obj_add_style(exo_settings.label_mass, style_base, 0);
+    lv_obj_set_size(exo_settings.label_mass, TITLE_SIZE_W, TITLE_SIZE_H);
+
+    exo_settings.btn_SAE_SI = lv_btn_create(exo_settings.tile_2);
+    lv_obj_set_size(exo_settings.btn_SAE_SI, SAE_SI_BUTTON_SIZE, SAE_SI_BUTTON_SIZE);
+    exo_settings.label_SAE_SI = lv_label_create(exo_settings.btn_SAE_SI);
+    update_SAE_SI_Label();
+    lv_obj_center(exo_settings.label_SAE_SI);
+    lv_obj_add_event_cb(exo_settings.btn_SAE_SI, toggle_SAE_SI_Event, LV_EVENT_ALL, NULL);
+
+    exo_settings.btn_reset = lv_btn_create(exo_settings.tile_2);
+    lv_obj_set_size(exo_settings.btn_reset, RESET_BUTTON_WIDTH, RESET_BUTTON_HEIGHT);
+    exo_settings.label_reset = lv_label_create(exo_settings.btn_reset);
+    lv_label_set_text(exo_settings.label_reset, "Reset");
+    lv_obj_center(exo_settings.label_reset);
+    lv_obj_add_event_cb(exo_settings.btn_reset, resetEvent, LV_EVENT_ALL, NULL);
+
     // ------------------------------------------mass related objects------------------------------------------------
     exo_settings.label_mass = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_mass, "Mass");
@@ -104,7 +128,7 @@ void HMI::setupExoSettings()
     lv_obj_set_size(exo_settings.label_mass, LABEL_SIZE_W, LABEL_SIZE_H);
     
     exo_settings.label_mass_value = lv_label_create(exo_settings.tile_2);
-    lv_label_set_text(exo_settings.label_mass_value, "0.0 kg");
+    updateMassLabel();
     lv_obj_set_style_text_color(exo_settings.label_mass_value, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_mass_value, style_base, 0);
     lv_obj_set_size(exo_settings.label_mass_value, LABEL_SIZE_W, LABEL_SIZE_H);
@@ -133,7 +157,7 @@ void HMI::setupExoSettings()
     lv_obj_set_size(exo_settings.label_charge_mass, LABEL_SIZE_W, LABEL_SIZE_H);
 
     exo_settings.label_charge_mass_value = lv_label_create(exo_settings.tile_2);
-    lv_label_set_text(exo_settings.label_charge_mass_value, "0.0 kg");
+    updateChargeMassLabel();
     lv_obj_set_style_text_color(exo_settings.label_charge_mass_value, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_charge_mass_value, style_base, 0);
     lv_obj_set_size(exo_settings.label_charge_mass_value, LABEL_SIZE_W, LABEL_SIZE_H);
@@ -162,7 +186,7 @@ void HMI::setupExoSettings()
     lv_obj_set_size(exo_settings.label_height, LABEL_SIZE_W, LABEL_SIZE_H);
 
     exo_settings.label_height_value = lv_label_create(exo_settings.tile_2);
-    lv_label_set_text(exo_settings.label_height_value, "0.0 m");
+    updateHeightLabel();
     lv_obj_set_style_text_color(exo_settings.label_height_value, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_height_value, style_base, 0);
     lv_obj_set_size(exo_settings.label_height_value, LABEL_SIZE_W, LABEL_SIZE_H);
@@ -197,6 +221,12 @@ void HMI::setupExoSettings()
     lv_slider_set_value(exo_settings.slider_motor_power, 100, LV_ANIM_OFF);
     
     // Set positions of objects
+    // title
+    lv_obj_set_pos(exo_settings.label_title, 10, 0);
+
+    // SAE SI button
+    lv_obj_align_to(exo_settings.btn_SAE_SI, exo_settings.label_title, LV_ALIGN_CENTER, 200, 0);
+
     // mass related objects
     lv_obj_set_pos(exo_settings.label_mass, 10, ROW * 1);  
     lv_obj_align_to(exo_settings.label_mass_value, exo_settings.label_mass, LV_ALIGN_CENTER, 0, 30);
@@ -218,6 +248,9 @@ void HMI::setupExoSettings()
     // motor power related objects
     lv_obj_set_pos(exo_settings.label_motor_power, 10, ROW * 4);
     lv_obj_align_to(exo_settings.slider_motor_power, exo_settings.label_motor_power, LV_ALIGN_CENTER, 0, 30);
+
+    // reset button
+    lv_obj_set_pos(exo_settings.btn_reset, 10, ROW * 5);
     
 }
 
@@ -261,43 +294,25 @@ void HMI::updateBatteryLabel()
 void HMI::addMass()
 {
     // change the mass value
-    mass++;
+    mass = round(mass + 1);
     
     // update the mass label
     updateMassLabel();
 
     // Send the new mass value to the exoskeleton
-    WifiServer* wifi = WifiServer::GetInstance();
-
-    MessageBuilder message;
-    message.add(EnumInformations::MASSE, mass);
-    int length = message.buildMessage();
-    Serial.print("Message length: ");
-    Serial.println(length);
-
-    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
-
+    sendSettingsExo();
 }
 
 void HMI::subMass()
 {
     // change the mass value
-    mass--;
+    mass = round(mass - 1);
     
     // update the mass label
     updateMassLabel();
 
     // Send the new mass value to the exoskeleton
-    WifiServer* wifi = WifiServer::GetInstance();
-
-    MessageBuilder message;
-    message.add(EnumInformations::MASSE, mass);
-    int length = message.buildMessage();
-    Serial.print("Message length: ");
-    Serial.println(length);
-
-    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
-
+    sendSettingsExo();
 }
 
 void HMI::updateMassLabel()
@@ -318,43 +333,25 @@ void HMI::updateMassLabel()
 void HMI::addChargeMass()
 {
     // change the charge mass value
-    charge_mass++;
+    charge_mass = round(charge_mass + 1);
     
     // update the charge mass label
     updateChargeMassLabel();
 
     // Send the new charge mass value to the exoskeleton
-    WifiServer* wifi = WifiServer::GetInstance();
-
-    MessageBuilder message;
-    message.add(EnumInformations::CHARGE_MASSE, charge_mass);
-    int length = message.buildMessage();
-    Serial.print("Message length: ");
-    Serial.println(length);
-
-    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
-
+    sendSettingsExo();
 }
 
 void HMI::subChargeMass()
 {
     // change the charge mass value
-    charge_mass--;
+    charge_mass = round(charge_mass - 1);
     
     // update the charge mass label
     updateChargeMassLabel();
 
     // Send the new charge mass value to the exoskeleton
-    WifiServer* wifi = WifiServer::GetInstance();
-
-    MessageBuilder message;
-    message.add(EnumInformations::CHARGE_MASSE, charge_mass);
-    int length = message.buildMessage();
-    Serial.print("Message length: ");
-    Serial.println(length);
-
-    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
-    
+    sendSettingsExo(); 
 }
 
 void HMI::updateChargeMassLabel()
@@ -375,43 +372,25 @@ void HMI::updateChargeMassLabel()
 void HMI::addHeight()
 {
     // change the height value
-    height++;
+    height = round(height + 1);
     
     // update the height label
     updateHeightLabel();
 
     // Send the new height value to the exoskeleton
-    WifiServer* wifi = WifiServer::GetInstance();
-
-    MessageBuilder message;
-    message.add(EnumInformations::HEIGHT, height);
-    int length = message.buildMessage();
-    Serial.print("Message length: ");
-    Serial.println(length);
-
-    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
-
+    sendSettingsExo();
 }
 
 void HMI::subHeight()
 {
     // change the height value
-    height--;
+    height = round(height - 1);
     
     // update the height label
     updateHeightLabel();
 
     // Send the new height value to the exoskeleton
-    WifiServer* wifi = WifiServer::GetInstance();
-
-    MessageBuilder message;
-    message.add(EnumInformations::HEIGHT, height);
-    int length = message.buildMessage();
-    Serial.print("Message length: ");
-    Serial.println(length);
-
-    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
-
+    sendSettingsExo();
 }
 
 void HMI::updateHeightLabel()
@@ -429,6 +408,81 @@ void HMI::updateHeightLabel()
         sprintf(buffer, "%d'%d\"", feet, inches); 
     }
     lv_label_set_text(exo_settings.label_height_value, buffer);
+}
+
+void HMI::toggle_SAE_SI()
+{
+    // change the SAE_SI value
+    SAE_SI = !SAE_SI;
+    
+    // update the SAE_SI label
+    if (SAE_SI)
+    {
+        // change values to SI units
+        mass *= 0.453592; // convert lbs to kg
+        charge_mass *= 0.453592; // convert lbs to kg
+        height *= 0.0254; // convert inches to m
+    }
+    else
+    {
+        // change values to SAE units
+        mass *= 2.20462; // convert kg to lbs
+        charge_mass *= 2.20462; // convert kg to lbs
+        height *= 39.3701; // convert m to inches
+    }
+
+    // update the labels
+    update_SAE_SI_Label();
+    updateMassLabel();
+    updateChargeMassLabel();
+    updateHeightLabel();
+
+}
+
+void HMI::update_SAE_SI_Label()
+{
+    // Update the SAE_SI label with the current value
+    if (SAE_SI)
+    {
+        lv_label_set_text(exo_settings.label_SAE_SI, "SI");
+    }
+    else
+    {
+        lv_label_set_text(exo_settings.label_SAE_SI, "SAE");
+    }
+}
+
+void HMI::resetExoSettings()
+{
+    // reset the exoskeleton settings to default values
+    mass = DEFAULT_MASSE;
+    charge_mass = DEFAULT_CHARGE_MASSE;
+    height = DEFAULT_HEIGHT;
+    SAE_SI = false;
+
+    // update the labels
+    updateMassLabel();
+    updateChargeMassLabel();
+    updateHeightLabel();
+
+    // send new data to the exo
+    sendSettingsExo();
+}
+
+void HMI::sendSettingsExo()
+{
+    // Send the new height value to the exoskeleton
+    // WifiServer* wifi = WifiServer::GetInstance();
+
+    // MessageBuilder message;
+    // message.add(EnumInformations::MASSE, mass);
+    // message.add(EnumInformations::CHARGE_MASSE, charge_mass);
+    // message.add(EnumInformations::HEIGHT, height);
+    // int length = message.buildMessage();
+    // Serial.print("Message length: ");
+    // Serial.println(length);
+
+    // wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
 }
 
 void HMI::update()
@@ -453,10 +507,6 @@ void HMI::update()
         // update the connection label
         if (true) // TODO: replace with the actual connection status check
         {
-            if (strcmp(text, "Connecting") == 0)
-            {
-                lv_label_set_text(menu.label_connection, "Connecting.");
-            }
             if (strcmp(text, "Connecting") == 0)
             {
                 lv_label_set_text(menu.label_connection, "Connecting.");
@@ -563,5 +613,29 @@ void subHeightEvent(lv_event_t *e)
     {
         // Call the add mass function
         HMI::getInstance()->subHeight();
+    }
+}
+
+void toggle_SAE_SI_Event(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->toggle_SAE_SI();
+    }
+}
+
+void resetEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->resetExoSettings();
     }
 }

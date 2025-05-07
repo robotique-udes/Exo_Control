@@ -10,6 +10,9 @@
 #define DEFAULT_CHARGE_MASSE 0.0 // in lbs
 
 #define INCREMENT_BUTTON_SIZE 50
+#define SAE_SI_BUTTON_SIZE 50
+#define RESET_BUTTON_HEIGHT 30
+#define RESET_BUTTON_WIDTH 70
 #define TITLE_SIZE_W 150
 #define TITLE_SIZE_H 50
 #define LABEL_SIZE_W 100
@@ -27,6 +30,7 @@ struct page_exo_settings
 {
     
     lv_obj_t * tile_2;
+    lv_obj_t * label_title;
 
     lv_obj_t * label_mass;
     lv_obj_t * label_mass_value;
@@ -52,10 +56,12 @@ struct page_exo_settings
     lv_obj_t * label_motor_power;
     lv_obj_t * slider_motor_power;
 
-    lv_obj_t * btn_bool_SAE_SI;
+    lv_obj_t * btn_SAE_SI;
+    lv_obj_t * label_SAE_SI;
 
     lv_obj_t * btn_profiles;
     lv_obj_t * btn_reset;
+    lv_obj_t * label_reset;
     
 };
 
@@ -115,7 +121,7 @@ class HMI
         float charge_mass = DEFAULT_CHARGE_MASSE;
         float height = DEFAULT_HEIGHT;
         float motor_power = 0.0;
-        bool SAE_SI = false;
+        bool SAE_SI = false; // false for SAE, true for SI
         bool is_connected_exo = false;
         float brightness = 0.0;
         float sound = 0.0;
@@ -140,7 +146,9 @@ class HMI
         void updateBrightnessLabel();
         void updateSoundLabel();
         void updateConnectionLabel();
+        void update_SAE_SI_Label();
         
+        void sendSettingsExo();
         
         public:
         HMI();
@@ -153,5 +161,6 @@ class HMI
         void addHeight();
         void subHeight();
         void toggle_SAE_SI();
+        void resetExoSettings();
         static HMI* getInstance();
 };
