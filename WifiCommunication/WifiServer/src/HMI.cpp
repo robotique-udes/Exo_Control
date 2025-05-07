@@ -103,8 +103,8 @@ void HMI::setupExoSettings()
     exo_settings.label_title = lv_label_create(exo_settings.tile_2);
     lv_label_set_text(exo_settings.label_title, "Exo Settings");
     lv_obj_set_style_text_color(exo_settings.label_title, lv_color_white(), 0);
-    // lv_obj_add_style(exo_settings.label_mass, style_base, 0);
-    lv_obj_set_size(exo_settings.label_mass, TITLE_SIZE_W, TITLE_SIZE_H);
+    // lv_obj_add_style(exo_settings.label_title, style_base, 0);
+    lv_obj_set_size(exo_settings.label_title, TITLE_SIZE_W, TITLE_SIZE_H);
 
     exo_settings.btn_SAE_SI = lv_btn_create(exo_settings.tile_2);
     lv_obj_set_size(exo_settings.btn_SAE_SI, SAE_SI_BUTTON_SIZE, SAE_SI_BUTTON_SIZE);
@@ -216,16 +216,16 @@ void HMI::setupExoSettings()
 
     exo_settings.slider_motor_power = lv_slider_create(exo_settings.tile_2);
     // lv_obj_add_style(exo_settings.slider_motor_power, style_base, 0);
-    lv_obj_set_size(exo_settings.slider_motor_power, LABEL_SIZE_W, LABEL_SIZE_H);
+    lv_obj_set_size(exo_settings.slider_motor_power, POWER_SLIDER_WIDTH, POWER_SLIDER_HEIGHT);
     lv_slider_set_range(exo_settings.slider_motor_power, 0, 200);
     lv_slider_set_value(exo_settings.slider_motor_power, 100, LV_ANIM_OFF);
     
     // Set positions of objects
     // title
-    lv_obj_set_pos(exo_settings.label_title, 10, 0);
+    lv_obj_set_pos(exo_settings.label_title, 10, 20);
 
     // SAE SI button
-    lv_obj_align_to(exo_settings.btn_SAE_SI, exo_settings.label_title, LV_ALIGN_CENTER, 200, 0);
+    lv_obj_set_pos(exo_settings.btn_SAE_SI, 125, 5);
 
     // mass related objects
     lv_obj_set_pos(exo_settings.label_mass, 10, ROW * 1);  
@@ -247,10 +247,10 @@ void HMI::setupExoSettings()
 
     // motor power related objects
     lv_obj_set_pos(exo_settings.label_motor_power, 10, ROW * 4);
-    lv_obj_align_to(exo_settings.slider_motor_power, exo_settings.label_motor_power, LV_ALIGN_CENTER, 0, 30);
+    lv_obj_set_pos(exo_settings.slider_motor_power, 20, ROW * 4 + 30);
 
     // reset button
-    lv_obj_set_pos(exo_settings.btn_reset, 10, ROW * 5);
+    lv_obj_set_pos(exo_settings.btn_reset, 10, ROW * 5 + 20);
     
 }
 
@@ -399,7 +399,7 @@ void HMI::updateHeightLabel()
     char buffer[30];
     if (SAE_SI)
     {
-        sprintf(buffer, "%.1f m", height);
+        sprintf(buffer, "%.1f cm", height);
     }
     else
     {
@@ -421,14 +421,14 @@ void HMI::toggle_SAE_SI()
         // change values to SI units
         mass *= 0.453592; // convert lbs to kg
         charge_mass *= 0.453592; // convert lbs to kg
-        height *= 0.0254; // convert inches to m
+        height *= 2.54; // convert inches to cm
     }
     else
     {
         // change values to SAE units
-        mass *= 2.20462; // convert kg to lbs
-        charge_mass *= 2.20462; // convert kg to lbs
-        height *= 39.3701; // convert m to inches
+        mass /= 0.453592; // convert kg to lbs
+        charge_mass /= 0.453592; // convert kg to lbs
+        height /= 2.54; // convert cm to inches
     }
 
     // update the labels
@@ -472,17 +472,17 @@ void HMI::resetExoSettings()
 void HMI::sendSettingsExo()
 {
     // Send the new height value to the exoskeleton
-    // WifiServer* wifi = WifiServer::GetInstance();
+    WifiServer* wifi = WifiServer::GetInstance();
 
-    // MessageBuilder message;
-    // message.add(EnumInformations::MASSE, mass);
-    // message.add(EnumInformations::CHARGE_MASSE, charge_mass);
-    // message.add(EnumInformations::HEIGHT, height);
-    // int length = message.buildMessage();
-    // Serial.print("Message length: ");
-    // Serial.println(length);
+    MessageBuilder message;
+    message.add(EnumInformations::MASSE, mass);
+    message.add(EnumInformations::CHARGE_MASSE, charge_mass);
+    message.add(EnumInformations::HEIGHT, height);
+    int length = message.buildMessage();
+    Serial.print("Message length: ");
+    Serial.println(length);
 
-    // wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
+    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
 }
 
 void HMI::update()
