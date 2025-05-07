@@ -7,7 +7,7 @@ void setup() {
   delay(3000);
 
   watch.begin();
-  watch_interface = new HMI();
+  watch_interface = HMI::getInstance();
 
   WifiServer::GetInstance()->Initialise();
 

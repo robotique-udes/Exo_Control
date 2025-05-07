@@ -5,8 +5,9 @@
 
 // #include <WifiServer.h>
 
-#define DEFAULT_MASSE "170"
-#define DEFAULT_HEIGHT "150"
+#define DEFAULT_MASSE 175.0 // in lbs
+#define DEFAULT_HEIGHT  66 // in inches
+#define DEFAULT_CHARGE_MASSE 0.0 // in lbs
 
 #define INCREMENT_BUTTON_SIZE 50
 #define TITLE_SIZE_W 150
@@ -110,14 +111,16 @@ class HMI
         lv_obj_t * screen_watch_settings;
         lv_obj_t * screen_profiles;
 
-        float mass = 0.0;
-        float charge_mass = 0.0;
-        float height = 0.0;
+        float mass = DEFAULT_MASSE;
+        float charge_mass = DEFAULT_CHARGE_MASSE;
+        float height = DEFAULT_HEIGHT;
         float motor_power = 0.0;
         bool SAE_SI = false;
         bool is_connected_exo = false;
         float brightness = 0.0;
         float sound = 0.0;
+
+        static HMI* hmi_instance;
 
         //WifiServer * wifiserver = WifiServer::GetInstance();
 
@@ -129,25 +132,26 @@ class HMI
         void setupWatchSettings();
         void setupProfiles();
 
-        void addMass();
-        void subMass();
         void updateMassLabel();
-        void addChargeMass();
-        void subChargeMass();
         void updateChargeMassLabel();
-        void addHeight();
-        void subHeight();
-        void updateSAE_SI();
         void updateHeightLabel();
         void updateMotorPowerLabel();
         void updateBatteryLabel();
         void updateBrightnessLabel();
         void updateSoundLabel();
         void updateConnectionLabel();
-
         
-    public:
+        
+        public:
         HMI();
         void setup();
         void update();
+        void addMass();
+        void subMass();
+        void addChargeMass();
+        void subChargeMass();
+        void addHeight();
+        void subHeight();
+        void toggle_SAE_SI();
+        static HMI* getInstance();
 };

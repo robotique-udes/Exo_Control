@@ -1,5 +1,25 @@
 #include "HMI.h"
 
+// Declare event handlers
+void addMassEvent(lv_event_t *e);
+void subMassEvent(lv_event_t *e);
+void addChargeMassEvent(lv_event_t *e);
+void subChargeMassEvent(lv_event_t *e);
+void addHeightEvent(lv_event_t *e);
+void subHeightEvent(lv_event_t *e);
+
+
+// HMI class implementation
+
+HMI* HMI::hmi_instance = nullptr;
+HMI* HMI::getInstance()
+{
+    if (hmi_instance == nullptr)
+    {
+        hmi_instance = new HMI();
+    }
+    return hmi_instance;
+}
 
 HMI::HMI()
 {
@@ -95,6 +115,7 @@ void HMI::setupExoSettings()
     exo_settings.label_add_mass = lv_label_create(exo_settings.btn_add_mass);
     lv_label_set_text(exo_settings.label_add_mass, "+");
     lv_obj_center(exo_settings.label_add_mass);
+    lv_obj_add_event_cb(exo_settings.btn_add_mass, addMassEvent, LV_EVENT_ALL, NULL); 
     
     exo_settings.btn_sub_mass = lv_btn_create(exo_settings.tile_2);
     // lv_obj_add_style(exo_settings.btn_sub_mass, style_base, 0);
@@ -102,6 +123,7 @@ void HMI::setupExoSettings()
     exo_settings.label_sub_mass = lv_label_create(exo_settings.btn_sub_mass);
     lv_label_set_text(exo_settings.label_sub_mass, "-");
     lv_obj_center(exo_settings.label_sub_mass);
+    lv_obj_add_event_cb(exo_settings.btn_sub_mass, subMassEvent, LV_EVENT_ALL, NULL);
 
     // ------------------------------------------charge mass related objects------------------------------------------------
     exo_settings.label_charge_mass = lv_label_create(exo_settings.tile_2);
@@ -122,6 +144,7 @@ void HMI::setupExoSettings()
     exo_settings.label_add_charge_mass = lv_label_create(exo_settings.btn_add_charge_mass);
     lv_label_set_text(exo_settings.label_add_charge_mass, "+");
     lv_obj_center(exo_settings.label_add_charge_mass);
+    lv_obj_add_event_cb(exo_settings.btn_add_charge_mass, addChargeMassEvent, LV_EVENT_ALL, NULL);
 
     exo_settings.btn_sub_charge_mass = lv_btn_create(exo_settings.tile_2);
     // lv_obj_add_style(exo_settings.btn_sub_charge_mass, style_base, 0);
@@ -129,6 +152,7 @@ void HMI::setupExoSettings()
     exo_settings.label_sub_charge_mass = lv_label_create(exo_settings.btn_sub_charge_mass);
     lv_label_set_text(exo_settings.label_sub_charge_mass, "-");
     lv_obj_center(exo_settings.label_sub_charge_mass);
+    lv_obj_add_event_cb(exo_settings.btn_sub_charge_mass, subChargeMassEvent, LV_EVENT_ALL, NULL);
 
     // ------------------------------------------height related objects------------------------------------------------
     exo_settings.label_height = lv_label_create(exo_settings.tile_2);
@@ -149,6 +173,7 @@ void HMI::setupExoSettings()
     exo_settings.label_add_height = lv_label_create(exo_settings.btn_add_height);
     lv_label_set_text(exo_settings.label_add_height, "+");
     lv_obj_center(exo_settings.label_add_height);
+    lv_obj_add_event_cb(exo_settings.btn_add_height, addHeightEvent, LV_EVENT_ALL, NULL);
 
     exo_settings.btn_sub_height = lv_btn_create(exo_settings.tile_2);
     // lv_obj_add_style(exo_settings.btn_sub_height, style_base, 0);
@@ -156,6 +181,7 @@ void HMI::setupExoSettings()
     exo_settings.label_sub_height = lv_label_create(exo_settings.btn_sub_height);
     lv_label_set_text(exo_settings.label_sub_height, "-");
     lv_obj_center(exo_settings.label_sub_height);
+    lv_obj_add_event_cb(exo_settings.btn_sub_height, subHeightEvent, LV_EVENT_ALL, NULL);
 
     // ------------------------------------------motor power related objects------------------------------------------------
     exo_settings.label_motor_power = lv_label_create(exo_settings.tile_2);
@@ -232,13 +258,186 @@ void HMI::updateBatteryLabel()
     lv_label_set_text(info.label_watch_battery, buffer);
 }
 
+void HMI::addMass()
+{
+    // change the mass value
+    mass++;
+    
+    // update the mass label
+    updateMassLabel();
+
+    // Send the new mass value to the exoskeleton
+    WifiServer* wifi = WifiServer::GetInstance();
+
+    MessageBuilder message;
+    message.add(EnumInformations::MASSE, mass);
+    int length = message.buildMessage();
+    Serial.print("Message length: ");
+    Serial.println(length);
+
+    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
+
+}
+
+void HMI::subMass()
+{
+    // change the mass value
+    mass--;
+    
+    // update the mass label
+    updateMassLabel();
+
+    // Send the new mass value to the exoskeleton
+    WifiServer* wifi = WifiServer::GetInstance();
+
+    MessageBuilder message;
+    message.add(EnumInformations::MASSE, mass);
+    int length = message.buildMessage();
+    Serial.print("Message length: ");
+    Serial.println(length);
+
+    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
+
+}
+
+void HMI::updateMassLabel()
+{
+    // Update the mass label with the current value
+    char buffer[30];
+    if (SAE_SI)
+    {
+        sprintf(buffer, "%.1f kg", mass);
+    }
+    else
+    {
+        sprintf(buffer, "%.1f lbs", mass);
+    }
+    lv_label_set_text(exo_settings.label_mass_value, buffer);
+}
+
+void HMI::addChargeMass()
+{
+    // change the charge mass value
+    charge_mass++;
+    
+    // update the charge mass label
+    updateChargeMassLabel();
+
+    // Send the new charge mass value to the exoskeleton
+    WifiServer* wifi = WifiServer::GetInstance();
+
+    MessageBuilder message;
+    message.add(EnumInformations::CHARGE_MASSE, charge_mass);
+    int length = message.buildMessage();
+    Serial.print("Message length: ");
+    Serial.println(length);
+
+    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
+
+}
+
+void HMI::subChargeMass()
+{
+    // change the charge mass value
+    charge_mass--;
+    
+    // update the charge mass label
+    updateChargeMassLabel();
+
+    // Send the new charge mass value to the exoskeleton
+    WifiServer* wifi = WifiServer::GetInstance();
+
+    MessageBuilder message;
+    message.add(EnumInformations::CHARGE_MASSE, charge_mass);
+    int length = message.buildMessage();
+    Serial.print("Message length: ");
+    Serial.println(length);
+
+    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
+    
+}
+
+void HMI::updateChargeMassLabel()
+{
+    // Update the charge mass label with the current value
+    char buffer[30];
+    if (SAE_SI)
+    {
+        sprintf(buffer, "%.1f kg", charge_mass);
+    }
+    else
+    {
+        sprintf(buffer, "%.1f lbs", charge_mass);
+    }
+    lv_label_set_text(exo_settings.label_charge_mass_value, buffer);
+}
+
+void HMI::addHeight()
+{
+    // change the height value
+    height++;
+    
+    // update the height label
+    updateHeightLabel();
+
+    // Send the new height value to the exoskeleton
+    WifiServer* wifi = WifiServer::GetInstance();
+
+    MessageBuilder message;
+    message.add(EnumInformations::HEIGHT, height);
+    int length = message.buildMessage();
+    Serial.print("Message length: ");
+    Serial.println(length);
+
+    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
+
+}
+
+void HMI::subHeight()
+{
+    // change the height value
+    height--;
+    
+    // update the height label
+    updateHeightLabel();
+
+    // Send the new height value to the exoskeleton
+    WifiServer* wifi = WifiServer::GetInstance();
+
+    MessageBuilder message;
+    message.add(EnumInformations::HEIGHT, height);
+    int length = message.buildMessage();
+    Serial.print("Message length: ");
+    Serial.println(length);
+
+    wifi->SendData(message.getMessage(), length, EnumIPType::EXOSKELETON);
+
+}
+
+void HMI::updateHeightLabel()
+{
+    // Update the height label with the current value
+    char buffer[30];
+    if (SAE_SI)
+    {
+        sprintf(buffer, "%.1f m", height);
+    }
+    else
+    {
+        int feet = (int)(height / 12);
+        int inches = (int)(height - feet * 12);
+        sprintf(buffer, "%d'%d\"", feet, inches); 
+    }
+    lv_label_set_text(exo_settings.label_height_value, buffer);
+}
+
 void HMI::update()
 {
     // Call this function in the main loop to update the HMI. The HMI will handle the display by itself.
     //Serial.println("HMI update called");
     // time count
     static unsigned long previousMillisConnection = 0; 
-    static unsigned long previousMillisBattery = 0;
+    static unsigned long previousMillisBattery = BATTERY_TIME_LAPSE;
     unsigned long currentMillis = millis();
     //Serial.println(currentMillis);
     WifiServer * wifiserver = WifiServer::GetInstance();
@@ -292,4 +491,77 @@ void HMI::update()
     }
 
     lv_task_handler();
+}
+
+// button event handlers definitions
+void addMassEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->addMass();
+    }
+}
+
+void subMassEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->subMass();
+    }
+}
+
+void addChargeMassEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->addChargeMass();
+    }
+}
+
+void subChargeMassEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->subChargeMass();
+    }
+}
+
+void addHeightEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->addHeight();
+    }
+}
+
+void subHeightEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->subHeight();
+    }
 }

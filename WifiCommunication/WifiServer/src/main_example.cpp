@@ -211,10 +211,10 @@
 // //   Serial.println("Going to build the message");
 // //   int length = message.buildMessage();
 // //   Serial.println("Build message finished");
-// //   IPAddress address;
-// //   wifiserver->retrieveInformation(EnumIPType::EXOSKELETON, &address);
-// //   wifiserver->SendData(message.getMessage(), length, address);
-// //   Serial.print("Message to: ");
+//   IPAddress address;
+//   wifiserver->retrieveInformation(EnumIPType::EXOSKELETON, &address);
+//   wifiserver->SendData(message.getMessage(), length, address);
+//   Serial.print("Message to: ");
 // //   Serial.println(address.toString());
 // //   unsigned char *mess = message.getMessage();
 // //   for(int i = 0; i < length; i++)
