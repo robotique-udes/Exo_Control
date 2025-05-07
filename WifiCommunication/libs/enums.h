@@ -50,6 +50,7 @@ enum class EnumMotorPosition
 enum class EnumInformations
 {
     MASSE,
+    CHARGE_MASSE,
     HEIGHT,
     NONE
 };
