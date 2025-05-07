@@ -43,7 +43,9 @@ bool CheckMacAddressInList(WifiServer* wifiserver, uint8_t* mac, int *positionIn
   for(int i = 1; i < wifiserver->IPsListVector.size(); i++)//i=1 for the server info in the list[0]
   {
     bool perfectMatch = true;
-    *positionInList = i;
+
+    if(positionInList != nullptr)
+      *positionInList = i;
 
     for(int j = 0; j < 6; j++)
     {
@@ -79,6 +81,8 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
   {
     tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
     IpTypeList newClient;
+
+    Serial.println("Checking in the list of connected clients");
 
     if(CheckMacAddressInList(wifiserver, station.mac))
     {
@@ -147,10 +151,12 @@ void WiFiStationDisconnected(arduino_event_id_t event, arduino_event_info_t info
       }
 
       int positionList = -1;
-      if(CheckMacAddressInList(wifiserver, mac))
+      if(CheckMacAddressInList(wifiserver, mac, &positionList))
       {
         Serial.println("This user disconnected and will be removed");
-        wifiserver->IPsListVector.erase(wifiserver->IPsListVector.begin() + positionList);
+
+        if(positionList >= 0)
+          wifiserver->IPsListVector.erase(wifiserver->IPsListVector.begin() + positionList);
 
         break;
       }
