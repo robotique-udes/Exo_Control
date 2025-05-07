@@ -119,8 +119,6 @@ void WiFiStationAssignation(arduino_event_id_t event, arduino_event_info_t info)
   wifiserver->readyToSendHandShake = 1;
 }
 
-
-
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
 {
   Serial.println("Station connected IP Add = ");
@@ -269,6 +267,19 @@ void WifiServer::handShake()
       SendData(mess, length, IPsListVector.at(j).ipAdresse);
     }
   }
+}
+
+bool WifiServer::isExoConnected()
+{
+  for(int j = 0; j < IPsListVector.size(); j++)
+  {
+    if(IPsListVector.at(j).ipType == EnumIPType::EXOSKELETON)
+    {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /// @brief Trying to find key in dictionary. Return value 0 == good, -1 failed conversion, -2 not found

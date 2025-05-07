@@ -71,6 +71,7 @@ public:
     ~WifiServer();
     int Initialise();
     int DataAvailable();
+    bool isExoConnected();
     int ReadData(int);
     int SendData(unsigned char* packet, int length, IPAddress ipAddress);
     int SendData(unsigned char * packet, int length, EnumIPType ipType);
