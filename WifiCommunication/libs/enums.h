@@ -52,6 +52,7 @@ enum class EnumInformations
     MASSE,
     CHARGE_MASSE,
     HEIGHT,
+    MOTOR_POWER,
     NONE
 };
 

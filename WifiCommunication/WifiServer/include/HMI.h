@@ -8,6 +8,7 @@
 #define DEFAULT_MASSE 175.0 // in lbs
 #define DEFAULT_HEIGHT  66 // in inches
 #define DEFAULT_CHARGE_MASSE 0.0 // in lbs
+#define DEFAULT_MOTOR_POWER 1.0
 
 #define INCREMENT_BUTTON_SIZE 50
 #define SAE_SI_BUTTON_SIZE 50
@@ -122,7 +123,7 @@ class HMI
         float mass = DEFAULT_MASSE;
         float charge_mass = DEFAULT_CHARGE_MASSE;
         float height = DEFAULT_HEIGHT;
-        float motor_power = 0.0;
+        float motor_power = DEFAULT_MOTOR_POWER;
         bool SAE_SI = false; // false for SAE, true for SI
         bool is_connected_exo = false;
         float brightness = 0.0;
@@ -162,6 +163,7 @@ class HMI
         void subChargeMass();
         void addHeight();
         void subHeight();
+        void changeMotorPower();
         void toggle_SAE_SI();
         void resetExoSettings();
         static HMI* getInstance();

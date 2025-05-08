@@ -7,6 +7,7 @@ void addChargeMassEvent(lv_event_t *e);
 void subChargeMassEvent(lv_event_t *e);
 void addHeightEvent(lv_event_t *e);
 void subHeightEvent(lv_event_t *e);
+void motorPowerEvent(lv_event_t *e);
 void toggle_SAE_SI_Event(lv_event_t *e);
 void resetEvent(lv_event_t *e);
 
@@ -209,7 +210,7 @@ void HMI::setupExoSettings()
 
     // ------------------------------------------motor power related objects------------------------------------------------
     exo_settings.label_motor_power = lv_label_create(exo_settings.tile_2);
-    lv_label_set_text(exo_settings.label_motor_power, "Motor Power");
+    updateMotorPowerLabel();
     lv_obj_set_style_text_color(exo_settings.label_motor_power, lv_color_white(), 0);
     // lv_obj_add_style(exo_settings.label_motor_power, style_base, 0);
     lv_obj_set_size(exo_settings.label_motor_power, LABEL_SIZE_W, LABEL_SIZE_H);
@@ -422,6 +423,34 @@ void HMI::updateHeightLabel()
     lv_label_set_text(exo_settings.label_height_value, buffer);
 }
 
+void HMI::changeMotorPower()
+{
+    // change the motor power value
+    motor_power = (float)lv_slider_get_value(exo_settings.slider_motor_power) / 100.0f;
+    if (motor_power < 0)
+    {
+        motor_power = 0;
+    }
+    else if (motor_power > 2)
+    {
+        motor_power = 2;
+    }
+    
+    // update the motor power label
+    updateMotorPowerLabel();
+
+    // Send the new motor power value to the exoskeleton
+    sendSettingsExo();
+}
+
+void HMI::updateMotorPowerLabel()
+{
+    // Update the motor power label with the current value
+    char buffer[30];
+    sprintf(buffer, "Motor Power   %d%%", (int)(motor_power * 100));
+    lv_label_set_text(exo_settings.label_motor_power, buffer);
+}
+
 void HMI::toggle_SAE_SI()
 {
     // change the SAE_SI value
@@ -470,12 +499,17 @@ void HMI::resetExoSettings()
     mass = DEFAULT_MASSE;
     charge_mass = DEFAULT_CHARGE_MASSE;
     height = DEFAULT_HEIGHT;
+    motor_power = DEFAULT_MOTOR_POWER;
     SAE_SI = false;
 
     // update the labels
     updateMassLabel();
     updateChargeMassLabel();
     updateHeightLabel();
+    updateMotorPowerLabel();
+
+    // reset the slider value
+    lv_slider_set_value(exo_settings.slider_motor_power, DEFAULT_MOTOR_POWER * 100, LV_ANIM_OFF);
 
     // send new data to the exo
     sendSettingsExo();
@@ -487,9 +521,20 @@ void HMI::sendSettingsExo()
     WifiServer* wifi = WifiServer::GetInstance();
 
     MessageBuilder message;
-    message.add(EnumInformations::MASSE, mass);
-    message.add(EnumInformations::CHARGE_MASSE, charge_mass);
-    message.add(EnumInformations::HEIGHT, height);
+    // Add the exoskeleton settings to the message SI
+    if (SAE_SI)
+    {
+        message.add(EnumInformations::MASSE, mass);
+        message.add(EnumInformations::CHARGE_MASSE, charge_mass);
+        message.add(EnumInformations::HEIGHT, height / 100); // convert cm to m
+    }
+    else
+    {
+        message.add(EnumInformations::MASSE, mass * 0.453592); // convert lbs to kg
+        message.add(EnumInformations::CHARGE_MASSE, charge_mass * 0.453592); // convert lbs to kg
+        message.add(EnumInformations::HEIGHT, height * 2.54 / 100); // convert inches to m
+    }
+    message.add(EnumInformations::MOTOR_POWER, motor_power);
     int length = message.buildMessage();
     Serial.print("Message length: ");
     Serial.println(length);
@@ -625,6 +670,18 @@ void subHeightEvent(lv_event_t *e)
     {
         // Call the add mass function
         HMI::getInstance()->subHeight();
+    }
+}
+
+void motorPowerEvent(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *slider = lv_event_get_target(e);
+
+    if (code == LV_EVENT_VALUE_CHANGED)
+    {
+        // Call the add mass function
+        HMI::getInstance()->changeMotorPower();
     }
 }
 
