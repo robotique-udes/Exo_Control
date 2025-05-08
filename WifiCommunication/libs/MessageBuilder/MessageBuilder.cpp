@@ -166,7 +166,7 @@ int MessageBuilder::buildMessage()
     }
 
     JsonArray informations = doc.createNestedArray(NESTED_INFORMATIONS);
-    for (int i = 0; i < indexStructMotorPosition; i++)
+    for (int i = 0; i < indexStructInformations; i++)
     {
         if (structInfo[i].ID != EnumInformations::NONE)
         {
