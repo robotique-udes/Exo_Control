@@ -307,6 +307,10 @@ void HMI::subMass()
 {
     // change the mass value
     mass = round(mass - 1);
+    if (mass < 1)
+    {
+        mass = 1;
+    }
     
     // update the mass label
     updateMassLabel();
@@ -346,6 +350,10 @@ void HMI::subChargeMass()
 {
     // change the charge mass value
     charge_mass = round(charge_mass - 1);
+    if (charge_mass < 0)
+    {
+        charge_mass = 0;
+    }
     
     // update the charge mass label
     updateChargeMassLabel();
@@ -385,6 +393,10 @@ void HMI::subHeight()
 {
     // change the height value
     height = round(height - 1);
+    if (height < 1)
+    {
+        height = 1;
+    }
     
     // update the height label
     updateHeightLabel();
@@ -505,7 +517,7 @@ void HMI::update()
         //Serial.println("HMI update called: connected to exoskeleton");
         char * text = lv_label_get_text(menu.label_connection);
         // update the connection label
-        if (true) // TODO: replace with the actual connection status check
+        if (!WifiServer::GetInstance()->isExoConnected())
         {
             if (strcmp(text, "Connecting") == 0)
             {
@@ -525,7 +537,7 @@ void HMI::update()
             }
             else
             {
-                lv_label_set_text(menu.label_connection, "Unknown error");
+                lv_label_set_text(menu.label_connection, " Not connected");
             }
         }
         else 
