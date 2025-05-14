@@ -58,9 +58,9 @@ void Test::keyboardCommand()
     if (incomingByte == 'q')
     {
       Serial.println("MOTEUR_HANCHE_DROITE");
-      motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 2000);
+      //motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, 2000);
     }
-    else if (incomingByte == 'a')
+    /*else if (incomingByte == 'a')
     {
       Serial.println("MOTEUR_HANCHE_DROITE");
       motor->motorSetSpeed(MOTEUR_HANCHE_DROITE, -2000);
@@ -102,7 +102,7 @@ void Test::keyboardCommand()
       motor->motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
       motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 0);
       motor->motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
-    }
+    } */
     else if (incomingByte == '1')
     {
       Serial.println("Relais 1 ON");
@@ -182,7 +182,7 @@ void Test::keyboardCommand()
       Serial.println("Torque: ");
       logicHandler->printTorque();
       Serial.print("PWM: ");
-      motor->printPMW();
+      //motor->printPMW();
     }
     else if (incomingByte == 'n')
     {
