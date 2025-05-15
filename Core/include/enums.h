@@ -12,7 +12,8 @@ enum class EnumBnoPosition
     THIGH_R    =   1,
     TIBIA_L    =   2,
     TIBIA_R    =   3,
-    EXO_BACK   =   4
+    EXO_BACK   =   4,
+    NONE       =   5
 };
 
 enum class EnumBnoAngle
@@ -25,7 +26,8 @@ enum class EnumBnoAngle
     HIP_L      =   5,
     HIP_R      =   6,
     KNEE_L     =   7,
-    KNEE_R     =   8
+    KNEE_R     =   8,
+    NONE       =   9
 };
 
 enum class EnumMotorPosition
@@ -33,7 +35,17 @@ enum class EnumMotorPosition
     HIP_R  = 0,
     HIP_L  = 1,
     KNEE_R = 2,
-    KNEE_L = 3
+    KNEE_L = 3,
+    NONE
+};
+
+enum class EnumInformations
+{
+    MASSE_SUR_EXO,
+    CHARGE_MASSE,
+    HEIGHT,
+    MOTOR_POWER,
+    NONE
 };
 
 enum class EnumScreenCallback
@@ -59,5 +71,21 @@ enum MotorMode
     TORQUE = 1,
     VELOCITY = 2,
     POSITION = 3
+};
+
+enum class EnumIPType
+{
+    WATCH,
+    EXOSKELETON,
+    SIMULATION,
+    CLIENT_3,
+    CLIENT_4,
+    CLIENT_5,
+    CLIENT_6,
+    CLIENT_7,
+    CLIENT_8,
+    CLIENT_9,
+    UNKNOWN_TYPE,
+    NONE
 };
 #endif

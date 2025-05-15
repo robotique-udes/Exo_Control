@@ -16,6 +16,9 @@
 #include "dataCore.h"
 #include "bnoHandler.h"
 #include "logic.h"
+#include "WifiClient.h"
+#include "MessageBuilder/MessageBuilder.h"
+
 
 #define CAN_TX		5 //to do 
 #define CAN_RX		4 //to do 
@@ -30,6 +33,7 @@
 //TouchScreen &screen = TouchScreen::getInstance();
 //DataCore &settings = DataCore::getInstance();
 Motor testMoteur;
+WifiClient *wifiExo;
 
 
 //===============================================================================================================
@@ -56,6 +60,10 @@ void setup()
   } else {
       Serial.println("CAN bus failed!");
   }
+
+  // Initialize the WifiClient
+  wifiExo = WifiClient::GetInstance();
+
   // À ajouter dans la classe moteur 
 
 
@@ -90,7 +98,7 @@ void setup()
 
 void loop()
 {
-
+  wifiExo->upDate();
   testMoteur.sendCommand(TORQUE,2);
   //--------------Test BLOC----------------
 
