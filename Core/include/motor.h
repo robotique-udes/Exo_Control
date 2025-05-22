@@ -17,6 +17,7 @@ private:
     float temperature; 
     int motorId;
     enum EnumMotorPosition motorPosition;
+    float currentTorque;
 
 public:
     Motor();
@@ -54,7 +55,8 @@ public:
     float uint_to_float(unsigned int x_int, float x_min, float x_max, int bits);
 
     enum EnumMotorPosition getMotorPosition();
-    void setMotorPosition(enum EnumMotorPosition position);
+
+    float getCurrentTorque();
 
 };
 

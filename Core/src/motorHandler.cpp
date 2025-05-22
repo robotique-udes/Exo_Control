@@ -2,13 +2,8 @@
 
 MotorHandler::MotorHandler()
 {
-    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
-    {
-        motors[motorPos].setMotorPosition(static_cast<EnumMotorPosition> (motorPos));
-    }
     initializeMotors();
 }
-
 
 MotorHandler::~MotorHandler()
 {
@@ -43,12 +38,9 @@ void MotorHandler::applyTorque()
     for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
     {
         EnumMotorPosition motorID = static_cast<EnumMotorPosition> (motorPos);
-        currentTorque[motorPos] = dataCore.getPWM(motorID);
-
-        motors[motorPos].sendCommand(TORQUE, currentTorque[motorPos]);
-
+        float torque = dataCore.getPWM(motorID);
+        motors[motorPos].sendCommand(TORQUE, torque);
         float temperature = motors[motorPos].getTemperature();
-
         if (temperature > TEMP_THRESHOLD)
         {
             tempTooHigh = true;
@@ -57,33 +49,29 @@ void MotorHandler::applyTorque()
     }
 }
 
+//TODO tester le slow shutdown
 void MotorHandler::slowShutDown()
 {
     unsigned long currentTime = millis();
+    unsigned long deltaTime = currentTime - previousTime;
+    totalTime += deltaTime;
 
-    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
-    {
-        int multiplier = 1;
-        if (currentTorque[motorPos] < 0)
-            multiplier = -1;
-
-        currentTorque[motorPos] -= multiplier * SHUT_DOWN_SPEED * (currentTime - previousTime);
-
-        if (multiplier == 1 && currentTorque[motorPos] <= 0)
-            currentTorque[motorPos] = 0;
-        else if (multiplier == -1 && currentTorque[motorPos] >= 0)
-            currentTorque[motorPos] = 0;
-
-        motors[motorPos].sendCommand(TORQUE, currentTorque[motorPos]);
-    }
-    tempTooHigh = false;
-    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
-    {
-        if (currentTorque[motorPos] != 0)
-            tempTooHigh = true;
-    }
-
-    if (tempTooHigh == false)
+    //if the timer is done, shuts down all the motors and waits for reactivation
+    if (totalTime >= SHUT_DOWN_TIME)
+    {  
+        totalTime = 0;
+        tempTooHigh = false;
         exitMotors();
+        return;
+    }
+
+    //if not, slowly reduces the torque until the timer ends
+    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+    {  
+        float torqueLoss = (initialTorque[motorPos] / SHUT_DOWN_TIME) * deltaTime;
+        float torque = motors[motorPos].getCurrentTorque() - torqueLoss;
+        motors[motorPos].sendCommand(TORQUE, torque);
+    }
+    previousTime = currentTime;
 }
 

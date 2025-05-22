@@ -58,7 +58,7 @@
 
 #define NB_MOTORS 4         //nombre de moteurs sur l'exo
 #define TEMP_THRESHOLD 75   // la temperature max que les moteur peuvent atteindre
-#define SHUT_DOWN_SPEED 1   // decay of torque in Nm/s when shutting down
+#define SHUT_DOWN_TIME 10   // the time that is takes to shut down motors when overheating 
 
 // LONGUEURS
 #define G 9.81  // gravité

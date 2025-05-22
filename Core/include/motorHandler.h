@@ -12,12 +12,13 @@ class MotorHandler
 {
 private:
     Motor motors[NB_MOTORS];
-    float currentTorque[NB_MOTORS];
-    bool tempTooHigh = false;
     DataCore &dataCore = DataCore::getInstance();
 
+    //variables pour le slow shut down
+    bool tempTooHigh = false;
     unsigned long previousTime = 0;
-
+    float totalTime = 0;
+    float initialTorque[4] = {0, 0, 0, 0};
 
     void applyTorque();
     void initializeMotors();
@@ -29,7 +30,6 @@ public:
     ~MotorHandler();
 
     void Update();
-
 };
 
 #endif

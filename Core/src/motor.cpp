@@ -138,6 +138,7 @@ void Motor::sendCommand(MotorMode mode,float value){
   switch (mode)
   {
   case TORQUE:
+    currentTorque = value;
     packCmd(0, 0, 0, 0, value);
     sendCanMessage(&msg);
     receiveCanMessage(&msg);
@@ -208,7 +209,7 @@ enum EnumMotorPosition Motor::getMotorPosition()
   return motorPosition;
 }
 
-void Motor::setMotorPosition(EnumMotorPosition position)
+float Motor::getCurrentTorque()
 {
-  this->motorPosition = position;
+  return currentTorque;
 }
