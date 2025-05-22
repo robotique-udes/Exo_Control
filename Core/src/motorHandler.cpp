@@ -23,14 +23,14 @@ void MotorHandler::Update()
 
 void MotorHandler::initializeMotors()
 {
-    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
-        motors[motorPos].enterMode();
+    //for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+    //    motors[motorPos].enterMode();
 }
 
 void MotorHandler::exitMotors()
 {
-    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
-        motors[motorPos].exitMode();
+    //for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+    //    motors[motorPos].exitMode();
 }
 
 void MotorHandler::applyTorque()
@@ -39,7 +39,7 @@ void MotorHandler::applyTorque()
     {
         EnumMotorPosition motorID = static_cast<EnumMotorPosition> (motorPos);
         float torque = dataCore.getPWM(motorID);
-        motors[motorPos].sendCommand(TORQUE, torque);
+        motors[motorPos].applyTorque(TORQUE, torque);
         float temperature = motors[motorPos].getTemperature();
         if (temperature > TEMP_THRESHOLD)
         {
@@ -70,7 +70,7 @@ void MotorHandler::slowShutDown()
     {  
         float torqueLoss = (initialTorque[motorPos] / SHUT_DOWN_TIME) * deltaTime;
         float torque = motors[motorPos].getCurrentTorque() - torqueLoss;
-        motors[motorPos].sendCommand(TORQUE, torque);
+        motors[motorPos].applyTorque(TORQUE, torque);
     }
     previousTime = currentTime;
 }

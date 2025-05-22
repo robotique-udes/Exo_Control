@@ -10,6 +10,7 @@
 #include <Nextion.h>
 #include <string.h>
 #include "motor.h"
+#include "motorV2.h"
 #include "test.h"
 #include "touchScreen.h"
 #include "callbackSetup.h"
@@ -29,7 +30,7 @@
 //QuadratureEncoder encoder;
 //TouchScreen &screen = TouchScreen::getInstance();
 //DataCore &settings = DataCore::getInstance();
-Motor testMoteur;
+MotorV2 testMoteur;
 
 
 //===============================================================================================================
