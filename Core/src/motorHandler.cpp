@@ -35,12 +35,15 @@ void MotorHandler::exitMotors()
 
 void MotorHandler::applyTorque()
 {
-    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+    //iterate for all motors 
+    for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
     {
-        EnumMotorPosition motorID = static_cast<EnumMotorPosition> (motorPos);
-        float torque = dataCore.getPWM(motorID);
-        motors[motorPos].applyTorque(TORQUE, torque);
-        float temperature = motors[motorPos].getTemperature();
+        //send torque request to the respective motor
+        float torque = dataCore.getPWM(static_cast<EnumMotorPosition>(motorIndex));
+        motors[motorIndex].sendRequest(TORQUE, torque);
+
+        //checks if the respective motor is overheating
+        float temperature = motors[motorIndex].getTemperature();
         if (temperature > TEMP_THRESHOLD)
         {
             tempTooHigh = true;
@@ -66,11 +69,11 @@ void MotorHandler::slowShutDown()
     }
 
     //if not, slowly reduces the torque until the timer ends
-    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+    for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
     {  
-        float torqueLoss = (initialTorque[motorPos] / SHUT_DOWN_TIME) * deltaTime;
-        float torque = motors[motorPos].getCurrentTorque() - torqueLoss;
-        motors[motorPos].applyTorque(TORQUE, torque);
+        float torqueLoss = (initialTorque[motorIndex] / SHUT_DOWN_TIME) * deltaTime;
+        float torque = motors[motorIndex].getCurrentTorque() - torqueLoss;
+        motors[motorIndex].sendRequest(TORQUE, torque);
     }
     previousTime = currentTime;
 }

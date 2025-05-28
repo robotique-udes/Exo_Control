@@ -8,10 +8,10 @@ class MotorV3 : public Motor
 {
 public:
     MotorV3();
-
+    MotorV3(int id);
     ~MotorV3();
 
-    void applyTorque(MotorMode mode, float value);
-}
+    void sendRequest(MotorMode mode, float value);
+};
 
 #endif

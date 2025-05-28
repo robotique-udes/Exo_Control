@@ -7,10 +7,11 @@ class MotorV2 : public Motor
 
 public :
     MotorV2();
+    MotorV2(int id);
 
     ~MotorV2();
 
-    void applyTorque(MotorMode mode, float value);
+void sendRequest(MotorMode mode, float value);
 
 //private: for test now, can uncomment later
 

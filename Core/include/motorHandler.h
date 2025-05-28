@@ -1,18 +1,24 @@
 #ifndef MOTOR_HANDLER_H
 #define MOTOR_HANDLER_H
 
-
-
 #include <Arduino.h>
 #include "enums.h"
 #include "motor.h"
+#include "motorV2.h"
+#include "motorV3.h"
 #include "dataCore.h"
 
 class MotorHandler
 {
 private:
-    Motor motors[NB_MOTORS];
     DataCore &dataCore = DataCore::getInstance();
+    enum EnumMotorPosition motorPos;
+
+    //TODO : verifier les IDs
+    Motor motors[NB_MOTORS] = {MotorV3(static_cast<int>(EnumMotorPosition::HIP_R)), 
+                               MotorV2(static_cast<int>(EnumMotorPosition::HIP_L)),
+                               MotorV3(static_cast<int>(EnumMotorPosition::KNEE_R)), 
+                               MotorV2(static_cast<int>(EnumMotorPosition::KNEE_L))};
 
     //variables pour le slow shut down
     bool tempTooHigh = false;

@@ -1,8 +1,10 @@
 #include "motorV2.h"
-#include "enums.h"
 //bool motorMode = ON; // mutliplie le torque demandé au moteur, lorsque a 0, les moteur sont effectivement à Off, contrôlé avec le HMI ou hardcode pour test
 
-MotorV2::MotorV2()
+MotorV2::MotorV2(){}
+
+MotorV2::MotorV2(int id)
+: Motor(id)
 {
 }
 
@@ -11,7 +13,7 @@ MotorV2::~MotorV2()
 {
 }
 
-void MotorV2::applyTorque(MotorMode mode, float value)
+void MotorV2::sendRequest(MotorMode mode, float value)
 {
     sendCommand(mode, value);
 }

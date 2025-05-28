@@ -21,9 +21,11 @@ protected:
 
 public:
     Motor();
+    Motor(int id);
     ~Motor();
+    
 
-    void applyTorque(MotorMode mode, float value);
+    void sendRequest(MotorMode mode, float value);
 
     int getTemperature();   
 
@@ -34,6 +36,8 @@ public:
     enum EnumMotorPosition getMotorPosition();
 
     float getCurrentTorque();
+
+    void setID(int id);
 
 };
 
