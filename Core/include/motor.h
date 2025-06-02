@@ -18,6 +18,8 @@ protected:
     int motorId;
     enum EnumMotorPosition motorPosition;
     float currentTorque;
+    float motorCorrectionSlope;
+    float motorCorrectionOffset;
 
 public:
     Motor();
@@ -32,6 +34,12 @@ public:
     void setMotorId(int id);
 
     int getMotorId();
+
+    void setMotorCorrection(float slope, float offset);
+
+    float getMotorCorrectionSlope();
+
+    float getMotorCorrectionOffset();
 
     enum EnumMotorPosition getMotorPosition();
 

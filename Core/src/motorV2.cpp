@@ -96,7 +96,7 @@ void MotorV2::packCmd(float position, float velocity, float kp, float kd, float 
     /// Bits 28-39:  Kp (Proportional gain), range: 0 to 500 N-m/rad
     /// Bits 40-51:  Kd (Derivative gain), range: 0 to 100 N-m*s/rad
     /// Bits 52-63:  Feed forward torque, range: -18 to 18 N-m
-    
+
     ///limit data to be withing bounds///
     position = constrain(position, P_MIN, P_MAX); ///fminf(fmaxf(P_MIN, p_in(, P_MAX);
     velocity = constrain(velocity, V_MIN, V_MAX); ///fminf(fmaxf(V_MIN, v_in(, V_MAX);
@@ -146,6 +146,9 @@ void MotorV2::sendCommand(MotorMode mode,float value){
   {
   case TORQUE:
     currentTorque = value;
+    /// Correction of the torque value ///
+    value = (value - motorCorrectionOffset) / motorCorrectionSlope;
+
     packCmd(0, 0, 0, 0, value);
     sendCanMessage(&msg);
     receiveCanMessage(&msg);

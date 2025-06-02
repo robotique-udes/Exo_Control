@@ -38,3 +38,19 @@ float Motor::getCurrentTorque()
 {
   return currentTorque;
 }
+
+void Motor::setMotorCorrection(float slope, float offset)
+{
+  motorCorrectionSlope = slope;
+  motorCorrectionOffset = offset;
+}
+
+float Motor::getMotorCorrectionSlope()
+{
+  return motorCorrectionSlope;
+}
+
+float Motor::getMotorCorrectionOffset()
+{
+  return motorCorrectionOffset;
+}
