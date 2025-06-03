@@ -31,6 +31,10 @@ private:
     void exitMotors();
     void slowShutDown();
 
+    //! Things to add  !//
+    // -Pin setup 
+    // -Can setup 
+
 public:
     MotorHandler();
     ~MotorHandler();

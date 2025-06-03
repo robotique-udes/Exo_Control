@@ -31,15 +31,6 @@ void MotorV2::setPins()
   pinExtender.pinMode(PIN_MD_HAN_DRO_EN, OUTPUT);
 }
 
-
-void MotorV2::sendCanMessage(CanFrame* msg){
-  ESP32Can.writeFrame(msg);
-}
-
-void MotorV2::receiveCanMessage(CanFrame* msg){
-  ESP32Can.readFrame(msg);
-}
-
 void MotorV2::enterMode(){
     msg.data[0] = 0xFF;
     msg.data[1] = 0xFF;
@@ -171,30 +162,3 @@ void MotorV2::sendCommand(MotorMode mode,float value){
   }
 } 
 
-unsigned int MotorV2::float_to_uint(float x, float x_min, float x_max, int bits){
-    ///Converts a  float to an unsigned int, given range and number of bits///
-    float span = x_max-x_min;
-    float offset = x_min;
-    unsigned int pgg = 0;
-    if(bits==12){
-        pgg = (unsigned int) ((x-offset)*4095.0/span);
-    }
-    if(bits==16){
-        pgg = (unsigned int) ((x-offset)*65535.0/span);
-    }
-    return pgg;
-}
-
-float MotorV2::uint_to_float(unsigned int x_int, float x_min, float x_max, int bits){
-    ///converts unsigned int to float, given range and number of bits///
-    float span = x_max-x_min;
-    float offset = x_min;
-    float pgg = 0;
-    if (bits==12){
-        pgg = ((float) x_int)*span/4095 + offset;
-    }
-    if (bits==16){
-        pgg = ((float) x_int)*span/65535.0 + offset;
-    }
-    return pgg;
-}

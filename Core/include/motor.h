@@ -29,6 +29,10 @@ public:
 
     void sendRequest(MotorMode mode, float value);
 
+    void sendCanMessage(CanFrame* msg);
+
+    void receiveCanMessage(CanFrame* msg);
+
     int getTemperature();   
 
     void setMotorId(int id);
@@ -46,6 +50,10 @@ public:
     float getCurrentTorque();
 
     void setID(int id);
+
+    unsigned int float_to_uint(float x, float x_min, float x_max, int bits);
+
+    float uint_to_float(unsigned int x_int, float x_min, float x_max, int bits);
 
 };
 
