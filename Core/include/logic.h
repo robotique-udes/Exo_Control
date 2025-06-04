@@ -32,6 +32,22 @@ private:
     bool RightOnGround = false; // True if the right foot is on the ground
     int NbOnGround = 0; // Number of feet on the ground
 
+    const float thighCenterMass = 0.433;	
+	const float calveCenterMass = 0.606;
+    const float torsoCenterMass = 0.626;
+	const float gravity = 9.81; 	//m/(s*s)
+
+	float thighMass = 7.5;		//kg
+	float calveMass = 4.575;		//kg
+    float torsoMass = 50.85;        //kg
+	float thighLength = 0.4361; 	//m
+	float calveLength = 0.77786;	//m
+    float torsoLength = 0.8366;     //m
+
+    float calculateHipTorque(float hipJoint, float kneeJoint);
+    float calculateKneeTorque(float hipJoint, float kneeJoint);
+    void jambelEnLair(float hipJointRight, float hipJointLeft, float torsoAngle, float *rightKneeTorque, float *leftKneeTorque);
+
 public:
     // -------------------------- TORQUE CALCULATION --------------------------
     /**

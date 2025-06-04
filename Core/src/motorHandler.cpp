@@ -41,7 +41,7 @@ void MotorHandler::applyTorque()
         //send torque request to the respective motor
         float torque = dataCore.getPWM(static_cast<EnumMotorPosition>(motorIndex));
         motors[motorIndex].sendRequest(TORQUE, torque);
-
+        initialTorque[motorIndex] = torque;
         //checks if the respective motor is overheating
         float temperature = motors[motorIndex].getTemperature();
         if (temperature > TEMP_THRESHOLD)
@@ -77,4 +77,5 @@ void MotorHandler::slowShutDown()
     }
     previousTime = currentTime;
 }
+
 
