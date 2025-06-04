@@ -53,7 +53,7 @@ void MotorV3::sendCommand(MotorMode mode,float value){
   if (mode == TORQUE) {
     currentTorque = value;
     /// Correction of the torque value ///
-    value = (value - motorCorrectionOffset) / motorCorrectionSlope;
+    value = (value - motorCorrectionOffset) / motorCorrectionSlope * 1000; // the command is in mA so we multiply by 1000
     packCmd(value);
     sendCanMessage(&msg);
     receiveCanMessage(&msg);

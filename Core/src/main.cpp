@@ -11,6 +11,7 @@
 #include <string.h>
 #include "motor.h"
 #include "motorV2.h"
+#include "motorV3.h"
 #include "test.h"
 #include "touchScreen.h"
 #include "callbackSetup.h"
@@ -30,7 +31,11 @@
 //QuadratureEncoder encoder;
 //TouchScreen &screen = TouchScreen::getInstance();
 //DataCore &settings = DataCore::getInstance();
-MotorV2 testMoteur;
+MotorV2 testMoteurV2;
+MotorV3 testMoteurV3;
+
+  int torqueV2 = 0;
+  int torqueV3 = 0;
 
 
 //===============================================================================================================
@@ -83,16 +88,47 @@ void setup()
   //relais.setAllRelay(OFF);
 
   //setupCallbacks();
-  testMoteur.setMotorId(2);
-  testMoteur.enterMode();
-  testMoteur.zeroSet();
+  testMoteurV2.setMotorId(2);
+  testMoteurV2.enterMode();
+  testMoteurV2.zeroSet();
 
+  testMoteurV3.setMotorId(0x168);
 }
 
 void loop()
 {
+  //---------------Test multiple motors----------------
+  char rc;
+  rc = Serial.read();
 
-  testMoteur.sendCommand(TORQUE,2);
+  if(rc == 'a') {
+    torqueV2 += 1;
+  }
+
+  if(rc == 'b') {
+    torqueV3 += 1;
+  }
+
+    testMoteurV2.sendCommand(TORQUE,torqueV2);
+    testMoteurV3.sendCommand(TORQUE,torqueV3);
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   //--------------Test BLOC----------------
 
   // motor->motorSetSpeed(MOTEUR_GENOU_GAUCHE, 4000);
