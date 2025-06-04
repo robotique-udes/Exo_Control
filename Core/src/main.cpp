@@ -19,8 +19,7 @@
 #include "bnoHandler.h"
 #include "logic.h"
 
-#define CAN_TX		5 //to do 
-#define CAN_RX		4 //to do 
+
 
 //Logic logicHandler;
 //Test tester;
@@ -46,9 +45,6 @@ void setup()
 {
   Serial.begin(115200);
   nexInit();
-  pinMode(CAN_TX, OUTPUT); 
-  pinMode(CAN_RX, OUTPUT);
-  ESP32Can.setPins(CAN_TX, CAN_RX);
 
   // set Rx/Tx queue
   ESP32Can.setRxQueueSize(5);

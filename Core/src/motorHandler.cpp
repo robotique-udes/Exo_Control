@@ -2,6 +2,9 @@
 
 MotorHandler::MotorHandler()
 {
+    pinMode(MOTOR_PIN_TX, OUTPUT); 
+    pinMode(MOTOR_PIN_RX, OUTPUT);
+    ESP32Can.setPins(MOTOR_PIN_TX, MOTOR_PIN_RX);
     initializeMotors();
 }
 

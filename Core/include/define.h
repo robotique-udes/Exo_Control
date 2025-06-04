@@ -59,6 +59,8 @@
 #define NB_MOTORS 4         //nombre de moteurs sur l'exo
 #define TEMP_THRESHOLD 75   // la temperature max que les moteur peuvent atteindre
 #define SHUT_DOWN_TIME 10   // the time that is takes to shut down motors when overheating 
+#define MOTOR_PIN_RX 4      //pin RX UART des moteurs
+#define MOTOR_PIN_TX 5      //pin TX UART des moteurs
 
 // LONGUEURS
 #define G 9.81  // gravité
