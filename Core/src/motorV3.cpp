@@ -23,17 +23,17 @@ void MotorV3::packCmd(float torque){
 
 
     ///convert floats to unsigned ints///
-    unsigned int torque_int = float_to_uint(torque, T_MIN, T_MAX, 12);
+    unsigned int torque_int = float_to_uint(torque, T_MIN, T_MAX, 16);
 
 
     /// pack ints into the can buffer///
 
     //!!! To confirm !!!//
     byte buf[4];
-    buf[0] = torque_int >> 24;
-    buf[1] = torque_int >> 16;
-    buf[2] = torque_int >> 8;
-    buf[3] = torque_int;
+    buf[0] = 0x00;
+    buf[1] = 0x00;
+    buf[2] = (torque_int >> 8) & 0xFF;
+    buf[3] = torque_int & 0xFF;
 
     for(int i = 0;i < 4; i++){
         msg.data[i] = buf[i];
@@ -56,8 +56,8 @@ void MotorV3::sendCommand(MotorMode mode,float value){
     value = (value - motorCorrectionOffset) / motorCorrectionSlope * 1000; // the command is in mA so we multiply by 1000
     packCmd(value);
     sendCanMessage(&msg);
-    receiveCanMessage(&msg);
-    unpackReply();
+    //receiveCanMessage(&msg);
+    //unpackReply();
   }
 } 
 
