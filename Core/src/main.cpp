@@ -88,7 +88,7 @@ void setup()
   testMoteurV2.enterMode();
   testMoteurV2.zeroSet();
 
-  testMoteurV3.setMotorId(0x168);
+  testMoteurV3.setMotorId(0x101); // vérifier si c'est le bon id 
 }
 
 void loop()
