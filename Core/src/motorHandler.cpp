@@ -2,6 +2,9 @@
 
 MotorHandler::MotorHandler()
 {
+    pinMode(MOTOR_PIN_TX, OUTPUT); 
+    pinMode(MOTOR_PIN_RX, OUTPUT);
+    ESP32Can.setPins(MOTOR_PIN_TX, MOTOR_PIN_RX);
     initializeMotors();
 }
 
@@ -41,7 +44,7 @@ void MotorHandler::applyTorque()
         //send torque request to the respective motor
         float torque = dataCore.getPWM(static_cast<EnumMotorPosition>(motorIndex));
         motors[motorIndex].sendRequest(TORQUE, torque);
-
+        initialTorque[motorIndex] = torque;
         //checks if the respective motor is overheating
         float temperature = motors[motorIndex].getTemperature();
         if (temperature > TEMP_THRESHOLD)
@@ -77,4 +80,5 @@ void MotorHandler::slowShutDown()
     }
     previousTime = currentTime;
 }
+
 
