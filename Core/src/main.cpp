@@ -33,8 +33,8 @@
 MotorV2 testMoteurV2;
 MotorV3 testMoteurV3;
 
-  int torqueV2 = 0;
-  int torqueV3 = 0;
+  float torqueV2 = 0;
+  float torqueV3 = 0;
 
 
 //===============================================================================================================
@@ -88,7 +88,8 @@ void setup()
   testMoteurV2.enterMode();
   testMoteurV2.zeroSet();
 
-  testMoteurV3.setMotorId(0x101); // vérifier si c'est le bon id 
+  testMoteurV3.setMotorId(0x801); // vérifier si c'est le bon id 
+  testMoteurV3.setMotorCorrection(1.3, 0);
 }
 
 void loop()
@@ -98,18 +99,22 @@ void loop()
   rc = Serial.read();
 
   if(rc == 'a') {
-    torqueV2 += 1;
+    Serial.println("a");
+    torqueV3 -= 1;
   }
 
   if(rc == 'b') {
+    Serial.print("b   : ");
     torqueV3 += 1;
+    Serial.println(torqueV3);
+    testMoteurV3.sendCommand(TORQUE,torqueV3);
   }
 
-    testMoteurV2.sendCommand(TORQUE,torqueV2);
-    testMoteurV3.sendCommand(TORQUE,torqueV3);
-  
-  
+  testMoteurV2.sendCommand(TORQUE,torqueV2);
 
+  
+  
+  
 
 
 
@@ -149,6 +154,5 @@ void loop()
   // logicHandler.IntegralPowerConsumption();
   
   //Serial.println("");
-
-  
+  delay(10);
 }

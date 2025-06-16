@@ -14,7 +14,7 @@ public:
 
     void sendRequest(MotorMode mode, float value);
 
-    void packCmd(float torque);
+    void packCmd(float position, float velocity, float kp, float kd, float torque);
 
     void unpackReply();
 
