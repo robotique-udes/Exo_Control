@@ -87,7 +87,8 @@ void setup()
   testMoteurV2.setMotorId(2);
   testMoteurV2.enterMode();
   testMoteurV2.zeroSet();
-
+  testMoteurV2.setMotorCorrection(1, 0);
+  delay(1000);
   testMoteurV3.setMotorId(0x801); // vérifier si c'est le bon id 
   testMoteurV3.setMotorCorrection(1.3, 0);
 }
@@ -110,7 +111,7 @@ void loop()
     testMoteurV3.sendCommand(TORQUE,torqueV3);
   }
 
-  testMoteurV2.sendCommand(TORQUE,torqueV2);
+  testMoteurV2.sendCommand(TORQUE,torqueV3);
 
   
   
