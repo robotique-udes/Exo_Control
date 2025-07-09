@@ -19,6 +19,8 @@
 #include "bnoHandler.h"
 #include "logic.h"
 
+#define uart_tx 43
+#define uart_rx 44
 
 
 //Logic logicHandler;
@@ -43,9 +45,10 @@ MotorV3 testMoteurV3;
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(115200, SERIAL_8N1, uart_rx, uart_tx);
   nexInit();
 
+  ESP32Can.setPins(uart_rx, uart_tx);
   // set Rx/Tx queue
   ESP32Can.setRxQueueSize(5);
   ESP32Can.setTxQueueSize(5);
@@ -100,20 +103,40 @@ void loop()
   rc = Serial.read();
 
   if(rc == 'a') {
-    Serial.println("a");
+    Serial.print("a  :");
     torqueV3 -= 1;
+    Serial.println(torqueV3);
+  }
+
+  if(rc == 's') {
+    Serial.print("s  :");
+    torqueV2 -= 1;
+    Serial.println(torqueV2);
+  }
+
+  if(rc == 'd') {
+    Serial.print("d  :");
+    torqueV2 += 1;
+    Serial.println(torqueV2);
   }
 
   if(rc == 'b') {
     Serial.print("b   : ");
     torqueV3 += 1;
     Serial.println(torqueV3);
-    testMoteurV3.sendCommand(TORQUE,torqueV3);
   }
 
-  testMoteurV2.sendCommand(TORQUE,torqueV3);
+  testMoteurV2.sendCommand(TORQUE,torqueV2);
+  testMoteurV3.sendCommand(TORQUE,torqueV3);
+
+
+
+
+
 
   
+
+
   
   
 
@@ -155,5 +178,5 @@ void loop()
   // logicHandler.IntegralPowerConsumption();
   
   //Serial.println("");
-  delay(10);
+  
 }
