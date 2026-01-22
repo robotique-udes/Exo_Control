@@ -1,26 +1,29 @@
 #include <Arduino.h>
-#include <HardwareSerial.h>
+//#include <HardwareSerial.h>
 #include "enums.h"
-#include "pinExtender.h"
-#include "quadratureEncoder.h"
+//#include "pinExtender.h"
+//#include "quadratureEncoder.h"
 #include "enums.h"
-#include "touchScreen.h"
-#include <SPI.h>
-#include <SD.h>
-#include <Nextion.h>
+//#include "touchScreen.h"
+//#include <SPI.h>
+//#include <SD.h>
+// #include <Nextion.h>
 #include <string.h>
 #include "motor.h"
 #include "motorV2.h"
 #include "motorV3.h"
-#include "test.h"
-#include "touchScreen.h"
-#include "callbackSetup.h"
+//#include "test.h"
+//#include "touchScreen.h"
+//#include "callbackSetup.h"
 #include "dataCore.h"
 #include "bnoHandler.h"
 #include "logic.h"
 
 #define uart_tx 43
 #define uart_rx 44
+#define TX_CAN 5
+#define RX_CAN 4
+
 
 
 //Logic logicHandler;
@@ -32,11 +35,9 @@
 //QuadratureEncoder encoder;
 //TouchScreen &screen = TouchScreen::getInstance();
 //DataCore &settings = DataCore::getInstance();
-MotorV2 testMoteurV2;
-MotorV3 testMoteurV3;
+MotorV3 testMoteurV3_2;
 
-  float torqueV2 = 0;
-  float torqueV3 = 0;
+  float torque = 0;
 
 
 //===============================================================================================================
@@ -45,26 +46,20 @@ MotorV3 testMoteurV3;
 
 void setup()
 {
-  Serial.begin(115200, SERIAL_8N1, uart_rx, uart_tx);
-  nexInit();
+  Serial1.begin(115200, SERIAL_8N1, uart_rx, uart_tx); // for mobo
+  //Serial1.begin(115200); // for proto
+  //Serial1.println("Etarting...");
 
-  ESP32Can.setPins(uart_rx, uart_tx);
-  // set Rx/Tx queue
-  ESP32Can.setRxQueueSize(5);
-  ESP32Can.setTxQueueSize(5);
-
-  ESP32Can.setSpeed(ESP32Can.convertSpeed(1000));//CAN Speed: 1 MHZ
-
-  if(ESP32Can.begin()) {
-      Serial.println("CAN bus started!");
-      Serial.println("CAN bus started!!!");
+  
+  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), TX_CAN, RX_CAN, 5, 5)) {
+    Serial1.println("CAN bus started!!!");
   } else {
-      Serial.println("CAN bus failed!");
+    Serial1.println("CAN bus failed!");
   }
-  // À ajouter dans la classe moteur 
 
-
-  //Serial2.begin(9600, SERIAL_8N1, 16, 17);
+  
+  
+  //Serial12.begin(9600, Serial1_8N1, 16, 17);
 
   // IMU setup
   //Wire.setPins(MAIN_I2C_SDA, MAIN_I2C_SCL);
@@ -87,47 +82,36 @@ void setup()
   //relais.setAllRelay(OFF);
 
   //setupCallbacks();
-  testMoteurV2.setMotorId(2);
-  testMoteurV2.enterMode();
-  testMoteurV2.zeroSet();
-  testMoteurV2.setMotorCorrection(1, 0);
-  delay(1000);
-  testMoteurV3.setMotorId(0x801); // vérifier si c'est le bon id 
-  testMoteurV3.setMotorCorrection(1.3, 0);
+  testMoteurV3_2.setMotorId(0x802);
+  testMoteurV3_2.setMotorCorrection(1, 0); 
 }
 
 void loop()
 {
   //---------------Test multiple motors----------------
   char rc;
-  rc = Serial.read();
+  rc = Serial1.read();
 
   if(rc == 'a') {
-    Serial.print("a  :");
-    torqueV3 -= 1;
-    Serial.println(torqueV3);
-  }
-
-  if(rc == 's') {
-    Serial.print("s  :");
-    torqueV2 -= 1;
-    Serial.println(torqueV2);
+    Serial1.print("a  :");
+    torque -= 0.5;
+    Serial1.println(torque);
   }
 
   if(rc == 'd') {
-    Serial.print("d  :");
-    torqueV2 += 1;
-    Serial.println(torqueV2);
+    Serial1.print("d  :");
+    torque += 0.5;
+    Serial1.println(torque,HEX);
   }
 
-  if(rc == 'b') {
-    Serial.print("b   : ");
-    torqueV3 += 1;
-    Serial.println(torqueV3);
+  if(rc == 's') {
+    Serial1.print("s  :");
+    torque = 0;
+    Serial1.println(torque);
   }
 
-  testMoteurV2.sendCommand(TORQUE,torqueV2);
-  testMoteurV3.sendCommand(TORQUE,torqueV3);
+  testMoteurV3_2.sendCommand(TORQUE, torque);
+  
 
 
 
@@ -177,6 +161,6 @@ void loop()
   // logicHandler.printTorque();
   // logicHandler.IntegralPowerConsumption();
   
-  //Serial.println("");
+  //Serial1.println("");
   
 }
