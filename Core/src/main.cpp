@@ -37,7 +37,8 @@
 //DataCore &settings = DataCore::getInstance();
 MotorV3 testMoteurV3_2;
 MotorV2 testMoteurV2;
-  float torque = 0;
+  float torqueV3 = 0;
+  float torqueV2 = 0;
 
 
 //===============================================================================================================
@@ -95,8 +96,10 @@ void loop()
 
    char rc = Serial1.read();
    if(rc == 'e'){
-       testMoteurV2.exitMode();
-       Serial1.println("Exit mode");
+        torqueV2=0.0;
+        testMoteurV2.sendCommand(TORQUE, torqueV2);
+        testMoteurV2.exitMode(); 
+        Serial1.println("Exit mode");
    }
    else if(rc == 's'){
        testMoteurV2.enterMode();
@@ -108,39 +111,36 @@ void loop()
    }
    else if(rc == 'a'){
        //float p_des, float v_des, float kp, float kd, float t_ff
-       torque+=0.5;
-       testMoteurV2.sendCommand(TORQUE, torque);
+       torqueV2+=0.5;
+       testMoteurV2.sendCommand(TORQUE, torqueV2);
        Serial1.println("Command send: a");
-       Serial1.println(torque);
+       Serial1.println(torqueV2);
    }
 
 
-  /*
-    char rc;
-    rc = Serial1.read();
 
-    if(rc == 'a') {
-        Serial1.print("a  :");
-        torque -= 0.5;
-        Serial1.println(torque);
+
+    if(rc == 'k') {
+        Serial1.print("- de torque  :");
+        torqueV3 -= 0.5;
+        Serial1.println(torqueV3);
     }
 
-    if(rc == 'd') {
-        Serial1.print("d  :");
-        torque += 0.5;
-        Serial1.println(torque,HEX);
+    if(rc == 'l') {
+        Serial1.print("+ de torqueV3  :");
+        torqueV3 += 0.5;
+        Serial1.println(torqueV3,HEX);
     }
 
-    if(rc == 's') {
-        Serial1.print("s  :");
-        torque = 0;
-        Serial1.println(torque);
+    if(rc == 'j') {
+        Serial1.print("stop  :");
+        torqueV3 = 0;
+        Serial1.println(torqueV3);
     }
 
-    testMoteurV3_2.sendCommand(TORQUE, torque);
+    testMoteurV3_2.sendCommand(TORQUE, torqueV3);
   
 
-*/
 
 
 
