@@ -93,29 +93,31 @@ void setup()
 void loop()
 {
   //---------------Test multiple motors----------------
-
-   char rc = Serial1.read();
-   if(rc == 'e'){
+        delay(500);
+    char rc = Serial1.read();
+    if(rc == 'e'){
         torqueV2=0.0;
         testMoteurV2.sendCommand(TORQUE, torqueV2);
         testMoteurV2.exitMode(); 
         Serial1.println("Exit mode");
-   }
-   else if(rc == 's'){
-       testMoteurV2.enterMode();
-       Serial1.println("Enter mode");
-   }
-   else if(rc == 'z'){
-       testMoteurV2.zeroSet();
-       Serial1.println("Zero set");
-   }
-   else if(rc == 'a'){
-       //float p_des, float v_des, float kp, float kd, float t_ff
-       torqueV2+=0.5;
-       testMoteurV2.sendCommand(TORQUE, torqueV2);
-       Serial1.println("Command send: a");
-       Serial1.println(torqueV2);
-   }
+    }
+    else if(rc == 's'){
+        testMoteurV2.enterMode();
+        Serial1.println("Enter mode");
+    }
+    else if(rc == 'z'){
+        testMoteurV2.zeroSet();
+        Serial1.println("Zero set");
+    }
+    else if(rc == 'a'){
+        //float p_des, float v_des, float kp, float kd, float t_ff
+        torqueV2+=0.5;
+        testMoteurV2.sendCommand(TORQUE, torqueV2);
+        Serial1.println("Command send: a");
+        Serial1.println(torqueV2);
+    }
+    //Serial1.print("Temperature V2 : ");
+    //Serial1.println(testMoteurV2.getTemperature());
 
 
 
@@ -139,6 +141,8 @@ void loop()
     }
 
     testMoteurV3_2.sendCommand(TORQUE, torqueV3);
+    Serial1.print("Temperature V3 : ");
+    Serial1.println(testMoteurV3_2.getTemperature());
   
 
 

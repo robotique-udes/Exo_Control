@@ -61,19 +61,32 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
 }
 
 void MotorV3::unpackReply(){
-    // To do 
+    
+    //from cubemars doc, we only use the temperature for now, should aslo check for error 
+    //TODO also evaluate motor errors 
+    int16_t pos_int = (msg.data[0] << 8 | msg.data[1]);
+    int16_t spd_int = (msg.data[2] << 8 | msg.data[3]);
+    int16_t cur_int = (msg.data[4] << 8 | msg.data[5]);
+    float motor_pos = (float)( pos_int * 0.1f); //Motor position
+    float motor_spd = (float)( spd_int * 10.0f);//Motor speed
+    float motor_cur = (float) ( cur_int * 0.01f);//Motor current
+    temperature = msg.data[6] ;//Motor temperature
+    int8_t motor_error = msg.data[7] ;//Motor error code
 }
+
+
+
 
 void MotorV3::sendCommand(MotorMode mode,float value){
 
-  if (mode == TORQUE) {
-    currentTorque = value;
-    /// Correction of the torque value ///
-    //value = ((value) / motorCorrectionSlope)*1000; // the command is in mA so we multiply by 1000
-    packCmd(0,0,0,0,value);
-    sendCanMessage(&msg);
-    //receiveCanMessage(&msg);
-    //unpackReply();
-  }
+    if (mode == TORQUE) {
+        currentTorque = value;
+        /// Correction of the torque value ///
+        //value = ((value) / motorCorrectionSlope)*1000; // the command is in mA so we multiply by 1000
+        packCmd(0,0,0,0,value);
+        sendCanMessage(&msg);
+    }
+    receiveCanMessage(&msg);
+    unpackReply();
 } 
 
