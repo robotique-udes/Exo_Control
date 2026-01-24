@@ -36,7 +36,7 @@
 //TouchScreen &screen = TouchScreen::getInstance();
 //DataCore &settings = DataCore::getInstance();
 MotorV3 testMoteurV3_2;
-
+MotorV2 testMoteurV2;
   float torque = 0;
 
 
@@ -84,36 +84,63 @@ void setup()
   //setupCallbacks();
   testMoteurV3_2.setMotorId(0x802);
   testMoteurV3_2.setMotorCorrection(1, 0); 
+
+  testMoteurV2.setMotorId(0x01);
+  testMoteurV2.setMotorCorrection(1, 0); 
 }
 
 void loop()
 {
   //---------------Test multiple motors----------------
-  char rc;
-  rc = Serial1.read();
 
-  if(rc == 'a') {
-    Serial1.print("a  :");
-    torque -= 0.5;
-    Serial1.println(torque);
-  }
+   char rc = Serial1.read();
+   if(rc == 'e'){
+       testMoteurV2.exitMode();
+       Serial1.println("Exit mode");
+   }
+   else if(rc == 's'){
+       testMoteurV2.enterMode();
+       Serial1.println("Enter mode");
+   }
+   else if(rc == 'z'){
+       testMoteurV2.zeroSet();
+       Serial1.println("Zero set");
+   }
+   else if(rc == 'a'){
+       //float p_des, float v_des, float kp, float kd, float t_ff
+       torque+=0.5;
+       testMoteurV2.sendCommand(TORQUE, torque);
+       Serial1.println("Command send: a");
+       Serial1.println(torque);
+   }
 
-  if(rc == 'd') {
-    Serial1.print("d  :");
-    torque += 0.5;
-    Serial1.println(torque,HEX);
-  }
 
-  if(rc == 's') {
-    Serial1.print("s  :");
-    torque = 0;
-    Serial1.println(torque);
-  }
+  /*
+    char rc;
+    rc = Serial1.read();
 
-  testMoteurV3_2.sendCommand(TORQUE, torque);
+    if(rc == 'a') {
+        Serial1.print("a  :");
+        torque -= 0.5;
+        Serial1.println(torque);
+    }
+
+    if(rc == 'd') {
+        Serial1.print("d  :");
+        torque += 0.5;
+        Serial1.println(torque,HEX);
+    }
+
+    if(rc == 's') {
+        Serial1.print("s  :");
+        torque = 0;
+        Serial1.println(torque);
+    }
+
+    testMoteurV3_2.sendCommand(TORQUE, torque);
   
 
-
+*/
 
 
 
