@@ -1,4 +1,6 @@
 Core/.pio
+WifiCommunication/WifiClient/.pio
+WifiCommunication/WifiServer/.pio
 Core/.vscode/.browse.c_cpp.db*
 Core/.vscode/c_cpp_properties.json
 Core/.vscode/launch.json
@@ -11,4 +13,3 @@ UtilsProjects/I2C-Scanner/.vscode
 .vscode/ipch
 
 *.d
-/WifiCommunication/WifiClient/.pio/build
