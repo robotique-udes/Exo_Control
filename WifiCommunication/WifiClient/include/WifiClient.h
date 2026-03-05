@@ -4,7 +4,7 @@
 #include <WiFiUdp.h>
 #include <map>
 #include "enums.h"
-#include "../lib/MessageBuilder/MessageBuilder.h"
+#include "../libs/MessageBuilder/MessageBuilder.h"
              
 #define ENUM_BNO_ANGLE "EnumBnoAngle"
 #define ENUM_BNO_POSITION "EnumBnoPosition"
