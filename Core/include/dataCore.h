@@ -6,7 +6,6 @@
 
 #include "define.h"
 #include "enums.h"
-#include "relay.h"
 #include "structs.h"
 
 using namespace std;
@@ -14,7 +13,6 @@ using namespace std;
 class DataCore
 {
 private:
-    Relay relais;
 
     // Ins
     // ground contact detection

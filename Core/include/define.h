@@ -37,30 +37,11 @@
 #define MOTEUR_HANCHE_GAUCHE 2
 #define MOTEUR_HANCHE_DROITE 3
 
-#define PIN_MD_HAN_DRO_INB 0 // Pin INB pour le moteur de la hanche droite
-#define PIN_MD_HAN_DRO_INA 1 // Pin INA pour le moteur de la hanche droite
-#define PIN_MD_HAN_GAU_INB 2 // Pin INB pour le moteur de la hanche gauche
-#define PIN_MD_HAN_GAU_INA 3 // Pin INA pour le moteur de la hanche gauche
-#define PIN_MD_GEN_DRO_INB 4 // Pin INB pour le moteur du genou droit
-#define PIN_MD_GEN_DRO_INA 5 // Pin INA pour le moteur du genou droit
-#define PIN_MD_GEN_GAU_INB 6 // Pin INB pour le moteur du genou gauche
-#define PIN_MD_GEN_GAU_INA 7 // Pin INA pour le moteur du genou gauche
-
-#define PIN_MD_GEN_GAU_EN 0  // Pin EN pour le moteur du genou gauche
-#define PIN_MD_GEN_DRO_EN 3  // Pin EN pour le moteur du genou droit
-#define PIN_MD_HAN_GAU_EN 7 // Pin EN pour le moteur de la hanche gauche
-#define PIN_MD_HAN_DRO_EN 10 // Pin EN pour le moteur de la hanche droite
-
-#define PIN_MD_HAN_GAU_CT 36 // Pin de current sensing pour le moteur de la hanche gauche
-#define PIN_MD_HAN_DRO_CT 39 // Pin de current sensing pour le moteur de la hanche droite
-#define PIN_MD_GEN_GAU_CT 34 // Pin de current sensing pour le moteur du genou gauche
-#define PIN_MD_GEN_DRO_CT 35 // Pin de current sensing pour le moteur du genou droit
-
 #define NB_MOTORS 4         //nombre de moteurs sur l'exo
 #define TEMP_THRESHOLD 75   // la temperature max que les moteur peuvent atteindre
 #define SHUT_DOWN_TIME 10   // the time that is takes to shut down motors when overheating 
-#define MOTOR_PIN_RX 4      //pin RX UART des moteurs
-#define MOTOR_PIN_TX 5      //pin TX UART des moteurs
+#define CAN_RX 5      
+#define CAN_TX 6      
 
 // LONGUEURS
 #define G 9.81  // gravité
@@ -79,10 +60,6 @@
 #define MOTEUR_HANCHE_GAUCHE 2
 #define MOTEUR_HANCHE_DROITE 3
 
-#define RELAIS_GENOU_GAUCHE 13
-#define RELAIS_GENOU_DROIT 14
-#define RELAIS_HANCHE_GAUCHE 15
-#define RELAIS_HANCHE_DROITE 16
 
 #define ON 1
 #define OFF 0

@@ -54,7 +54,6 @@ void DataCore::setMotorEnabled(bool setMotorEnabled){
 
 void DataCore::setClutchEnabled(bool setClutchEnabled){
     clutchEnabled = !(clutchEnabled);
-    relais.setAllRelay(clutchEnabled);
 
 }
 

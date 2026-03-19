@@ -18,19 +18,6 @@ void MotorV2::sendRequest(MotorMode mode, float value)
     sendCommand(mode, value);
 }
 
-void MotorV2::setPins()
-{
-  pinMode(PIN_MD_HAN_GAU_CT, INPUT);
-  pinMode(PIN_MD_HAN_DRO_CT, INPUT);
-  pinMode(PIN_MD_GEN_GAU_CT, INPUT);
-  pinMode(PIN_MD_GEN_DRO_CT, INPUT);
-
-  pinExtender.pinMode(PIN_MD_GEN_GAU_EN, OUTPUT);
-  pinExtender.pinMode(PIN_MD_GEN_DRO_EN, OUTPUT);
-  pinExtender.pinMode(PIN_MD_HAN_GAU_EN, OUTPUT);
-  pinExtender.pinMode(PIN_MD_HAN_DRO_EN, OUTPUT);
-}
-
 void MotorV2::enterMode(){
     msg.data[0] = 0xFF;
     msg.data[1] = 0xFF;

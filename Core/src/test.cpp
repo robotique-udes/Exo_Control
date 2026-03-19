@@ -1,16 +1,10 @@
-#include "test.h"
+/* #include "test.h"
 
 
 void Test::setMotor(Motor *newMotor)
 {
     motor = newMotor;
 }
-
-void Test::setEncoder(QuadratureEncoder *newEncoder)
-{
-    encoder = newEncoder;
-}
-
 
 void Test::setBNOHandler(BnoHandler *newHandler)
 {
@@ -20,31 +14,6 @@ void Test::setBNOHandler(BnoHandler *newHandler)
 void Test::setLogic(Logic *newLogic)
 {
   logicHandler = newLogic;
-}
-
-
-void Test::testRelay()
-{
-    relais.setAllRelay(ON);
-    delay(500);
-    relais.setAllRelay(OFF);
-    delay(500);
-    Serial.println("Relais 1 ");
-    relais.setRelay(RELAIS_HANCHE_GAUCHE, ON);
-    delay(500);
-    relais.setRelay(RELAIS_HANCHE_GAUCHE, OFF);
-    Serial.println("Relais 2 ");
-    relais.setRelay(RELAIS_HANCHE_DROITE, ON);
-    delay(500);
-    relais.setRelay(RELAIS_HANCHE_DROITE, OFF);
-    Serial.println("Relais 3 ");
-    relais.setRelay(RELAIS_GENOU_GAUCHE, ON);
-    delay(500);
-    relais.setRelay(RELAIS_GENOU_GAUCHE, OFF);
-    Serial.println("Relais 4 ");
-    relais.setRelay(RELAIS_GENOU_DROIT, ON);
-    delay(500);
-    relais.setRelay(RELAIS_GENOU_DROIT, OFF);
 }
 
 void Test::keyboardCommand()
@@ -102,7 +71,7 @@ void Test::keyboardCommand()
       motor->motorSetSpeed(MOTEUR_GENOU_DROIT, 0);
       motor->motorSetSpeed(MOTEUR_HANCHE_GAUCHE, 0);
       motor->motorSetSpeed(MOTEUR_GENOU_GAUCHE, 0);
-    } */
+    } 
     else if (incomingByte == '1')
     {
       Serial.println("Relais 1 ON");
@@ -206,4 +175,4 @@ void Test::keyboardCommand()
       dataCore.setMotorEnabled(motorState);
     }
   }
-}
+} */

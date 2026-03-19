@@ -2,7 +2,6 @@
 //#include <HardwareSerial.h>
 #include "enums.h"
 //#include "pinExtender.h"
-//#include "quadratureEncoder.h"
 #include "enums.h"
 //#include "touchScreen.h"
 //#include <SPI.h>
@@ -21,8 +20,6 @@
 
 #define uart_tx 43
 #define uart_rx 44
-#define TX_CAN 5
-#define RX_CAN 4
 
 
 
@@ -52,7 +49,7 @@ void setup()
   //Serial1.println("Etarting...");
 
   
-  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), TX_CAN, RX_CAN, 5, 5)) {
+  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), CAN_TX, CAN_RX, 5, 5)) {
     Serial1.println("CAN bus started!!!");
   } else {
     Serial1.println("CAN bus failed!");
