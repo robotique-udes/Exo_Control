@@ -34,8 +34,8 @@
 //DataCore &settings = DataCore::getInstance();
 MotorV3 testMoteurV3_2;
 MotorV2 testMoteurV2;
-  float torqueV3 = 0;
-  float torqueV2 = 0;
+float torqueV3 = 0;
+float torqueV2 = 0;
 
 
 //===============================================================================================================
@@ -44,16 +44,19 @@ MotorV2 testMoteurV2;
 
 void setup()
 {
-  Serial1.begin(115200, SERIAL_8N1, uart_rx, uart_tx); // for mobo
-  //Serial1.begin(115200); // for proto
-  //Serial1.println("Etarting...");
+  //Serial1.begin(115200, SERIAL_8N1, uart_rx, uart_tx); // for mobo
+  Serial.begin(115200); // for proto
+  Serial.println("Etarting...");
+  delay(5000);
+  
+
+if(ESP32Can.begin(ESP32Can.convertSpeed(1000), CAN_TX, CAN_RX, 5, 5)) {
+  Serial.println("CAN bus started!!!");
+} else {
+  Serial.println("CAN bus failed!");
+}
 
   
-  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), CAN_TX, CAN_RX, 5, 5)) {
-    Serial1.println("CAN bus started!!!");
-  } else {
-    Serial1.println("CAN bus failed!");
-  }
 
   
   
@@ -85,56 +88,60 @@ void setup()
 
   testMoteurV2.setMotorId(0x01);
   testMoteurV2.setMotorCorrection(1, 0); 
+
+  pinMode(CAN_TERMINAL_PIN, OUTPUT);
+  digitalWrite(CAN_TERMINAL_PIN, HIGH);
+
 }
 
 void loop()
 {
   //---------------Test multiple motors----------------
-        delay(500);
-    char rc = Serial1.read();
+    delay(100);
+    char rc = Serial.read();
     if(rc == 'e'){
         torqueV2=0.0;
         testMoteurV2.sendCommand(TORQUE, torqueV2);
         testMoteurV2.exitMode(); 
-        Serial1.println("Exit mode");
+        Serial.println("Exit mode");
     }
     else if(rc == 's'){
         testMoteurV2.enterMode();
-        Serial1.println("Enter mode");
+        Serial.println("Enter mode");
     }
     else if(rc == 'z'){
         testMoteurV2.zeroSet();
-        Serial1.println("Zero set");
+        Serial.println("Zero set");
     }
     else if(rc == 'a'){
         //float p_des, float v_des, float kp, float kd, float t_ff
         torqueV2+=0.5;
         testMoteurV2.sendCommand(TORQUE, torqueV2);
-        Serial1.println("Command send: a");
-        Serial1.println(torqueV2);
+        Serial.println("Command send: a");
+        Serial.println(torqueV2);
     }
-    //Serial1.print("Temperature V2 : ");
-    //Serial1.println(testMoteurV2.getTemperature());
+    Serial.print("Temperature V2 : ");
+    Serial.println(testMoteurV2.getTemperature());
 
 
 
 
     if(rc == 'k') {
-        Serial1.print("- de torque  :");
+        Serial.print("- de torque  :");
         torqueV3 -= 0.5;
-        Serial1.println(torqueV3);
+        Serial.println(torqueV3);
     }
 
     if(rc == 'l') {
-        Serial1.print("+ de torqueV3  :");
+        Serial.print("+ de torqueV3  :");
         torqueV3 += 0.5;
-        Serial1.println(torqueV3,HEX);
+        Serial.println(torqueV3,HEX);
     }
 
     if(rc == 'j') {
-        Serial1.print("stop  :");
+        Serial.print("stop  :");
         torqueV3 = 0;
-        Serial1.println(torqueV3);
+        Serial.println(torqueV3);
     }
 
     testMoteurV3_2.sendCommand(TORQUE, torqueV3);

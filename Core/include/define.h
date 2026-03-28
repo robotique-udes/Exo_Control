@@ -40,8 +40,12 @@
 #define NB_MOTORS 4         //nombre de moteurs sur l'exo
 #define TEMP_THRESHOLD 75   // la temperature max que les moteur peuvent atteindre
 #define SHUT_DOWN_TIME 10   // the time that is takes to shut down motors when overheating 
-#define CAN_RX 5      
-#define CAN_TX 6      
+
+
+// ce setting : -DBOARD_USES_HW_GPIO_NUMBERS fait en sorte QUE D6 et D7 sont = 8 9, TODO voir autres pin
+#define CAN_RX 8      
+#define CAN_TX 9   
+#define CAN_TERMINAL_PIN 4 //la pin de la resistance de terminaison du Can
 
 // LONGUEURS
 #define G 9.81  // gravité
