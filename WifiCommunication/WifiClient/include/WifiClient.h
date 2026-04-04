@@ -28,7 +28,7 @@ private:
     bool handShakeDone = false;
     bool tryingToConnect = false;
     int IPsListSize = 0; // Number of IPs in the IPs_list
-    std::string IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
+    //std::string IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
     std::map<std::pair<std::string, int>, std::string> dataMap;
     
     // Private constructors to prevent instantiation from outside
@@ -46,6 +46,8 @@ public:
     static WifiClient* GetInstance();
     ~WifiClient();
     
+    std::string IPsList[10]; // 0 - watch, 1 - exoskeleton, 2 - simulation, 3+ - other clients
+
     void sendMessage(int data_lenght, unsigned char data[], EnumIPType address);
     void receiveMessage();	
     bool isConnected();
