@@ -77,8 +77,8 @@
 #define I2C_SCL3 14
 
 #define IMU_DEBUG true
-#define MAIN_I2C_SDA 21
-#define MAIN_I2C_SCL 22
+#define MAIN_I2C_SDA 11
+#define MAIN_I2C_SCL 12
 #define LEFT_MOUSTACHE_MUX_CHANNEL 1
 #define RIGHT_MOUSTACHE_MUX_CHANNEL 2 
 #define I2C_CLOCK   400000L 

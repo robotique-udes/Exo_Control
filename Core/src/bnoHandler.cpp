@@ -12,6 +12,7 @@ BnoHandler::BnoHandler(){
     BNOs[static_cast<int> (EnumBnoPosition::THIGH_R)]     = new BNO_085(EnumBnoPosition::THIGH_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4A);
     BNOs[static_cast<int> (EnumBnoPosition::TIBIA_R)]    = new BNO_085(EnumBnoPosition::TIBIA_R, RIGHT_MOUSTACHE_MUX_CHANNEL, &this->mux, 0x4B);
     BNOs[static_cast<int> (EnumBnoPosition::EXO_BACK)]  = new BNO_085(EnumBnoPosition::EXO_BACK, 0, &this->mux, 0x4A);
+    BNOs[static_cast<int> (EnumBnoPosition::MOBO)]  = new BNO_085(EnumBnoPosition::MOBO, 3, &this->mux, 0x4B);
     bufferIndexLeft = 0;
     bufferIndexRight = 0;
     for(int i = 0; i < BUFFER_SIZE; i++)
@@ -57,6 +58,7 @@ void BnoHandler::read(){
     dataCore.setBnoAngles(EnumBnoAngle::HIP_L, getValAngle(EnumBnoAngle::HIP_L));
     dataCore.setBnoAngles(EnumBnoAngle::KNEE_R, getValAngle(EnumBnoAngle::KNEE_R));
     dataCore.setBnoAngles(EnumBnoAngle::KNEE_L, getValAngle(EnumBnoAngle::KNEE_L));
+    
 
     //Ground status
     dataCore.setRightGrounded(getLinAccel(EnumBnoPosition::TIBIA_R));

@@ -12,7 +12,8 @@ enum class EnumBnoPosition
     THIGH_R    =   1,
     TIBIA_L    =   2,
     TIBIA_R    =   3,
-    EXO_BACK   =   4
+    EXO_BACK   =   4,
+    MOBO       =   5
 };
 
 enum class EnumBnoAngle

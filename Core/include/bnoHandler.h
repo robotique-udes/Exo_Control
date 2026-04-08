@@ -12,7 +12,7 @@ using namespace std;
 class BnoHandler {
     private:
         // Array of the physical BNOs, ordered by EnumBnoPosition
-        array<BNO_085 *, 5> BNOs;
+        array<BNO_085 *, 6> BNOs;
         // Array of the angles between the parts, stored in degrees
         array<float, 9> angles;
         // Multiplexer used to switch between BNOs
