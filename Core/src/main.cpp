@@ -12,6 +12,12 @@ sh2_SensorValue_t sensorValues[NUM_BNO];
 // Function to select I2C channel (0-3 for TCA9546A)
 void selectChannel(uint8_t i) {
   if (i > 3) return;
+
+  // First, disable all channels
+ // Wire.beginTransmission(TCA_ADDR);
+ // Wire.write(0); 
+ // Wire.endTransmission();
+
   Wire.beginTransmission(TCA_ADDR);
   Wire.write(1 << i);
   Wire.endTransmission();
@@ -24,11 +30,10 @@ void setup() {
 
   // Initialize all BNO085 sensors on channels 0-3
   for (uint8_t ch = 0; ch < NUM_BNO; ch++) {
-    if (ch == 1 || ch == 2)
+    if (ch == 2)
       continue;
-
     selectChannel(ch);
-    delay(10); // Small delay for channel switching
+    delay(100); // Small delay for channel switching
     if (!bno08x[ch].begin_I2C(BNO_ADDR)) {
       Serial.print("Failed to find BNO085 chip on Channel ");
       Serial.println(ch);
@@ -44,7 +49,7 @@ void setup() {
 void loop() {
   // Example: Read all BNO085 sensors in sequence
   for (uint8_t ch = 0; ch < NUM_BNO; ch++) {
-    if (ch == 1 || ch == 2)
+    if (ch == 2)
       continue;
 
     selectChannel(ch);
