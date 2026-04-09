@@ -47,26 +47,31 @@ void setup() {
 }
 
 void loop() {
-  // Example: Read all BNO085 sensors in sequence
-  for (uint8_t ch = 0; ch < NUM_BNO; ch++) {
-    if (ch == 2)
-      continue;
-
-    selectChannel(ch);
-    delay(20); // Allow channel switch to settle
-    if (bno08x[ch].getSensorEvent(&sensorValues[ch])) {
-      if (sensorValues[ch].sensorId == SH2_ROTATION_VECTOR) {
-        Serial.print("Channel ");
-        Serial.print(ch);
-        Serial.print(" Quat: ");
-        Serial.print(sensorValues[ch].un.rotationVector.i);
-        Serial.print(", ");
-        Serial.print(sensorValues[ch].un.rotationVector.j);
-        Serial.print(", ");
-        Serial.println(sensorValues[ch].un.rotationVector.k);
+  // Clear the serial buffer at the start of each loop
+  while (Serial.available() > 1) {
+    Serial.read();
+  }
+  // Only print the channel corresponding to the digit pressed ('0'-'3')
+  if (Serial.available()) {
+    char input = Serial.read();
+    if (input >= '0' && input <= '3') {
+      uint8_t ch = input - '0';
+      if (ch == 2) return; // skip if channel 2 is not used
+      selectChannel(ch);
+      delay(20); // Allow channel switch to settle
+      if (bno08x[ch].getSensorEvent(&sensorValues[ch])) {
+        if (sensorValues[ch].sensorId == SH2_ROTATION_VECTOR) {
+          Serial.print("Channel ");
+          Serial.print(ch);
+          Serial.print(" Quat: ");
+          Serial.print(sensorValues[ch].un.rotationVector.i);
+          Serial.print(", ");
+          Serial.print(sensorValues[ch].un.rotationVector.j);
+          Serial.print(", ");
+          Serial.println(sensorValues[ch].un.rotationVector.k);
+        }
       }
     }
-    delay(10); // Optional: adjust for sensor timing
   }
   delay(100); // Main loop delay
 }
