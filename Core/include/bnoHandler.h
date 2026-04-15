@@ -1,6 +1,6 @@
 #ifndef BNOHANDLER_H_
 #define BNOHANDLER_H_
-#include "BNO_085.h"
+#include "Adafruit_BNO08x.h"
 #include "dataCore.h"
 #include "multiplex.h"
 #include "enums.h"
@@ -11,12 +11,26 @@ using namespace std;
 // Class storing all BNOs and the multiplexer that they use
 class BnoHandler {
     private:
-        // Array of the physical BNOs, ordered by EnumBnoPosition
-        array<BNO_085 *, 6> BNOs;
+        // Array of physical BNO08x instances, ordered by EnumBnoPosition
+        array<Adafruit_BNO08x, 6> bnoDevices;
+        // Latest report values for each BNO
+        array<sh2_SensorValue_t, 6> bnoRotation;
+        array<sh2_SensorValue_t, 6> bnoAccel;
+        array<sh2_SensorValue_t, 6> bnoLinAccel;
+        array<sh2_SensorValue_t, 6> bnoGyro;
+        array<sh2_SensorValue_t, 6> bnoMag;
+        // BNO connection state
+        array<bool, 6> bnoConnected;
+        // Mux channel for each BNO
+        array<uint8_t, 6> muxChannels;
+        // I2C address for each BNO
+        array<uint8_t, 6> i2cAddresses;
         // Array of the angles between the parts, stored in degrees
         array<float, 9> angles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
+        // Reused event buffer for BNO08x reports
+        sh2_SensorValue_t sensorValue;
         // Time of last update, based on millis()
         long last_update = 0;
         // Instance of dataCore
@@ -32,6 +46,11 @@ class BnoHandler {
          * @param position EnumBnoPosition of the part
          */
         void updateBuffer(EnumBnoPosition position);
+        void resetData(EnumBnoPosition position);
+        bool setupReports(int index);
+        bool checkIfConnected(int index);
+        float getPitchDegrees(EnumBnoPosition position);
+        int16_t getLinAccelYScaled(EnumBnoPosition position);
 
     public:
         int offset = 0;
@@ -62,7 +81,8 @@ class BnoHandler {
          * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
          */
         void printBNOsStatus(int startIndex = 0, int endIndex = 4);
-        void printBNOsData(int startIndex = 0, int endIndex = 8);
+        void printBNOsData(int startIndex = 0, int endIndex = 4);
+        void printConnectedBNOsData(int startIndex = 0, int endIndex = 4);
 
         /**
          * @brief Compute the relative angles at the joints
@@ -79,11 +99,11 @@ class BnoHandler {
         /**
          * @brief Get the BNO data of a part
          * @param position EnumBnoPosition of the part
-         * @return BNOStruct of the part
+         * @return Latest rotation-vector report for the part
          */
-        BNOStruct getBNOData(EnumBnoPosition position);
+        sh2_SensorValue_t getBNOData(EnumBnoPosition position);
 
-        BNOStruct* getBNODataPointer(EnumBnoPosition position);
+        sh2_SensorValue_t* getBNODataPointer(EnumBnoPosition position);
 
         /**
          * @brief Compute linear acceleration from an average on linAccelBuffer

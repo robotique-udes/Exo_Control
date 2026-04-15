@@ -3,10 +3,10 @@
 
 #include <Arduino.h>
 #include <Nextion.h>
+#include <Adafruit_BNO08x.h>
 
 #include "define.h"
 #include "enums.h"
-#include "structs.h"
 
 using namespace std;
 
@@ -38,7 +38,7 @@ private:
     float Imu_tibia_left = 0;
     float Imu_tibia_right = 0;
 
-    array<BNOStruct *, 5> bnoData;
+    array<sh2_SensorValue_t *, 5> bnoData;
 
     //In between settings
     bool motorEnabled;
@@ -215,14 +215,14 @@ public:
     * @param bno BNO title
     * @param data Pointer to the structure
     */
-    void setBnoStruct(EnumBnoPosition bno, BNOStruct* data);
+    void setBnoStruct(EnumBnoPosition bno, sh2_SensorValue_t* data);
 
     /**
     * @brief Bno struct getter :)
     * @param bno Target bno
     * @return struct
     */
-    BNOStruct* getBnoStruct(EnumBnoPosition bno);
+    sh2_SensorValue_t* getBnoStruct(EnumBnoPosition bno);
 
     // PWM
     /**

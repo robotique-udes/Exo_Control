@@ -1,77 +1,31 @@
+#include <Arduino.h>
 #include <Wire.h>
-#include <Adafruit_BNO08x.h>
+#include "bnoHandler.h"
 
-// TCA9546A and BNO085 addresses
-#define TCA_ADDR 0x70      // TCA9546A default address
-#define BNO_ADDR 0x4A      // BNO085 default address
-#define NUM_BNO 4          // Number of BNO085 sensors (channels 0-3)
-
-Adafruit_BNO08x bno08x[NUM_BNO];
-sh2_SensorValue_t sensorValues[NUM_BNO];
-
-// Function to select I2C channel (0-3 for TCA9546A)
-void selectChannel(uint8_t i) {
-  if (i > 3) return;
-
-  // First, disable all channels
- // Wire.beginTransmission(TCA_ADDR);
- // Wire.write(0); 
- // Wire.endTransmission();
-
-  Wire.beginTransmission(TCA_ADDR);
-  Wire.write(1 << i);
-  Wire.endTransmission();
-}
+static BnoHandler bnoHandler;
 
 void setup() {
   Serial.begin(115200);
   Wire.begin();
-  delay(3000);
+  delay(500);
 
-  // Initialize all BNO085 sensors on channels 0-3
-  for (uint8_t ch = 0; ch < NUM_BNO; ch++) {
-    if (ch == 2)
-      continue;
-    selectChannel(ch);
-    delay(100); // Small delay for channel switching
-    if (!bno08x[ch].begin_I2C(BNO_ADDR)) {
-      Serial.print("Failed to find BNO085 chip on Channel ");
-      Serial.println(ch);
-    } else {
-      Serial.print("ok to find BNO085 chip on Channel ");
-      Serial.println(ch);
-      bno08x[ch].enableReport(SH2_ROTATION_VECTOR);
-    }
-    delay(10);
+  Serial.println("Starting BnoHandler...");
+  const bool hasConnectedBno = bnoHandler.begin();
+
+  if (!hasConnectedBno) {
+    Serial.println("No BNO connected.");
+  } else {
+    Serial.println("BNO setup complete. Reading connected sensors only.");
   }
 }
 
 void loop() {
-  // Clear the serial buffer at the start of each loop
-  while (Serial.available() > 1) {
-    Serial.read();
-  }
-  // Only print the channel corresponding to the digit pressed ('0'-'3')
-  if (Serial.available()) {
-    char input = Serial.read();
-    if (input >= '0' && input <= '3') {
-      uint8_t ch = input - '0';
-      if (ch == 2) return; // skip if channel 2 is not used
-      selectChannel(ch);
-      delay(20); // Allow channel switch to settle
-      if (bno08x[ch].getSensorEvent(&sensorValues[ch])) {
-        if (sensorValues[ch].sensorId == SH2_ROTATION_VECTOR) {
-          Serial.print("Channel ");
-          Serial.print(ch);
-          Serial.print(" Quat: ");
-          Serial.print(sensorValues[ch].un.rotationVector.i);
-          Serial.print(", ");
-          Serial.print(sensorValues[ch].un.rotationVector.j);
-          Serial.print(", ");
-          Serial.println(sensorValues[ch].un.rotationVector.k);
-        }
-      }
-    }
-  }
-  delay(100); // Main loop delay
+  bnoHandler.requestData();
+
+  Serial.println("---- Connected BNO Data ----");
+  bnoHandler.printConnectedBNOsData(0, 4);
+  bnoHandler.printGroundState();
+  Serial.println();
+
+  delay(200);
 }
