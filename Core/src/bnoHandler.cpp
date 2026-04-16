@@ -21,7 +21,7 @@ BnoHandler::BnoHandler(){
     i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_L)] = 0x4B;
     i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_R)] = 0x4B;
     i2cAddresses[static_cast<int>(EnumBnoPosition::EXO_BACK)] = 0x4A;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::MOBO)] = 0x4B;
+    i2cAddresses[static_cast<int>(EnumBnoPosition::MOBO)] = 0x4A;
 
     bufferIndexLeft = 0;
     bufferIndexRight = 0;
@@ -139,7 +139,7 @@ void BnoHandler::requestData(){
 // Print relevant IMU information
 void BnoHandler::printBNOsStatus(int startIndex, int endIndex){
     for (int i = startIndex; i<=endIndex; i++){
-        Serial.print("\tIMU "); printName(static_cast<EnumBnoAngle>(i)); Serial.print("\t");
+        Serial.print("\tIMU "); printName(static_cast<EnumBnoPosition>(i)); Serial.print("\t");
         Serial.print("LINK: "); Serial.print(checkIfConnected(i));
         Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<EnumBnoAngle>(i)));
     }
@@ -153,7 +153,7 @@ void BnoHandler::printBNOsData(int startIndex, int endIndex){
 
 void BnoHandler::printConnectedBNOsData(int startIndex, int endIndex){
     for (int i = startIndex; i <= endIndex; i++){
-        if (checkIfConnected(i)) {
+        if (bnoConnected[i]) {
             printBNOData(static_cast<EnumBnoPosition>(i));
         }
     }
@@ -226,36 +226,27 @@ sh2_SensorValue_t* BnoHandler::getBNODataPointer(EnumBnoPosition position){
 }
 
 //print name of angle
-void BnoHandler::printName(EnumBnoAngle position){
+void BnoHandler::printName(EnumBnoPosition position){
 
     switch (position)
     {
-    case EnumBnoAngle::THIGH_L:
+    case EnumBnoPosition::THIGH_L:
         Serial.print("THIGH_L");
         break;
-    case EnumBnoAngle::THIGH_R:
+    case EnumBnoPosition::THIGH_R:
         Serial.print("THIGH_R");
         break;
-    case EnumBnoAngle::TIBIA_L:
+    case EnumBnoPosition::TIBIA_L:
         Serial.print("TIBIA_L");
         break;
-    case EnumBnoAngle::TIBIA_R:
+    case EnumBnoPosition::TIBIA_R:
         Serial.print("TIBIA_R");
         break;
-    case EnumBnoAngle::EXO_BACK:
+    case EnumBnoPosition::EXO_BACK:
         Serial.print("EXO_BACK");
         break;
-    case EnumBnoAngle::HIP_L:
-        Serial.print("HIP_L");
-        break;
-    case EnumBnoAngle::HIP_R:
-        Serial.print("HIP_R");
-        break;
-    case EnumBnoAngle::KNEE_L:
-        Serial.print("KNEE_L");
-        break;
-    case EnumBnoAngle::KNEE_R:
-        Serial.print("KNEE_R");
+    case EnumBnoPosition::MOBO:
+        Serial.print("MOBO");
         break;
     default:
         Serial.print("Unknown");
@@ -265,16 +256,37 @@ void BnoHandler::printName(EnumBnoAngle position){
 
 void BnoHandler::printBNOData(EnumBnoPosition position){
     const int index = static_cast<int>(position);
-    Serial.print("IMU "); printName(static_cast<EnumBnoAngle>(position)); Serial.print("\n");
-    Serial.print("Accel: ");
-    Serial.print(bnoAccel[index].un.accelerometer.x); Serial.print("\t");
-    Serial.print(bnoAccel[index].un.accelerometer.y); Serial.print("\t");
-    Serial.print(bnoAccel[index].un.accelerometer.z); Serial.print("\t");
-    
-    Serial.print("L-Acc: "); 
-    Serial.print(bnoLinAccel[index].un.linearAcceleration.x); Serial.print("\t");
-    Serial.print(bnoLinAccel[index].un.linearAcceleration.y); Serial.print("\t");
-    Serial.print(bnoLinAccel[index].un.linearAcceleration.z); Serial.print("\n");
+    Serial.print("IMU "); printName(static_cast<EnumBnoPosition>(position)); Serial.print("\n");
+
+    // Extract quaternion
+    const sh2_RotationVectorWAcc_t &q = bnoRotation[index].un.rotationVector;
+    const float w = q.real;
+    const float x = q.i;
+    const float y = q.j;
+    const float z = q.k;
+
+    // Convert quaternion to Euler angles (roll, pitch, yaw)
+    // Roll (x-axis rotation)
+    float sinr_cosp = 2.0f * (w * x + y * z);
+    float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
+    float roll = atan2(sinr_cosp, cosr_cosp) * RAD_TO_DEG;
+
+    // Pitch (y-axis rotation)
+    float sinp = 2.0f * (w * y - z * x);
+    float pitch;
+    if (fabs(sinp) >= 1)
+        pitch = copysign(90.0f, sinp); // use 90 degrees if out of range
+    else
+        pitch = asin(sinp) * RAD_TO_DEG;
+
+    // Yaw (z-axis rotation)
+    float siny_cosp = 2.0f * (w * z + x * y);
+    float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
+    float yaw = atan2(siny_cosp, cosy_cosp) * RAD_TO_DEG;
+
+    Serial.print("Roll: "); Serial.print(roll); Serial.print("\t");
+    Serial.print("Pitch: "); Serial.print(pitch); Serial.print("\t");
+    Serial.print("Yaw: "); Serial.print(yaw); Serial.print("\n");
 }
 
 void BnoHandler::printGroundState()

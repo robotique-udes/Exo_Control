@@ -23,8 +23,7 @@ void loop() {
   bnoHandler.requestData();
 
   Serial.println("---- Connected BNO Data ----");
-  bnoHandler.printConnectedBNOsData(0, 4);
-  bnoHandler.printGroundState();
+  bnoHandler.printConnectedBNOsData(0, 5);
   Serial.println();
 
   delay(200);

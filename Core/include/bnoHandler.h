@@ -112,7 +112,7 @@ class BnoHandler {
          */
         bool getLinAccel(EnumBnoPosition position);
 
-        void printName(EnumBnoAngle position);
+        void printName(EnumBnoPosition position);
 
         void printBNOData(EnumBnoPosition position);
 
