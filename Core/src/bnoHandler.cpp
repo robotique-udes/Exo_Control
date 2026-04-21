@@ -13,15 +13,15 @@ BnoHandler::BnoHandler(){
     muxChannels[static_cast<int>(EnumBnoPosition::THIGH_R)] = RIGHT_MOUSTACHE_MUX_CHANNEL;
     muxChannels[static_cast<int>(EnumBnoPosition::TIBIA_L)] = LEFT_MOUSTACHE_MUX_CHANNEL;
     muxChannels[static_cast<int>(EnumBnoPosition::TIBIA_R)] = RIGHT_MOUSTACHE_MUX_CHANNEL;
-    muxChannels[static_cast<int>(EnumBnoPosition::EXO_BACK)] = 0;
-    muxChannels[static_cast<int>(EnumBnoPosition::MOBO)] = 3;
+    muxChannels[static_cast<int>(EnumBnoPosition::EXO_BACK)] = BACK_MUX_CHANNEL;
+    muxChannels[static_cast<int>(EnumBnoPosition::MOBO)] = MOBO_MUX_CHANNEL;
 
-    i2cAddresses[static_cast<int>(EnumBnoPosition::THIGH_L)] = 0x4A;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::THIGH_R)] = 0x4A;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_L)] = 0x4B;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_R)] = 0x4B;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::EXO_BACK)] = 0x4A;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::MOBO)] = 0x4B;
+    i2cAddresses[static_cast<int>(EnumBnoPosition::THIGH_L)] = BNO_ADDRESS_1;
+    i2cAddresses[static_cast<int>(EnumBnoPosition::THIGH_R)] = BNO_ADDRESS_1;
+    i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_L)] = BNO_ADDRESS_2;
+    i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_R)] = BNO_ADDRESS_2;
+    i2cAddresses[static_cast<int>(EnumBnoPosition::EXO_BACK)] = BNO_ADDRESS_1;
+    i2cAddresses[static_cast<int>(EnumBnoPosition::MOBO)] = BNO_ADDRESS_2;
 
     bufferIndexLeft = 0;
     bufferIndexRight = 0;
