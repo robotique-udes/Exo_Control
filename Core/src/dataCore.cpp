@@ -190,36 +190,27 @@ void DataCore::setEncoderReset(bool state){
 
 
 //BNO
-float DataCore::getBnoAngles(EnumBnoAngle bno)
+float DataCore::getBnoAngle(EnumBnoPosition bno)
 {
     switch (bno)
     {
-    case EnumBnoAngle::HIP_R:
-        return Imu_hip_right;
-        break;
-    case EnumBnoAngle::HIP_L:
-        return Imu_hip_left;
-        break;
-    case EnumBnoAngle::KNEE_R:
-        return Imu_knee_right;
-        break;
-    case EnumBnoAngle::KNEE_L:
-        return Imu_knee_left;
-        break;
-    case EnumBnoAngle::EXO_BACK:
+    case EnumBnoPosition::EXO_BACK:
         return Imu_back;
         break;
-    case EnumBnoAngle::THIGH_L:
+    case EnumBnoPosition::THIGH_L:
         return Imu_thigh_left;
         break;
-    case EnumBnoAngle::THIGH_R:
+    case EnumBnoPosition::THIGH_R:
         return Imu_thigh_right;
         break;
-    case EnumBnoAngle::TIBIA_L:
+    case EnumBnoPosition::TIBIA_L:
         return Imu_tibia_left;
         break;
-    case EnumBnoAngle::TIBIA_R:
+    case EnumBnoPosition::TIBIA_R:
         return Imu_tibia_right;
+        break;
+    case EnumBnoPosition::MOBO:
+        return 0.0f;
         break;
     default:
         Serial.println("Invalid bno pos");
@@ -227,36 +218,26 @@ float DataCore::getBnoAngles(EnumBnoAngle bno)
     }
 }
 
-void DataCore::setBnoAngles(EnumBnoAngle bno, float angle)
+void DataCore::setBnoAngle(EnumBnoPosition bno, float angle)
 {
     switch (bno)
     {
-    case EnumBnoAngle::HIP_R:
-        Imu_hip_right = angle;
-        break;
-    case EnumBnoAngle::HIP_L:
-        Imu_hip_left = angle;
-        break;
-    case EnumBnoAngle::KNEE_R:
-        Imu_knee_right = angle;
-        break;
-    case EnumBnoAngle::KNEE_L:
-        Imu_knee_left = angle;
-        break;
-    case EnumBnoAngle::EXO_BACK:
+    case EnumBnoPosition::EXO_BACK:
         Imu_back = angle;
         break;
-    case EnumBnoAngle::THIGH_L:
+    case EnumBnoPosition::THIGH_L:
         Imu_thigh_left = angle;
         break;
-    case EnumBnoAngle::THIGH_R:
+    case EnumBnoPosition::THIGH_R:
         Imu_thigh_right = angle;
         break;
-    case EnumBnoAngle::TIBIA_L:
+    case EnumBnoPosition::TIBIA_L:
         Imu_tibia_left = angle;
         break;
-    case EnumBnoAngle::TIBIA_R:
+    case EnumBnoPosition::TIBIA_R:
         Imu_tibia_right = angle;
+        break;
+    case EnumBnoPosition::MOBO:
         break;
     default:
         break;
@@ -314,10 +295,12 @@ void DataCore::setPWM(EnumMotorPosition motor, float pwm){
 }
 
 void DataCore::printAngles(){
-    Serial.print("Knee left: ");
-    Serial.print(Imu_knee_left);
-    Serial.print("  Hip left: ");
-    Serial.print(Imu_hip_left);
+    Serial.print("Thigh left: ");
+    Serial.print(Imu_thigh_left);
+    Serial.print("  Tibia left: ");
+    Serial.print(Imu_tibia_left);
+    Serial.print("  Back: ");
+    Serial.print(Imu_back);
 }
 
 

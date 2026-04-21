@@ -28,10 +28,6 @@ private:
     bool needResetEncoder = false;
 
     // BNO
-    float Imu_knee_right = 0;
-    float Imu_knee_left = 0;
-    float Imu_hip_right = 0;
-    float Imu_hip_left = 0;
     float Imu_back = 0;
     float Imu_thigh_left = 0;
     float Imu_thigh_right = 0;
@@ -201,14 +197,14 @@ public:
     * @param bno Target bno
     * @param angle Angle value
     */
-    void setBnoAngles(EnumBnoAngle bno, float angle);
+    void setBnoAngle(EnumBnoPosition bno, float angle);
 
     /**
     * @brief Bno angle getter
     * @param bno Target bno
     * @return Degree angle value
     */
-    float getBnoAngles(EnumBnoAngle bno);
+    float getBnoAngle(EnumBnoPosition bno);
 
     /**
     * @brief Bno struct setter :)
