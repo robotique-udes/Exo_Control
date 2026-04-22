@@ -16,19 +16,6 @@ enum class EnumBnoPosition
     MOBO       =   5
 };
 
-enum class EnumBnoAngle
-{
-    THIGH_L    =   0,
-    THIGH_R    =   1,
-    TIBIA_L    =   2,
-    TIBIA_R    =   3,
-    EXO_BACK   =   4,
-    HIP_L      =   5,
-    HIP_R      =   6,
-    KNEE_L     =   7,
-    KNEE_R     =   8
-};
-
 enum class EnumMotorPosition
 {
     HIP_R  = 0,

@@ -20,18 +20,7 @@ private:
     bool leftGrounded;
     bool groundDetectEnable;
 
-    // encoder
-    float encoder_knee_right = 0;
-    float encoder_knee_left = 0;
-    float encoder_hip_right = 0;
-    float encoder_hip_left = 0;
-    bool needResetEncoder = false;
-
     // BNO
-    float Imu_knee_right = 0;
-    float Imu_knee_left = 0;
-    float Imu_hip_right = 0;
-    float Imu_hip_left = 0;
     float Imu_back = 0;
     float Imu_thigh_left = 0;
     float Imu_thigh_right = 0;
@@ -42,37 +31,19 @@ private:
 
     //In between settings
     bool motorEnabled;
-    bool clutchEnabled;
     bool angleSource;
-    bool brightness;
-    int height;
     float motorPower;
 
     // Outs
     // PWM
-    int PWMRightKnee = 0;
-    int PWMLeftKnee = 0;
-    int PWMRightHip = 0;
-    int PWMLeftHip = 0;
+    int torqueRightKnee = 0;
+    int torqueLeftKnee = 0;
+    int torqueRightHip = 0;
+    int torqueLeftHip = 0;
     
     DataCore();
 
 public:
-
-
-    /**
-    * @brief Clutch enable getter
-    * @return Clutch state
-    */
-    bool isClutchEnabled();
-
-    /**
-    * @brief Clutch enable setter
-    * @param setClutchEnabled Clutch enable state
-    */
-    void setClutchEnabled(bool setClutchEnabled);
-
-    
 
     /**
     * @brief Motor enable setter
@@ -101,11 +72,6 @@ public:
     * @brief Put all settings back to boot values
     */
     void initialise();
-
-    /**
-    * @brief Set all encoder pulse values to 0
-    */
-    void resetEncoder();
 
     /**
     * @brief Angle source getter
@@ -161,54 +127,20 @@ public:
     */
     void setLeftGrounded(bool state);
 
-    // encoder
-    /**
-    * @brief Encoder getter (Deg)
-    * @param motor Target motor
-    * @return Degree angle value
-    */
-    float getEncoderDeg(EnumMotorPosition motor);
-
-    /**
-    * @brief Encoder getter (Rad)
-    * @param motor Traget motor
-    * @return Radian angle value
-    */
-    float getEncoderRad(EnumMotorPosition motor);
-
-    /**
-    * @brief Encoder angle setter
-    * @param motor Target motor
-    * @param pulse Pulse value
-    */
-    void setEncoderAngles(EnumMotorPosition motor, int pulse);
-
-    /**
-    * @brief Encoder reset getter
-    * @return Encoder reset state
-    */
-    bool isEncoderResetNeeded();
-
-    /**
-    * @brief Encoder reset setter
-    * @param state New state
-    */
-    void setEncoderReset(bool state);
-
     // Bno
     /**
     * @brief Bno angle setter
     * @param bno Target bno
     * @param angle Angle value
     */
-    void setBnoAngles(EnumBnoAngle bno, float angle);
+    void setBnoAngle(EnumBnoPosition bno, float angle);
 
     /**
     * @brief Bno angle getter
     * @param bno Target bno
     * @return Degree angle value
     */
-    float getBnoAngles(EnumBnoAngle bno);
+    float getBnoAngle(EnumBnoPosition bno);
 
     /**
     * @brief Bno struct setter :)
@@ -230,14 +162,14 @@ public:
     * @param motor Target motor
     * @param pwm PWM value
     */
-    void setPWM(EnumMotorPosition motor, float pwm);
+    void setTorque(EnumMotorPosition motor, float torque);
 
     /**
     * @brief PWM getter
     * @param motor Target motor
     * @return PWM value
     */
-    float getPWM(EnumMotorPosition motor);
+    float getTorque(EnumMotorPosition motor);
 
     // Singleton code
     static DataCore *instance;

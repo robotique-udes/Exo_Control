@@ -9,19 +9,19 @@ BnoHandler::BnoHandler(){
     this->mux = Multiplex();
 
     // Keep this order, position in arrays is same as EnumBnoPosition value
-    muxChannels[static_cast<int>(EnumBnoPosition::THIGH_L)] = LEFT_MOUSTACHE_MUX_CHANNEL;
-    muxChannels[static_cast<int>(EnumBnoPosition::THIGH_R)] = RIGHT_MOUSTACHE_MUX_CHANNEL;
-    muxChannels[static_cast<int>(EnumBnoPosition::TIBIA_L)] = LEFT_MOUSTACHE_MUX_CHANNEL;
-    muxChannels[static_cast<int>(EnumBnoPosition::TIBIA_R)] = RIGHT_MOUSTACHE_MUX_CHANNEL;
-    muxChannels[static_cast<int>(EnumBnoPosition::EXO_BACK)] = 0;
-    muxChannels[static_cast<int>(EnumBnoPosition::MOBO)] = 3;
+    muxChannels[bnoIndex(EnumBnoPosition::THIGH_L)] = LEFT_MOUSTACHE_MUX_CHANNEL;
+    muxChannels[bnoIndex(EnumBnoPosition::THIGH_R)] = RIGHT_MOUSTACHE_MUX_CHANNEL;
+    muxChannels[bnoIndex(EnumBnoPosition::TIBIA_L)] = LEFT_MOUSTACHE_MUX_CHANNEL;
+    muxChannels[bnoIndex(EnumBnoPosition::TIBIA_R)] = RIGHT_MOUSTACHE_MUX_CHANNEL;
+    muxChannels[bnoIndex(EnumBnoPosition::EXO_BACK)] = BACK_MUX_CHANNEL;
+    muxChannels[bnoIndex(EnumBnoPosition::MOBO)] = MOBO_MUX_CHANNEL;
 
-    i2cAddresses[static_cast<int>(EnumBnoPosition::THIGH_L)] = 0x4A;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::THIGH_R)] = 0x4A;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_L)] = 0x4B;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::TIBIA_R)] = 0x4B;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::EXO_BACK)] = 0x4A;
-    i2cAddresses[static_cast<int>(EnumBnoPosition::MOBO)] = 0x4A;
+    i2cAddresses[bnoIndex(EnumBnoPosition::THIGH_L)] = BNO_ADDRESS_1;
+    i2cAddresses[bnoIndex(EnumBnoPosition::THIGH_R)] = BNO_ADDRESS_1;
+    i2cAddresses[bnoIndex(EnumBnoPosition::TIBIA_L)] = BNO_ADDRESS_2;
+    i2cAddresses[bnoIndex(EnumBnoPosition::TIBIA_R)] = BNO_ADDRESS_2;
+    i2cAddresses[bnoIndex(EnumBnoPosition::EXO_BACK)] = BNO_ADDRESS_1;
+    i2cAddresses[bnoIndex(EnumBnoPosition::MOBO)] = BNO_ADDRESS_2;
 
     bufferIndexLeft = 0;
     bufferIndexRight = 0;
@@ -50,9 +50,10 @@ bool BnoHandler::begin(){
     if (IMU_DEBUG) Serial.print("===== BnoHandler STARTING =====\n");
 
     for (int i = 0; i < bnoDevices.size(); i++){
+        const EnumBnoPosition position = static_cast<EnumBnoPosition>(i);
         mux.selectChannel(muxChannels[i]);
 
-        const bool isConnected = bnoDevices[i].begin_I2C(i2cAddresses[i], &Wire) && setupReports(i);
+        const bool isConnected = bnoDevices[i].begin_I2C(i2cAddresses[i], &Wire) && setupReports(position);
         bnoConnected[i] = isConnected;
 
         if (isConnected){
@@ -73,15 +74,11 @@ bool BnoHandler::begin(){
 void BnoHandler::read(){
     requestData();
 
-    dataCore.setBnoAngles(EnumBnoAngle::THIGH_R, getValAngle(EnumBnoAngle::THIGH_R));
-    dataCore.setBnoAngles(EnumBnoAngle::THIGH_L, getValAngle(EnumBnoAngle::THIGH_L));
-    dataCore.setBnoAngles(EnumBnoAngle::TIBIA_R, getValAngle(EnumBnoAngle::TIBIA_R));
-    dataCore.setBnoAngles(EnumBnoAngle::TIBIA_L, getValAngle(EnumBnoAngle::TIBIA_L));
-    dataCore.setBnoAngles(EnumBnoAngle::EXO_BACK, getValAngle(EnumBnoAngle::EXO_BACK));
-    dataCore.setBnoAngles(EnumBnoAngle::HIP_R, getValAngle(EnumBnoAngle::HIP_R));
-    dataCore.setBnoAngles(EnumBnoAngle::HIP_L, getValAngle(EnumBnoAngle::HIP_L));
-    dataCore.setBnoAngles(EnumBnoAngle::KNEE_R, getValAngle(EnumBnoAngle::KNEE_R));
-    dataCore.setBnoAngles(EnumBnoAngle::KNEE_L, getValAngle(EnumBnoAngle::KNEE_L));
+    dataCore.setBnoAngle(EnumBnoPosition::THIGH_R, getValAngle(EnumBnoPosition::THIGH_R));
+    dataCore.setBnoAngle(EnumBnoPosition::THIGH_L, getValAngle(EnumBnoPosition::THIGH_L));
+    dataCore.setBnoAngle(EnumBnoPosition::TIBIA_R, getValAngle(EnumBnoPosition::TIBIA_R));
+    dataCore.setBnoAngle(EnumBnoPosition::TIBIA_L, getValAngle(EnumBnoPosition::TIBIA_L));
+    dataCore.setBnoAngle(EnumBnoPosition::EXO_BACK, getValAngle(EnumBnoPosition::EXO_BACK));
     
 
     //Ground status
@@ -96,10 +93,11 @@ void BnoHandler::requestData(){
             continue;
         }
 
+        const EnumBnoPosition position = static_cast<EnumBnoPosition>(i);
         mux.selectChannel(muxChannels[i]);
 
         if (bnoDevices[i].wasReset()) {
-            setupReports(i);
+            setupReports(position);
         }
 
         while (bnoDevices[i].getSensorEvent(&sensorValue)) {
@@ -139,9 +137,10 @@ void BnoHandler::requestData(){
 // Print relevant IMU information
 void BnoHandler::printBNOsStatus(int startIndex, int endIndex){
     for (int i = startIndex; i<=endIndex; i++){
-        Serial.print("\tIMU "); printName(static_cast<EnumBnoPosition>(i)); Serial.print("\t");
-        Serial.print("LINK: "); Serial.print(checkIfConnected(i));
-        Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(static_cast<EnumBnoAngle>(i)));
+        const EnumBnoPosition position = static_cast<EnumBnoPosition>(i);
+        Serial.print("\tIMU "); printName(position); Serial.print("\t");
+        Serial.print("LINK: "); Serial.print(checkIfConnected(position));
+        Serial.print("\tCOMPUTE ANGLE:\t"); Serial.println(this->getValAngle(position));
     }
 }
 
@@ -153,8 +152,9 @@ void BnoHandler::printBNOsData(int startIndex, int endIndex){
 
 void BnoHandler::printConnectedBNOsData(int startIndex, int endIndex){
     for (int i = startIndex; i <= endIndex; i++){
+        const EnumBnoPosition position = static_cast<EnumBnoPosition>(i);
         if (bnoConnected[i]) {
-            printBNOData(static_cast<EnumBnoPosition>(i));
+            printBNOData(position);
         }
     }
 }
@@ -196,33 +196,25 @@ void BnoHandler::computeAngles() {
     float tibiaR = getPitchDegrees(EnumBnoPosition::TIBIA_R);
     float back = getPitchDegrees(EnumBnoPosition::EXO_BACK);
 
-    // Compute Joint angles
-    angles[static_cast<int> (EnumBnoAngle::HIP_L)] = abs(-thighL-back);
-    angles[static_cast<int> (EnumBnoAngle::KNEE_L)] = abs(tibiaL-thighL);
-
-    angles[static_cast<int> (EnumBnoAngle::HIP_R)] = abs(-thighR-back);
-    angles[static_cast<int> (EnumBnoAngle::KNEE_R)] = abs(tibiaR-thighR);
-
     // Get angles "right away" to be used in calculations
-    angles[static_cast<int> (EnumBnoAngle::EXO_BACK)] = back;
-    angles[static_cast<int> (EnumBnoAngle::THIGH_L)] = thighL;
-    angles[static_cast<int> (EnumBnoAngle::TIBIA_L)] = tibiaL;
-    angles[static_cast<int> (EnumBnoAngle::THIGH_R)] = thighR;
-    angles[static_cast<int> (EnumBnoAngle::TIBIA_R)] = tibiaR;
+    angles[bnoIndex(EnumBnoPosition::EXO_BACK)] = back;
+    angles[bnoIndex(EnumBnoPosition::THIGH_L)] = thighL;
+    angles[bnoIndex(EnumBnoPosition::TIBIA_L)] = tibiaL;
+    angles[bnoIndex(EnumBnoPosition::THIGH_R)] = thighR;
+    angles[bnoIndex(EnumBnoPosition::TIBIA_R)] = tibiaR;
 }
 
 // Returns Yaw, same as previous implementation (BNO_055 used on Darianne)
-float BnoHandler::getValAngle(EnumBnoAngle position){
-    int pos = static_cast<int> (position);
-    return this->angles[pos];
+float BnoHandler::getValAngle(EnumBnoPosition position){
+    return this->angles[bnoIndex(position)];
 }
 
 sh2_SensorValue_t BnoHandler::getBNOData(EnumBnoPosition position){
-    return bnoRotation[static_cast<int> (position)];
+    return bnoRotation[bnoIndex(position)];
 }
 
 sh2_SensorValue_t* BnoHandler::getBNODataPointer(EnumBnoPosition position){
-    return &bnoRotation[static_cast<int> (position)];
+    return &bnoRotation[bnoIndex(position)];
 }
 
 //print name of angle
@@ -255,38 +247,30 @@ void BnoHandler::printName(EnumBnoPosition position){
 }
 
 void BnoHandler::printBNOData(EnumBnoPosition position){
-    const int index = static_cast<int>(position);
-    Serial.print("IMU "); printName(static_cast<EnumBnoPosition>(position)); Serial.print("\n");
-
-    // Extract quaternion
-    const sh2_RotationVectorWAcc_t &q = bnoRotation[index].un.rotationVector;
+    const sh2_RotationVectorWAcc_t &q = bnoRotation[bnoIndex(position)].un.rotationVector;
     const float w = q.real;
     const float x = q.i;
     const float y = q.j;
     const float z = q.k;
 
-    // Convert quaternion to Euler angles (roll, pitch, yaw)
-    // Roll (x-axis rotation)
-    float sinr_cosp = 2.0f * (w * x + y * z);
-    float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
-    float roll = atan2(sinr_cosp, cosr_cosp) * RAD_TO_DEG;
+    const float sinr_cosp = 2.0f * (w * x + y * z);
+    const float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
+    const float rollX = atan2(sinr_cosp, cosr_cosp) * RAD_TO_DEG;
 
-    // Pitch (y-axis rotation)
     float sinp = 2.0f * (w * y - z * x);
-    float pitch;
-    if (fabs(sinp) >= 1)
-        pitch = copysign(90.0f, sinp); // use 90 degrees if out of range
-    else
-        pitch = asin(sinp) * RAD_TO_DEG;
+    if (sinp > 1.0f) sinp = 1.0f;
+    if (sinp < -1.0f) sinp = -1.0f;
+    const float pitchY = asin(sinp) * RAD_TO_DEG;
 
-    // Yaw (z-axis rotation)
-    float siny_cosp = 2.0f * (w * z + x * y);
-    float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
-    float yaw = atan2(siny_cosp, cosy_cosp) * RAD_TO_DEG;
+    const float siny_cosp = 2.0f * (w * z + x * y);
+    const float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
+    const float yawZ = atan2(siny_cosp, cosy_cosp) * RAD_TO_DEG;
 
-    Serial.print("Roll: "); Serial.print(roll); Serial.print("\t");
-    Serial.print("Pitch: "); Serial.print(pitch); Serial.print("\t");
-    Serial.print("Yaw: "); Serial.print(yaw); Serial.print("\n");
+    Serial.print("IMU "); printName(position); Serial.print("\n");
+    Serial.print("X: "); Serial.print(rollX);
+    Serial.print("\tY: "); Serial.print(pitchY);
+    Serial.print("\tZ: "); Serial.print(yawZ);
+    Serial.print("\n");
 }
 
 void BnoHandler::printGroundState()
@@ -302,7 +286,7 @@ void BnoHandler::printGroundState()
 
 void BnoHandler::resetData(EnumBnoPosition position)
 {
-    const int index = static_cast<int>(position);
+    const size_t index = bnoIndex(position);
     memset(&bnoRotation[index], 0, sizeof(sh2_SensorValue_t));
     memset(&bnoAccel[index], 0, sizeof(sh2_SensorValue_t));
     memset(&bnoLinAccel[index], 0, sizeof(sh2_SensorValue_t));
@@ -310,8 +294,9 @@ void BnoHandler::resetData(EnumBnoPosition position)
     memset(&bnoMag[index], 0, sizeof(sh2_SensorValue_t));
 }
 
-bool BnoHandler::setupReports(int index)
+bool BnoHandler::setupReports(EnumBnoPosition position)
 {
+    const size_t index = bnoIndex(position);
     const bool ok =
         bnoDevices[index].enableReport(SH2_ACCELEROMETER) &&
         bnoDevices[index].enableReport(SH2_GYROSCOPE_CALIBRATED) &&
@@ -330,8 +315,9 @@ bool BnoHandler::setupReports(int index)
     return ok;
 }
 
-bool BnoHandler::checkIfConnected(int index)
+bool BnoHandler::checkIfConnected(EnumBnoPosition position)
 {
+    const size_t index = bnoIndex(position);
     mux.selectChannel(muxChannels[index]);
     Wire.beginTransmission(i2cAddresses[index]);
     const bool connected = (Wire.endTransmission() == 0);
@@ -341,7 +327,7 @@ bool BnoHandler::checkIfConnected(int index)
 
 float BnoHandler::getPitchDegrees(EnumBnoPosition position)
 {
-    const sh2_RotationVectorWAcc_t &q = bnoRotation[static_cast<int>(position)].un.rotationVector;
+    const sh2_RotationVectorWAcc_t &q = bnoRotation[bnoIndex(position)].un.rotationVector;
     const float w = q.real;
     const float x = q.i;
     const float y = q.j;
@@ -358,6 +344,6 @@ float BnoHandler::getPitchDegrees(EnumBnoPosition position)
 
 int16_t BnoHandler::getLinAccelYScaled(EnumBnoPosition position)
 {
-    const float y = bnoLinAccel[static_cast<int>(position)].un.linearAcceleration.y;
+    const float y = bnoLinAccel[bnoIndex(position)].un.linearAcceleration.y;
     return static_cast<int16_t>(y * 256.0f);
 }

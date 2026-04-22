@@ -25,8 +25,8 @@ class BnoHandler {
         array<uint8_t, 6> muxChannels;
         // I2C address for each BNO
         array<uint8_t, 6> i2cAddresses;
-        // Array of the angles between the parts, stored in degrees
-        array<float, 9> angles;
+        // BNO orientation angles, stored in degrees and indexed by EnumBnoPosition
+        array<float, 6> angles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
         // Reused event buffer for BNO08x reports
@@ -42,14 +42,55 @@ class BnoHandler {
         float linAccelBufferRight[BUFFER_SIZE];
 
         /**
+         * @brief Convert BNO enum position to array index
+         * @param position EnumBnoPosition value
+         * @return Zero-based index matching internal storage order
+         */
+        static constexpr size_t bnoIndex(EnumBnoPosition position) {
+            return static_cast<size_t>(position);
+        }
+
+        /**
          * @brief Write new value into buffer and increment pointer
          * @param position EnumBnoPosition of the part
          */
         void updateBuffer(EnumBnoPosition position);
+
+        /**
+         * @brief Reset BNO data structur
+         * 
+         * @param position BNO to reset
+         */
         void resetData(EnumBnoPosition position);
-        bool setupReports(int index);
-        bool checkIfConnected(int index);
+
+        /**
+         * @brief Configure all required sensor reports for one BNO
+         * @param position EnumBnoPosition of the BNO to configure
+         * @return true if all required reports are enabled
+         * @return false if any report setup fails
+         */
+        bool setupReports(EnumBnoPosition position);
+
+        /**
+         * @brief Probe one BNO over I2C and update its connection state
+         * @param position EnumBnoPosition of the BNO to check
+         * @return true if the BNO responds on I2C
+         * @return false if no response is received
+         */
+        bool checkIfConnected(EnumBnoPosition position);
+
+        /**
+         * @brief Compute pitch angle from the latest rotation-vector quaternion
+         * @param position EnumBnoPosition of the BNO
+         * @return Pitch in degrees
+         */
         float getPitchDegrees(EnumBnoPosition position);
+
+        /**
+         * @brief Get Y axis linear acceleration scaled to fixed-point format
+         * @param position EnumBnoPosition of the BNO
+         * @return Linear acceleration on Y axis, scaled by 256
+         */
         int16_t getLinAccelYScaled(EnumBnoPosition position);
 
     public:
@@ -81,7 +122,19 @@ class BnoHandler {
          * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
          */
         void printBNOsStatus(int startIndex = 0, int endIndex = 4);
+
+        /**
+         * @brief Print accelerometer and linear-acceleration values for a BNO range
+         * @param startIndex Index of the first BNO to print (value of EnumBnoPosition)
+         * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
+         */
         void printBNOsData(int startIndex = 0, int endIndex = 4);
+
+        /**
+         * @brief Print sensor values only for BNOs that are currently connected
+         * @param startIndex Index of the first BNO to print (value of EnumBnoPosition)
+         * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
+         */
         void printConnectedBNOsData(int startIndex = 0, int endIndex = 4);
 
         /**
@@ -94,7 +147,7 @@ class BnoHandler {
          * @param position EnumBnoPosition of the part
          * @return Angle in degrees
          */
-        float getValAngle(EnumBnoAngle position);
+        float getValAngle(EnumBnoPosition position);
 
         /**
          * @brief Get the BNO data of a part
@@ -103,6 +156,11 @@ class BnoHandler {
          */
         sh2_SensorValue_t getBNOData(EnumBnoPosition position);
 
+        /**
+         * @brief Get direct pointer to latest rotation-vector report for a BNO
+         * @param position EnumBnoPosition of the part
+         * @return Pointer to internal rotation-vector storage
+         */
         sh2_SensorValue_t* getBNODataPointer(EnumBnoPosition position);
 
         /**
@@ -112,10 +170,21 @@ class BnoHandler {
          */
         bool getLinAccel(EnumBnoPosition position);
 
+        /**
+         * @brief Print human-readable name for one angle/part enum
+         * @param position EnumBnoPosition value to print
+         */
         void printName(EnumBnoPosition position);
 
+        /**
+         * @brief Print accelerometer and linear-acceleration data for one BNO
+         * @param position EnumBnoPosition of the BNO to print
+         */
         void printBNOData(EnumBnoPosition position);
 
+        /**
+         * @brief Print left/right grounded state and current threshold
+         */
         void printGroundState();
 };
 #endif

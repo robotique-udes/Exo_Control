@@ -122,15 +122,22 @@ void Logic::getAngles()
 {
     if (dataCore.getAngleSource() == FROM_IMU)
     {
-        LeftHipAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::HIP_L));
-        LeftKneeAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::KNEE_L));
-        RightHipAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::HIP_R));
-        RightKneeAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::KNEE_L));
-        RightThighAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::THIGH_R));
-        LeftThighAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::THIGH_L));
-        RightTibiaAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::TIBIA_R));
-        LeftTibiaAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::TIBIA_L));
-        ExoBackAngle = toRadian(dataCore.getBnoAngles(EnumBnoAngle::EXO_BACK));
+        const float rightThighDeg = dataCore.getBnoAngle(EnumBnoPosition::THIGH_R);
+        const float leftThighDeg = dataCore.getBnoAngle(EnumBnoPosition::THIGH_L);
+        const float rightTibiaDeg = dataCore.getBnoAngle(EnumBnoPosition::TIBIA_R);
+        const float leftTibiaDeg = dataCore.getBnoAngle(EnumBnoPosition::TIBIA_L);
+        const float backDeg = dataCore.getBnoAngle(EnumBnoPosition::EXO_BACK);
+
+        RightThighAngle = toRadian(rightThighDeg);
+        LeftThighAngle = toRadian(leftThighDeg);
+        RightTibiaAngle = toRadian(rightTibiaDeg);
+        LeftTibiaAngle = toRadian(leftTibiaDeg);
+        ExoBackAngle = toRadian(backDeg);
+
+        LeftHipAngle = toRadian(abs(-leftThighDeg - backDeg));
+        LeftKneeAngle = toRadian(abs(leftTibiaDeg - leftThighDeg));
+        RightHipAngle = toRadian(abs(-rightThighDeg - backDeg));
+        RightKneeAngle = toRadian(abs(rightTibiaDeg - rightThighDeg));
     }
     else
     {
