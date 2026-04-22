@@ -1,17 +1,5 @@
 #include "logic.h"
 
-namespace {
-float stubHipFromBno(float thigh, float back) {
-    // TODO: Replace with calibrated biomechanical mapping.
-    return abs(-thigh - back);
-}
-
-float stubKneeFromBno(float thigh, float tibia) {
-    // TODO: Replace with calibrated biomechanical mapping.
-    return abs(tibia - thigh);
-}
-}
-
 void Logic::Update()
 {
     neededTorque();
@@ -146,10 +134,10 @@ void Logic::getAngles()
         LeftTibiaAngle = toRadian(leftTibiaDeg);
         ExoBackAngle = toRadian(backDeg);
 
-        LeftHipAngle = toRadian(stubHipFromBno(leftThighDeg, backDeg));
-        LeftKneeAngle = toRadian(stubKneeFromBno(leftThighDeg, leftTibiaDeg));
-        RightHipAngle = toRadian(stubHipFromBno(rightThighDeg, backDeg));
-        RightKneeAngle = toRadian(stubKneeFromBno(rightThighDeg, rightTibiaDeg));
+        LeftHipAngle = toRadian(abs(-leftThighDeg - backDeg));
+        LeftKneeAngle = toRadian(abs(leftTibiaDeg - leftThighDeg));
+        RightHipAngle = toRadian(abs(-rightThighDeg - backDeg));
+        RightKneeAngle = toRadian(abs(rightTibiaDeg - rightThighDeg));
     }
     else
     {

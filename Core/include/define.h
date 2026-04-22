@@ -97,8 +97,8 @@
 //------ SETTINGS -------
 #define WALK_MODE 0
 #define SQUAT_MODE 1
-#define FROM_IMU 0
-#define FROM_ENCODER 1
+#define FROM_IMU 1
+#define FROM_ENCODER 0
 #define MOTOR_INCREASE 5
 #define PULSES_PER_REVOLUTION 925
 

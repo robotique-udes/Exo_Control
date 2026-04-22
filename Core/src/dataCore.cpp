@@ -5,8 +5,6 @@ DataCore *DataCore::instance;
 DataCore::DataCore(){
     
     groundDetectEnable = true;
-    brightness = HIGH;
-    height = 180;
     initialise();
     bnoData = {nullptr, nullptr, nullptr, nullptr, nullptr};
 }
@@ -14,11 +12,9 @@ DataCore::DataCore(){
 void DataCore::initialise(){
     rightGrounded = false;
     leftGrounded = false;
-    clutchEnabled = OFF;
     motorEnabled = false;
     motorPower = 2048;
     angleSource = FROM_IMU;
-    resetEncoder();
 }
 
 
@@ -33,16 +29,8 @@ bool DataCore::isMotorEnabled(){
     return motorEnabled;
 }
 
-bool DataCore::isClutchEnabled(){
-    return clutchEnabled;
-}
-
 bool DataCore::isGroundDetectEnable(){
     return groundDetectEnable;
-}
-
-bool DataCore::isEncoderResetNeeded(){
-    return needResetEncoder;
 }
 
 //TODO when hmi is refactored, change toggle to using input param
@@ -50,11 +38,6 @@ void DataCore::setMotorEnabled(bool setMotorEnabled){
     motorEnabled = setMotorEnabled;
     Serial.print("Motor state: ");
     Serial.println(isMotorEnabled());
-}
-
-void DataCore::setClutchEnabled(bool setClutchEnabled){
-    clutchEnabled = !(clutchEnabled);
-
 }
 
 void DataCore::setGroundDetectEnable(bool setGroundDetectEnable){
@@ -103,91 +86,6 @@ void DataCore::setMotorPower(int newMotorPower){
 void DataCore::adjustMotorPower(int offset){
     setMotorPower(motorPower+offset);
 }
-
-//ENCODER
-float DataCore::getEncoderDeg(EnumMotorPosition motor)
-{
-    long pulses;
-    switch (motor)
-    {
-    case EnumMotorPosition::HIP_R:
-        pulses = encoder_hip_right;
-        break;
-    case EnumMotorPosition::HIP_L:
-        pulses = -encoder_hip_left;
-        break;
-    case EnumMotorPosition::KNEE_R:
-        pulses = -encoder_knee_right;
-        break;
-    case EnumMotorPosition::KNEE_L:
-        pulses = encoder_knee_left;
-        break;
-    default:
-        Serial.println("Invalid motor");
-        return 0.0;
-    }
-    return (float)pulses / PULSES_PER_REVOLUTION * 360.0;
-}
-
-float DataCore::getEncoderRad(EnumMotorPosition motor)
-{
-    long pulses;
-    switch (motor)
-    {
-    case EnumMotorPosition::HIP_R:
-        pulses = encoder_hip_right;
-        break;
-    case EnumMotorPosition::HIP_L:
-        pulses = -encoder_hip_left;
-        break;
-    case EnumMotorPosition::KNEE_R:
-        pulses = -encoder_knee_right;
-        break;
-    case EnumMotorPosition::KNEE_L:
-        pulses = encoder_knee_left;
-        break;
-    default:
-        Serial.println("Invalid motor");
-        return 0.0;
-    }
-    return (float)pulses / PULSES_PER_REVOLUTION * 2 * PI;
-}
-
-void DataCore::setEncoderAngles(EnumMotorPosition motor, int pulse)
-{
-    switch (motor)
-    {
-    case EnumMotorPosition::HIP_R:
-        encoder_hip_right = pulse;
-        break;
-    case EnumMotorPosition::HIP_L:
-        encoder_knee_left = pulse;
-        break;
-    case EnumMotorPosition::KNEE_R:
-        encoder_knee_right = pulse;
-        break;
-    case EnumMotorPosition::KNEE_L:
-        encoder_knee_left = pulse;
-        break;
-    default:
-        break;
-    }
-}
-
-
-void DataCore::resetEncoder(){
-    Serial.println("\t Reseting encoder ");
-    encoder_knee_right = 0;
-    encoder_knee_left = 0;
-    encoder_hip_right = 0;
-    encoder_hip_left = 0;
-    setEncoderReset(true);
-}
-
-void DataCore::setEncoderReset(bool state){
-    needResetEncoder = state;
-}
-
 
 //BNO
 float DataCore::getBnoAngle(EnumBnoPosition bno)
@@ -253,20 +151,20 @@ void DataCore::setBnoStruct(EnumBnoPosition bno, sh2_SensorValue_t* data) {
 }
 
 //PWM
-float DataCore::getPWM(EnumMotorPosition motor){
+float DataCore::getTorque(EnumMotorPosition motor){
     switch (motor)
     {
     case EnumMotorPosition::HIP_R:
-        return PWMRightHip;
+        return torqueRightHip;
         break;
     case EnumMotorPosition::HIP_L:
-        return PWMLeftHip;
+        return torqueLeftHip;
         break;
     case EnumMotorPosition::KNEE_R:
-        return PWMRightKnee;
+        return torqueRightKnee;
         break;
     case EnumMotorPosition::KNEE_L:
-        return PWMLeftKnee;
+        return torqueLeftKnee;
         break;
     default:
         return 0.0;
@@ -274,20 +172,20 @@ float DataCore::getPWM(EnumMotorPosition motor){
     }
 }
 
-void DataCore::setPWM(EnumMotorPosition motor, float pwm){
+void DataCore::setTorque(EnumMotorPosition motor, float torque){
     switch (motor)
     {
     case EnumMotorPosition::HIP_R:
-        PWMRightHip = pwm;
+        torqueRightHip = torque;
         break;
     case EnumMotorPosition::HIP_L:
-        PWMLeftHip = pwm;
+        torqueLeftHip = torque;
         break;
     case EnumMotorPosition::KNEE_R:
-        PWMRightKnee = pwm;
+        torqueRightKnee = torque;
         break;
     case EnumMotorPosition::KNEE_L:
-        PWMLeftKnee = pwm;
+        torqueLeftKnee = torque;
         break;
     default:
         break;
