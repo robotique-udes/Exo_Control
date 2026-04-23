@@ -82,9 +82,9 @@
 #define BACK_MUX_CHANNEL 0
 #define LEFT_MOUSTACHE_MUX_CHANNEL 1
 #define RIGHT_MOUSTACHE_MUX_CHANNEL 2
-#define MOBO_MUX_CHANNEL 3;
-#define BNO_ADDRESS_1 0x4A;
-#define BNO_ADDRESS_2 0x4B;
+#define MOBO_MUX_CHANNEL 3
+#define BNO_ADDRESS_1 0x4A
+#define BNO_ADDRESS_2 0x4B
 #define I2C_CLOCK   400000L 
 
 /* Set the delay between fresh samples */
