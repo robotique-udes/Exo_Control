@@ -24,11 +24,11 @@ void loop() {
         time_passed_second = time;
     }
     
-    int allo = 0x55;
-    //IPAddress address;
-    //address.fromString(wificlient->IPsList[(int)EnumIPType::WATCH].c_str());
-    EnumIPType address;
-    wificlient->sendMessage(3, reinterpret_cast<unsigned char *>(allo), address);
+    //int allo = 0x55;
+    ////IPAddress address;
+    ////address.fromString(wificlient->IPsList[(int)EnumIPType::WATCH].c_str());
+    //EnumIPType address;
+    //wificlient->sendMessage(3, reinterpret_cast<unsigned char *>(allo), address);
 }
 
 //1- On commence par recevoir du serveur les personnes qui sont accessible
