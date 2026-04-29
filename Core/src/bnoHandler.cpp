@@ -106,10 +106,8 @@ void BnoHandler::requestData(){
             const float qy = bnoDevices[i].getQuatJ();
             const float qz = bnoDevices[i].getQuatK();
 
-            // atan2-based extraction gives a wider range than asin-based pitch.
-            const float numerator = 2.0f * (qw * qy + qx * qz);
-            const float denominator = 1.0f - 2.0f * (qy * qy + qx * qx);
-            BNOAngles[i] = atan2f(numerator, denominator) * RAD_TO_DEG;
+            BNOAngles[i] = asin(-2.0f * (qx * qz - qy * qw) / (sq(qx) + sq(qy) + sq(qz) + sq(qw)));
+
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
             bnoDevices[i].getLinAccel(lax, lay, laz, lac);
