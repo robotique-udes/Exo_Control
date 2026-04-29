@@ -76,8 +76,6 @@ class BnoHandler {
         array<linearAcceleration_t, NUMBER_OF_BNO> linearAccelerations;
         // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
         array<float, NUMBER_OF_BNO> BNOAngles;
-        // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
-        array<float, 5> angles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
         // Time of last update, based on millis()

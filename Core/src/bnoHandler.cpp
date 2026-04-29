@@ -103,8 +103,7 @@ void BnoHandler::requestData(){
 
         // Read available reports and populate compatibility structures
         while (bnoDevices[i].dataAvailable()) {
-            BNOAngles[i] = bnoDevices[i].getPitch();
-
+            BNOAngles[i] = degrees(bnoDevices[i].getPitch());
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
             bnoDevices[i].getLinAccel(lax, lay, laz, lac);
@@ -117,20 +116,6 @@ void BnoHandler::requestData(){
 
     last_update = millis();
 }
-
-
-namespace {
-float stubHipFromBno(float thigh, float back) {
-    // TODO: Replace with calibrated biomechanical mapping.
-    return abs(-thigh - back);
-}
-
-float stubKneeFromBno(float thigh, float tibia) {
-    // TODO: Replace with calibrated biomechanical mapping.
-    return abs(tibia - thigh);
-}
-}
-
 
 angleOutput_t BnoHandler::getAngle()
 {
