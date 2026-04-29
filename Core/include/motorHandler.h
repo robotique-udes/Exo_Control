@@ -2,16 +2,21 @@
 #define MOTOR_HANDLER_H
 
 #include <Arduino.h>
-#include "enums.h"
 #include "motor.h"
 #include "motorV2.h"
 #include "motorV3.h"
-#include "dataCore.h"
+
+enum class EnumMotorPosition
+{
+    HIP_R  = 0,
+    HIP_L  = 1,
+    KNEE_R = 2,
+    KNEE_L = 3
+};
 
 class MotorHandler
 {
 private:
-    DataCore &dataCore = DataCore::getInstance();
     enum EnumMotorPosition motorPos;
 
     //TODO : verifier les IDs

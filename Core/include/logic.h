@@ -1,11 +1,9 @@
 #ifndef LOGIC_H
 #define LOGIC_H
-#include "dataCore.h"
 
 class Logic
 {
 private:
-    DataCore &dataCore = DataCore::getInstance();
 
     // Torques
     float LeftHipTorque = 0.0;

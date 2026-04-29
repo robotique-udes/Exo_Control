@@ -36,11 +36,6 @@ int Motor::getMotorId(){
   return motorId;
 }
 
-enum EnumMotorPosition Motor::getMotorPosition()
-{
-  return motorPosition;
-}
-
 float Motor::getCurrentTorque()
 {
   return currentTorque;

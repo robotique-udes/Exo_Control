@@ -1,10 +1,16 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 #include <Arduino.h>
-#include "enums.h"
 #include "define.h"
 #include "ESP32-TWAI-CAN.hpp"
 
+
+enum MotorMode
+{
+    TORQUE = 1,
+    VELOCITY = 2,
+    POSITION = 3
+};
 class Motor
 {
 protected:
@@ -12,7 +18,6 @@ protected:
     CanFrame msg;
     float temperature; 
     int motorId;
-    enum EnumMotorPosition motorPosition;
     float currentTorque;
     float motorCorrectionSlope;
     float motorCorrectionOffset;
@@ -40,8 +45,6 @@ public:
     float getMotorCorrectionSlope();
 
     float getMotorCorrectionOffset();
-
-    enum EnumMotorPosition getMotorPosition();
 
     float getCurrentTorque();
 

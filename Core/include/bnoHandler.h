@@ -1,34 +1,38 @@
 #ifndef BNOHANDLER_H_
 #define BNOHANDLER_H_
 #include "SparkFun_BNO080_Arduino_Library.h"
-#include "dataCore.h"
 #include "multiplex.h"
-#include "enums.h"
 #include "define.h"
 #include <array>
 using namespace std;
+
+enum class EnumBnoPosition
+{
+    THIGH_L    =   0,
+    THIGH_R    =   1,
+    TIBIA_L    =   2,
+    TIBIA_R    =   3,
+    EXO_BACK   =   4,
+    MOBO       =   5
+};
 
 // Class storing all BNOs and the multiplexer that they use
 class BnoHandler {
     private:
         // Array of physical BNO08x instances, ordered by EnumBnoPosition
         array<BNO080, 6> bnoDevices;
-        // Latest report values for each BNO (all sensors stored in one struct per device)
-        array<BnoData_t, 6> bnoData;
         // BNO connection state
         array<bool, 6> bnoConnected;
         // Mux channel for each BNO
         array<uint8_t, 6> muxChannels;
         // I2C address for each BNO
         array<uint8_t, 6> i2cAddresses;
-        // BNO orientation angles, stored in degrees and indexed by EnumBnoPosition
-        array<float, 6> angles;
+        // Angle required for logic
+        array<float, 4> angles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
         // Time of last update, based on millis()
         long last_update = 0;
-        // Instance of dataCore
-        DataCore& dataCore = DataCore::getInstance();
 
         int bufferIndexLeft;
         float linAccelBufferLeft[BUFFER_SIZE];
