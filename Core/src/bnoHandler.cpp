@@ -72,7 +72,7 @@ void BnoHandler::setupReports(EnumBnoPosition position)
 {
     const size_t index = bnoIndex(position);
     // Enable common reports using SparkFun API. Time between reports set to 10 (library-specific unit).
-    bnoDevices[index].enableRotationVector(10);
+    bnoDevices[index].enableGameRotationVector(10);
     bnoDevices[index].enableLinearAccelerometer(10);
 
 }
@@ -105,10 +105,9 @@ void BnoHandler::requestData(){
             const float qy = bnoDevices[i].getQuatJ();
             const float qz = bnoDevices[i].getQuatK();
 
-            // atan2-based extraction gives a wider range than asin-based pitch.
-            const float numerator = 2.0f * (qw * qy + qx * qz);
-            const float denominator = 1.0f - 2.0f * (qy * qy + qx * qx);
-            BNOAngles[i] = atan2f(numerator, denominator) * RAD_TO_DEG;
+            const float t3 = 2.0f * (qw * qz + qx * qy);
+            const float t4 = 1.0f - 2.0f * (qy * qy + qz * qz);
+            BNOAngles[i] = atan2f(t3, t4) * RAD_TO_DEG;
 
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
