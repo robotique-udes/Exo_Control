@@ -26,5 +26,5 @@ void loop() {
   bnoHandler.printConnectedBNOsData(0, 5);
   Serial.println();
 
-  delay(200);
+  delay(100);
 }

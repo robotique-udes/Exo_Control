@@ -290,8 +290,6 @@ bool BnoHandler::setupReports(EnumBnoPosition position)
     bnoDevices[index].enableRotationVector(10);
     bnoDevices[index].enableLinearAccelerometer(10);
     bnoDevices[index].enableAccelerometer(10);
-    bnoDevices[index].enableGyro(10);
-    bnoDevices[index].enableMagnetometer(10);
 
     // Assume OK; library doesn't return a combined boolean for all enables
     return true;
