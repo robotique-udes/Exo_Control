@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include "define.h"
 #include <Wire.h>
+#include <cmath>
 #include <cstring>
 using namespace std;
 
@@ -37,10 +38,6 @@ BnoHandler::BnoHandler(){
         BNOAngles[i] = 0;
     }
 
-    for(int i = 0; i < angles.size(); i++)
-    {
-        angles[i] = 0;
-    }
 }
 
 bool BnoHandler::begin(){
@@ -76,6 +73,7 @@ void BnoHandler::setupReports(EnumBnoPosition position)
     const size_t index = bnoIndex(position);
     // Enable common reports using SparkFun API. Time between reports set to 10 (library-specific unit).
     bnoDevices[index].enableRotationVector(10);
+    bnoDevices[index].enableGameRotationVector(10);
     bnoDevices[index].enableLinearAccelerometer(10);
 
 }
@@ -103,7 +101,15 @@ void BnoHandler::requestData(){
 
         // Read available reports and populate compatibility structures
         while (bnoDevices[i].dataAvailable()) {
-            BNOAngles[i] = degrees(bnoDevices[i].getPitch());
+            const float qw = bnoDevices[i].getQuatReal();
+            const float qx = bnoDevices[i].getQuatI();
+            const float qy = bnoDevices[i].getQuatJ();
+            const float qz = bnoDevices[i].getQuatK();
+
+            // atan2-based extraction gives a wider range than asin-based pitch.
+            const float numerator = 2.0f * (qw * qy + qx * qz);
+            const float denominator = 1.0f - 2.0f * (qy * qy + qx * qx);
+            BNOAngles[i] = atan2f(numerator, denominator) * RAD_TO_DEG;
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
             bnoDevices[i].getLinAccel(lax, lay, laz, lac);
@@ -176,8 +182,6 @@ int16_t BnoHandler::getLinAccelYScaled(EnumBnoPosition position)
     const float y = linearAccelerations[bnoIndex(position)].y;
     return static_cast<int16_t>(y * 256.0f);
 }
-
-
 
 void BnoHandler::printName(EnumBnoPosition position){
 
