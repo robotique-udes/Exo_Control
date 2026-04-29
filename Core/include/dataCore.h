@@ -3,12 +3,27 @@
 
 #include <Arduino.h>
 #include <Nextion.h>
-#include <Adafruit_BNO08x.h>
 
 #include "define.h"
 #include "enums.h"
 
 using namespace std;
+
+typedef struct {
+    // Quaternion components (real, i, j, k)
+    float real;
+    float i;
+    float j;
+    float k;
+    // Linear acceleration
+    float lin_x;
+    float lin_y;
+    float lin_z;
+    // Accelerometer
+    float accel_x;
+    float accel_y;
+    float accel_z;
+} BnoData_t;
 
 class DataCore
 {
@@ -27,7 +42,7 @@ private:
     float Imu_tibia_left = 0;
     float Imu_tibia_right = 0;
 
-    array<sh2_SensorValue_t *, 5> bnoData;
+    array<BnoData_t *, 5> bnoData;
 
     //In between settings
     bool motorEnabled;
@@ -147,14 +162,14 @@ public:
     * @param bno BNO title
     * @param data Pointer to the structure
     */
-    void setBnoStruct(EnumBnoPosition bno, sh2_SensorValue_t* data);
+    void setBnoStruct(EnumBnoPosition bno, BnoData_t* data);
 
     /**
     * @brief Bno struct getter :)
     * @param bno Target bno
     * @return struct
     */
-    sh2_SensorValue_t* getBnoStruct(EnumBnoPosition bno);
+    BnoData_t* getBnoStruct(EnumBnoPosition bno);
 
     // PWM
     /**

@@ -39,7 +39,7 @@ BnoHandler::BnoHandler(){
 
     // DataCore currently stores 5 BNO pointers (no MOBO slot)
     for (int i = 0; i < 5 && i < bnoDevices.size(); i++){
-        dataCore.setBnoStruct(static_cast<EnumBnoPosition>(i), &bnoRotation[i]);
+        dataCore.setBnoStruct(static_cast<EnumBnoPosition>(i), &bnoData[i]);
     }
 }
 
@@ -53,7 +53,7 @@ bool BnoHandler::begin(){
         const EnumBnoPosition position = static_cast<EnumBnoPosition>(i);
         mux.selectChannel(muxChannels[i]);
 
-        const bool isConnected = bnoDevices[i].begin_I2C(i2cAddresses[i], &Wire) && setupReports(position);
+        const bool isConnected = bnoDevices[i].begin(i2cAddresses[i], Wire) && setupReports(position);
         bnoConnected[i] = isConnected;
 
         if (isConnected){
@@ -89,48 +89,42 @@ void BnoHandler::read(){
 // Request data from all BNOs
 void BnoHandler::requestData(){
     for (int i = 0; i < bnoDevices.size(); i++){
-        if (!bnoConnected[i]) {
-            continue;
-        }
+        if (!bnoConnected[i]) continue;
 
         const EnumBnoPosition position = static_cast<EnumBnoPosition>(i);
         mux.selectChannel(muxChannels[i]);
 
-        if (bnoDevices[i].wasReset()) {
+        if (bnoDevices[i].hasReset()) {
             setupReports(position);
         }
 
-        while (bnoDevices[i].getSensorEvent(&sensorValue)) {
+        // Read available reports and populate compatibility structures
+        while (bnoDevices[i].dataAvailable()) {
+            // Rotation vector (quaternion)
+            float qi, qj, qk, qreal, qRadAcc; uint8_t qAcc;
+            bnoDevices[i].getQuat(qi, qj, qk, qreal, qRadAcc, qAcc);
+            bnoData[i].i = qi;
+            bnoData[i].j = qj;
+            bnoData[i].k = qk;
+            bnoData[i].real = qreal;
 
-            switch (sensorValue.sensorId) {
-                case SH2_ROTATION_VECTOR:
-                    bnoRotation[i] = sensorValue;
-                    break;
+            // Linear acceleration
+            float lax, lay, laz; uint8_t lac;
+            bnoDevices[i].getLinAccel(lax, lay, laz, lac);
+            bnoData[i].lin_x = lax;
+            bnoData[i].lin_y = lay;
+            bnoData[i].lin_z = laz;
 
-                case SH2_LINEAR_ACCELERATION:
-                    bnoLinAccel[i] = sensorValue;
-                    break;
-
-                case SH2_ACCELEROMETER:
-                    bnoAccel[i] = sensorValue;
-                    break;
-
-                case SH2_GYROSCOPE_CALIBRATED:
-                    bnoGyro[i] = sensorValue;
-                    break;
-
-                case SH2_MAGNETIC_FIELD_CALIBRATED:
-                    bnoMag[i] = sensorValue;
-                    break;
-
-                default:
-                    break;
-            }
+            // Accelerometer
+            float ax, ay, az; uint8_t aAcc;
+            bnoDevices[i].getAccel(ax, ay, az, aAcc);
+            bnoData[i].accel_x = ax;
+            bnoData[i].accel_y = ay;
+            bnoData[i].accel_z = az;
         }
     }
 
     this->computeAngles();
-
     last_update = millis();
 }
 
@@ -209,12 +203,12 @@ float BnoHandler::getValAngle(EnumBnoPosition position){
     return this->angles[bnoIndex(position)];
 }
 
-sh2_SensorValue_t BnoHandler::getBNOData(EnumBnoPosition position){
-    return bnoRotation[bnoIndex(position)];
+BnoData_t BnoHandler::getBNOData(EnumBnoPosition position){
+    return bnoData[bnoIndex(position)];
 }
 
-sh2_SensorValue_t* BnoHandler::getBNODataPointer(EnumBnoPosition position){
-    return &bnoRotation[bnoIndex(position)];
+BnoData_t* BnoHandler::getBNODataPointer(EnumBnoPosition position){
+    return &bnoData[bnoIndex(position)];
 }
 
 //print name of angle
@@ -247,11 +241,10 @@ void BnoHandler::printName(EnumBnoPosition position){
 }
 
 void BnoHandler::printBNOData(EnumBnoPosition position){
-    const sh2_RotationVectorWAcc_t &q = bnoRotation[bnoIndex(position)].un.rotationVector;
-    const float w = q.real;
-    const float x = q.i;
-    const float y = q.j;
-    const float z = q.k;
+    const float w = bnoData[bnoIndex(position)].real;
+    const float x = bnoData[bnoIndex(position)].i;
+    const float y = bnoData[bnoIndex(position)].j;
+    const float z = bnoData[bnoIndex(position)].k;
 
     const float sinr_cosp = 2.0f * (w * x + y * z);
     const float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
@@ -287,32 +280,21 @@ void BnoHandler::printGroundState()
 void BnoHandler::resetData(EnumBnoPosition position)
 {
     const size_t index = bnoIndex(position);
-    memset(&bnoRotation[index], 0, sizeof(sh2_SensorValue_t));
-    memset(&bnoAccel[index], 0, sizeof(sh2_SensorValue_t));
-    memset(&bnoLinAccel[index], 0, sizeof(sh2_SensorValue_t));
-    memset(&bnoGyro[index], 0, sizeof(sh2_SensorValue_t));
-    memset(&bnoMag[index], 0, sizeof(sh2_SensorValue_t));
+    memset(&bnoData[index], 0, sizeof(BnoData_t));
 }
 
 bool BnoHandler::setupReports(EnumBnoPosition position)
 {
     const size_t index = bnoIndex(position);
-    const bool ok =
-        bnoDevices[index].enableReport(SH2_ACCELEROMETER) &&
-        bnoDevices[index].enableReport(SH2_GYROSCOPE_CALIBRATED) &&
-        bnoDevices[index].enableReport(SH2_MAGNETIC_FIELD_CALIBRATED) &&
-        bnoDevices[index].enableReport(SH2_LINEAR_ACCELERATION) &&
-        bnoDevices[index].enableReport(SH2_ROTATION_VECTOR);
+    // Enable common reports using SparkFun API. Time between reports set to 10 (library-specific unit).
+    bnoDevices[index].enableRotationVector(10);
+    bnoDevices[index].enableLinearAccelerometer(10);
+    bnoDevices[index].enableAccelerometer(10);
+    bnoDevices[index].enableGyro(10);
+    bnoDevices[index].enableMagnetometer(10);
 
-    if (!ok) {
-        if (IMU_DEBUG) {
-            Serial.print("Failed to configure BNO reports for index ");
-            Serial.println(index);
-        }
-        bnoConnected[index] = false;
-    }
-
-    return ok;
+    // Assume OK; library doesn't return a combined boolean for all enables
+    return true;
 }
 
 bool BnoHandler::checkIfConnected(EnumBnoPosition position)
@@ -327,11 +309,10 @@ bool BnoHandler::checkIfConnected(EnumBnoPosition position)
 
 float BnoHandler::getPitchDegrees(EnumBnoPosition position)
 {
-    const sh2_RotationVectorWAcc_t &q = bnoRotation[bnoIndex(position)].un.rotationVector;
-    const float w = q.real;
-    const float x = q.i;
-    const float y = q.j;
-    const float z = q.k;
+    const float w = bnoData[bnoIndex(position)].real;
+    const float x = bnoData[bnoIndex(position)].i;
+    const float y = bnoData[bnoIndex(position)].j;
+    const float z = bnoData[bnoIndex(position)].k;
 
     const float sqw = sq(w);
     const float sqx = sq(x);
@@ -344,6 +325,6 @@ float BnoHandler::getPitchDegrees(EnumBnoPosition position)
 
 int16_t BnoHandler::getLinAccelYScaled(EnumBnoPosition position)
 {
-    const float y = bnoLinAccel[bnoIndex(position)].un.linearAcceleration.y;
+    const float y = bnoData[bnoIndex(position)].lin_y;
     return static_cast<int16_t>(y * 256.0f);
 }

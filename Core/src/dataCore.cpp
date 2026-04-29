@@ -142,11 +142,11 @@ void DataCore::setBnoAngle(EnumBnoPosition bno, float angle)
     }
 }
 
-sh2_SensorValue_t* DataCore::getBnoStruct(EnumBnoPosition bno) {
+BnoData_t* DataCore::getBnoStruct(EnumBnoPosition bno) {
     return bnoData[static_cast<int>(bno)];
 }
 
-void DataCore::setBnoStruct(EnumBnoPosition bno, sh2_SensorValue_t* data) {
+void DataCore::setBnoStruct(EnumBnoPosition bno, BnoData_t* data) {
     bnoData[static_cast<int>(bno)] = data;
 }
 

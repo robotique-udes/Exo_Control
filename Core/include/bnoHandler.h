@@ -1,6 +1,6 @@
 #ifndef BNOHANDLER_H_
 #define BNOHANDLER_H_
-#include "Adafruit_BNO08x.h"
+#include "SparkFun_BNO080_Arduino_Library.h"
 #include "dataCore.h"
 #include "multiplex.h"
 #include "enums.h"
@@ -12,13 +12,9 @@ using namespace std;
 class BnoHandler {
     private:
         // Array of physical BNO08x instances, ordered by EnumBnoPosition
-        array<Adafruit_BNO08x, 6> bnoDevices;
-        // Latest report values for each BNO
-        array<sh2_SensorValue_t, 6> bnoRotation;
-        array<sh2_SensorValue_t, 6> bnoAccel;
-        array<sh2_SensorValue_t, 6> bnoLinAccel;
-        array<sh2_SensorValue_t, 6> bnoGyro;
-        array<sh2_SensorValue_t, 6> bnoMag;
+        array<BNO080, 6> bnoDevices;
+        // Latest report values for each BNO (all sensors stored in one struct per device)
+        array<BnoData_t, 6> bnoData;
         // BNO connection state
         array<bool, 6> bnoConnected;
         // Mux channel for each BNO
@@ -29,8 +25,6 @@ class BnoHandler {
         array<float, 6> angles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
-        // Reused event buffer for BNO08x reports
-        sh2_SensorValue_t sensorValue;
         // Time of last update, based on millis()
         long last_update = 0;
         // Instance of dataCore
@@ -154,14 +148,14 @@ class BnoHandler {
          * @param position EnumBnoPosition of the part
          * @return Latest rotation-vector report for the part
          */
-        sh2_SensorValue_t getBNOData(EnumBnoPosition position);
+        BnoData_t getBNOData(EnumBnoPosition position);
 
         /**
-         * @brief Get direct pointer to latest rotation-vector report for a BNO
+         * @brief Get direct pointer to latest sensor storage for a BNO
          * @param position EnumBnoPosition of the part
-         * @return Pointer to internal rotation-vector storage
+         * @return Pointer to internal storage
          */
-        sh2_SensorValue_t* getBNODataPointer(EnumBnoPosition position);
+        BnoData_t* getBNODataPointer(EnumBnoPosition position);
 
         /**
          * @brief Compute linear acceleration from an average on linAccelBuffer
