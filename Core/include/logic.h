@@ -1,104 +1,46 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
+#include <Arduino.h>
+
+
+#define GRAVITY 9.81
+
+
+struct RequiredData {
+    float hipAngleL;
+    float hipAngleR;
+    float kneeAngleL;
+    float kneeAngleR;
+    float backAngle;
+    bool groundedL;
+    bool groundedR;
+}; 
+
+
+struct Position {
+    float x;
+    float y;
+}; 
+
 class Logic
 {
 private:
 
-    // Torques
-    float LeftHipTorque = 0.0;
-    float RightHipTorque = 0.0;
-    float LeftKneeTorque = 0.0;
-    float RightKneeTorque = 0.0;
+    float userHeight;
+    float userMass;
 
-    // BATTERY ESTIMATION
-    unsigned long previousTimeBatterie = 0;
+    float lengthTorso;
+    float lengthThigh;
+    float lengthCalf;
 
-    // Angles
-    float LeftHipAngle = 0;
-    float LeftKneeAngle = 0;
-    float RightHipAngle = 0;
-    float RightKneeAngle = 0;
-    float LeftThighAngle = 0;
-    float RightThighAngle = 0;
-    float LeftTibiaAngle = 0;
-    float RightTibiaAngle = 0;
-    float ExoBackAngle = 0;
+    float forceTorso;
+    float forceThigh;
+    float forceCalf;
 
-    // On ground
-    bool LeftOnGround = false; // True if the left foot is on the ground
-    bool RightOnGround = false; // True if the right foot is on the ground
-    int NbOnGround = 0; // Number of feet on the ground
-
-    const float thighCenterMass = 0.433;	
-	const float calveCenterMass = 0.606;
-    const float torsoCenterMass = 0.626;
-	const float gravity = 9.81; 	//m/(s*s)
-
-	float thighMass = 7.5;		//kg
-	float calveMass = 4.575;		//kg
-    float torsoMass = 50.85;        //kg
-	float thighLength = 0.4361; 	//m
-	float calveLength = 0.77786;	//m
-    float torsoLength = 0.8366;     //m
-
-    float calculateHipTorque(float hipJoint, float kneeJoint);
-    float calculateKneeTorque(float hipJoint, float kneeJoint);
-    void jambelEnLair(float hipJointRight, float hipJointLeft, float torsoAngle, float *rightKneeTorque, float *leftKneeTorque);
-
-public:
-    // -------------------------- TORQUE CALCULATION --------------------------
-    /**
-     * @brief Compute needed torque using either angles from encoders or IMUs
-     */
-    void neededTorque();
-
-    /**
-     * @brief Compute torque needed to keep the foot in the air
-     * @param thighAngle Angle of the thigh
-     * @param tibiaAngle Angle of the tibia
-     * @param backAngle Angle of the back
-     * @param isLeft True if the foot is the left one
-     */
-    void calculateTorqueFootInAir(float thighAngle, float tibiaAngle, float backAngle, bool isLeft);
-
-    /**
-     * @brief Compute torque needed counteract gravity when the foot is on the ground
-     * @param thighAngle Angle of the thigh
-     * @param tibiaAngle Angle of the tibia
-     * @param backAngle Angle of the back
-     * @param isLeft True if the foot is the left one
-     */
-    void calculateTorqueFootOnGround(float thighAngle, float tibiaAngle, float backAngle, bool isLeft);
-
-    /**
-     * @brief Check if the angles are within the limits
-     */
-    void checkAngleLimits();
-
-    /**
-     * @brief Limit the torque to the max value of the motor
-     */
-    void limitTorques();
-
-    // -------------------------- GETTERS --------------------------
-    /**
-     * @brief Get angles from encoders or IMUs
-     */
-    void getAngles();
-
-    /**
-     * @brief Get the number of feet on the ground
-     */
-    void getOnGround();
-
-    // -------------------------- BATTERY ESTIMATION --------------------------
-    float totalEnergy = 0.0;
-    void IntegralPowerConsumption();
-    /**
-     * @brief Compute torque and update required PWM by calling other functions
-     */
-    void Update();
+    void setMorphology(float height, float mass);
+    void calculateTorque(RequiredData data);
+    void calculateTorqueGrounded(RequiredData data, float torque[4]);
 
     // -------------------------- UTILITIES --------------------------
     /**
@@ -107,31 +49,10 @@ public:
      * @param cap max/min reachable value (float or int)
      */
     template <typename T>
-    void LimitMinMax(T &val, T cap);
+    void limitMinMax(T &val, T cap);
 
-    /**
-     * @brief Print computed needed torque
-     */
-    void printTorque();
-
-    /**
-     * @brief Set all torques to 0
-     */
-    void resetTorque();
-
-    /**
-     * @brief Convert degree to radian equivalent
-     * @param degrees Input degree value
-     * @return Radian equivalent of the input degree
-     */
-    float toDegrees(float degrees);
-
-    /**
-     * @brief Convert radian to degree equivalent
-     * @param radians Input radian value
-     * @return Degree equivalent of the input radian
-     */
-    float toRadian(float radians);
+public :
+    Logic();
 };
 
 #endif
