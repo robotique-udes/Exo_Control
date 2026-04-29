@@ -34,6 +34,7 @@ BnoHandler::BnoHandler(){
 
     for (int i = 0; i < bnoDevices.size(); i++) {
         bnoConnected[i] = false;
+        BNOAngles[i] = 0;
     }
 
     for(int i = 0; i < angles.size(); i++)
@@ -102,7 +103,7 @@ void BnoHandler::requestData(){
 
         // Read available reports and populate compatibility structures
         while (bnoDevices[i].dataAvailable()) {
-            BNOangles[i] = bnoDevices[i].getPitch();
+            BNOAngles[i] = bnoDevices[i].getPitch();
 
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
@@ -134,11 +135,11 @@ float stubKneeFromBno(float thigh, float tibia) {
 angleOutput_t BnoHandler::getAngle()
 {
     angleOutput_t angle;
-    angle.hipLeft = -BNOangles[bnoIndex(EnumBnoPosition::THIGH_L)] - BNOangles[bnoIndex(EnumBnoPosition::MOBO)];
-    angle.hipRight = -BNOangles[bnoIndex(EnumBnoPosition::THIGH_R)] - BNOangles[bnoIndex(EnumBnoPosition::MOBO)];
-    angle.KneeLeft = BNOangles[bnoIndex(EnumBnoPosition::TIBIA_L)] - BNOangles[bnoIndex(EnumBnoPosition::THIGH_L)];
-    angle.KneeRight = BNOangles[bnoIndex(EnumBnoPosition::TIBIA_R)] - BNOangles[bnoIndex(EnumBnoPosition::TIBIA_R)];
-    angle.back = BNOangles[bnoIndex(EnumBnoPosition::MOBO)];
+    angle.hipLeft = -BNOAngles[bnoIndex(EnumBnoPosition::THIGH_L)] - BNOAngles[bnoIndex(EnumBnoPosition::MOBO)];
+    angle.hipRight = -BNOAngles[bnoIndex(EnumBnoPosition::THIGH_R)] - BNOAngles[bnoIndex(EnumBnoPosition::MOBO)];
+    angle.KneeLeft = BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_L)] - BNOAngles[bnoIndex(EnumBnoPosition::THIGH_L)];
+    angle.KneeRight = BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_R)] - BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_R)];
+    angle.back = BNOAngles[bnoIndex(EnumBnoPosition::MOBO)];
 
     return angle;
 }
@@ -224,9 +225,7 @@ void BnoHandler::printName(EnumBnoPosition position){
 void BnoHandler::printBNOData(EnumBnoPosition position){
 
     Serial.print("IMU "); printName(position); Serial.print("\n");
-    Serial.print("X: "); Serial.print(bnoDevices[bnoIndex(position)].getRoll());
-    Serial.print("\tY: "); Serial.print(bnoDevices[bnoIndex(position)].getPitch());
-    Serial.print("\tZ: "); Serial.print(bnoDevices[bnoIndex(position)].getYaw());
+    Serial.print("Y: "); Serial.print(BNOAngles[bnoIndex(position)]);
     Serial.print("\n");
 }
 
