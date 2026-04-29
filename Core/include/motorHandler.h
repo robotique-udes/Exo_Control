@@ -31,7 +31,7 @@ private:
     float totalTime = 0;
     float initialTorque[4] = {0, 0, 0, 0};
 
-    void applyTorque();
+    void applyTorque(float torque);
     void initializeMotors();
     void exitMotors();
     void slowShutDown();
@@ -44,7 +44,7 @@ public:
     MotorHandler();
     ~MotorHandler();
 
-    void Update();
+    void Update(float torque);
 };
 
 #endif

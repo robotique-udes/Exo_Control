@@ -6,6 +6,11 @@
 #include <array>
 using namespace std;
 
+#define NUMBER_OF_BNO 6
+
+/**
+ * @brief Physical BNO locations on the exoskeleton.
+ */
 enum class EnumBnoPosition
 {
     THIGH_L    =   0,
@@ -16,19 +21,73 @@ enum class EnumBnoPosition
     MOBO       =   5
 };
 
-// Class storing all BNOs and the multiplexer that they use
+/**
+ * @brief Enum indexes used to expose angle outputs.
+ */
+enum class AngleOutput : uint8_t
+{
+    HipLeft,
+    HipRight,
+    KneeLeft,
+    KneeRight,
+    Back
+};
+
+/**
+ * @brief Aggregated joint angles returned by `getAngle()`.
+ */
+typedef struct
+{
+    float hipLeft;
+    float hipRight;
+    float KneeLeft;
+    float KneeRight;
+    float back;
+
+} angleOutput_t;
+/**
+ * @brief Result of ground-contact detection for left / right legs.
+ */
+typedef struct
+{
+    bool isLeftGrounded;
+    bool isRightGrounded;
+
+} groundedOutput_t;
+
+/**
+ * @brief Simple 3-axis linear-acceleration container.
+ */
+typedef struct
+{
+    float x;
+    float y;
+    float z;
+
+} linearAcceleration_t;
+
+
+/**
+ * @brief Manager for multiple BNO080 devices connected through an I2C multiplexer.
+ *
+ * The class maintains an array of `BNO080` objects, per-device connection state,
+ * recent linear acceleration samples and computed joint angles. It provides
+ * methods to initialize devices, poll sensor data and query processed outputs.
+ */
 class BnoHandler {
     private:
         // Array of physical BNO08x instances, ordered by EnumBnoPosition
-        array<BNO080, 6> bnoDevices;
+        array<BNO080, NUMBER_OF_BNO> bnoDevices;
         // BNO connection state
-        array<bool, 6> bnoConnected;
+        array<bool, NUMBER_OF_BNO> bnoConnected;
         // Mux channel for each BNO
-        array<uint8_t, 6> muxChannels;
+        array<uint8_t, NUMBER_OF_BNO> muxChannels;
         // I2C address for each BNO
-        array<uint8_t, 6> i2cAddresses;
-        // Angle required for logic
-        array<float, 4> angles;
+        array<uint8_t, NUMBER_OF_BNO> i2cAddresses;
+        // Linear acceleration for each bno
+        array<linearAcceleration_t, NUMBER_OF_BNO> linearAccelerations;
+        // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
+        array<float, 5> angles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
         // Time of last update, based on millis()
@@ -49,70 +108,69 @@ class BnoHandler {
         }
 
         /**
-         * @brief Write new value into buffer and increment pointer
-         * @param position EnumBnoPosition of the part
+         * @brief Write latest linear-accel Y value into the circular buffer for the
+         * specified `position` and advance the write pointer.
+         * @param position BNO position to update buffer for
          */
         void updateBuffer(EnumBnoPosition position);
 
         /**
-         * @brief Reset BNO data structur
-         * 
-         * @param position BNO to reset
+         * @brief Configure the reports/features required from the BNO080 at `position`.
+         * @param position BNO to configure
          */
-        void resetData(EnumBnoPosition position);
+        void setupReports(EnumBnoPosition position);
 
         /**
-         * @brief Configure all required sensor reports for one BNO
-         * @param position EnumBnoPosition of the BNO to configure
-         * @return true if all required reports are enabled
-         * @return false if any report setup fails
-         */
-        bool setupReports(EnumBnoPosition position);
-
-        /**
-         * @brief Probe one BNO over I2C and update its connection state
-         * @param position EnumBnoPosition of the BNO to check
-         * @return true if the BNO responds on I2C
-         * @return false if no response is received
+         * @brief Probe a device by selecting the proper mux channel and attempting
+         * an I2C transmission to its configured address.
+         * @param position BNO to probe
+         * @return true if the device acknowledged on I2C
          */
         bool checkIfConnected(EnumBnoPosition position);
 
         /**
-         * @brief Compute pitch angle from the latest rotation-vector quaternion
-         * @param position EnumBnoPosition of the BNO
-         * @return Pitch in degrees
-         */
-        float getPitchDegrees(EnumBnoPosition position);
-
-        /**
-         * @brief Get Y axis linear acceleration scaled to fixed-point format
-         * @param position EnumBnoPosition of the BNO
-         * @return Linear acceleration on Y axis, scaled by 256
+         * @brief Read the buffered linear-acceleration Y for `position` and
+         * return it in fixed-point Q8 format (value * 256).
+         * @param position BNO position
+         * @return Scaled Y linear-acceleration (int16_t)
          */
         int16_t getLinAccelYScaled(EnumBnoPosition position);
-
-    public:
         int offset = 0;
+        
+        public:
         /**
-        * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
-        */
+         * @brief Construct the BNO handler and initialise internal buffers.
+         *
+         * This does not start data acquisition on the sensors; call `begin()` to
+         * initialise hardware and enable reports.
+         */
         BnoHandler();
-
+        
         /**
-        * @brief Read angles and store them in dataCore
-        */
-        void read();
-
-        /**
-        * @brief Constructor, sets up individual BNOs. Data aquisition is not started.
-        * @return True if at least one BNO is connected
-        */
-        bool begin();
-
-        /**
-         * @brief Request data from all BNOs and compute angles between parts
+         * @brief Poll all connected BNOs for available reports and update
+         * internal `angles` and `linearAccelerations` buffers.
          */
         void requestData();
+
+        /**
+         * @brief Return computed joint angles.
+         * @return `angleOutput_t` with current joint angles in degrees.
+         */
+        angleOutput_t getAngle();
+
+        /**
+         * @brief Compute and return left/right grounded state using the
+         * moving-average linear-accel buffers.
+         * @return `groundedOutput_t` with booleans for left/right ground contact.
+         */
+        groundedOutput_t getGroundedState();
+
+        /**
+         * @brief Initialise all BNO devices (select mux channel and call BNO begin).
+         * @return true if at least one device was successfully initialised
+         */
+        bool begin();
+
 
         /**
          * @brief Print the name and connection status of all BNOs
@@ -136,39 +194,6 @@ class BnoHandler {
         void printConnectedBNOsData(int startIndex = 0, int endIndex = 4);
 
         /**
-         * @brief Compute the relative angles at the joints
-         */
-        void computeAngles();
-
-        /**
-         * @brief Get the relative angle of a part
-         * @param position EnumBnoPosition of the part
-         * @return Angle in degrees
-         */
-        float getValAngle(EnumBnoPosition position);
-
-        /**
-         * @brief Get the BNO data of a part
-         * @param position EnumBnoPosition of the part
-         * @return Latest rotation-vector report for the part
-         */
-        BnoData_t getBNOData(EnumBnoPosition position);
-
-        /**
-         * @brief Get direct pointer to latest sensor storage for a BNO
-         * @param position EnumBnoPosition of the part
-         * @return Pointer to internal storage
-         */
-        BnoData_t* getBNODataPointer(EnumBnoPosition position);
-
-        /**
-         * @brief Compute linear acceleration from an average on linAccelBuffer
-         * @param position EnumBnoPosition of the part
-         * @return GroundedStatus
-         */
-        bool getLinAccel(EnumBnoPosition position);
-
-        /**
          * @brief Print human-readable name for one angle/part enum
          * @param position EnumBnoPosition value to print
          */
@@ -180,9 +205,5 @@ class BnoHandler {
          */
         void printBNOData(EnumBnoPosition position);
 
-        /**
-         * @brief Print left/right grounded state and current threshold
-         */
-        void printGroundState();
 };
 #endif

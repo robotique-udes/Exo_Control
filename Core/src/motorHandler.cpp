@@ -10,7 +10,7 @@ MotorHandler::~MotorHandler()
     exitMotors();
 }
 
-void MotorHandler::Update()
+void MotorHandler::Update(float torque)
 {
     if (tempTooHigh == true)
     {
@@ -18,7 +18,7 @@ void MotorHandler::Update()
         return;
     }
 
-    applyTorque();
+    applyTorque(torque);
 }
 
 void MotorHandler::initializeMotors()
@@ -33,13 +33,12 @@ void MotorHandler::exitMotors()
     //    motors[motorPos].exitMode();
 }
 
-void MotorHandler::applyTorque()
+void MotorHandler::applyTorque(float torque)
 {
     //iterate for all motors 
     for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
     {
         //send torque request to the respective motor
-        float torque = dataCore.getTorque(static_cast<EnumMotorPosition>(motorIndex));
         motors[motorIndex].sendRequest(TORQUE, torque);
         initialTorque[motorIndex] = torque;
         //checks if the respective motor is overheating
