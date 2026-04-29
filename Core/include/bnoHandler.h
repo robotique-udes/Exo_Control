@@ -22,18 +22,6 @@ enum class EnumBnoPosition
 };
 
 /**
- * @brief Enum indexes used to expose angle outputs.
- */
-enum class AngleOutput : uint8_t
-{
-    HipLeft,
-    HipRight,
-    KneeLeft,
-    KneeRight,
-    Back
-};
-
-/**
  * @brief Aggregated joint angles returned by `getAngle()`.
  */
 typedef struct
@@ -86,6 +74,8 @@ class BnoHandler {
         array<uint8_t, NUMBER_OF_BNO> i2cAddresses;
         // Linear acceleration for each bno
         array<linearAcceleration_t, NUMBER_OF_BNO> linearAccelerations;
+        // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
+        array<float, NUMBER_OF_BNO> BNOangles;
         // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
         array<float, 5> angles;
         // Multiplexer used to switch between BNOs

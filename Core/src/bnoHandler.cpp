@@ -102,7 +102,7 @@ void BnoHandler::requestData(){
 
         // Read available reports and populate compatibility structures
         while (bnoDevices[i].dataAvailable()) {
-            angles[i] = bnoDevices[i].getPitch();
+            BNOangles[i] = bnoDevices[i].getPitch();
 
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
@@ -117,14 +117,28 @@ void BnoHandler::requestData(){
     last_update = millis();
 }
 
+
+namespace {
+float stubHipFromBno(float thigh, float back) {
+    // TODO: Replace with calibrated biomechanical mapping.
+    return abs(-thigh - back);
+}
+
+float stubKneeFromBno(float thigh, float tibia) {
+    // TODO: Replace with calibrated biomechanical mapping.
+    return abs(tibia - thigh);
+}
+}
+
+
 angleOutput_t BnoHandler::getAngle()
 {
     angleOutput_t angle;
-    angle.hipLeft = angles[(uint8_t)AngleOutput::HipLeft];
-    angle.hipRight = angles[(uint8_t)AngleOutput::HipRight];
-    angle.KneeLeft = angles[(uint8_t)AngleOutput::KneeLeft];
-    angle.KneeRight = angles[(uint8_t)AngleOutput::KneeRight];
-    angle.back = angles[(uint8_t)AngleOutput::Back];
+    angle.hipLeft = -BNOangles[bnoIndex(EnumBnoPosition::THIGH_L)] - BNOangles[bnoIndex(EnumBnoPosition::MOBO)];
+    angle.hipRight = -BNOangles[bnoIndex(EnumBnoPosition::THIGH_R)] - BNOangles[bnoIndex(EnumBnoPosition::MOBO)];
+    angle.KneeLeft = BNOangles[bnoIndex(EnumBnoPosition::TIBIA_L)] - BNOangles[bnoIndex(EnumBnoPosition::THIGH_L)];
+    angle.KneeRight = BNOangles[bnoIndex(EnumBnoPosition::TIBIA_R)] - BNOangles[bnoIndex(EnumBnoPosition::TIBIA_R)];
+    angle.back = BNOangles[bnoIndex(EnumBnoPosition::MOBO)];
 
     return angle;
 }
