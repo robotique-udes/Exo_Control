@@ -39,8 +39,8 @@ private:
     float forceCalf;
 
     void setMorphology(float height, float mass);
-    void calculateTorque(RequiredData data);
-    void calculateTorqueGrounded(RequiredData data, float torque[4]);
+    
+    void calculateTorqueLeg(float angleHip, float angleKnee, bool grounded, float torque[2]);
 
     // -------------------------- UTILITIES --------------------------
     /**
@@ -52,6 +52,7 @@ private:
     void limitMinMax(T &val, T cap);
 
 public :
+    void calculateTorque(RequiredData data);
     Logic();
 };
 

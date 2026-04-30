@@ -72,7 +72,7 @@ void BnoHandler::setupReports(EnumBnoPosition position)
 {
     const size_t index = bnoIndex(position);
     // Enable common reports using SparkFun API. Time between reports set to 10 (library-specific unit).
-    bnoDevices[index].enableGameRotationVector(10);
+    bnoDevices[index].enableGravity(10);
     bnoDevices[index].enableLinearAccelerometer(10);
 
 }
@@ -100,15 +100,12 @@ void BnoHandler::requestData(){
 
         // Read available reports and populate compatibility structures
         while (bnoDevices[i].dataAvailable()) {
-            const float qw = bnoDevices[i].getQuatReal();
-            const float qx = bnoDevices[i].getQuatI();
-            const float qy = bnoDevices[i].getQuatJ();
-            const float qz = bnoDevices[i].getQuatK();
 
-            const float t3 = 2.0f * (qw * qz + qx * qy);
-            const float t4 = 1.0f - 2.0f * (qy * qy + qz * qz);
-            BNOAngles[i] = atan2f(t3, t4) * RAD_TO_DEG;
-
+            float gX = bnoDevices[i].getGravityX();
+            float gY = bnoDevices[i].getGravityY();
+            float gZ = bnoDevices[i].getGravityZ();
+            BNOAngles[i] = degrees(atan2(gX, gY)) + 180;
+            
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
             bnoDevices[i].getLinAccel(lax, lay, laz, lac);
@@ -125,10 +122,10 @@ void BnoHandler::requestData(){
 angleOutput_t BnoHandler::getAngle()
 {
     angleOutput_t angle;
-    angle.hipLeft = -BNOAngles[bnoIndex(EnumBnoPosition::THIGH_L)] - BNOAngles[bnoIndex(EnumBnoPosition::MOBO)];
-    angle.hipRight = -BNOAngles[bnoIndex(EnumBnoPosition::THIGH_R)] - BNOAngles[bnoIndex(EnumBnoPosition::MOBO)];
-    angle.KneeLeft = BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_L)] - BNOAngles[bnoIndex(EnumBnoPosition::THIGH_L)];
-    angle.KneeRight = BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_R)] - BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_R)];
+    angle.hipLeft = BNOAngles[bnoIndex(EnumBnoPosition::THIGH_L)];
+    angle.hipRight = BNOAngles[bnoIndex(EnumBnoPosition::THIGH_R)];
+    angle.KneeLeft = BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_L)];
+    angle.KneeRight = BNOAngles[bnoIndex(EnumBnoPosition::TIBIA_R)];
     angle.back = BNOAngles[bnoIndex(EnumBnoPosition::MOBO)];
 
     return angle;
