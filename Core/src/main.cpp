@@ -2,9 +2,11 @@
 #include <Wire.h>
 #include "bnoHandler.h"
 #include "logic.h"
+#include "motorHandler.h"
 
 static BnoHandler bnoHandler;
 static Logic logic;
+static MotorHandler motorHandler;
 
 void setup() {
   Serial.begin(115200);
@@ -20,6 +22,8 @@ void setup() {
   } else {
     Serial.println("BNO setup complete. Reading connected sensors only.");
   }
+
+  motorHandler.initializeMotors();
 }
 
 void loop() {
@@ -45,7 +49,11 @@ void loop() {
   data.groundedL = grounded.isLeftGrounded;
   data.groundedR = grounded.isRightGrounded;
 
+  float torque[NB_MOTORS] = {0};
+  // TODO recevoir le torque de calculateTorque
   logic.calculateTorque(data);
+
+  motorHandler.Update(torque);
 
   delay(10);
 }

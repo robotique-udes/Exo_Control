@@ -2,15 +2,23 @@
 
 MotorHandler::MotorHandler()
 {
-    initializeMotors();
+    motors[0] = new MotorV3(static_cast<int>(EnumMotorPosition::HIP_R));
+    motors[1] = new MotorV2(static_cast<int>(EnumMotorPosition::HIP_L));
+    motors[2] = new MotorV3(static_cast<int>(EnumMotorPosition::KNEE_R)); 
+    motors[3] = new MotorV2(static_cast<int>(EnumMotorPosition::KNEE_L));
 }
 
 MotorHandler::~MotorHandler()
 {
     exitMotors();
+
+    delete motors[0];
+    delete motors[1];
+    delete motors[2];
+    delete motors[3];
 }
 
-void MotorHandler::Update(float torque)
+void MotorHandler::Update(const float torque[NB_MOTORS])
 {
     if (tempTooHigh == true)
     {
@@ -23,29 +31,51 @@ void MotorHandler::Update(float torque)
 
 void MotorHandler::initializeMotors()
 {
-    //for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
-    //    motors[motorPos].enterMode();
+    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+        motors[motorPos]->start();
+
+    initialized = true;
 }
 
 void MotorHandler::exitMotors()
 {
-    //for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
-    //    motors[motorPos].exitMode();
+    for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+        motors[motorPos]->stop();
+
+    initialized = false;
 }
 
-void MotorHandler::applyTorque(float torque)
+void MotorHandler::applyTorque(const float torque[NB_MOTORS])
 {
     //iterate for all motors 
     for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
     {
+        //calculate torque
+        float motorTorque = 0.0f;
+        if(initialized)
+        {
+            for(int sampleIndex = 0; sampleIndex < (SAMPLE_COUNT - 1); ++sampleIndex)
+            {
+                movingAverage[motorIndex][sampleIndex] = movingAverage[motorIndex][sampleIndex + 1];
+                motorTorque += movingAverage[motorIndex][sampleIndex];
+            }
+
+            movingAverage[motorIndex][SAMPLE_COUNT - 1] = torque[motorIndex];
+            motorTorque += movingAverage[motorIndex][SAMPLE_COUNT - 1];
+
+            motorTorque /= SAMPLE_COUNT;
+        }
+
         //send torque request to the respective motor
-        motors[motorIndex].sendRequest(TORQUE, torque);
-        initialTorque[motorIndex] = torque;
+        motors[motorIndex]->sendRequest(TORQUE, motorTorque);
+        initialShutdownTorque[motorIndex] = motorTorque;
+
         //checks if the respective motor is overheating
-        float temperature = motors[motorIndex].getTemperature();
+        float temperature = motors[motorIndex]->getTemperature();
         if (temperature > TEMP_THRESHOLD)
         {
             tempTooHigh = true;
+            shutdownStartTime = millis();
             return;
         }
     }
@@ -54,27 +84,22 @@ void MotorHandler::applyTorque(float torque)
 //TODO tester le slow shutdown
 void MotorHandler::slowShutDown()
 {
-    unsigned long currentTime = millis();
-    unsigned long deltaTime = currentTime - previousTime;
-    totalTime += deltaTime;
+    unsigned long timeElapsed = millis() - shutdownStartTime;
 
-    //if the timer is done, shuts down all the motors and waits for reactivation
-    if (totalTime >= SHUT_DOWN_TIME)
+    //if the timer is done, shuts down all the motors
+    if (timeElapsed > SHUT_DOWN_TIME * 1000)
     {  
-        totalTime = 0;
         tempTooHigh = false;
         exitMotors();
         return;
     }
 
-    //if not, slowly reduces the torque until the timer ends
+    //if not, linearly reduces the torque until the timer ends
     for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
     {  
-        float torqueLoss = (initialTorque[motorIndex] / SHUT_DOWN_TIME) * deltaTime;
-        float torque = motors[motorIndex].getCurrentTorque() - torqueLoss;
-        motors[motorIndex].sendRequest(TORQUE, torque);
+        float torque = initialShutdownTorque[motorIndex] * (1 - ((float)timeElapsed / SHUT_DOWN_TIME));
+        motors[motorIndex]->sendRequest(TORQUE, torque);
     }
-    previousTime = currentTime;
 }
 
 

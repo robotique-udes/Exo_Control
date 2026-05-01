@@ -38,8 +38,9 @@
 #define MOTEUR_HANCHE_DROITE 3
 
 #define NB_MOTORS 4         //nombre de moteurs sur l'exo
+#define SAMPLE_COUNT 5      //nombre d'echantillon pour la moyenne mobile
 #define TEMP_THRESHOLD 75   // la temperature max que les moteur peuvent atteindre
-#define SHUT_DOWN_TIME 10   // the time that is takes to shut down motors when overheating 
+#define SHUT_DOWN_TIME (10 * 1000)   // the time in milliseconds that it takes to shut down motors when overheating 
 
 
 // ce setting : -DBOARD_USES_HW_GPIO_NUMBERS fait en sorte QUE D6 et D7 sont = 8 9, TODO voir autres pin
