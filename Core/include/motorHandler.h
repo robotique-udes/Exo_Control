@@ -20,19 +20,17 @@ private:
     enum EnumMotorPosition motorPos;
 
     //TODO : verifier les IDs
-    Motor motors[NB_MOTORS] = {MotorV3(static_cast<int>(EnumMotorPosition::HIP_R)), 
-                               MotorV2(static_cast<int>(EnumMotorPosition::HIP_L)),
-                               MotorV3(static_cast<int>(EnumMotorPosition::KNEE_R)), 
-                               MotorV2(static_cast<int>(EnumMotorPosition::KNEE_L))};
-
+    Motor* motors[NB_MOTORS];
+    bool initialized = false;
+    
     //variables pour le slow shut down
-    bool tempTooHigh = false;
-    unsigned long previousTime = 0;
-    float totalTime = 0;
-    float initialTorque[4] = {0, 0, 0, 0};
+    bool tempTooHigh = true;
+    unsigned long shutdownStartTime = 0;
 
-    void applyTorque(float torque);
-    void initializeMotors();
+    float movingAverage[NB_MOTORS][SAMPLE_COUNT] = {0};
+    float initialShutdownTorque[NB_MOTORS] = {0};
+
+    void applyTorque(const float torque[NB_MOTORS]);
     void exitMotors();
     void slowShutDown();
 
@@ -44,7 +42,8 @@ public:
     MotorHandler();
     ~MotorHandler();
 
-    void Update(float torque);
+    void initializeMotors();
+    void Update(const float torque[NB_MOTORS]);
 };
 
 #endif

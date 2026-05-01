@@ -13,6 +13,14 @@ Motor::~Motor()
 {
 }
 
+void Motor::start()
+{
+}
+
+void Motor::stop()
+{
+}
+
 void Motor::sendCanMessage(CanFrame* msg){
   ESP32Can.writeFrame(msg);
 }

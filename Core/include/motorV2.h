@@ -12,6 +12,8 @@ public :
     ~MotorV2();
 
 void sendRequest(MotorMode mode, float value);
+void start();
+void stop();
 
 //private: for test now, can uncomment later
 

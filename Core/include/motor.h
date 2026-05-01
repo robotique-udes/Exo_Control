@@ -28,7 +28,11 @@ public:
     ~Motor();
     
 
-    void sendRequest(MotorMode mode, float value);
+    virtual void sendRequest(MotorMode mode, float value) = 0;
+
+    virtual void start();
+    
+    virtual void stop();
 
     void sendCanMessage(CanFrame* msg);
 

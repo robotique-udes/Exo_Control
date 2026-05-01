@@ -18,6 +18,17 @@ void MotorV2::sendRequest(MotorMode mode, float value)
     sendCommand(mode, value);
 }
 
+void MotorV2::start()
+{
+  enterMode();
+  zeroSet();
+}
+
+void MotorV2::stop()
+{
+  exitMode();
+}
+
 void MotorV2::enterMode(){
     msg.data[0] = 0xFF;
     msg.data[1] = 0xFF;

@@ -64,7 +64,7 @@ bool BnoHandler::begin(){
         }
     }
 
-    // At lease one BNO is up and running
+    // At least one BNO is up and running
     return connected > 0;
 }
 
