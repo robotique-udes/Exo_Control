@@ -5,6 +5,7 @@
 
 
 #define GRAVITY 9.81
+#define EXO_MASS 10 //kg
 
 
 struct RequiredData {
@@ -41,6 +42,9 @@ private:
     void setMorphology(float height, float mass);
     
     void calculateTorqueLeg(float angleHip, float angleKnee, bool grounded, float torque[2]);
+    void calculateTorqueGrounded(float angleHip, float angleKnee, float fg, float torque[2]);
+    void getDistanceFromCenterMass(RequiredData data, float& distLeftFoot, float& distRightFoot);
+    void getNormalForces(RequiredData data, float& fnRight, float& fnLeft);
 
     // -------------------------- UTILITIES --------------------------
     /**

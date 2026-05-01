@@ -105,7 +105,16 @@ void BnoHandler::requestData(){
             float gY = bnoDevices[i].getGravityY();
             float gZ = bnoDevices[i].getGravityZ();
             BNOAngles[i] = degrees(atan2(gX, gY)) + 180;
-            
+
+            if (BNOAngles[i] > 180) BNOAngles[i] -= 360;
+            else if (BNOAngles[i] <= -180) BNOAngles[i] += 360;
+
+            if (bnoIndex(EnumBnoPosition::THIGH_L) == i
+                || bnoIndex(EnumBnoPosition::TIBIA_L) == i)
+            {
+                BNOAngles[i] = -1*BNOAngles[i];
+            }
+        
             // Linear acceleration
             float lax, lay, laz; uint8_t lac;
             bnoDevices[i].getLinAccel(lax, lay, laz, lac);
