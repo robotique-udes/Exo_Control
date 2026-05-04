@@ -31,18 +31,17 @@ class MyServerCallbacks: public BLEServerCallbacks {
 };
 
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic* pLedCharacteristic) {
-    String value = (pLedCharacteristic->getValue()).c_str();
-    if (value.length() > 0) {
-      Serial.print("Characteristic event, written: ");
-      Serial.println(static_cast<int>(value[0])); // Print the integer value
 
-      int receivedValue = static_cast<int>(value[0]);
-      if (receivedValue == 1) {
-        digitalWrite(ledPin, HIGH);
-      } else {
-        digitalWrite(ledPin, LOW);
-      }
+  void onWrite(BLECharacteristic* pLedCharacteristic) {
+
+    String value = (pLedCharacteristic->getValue()).c_str();
+
+    if (value.length() > 0) {
+        Serial.print("Characteristic event, written: ");
+
+        for (int i = 0; i < value.length(); i++) {
+            Serial.println(static_cast<int>(value[i])); // Print the integer value
+        }
     }
   }
 };
