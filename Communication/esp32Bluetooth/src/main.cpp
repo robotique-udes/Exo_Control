@@ -5,9 +5,12 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 
+#include "ASCII.h"
+
 BLEServer* pServer = NULL;
 BLECharacteristic* pSensorCharacteristic = NULL;
 BLECharacteristic* pLedCharacteristic = NULL;
+ASCII *Ascii;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
@@ -37,11 +40,15 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
     String value = (pLedCharacteristic->getValue()).c_str();
 
     if (value.length() > 0) {
-        Serial.print("Characteristic event, written: ");
+        Serial.println("Raw value: ");
+        Serial.print(value);
 
-        for (int i = 0; i < value.length(); i++) {
-            Serial.println(static_cast<int>(value[i])); // Print the integer value
-        }
+
+        //for (int i = 0; i < value.length(); i++) {
+        //    //Serial.println(static_cast<int>(value[i])); // Print the integer value
+        //}
+
+        Serial.println();
     }
   }
 };
