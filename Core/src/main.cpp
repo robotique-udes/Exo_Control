@@ -50,8 +50,7 @@ void loop() {
   data.groundedR = grounded.isRightGrounded;
 
   float torque[NB_MOTORS] = {0};
-  // TODO recevoir le torque de calculateTorque
-  logic.calculateTorque(data);
+  logic.calculateTorque(data, torque);
 
   motorHandler.Update(torque);
 

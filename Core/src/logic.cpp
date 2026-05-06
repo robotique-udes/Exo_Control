@@ -26,10 +26,9 @@ void Logic::setMorphology(float height, float mass)
 }
 
 
-void Logic::calculateTorque(RequiredData data)
+void Logic::calculateTorque(RequiredData data, float (&torque)[4])
 {
-    float torque[4] = {0,0,0,0};
-   
+  
    if (data.groundedL && data.groundedR)
     {
         float fnRight = 0.0;
@@ -38,10 +37,20 @@ void Logic::calculateTorque(RequiredData data)
         calculateTorqueGrounded(data.backAngle,data.hipAngleL, fnLeft, torque);
         calculateTorqueGrounded(data.backAngle,data.hipAngleR, fnRight, torque+2);
     }
-    else if (data.groundedL || data.groundedR)
-    { 
-        calculateTorqueLeg(data.hipAngleL,data.kneeAngleL, data.groundedL, torque);
-        calculateTorqueLeg(data.hipAngleR,data.kneeAngleR, data.groundedR, torque+2);
+    else if (data.groundedL)
+    {
+        calculateTorqueGrounded(data.backAngle,data.hipAngleL, forceTorso, torque);
+        calculateTorqueAirborne(data.hipAngleR,data.kneeAngleR, data.groundedR, torque+2);
+    }
+    else if (data.groundedR)
+    {
+        calculateTorqueGrounded(data.backAngle,data.hipAngleR, forceTorso, torque+2);
+        calculateTorqueAirborne(data.hipAngleL,data.kneeAngleL, data.groundedL, torque);
+    }
+    else 
+    {
+        //no torque if both foot of the ground (jumping)
+        memset(torque, 0, sizeof(torque));
     }
 
     Serial.print("Torque Knee Right ");
@@ -56,24 +65,11 @@ void Logic::calculateTorque(RequiredData data)
     Serial.println();
 }
 
-void Logic::calculateTorqueLeg(float angleHip, float angleKnee, bool grounded, float torque[2])
+void Logic::calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded, float torque[2])
 {
-    float torqueKnee;
-    float torqueHips;
-    if (grounded)
-    {
-        torqueKnee = -1*((forceTorso/2.0 + forceThigh)*lengthCalf*sin(radians(angleKnee))
-                        + forceCalf*lengthCalf/2.0*sin(radians(angleKnee)));
-
-        torqueHips = torqueKnee + forceTorso/2.0*lengthThigh*sin(radians(angleHip))
-                        + forceThigh*lengthThigh/2.0*sin(radians(angleHip));
-    }
-    else 
-    {
-        torqueKnee = forceCalf*lengthCalf/2.0*sin(radians(angleKnee));
-        torqueHips = torqueKnee + forceThigh*lengthThigh/2.0*sin(radians(angleHip))
-                        + forceCalf*(lengthThigh*sin(radians(angleHip)) + lengthCalf/2.0*sin(radians(angleKnee)));
-    }
+    float torqueKnee = forceCalf*lengthCalf/2.0*sin(radians(angleKnee));
+    float torqueHips = torqueKnee + forceThigh*lengthThigh/2.0*sin(radians(angleHip))
+                    + forceCalf*(lengthThigh*sin(radians(angleHip)) + lengthCalf/2.0*sin(radians(angleKnee)));
     
     torque[0] = torqueKnee;
     torque[1] = torqueHips;

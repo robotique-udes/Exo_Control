@@ -41,7 +41,7 @@ private:
 
     void setMorphology(float height, float mass);
     
-    void calculateTorqueLeg(float angleHip, float angleKnee, bool grounded, float torque[2]);
+    void calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded, float torque[2]);
     void calculateTorqueGrounded(float angleHip, float angleKnee, float fg, float torque[2]);
     void getDistanceFromCenterMass(RequiredData data, float& distLeftFoot, float& distRightFoot);
     void getNormalForces(RequiredData data, float& fnRight, float& fnLeft);
@@ -56,7 +56,7 @@ private:
     void limitMinMax(T &val, T cap);
 
 public :
-    void calculateTorque(RequiredData data);
+    void calculateTorque(RequiredData data, float (&torque)[4]);
     Logic();
 };
 
