@@ -15,8 +15,6 @@ private:
         bool stopMotors;
         int height;
         int weight;
-        int test;
-        char charTest;
     };
 
     Data data;
@@ -32,5 +30,4 @@ public:
     int getWeight();
     int getTest();
     int getCharTest();
-
 };

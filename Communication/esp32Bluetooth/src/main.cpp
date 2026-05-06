@@ -47,11 +47,6 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
         Serial.print("Motor state: "); Serial.println(DataInterpreter.getMotorState());
         Serial.print("Height: "); Serial.println(DataInterpreter.getHeight());
         Serial.print("Weight: "); Serial.println(DataInterpreter.getWeight());
-        Serial.print("Test: "); Serial.println(DataInterpreter.getTest());
-        Serial.print("Char test: "); Serial.println(DataInterpreter.getCharTest());
-
-
-        //Serial.print("Raw value: "); Serial.println(value);
     }
   }
 };
@@ -113,7 +108,7 @@ void loop() {
     value++;
     Serial.print("New value notified: ");
     Serial.println(value);
-    delay(3000); // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
+    delay(1500); // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
   }
   // disconnecting
   if (!deviceConnected && oldDeviceConnected) {

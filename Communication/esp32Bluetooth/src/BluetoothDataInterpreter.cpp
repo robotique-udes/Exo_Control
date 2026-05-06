@@ -20,12 +20,11 @@ void BluetoothDataInterpreter::interpretData(String rawString) {
     }
     const char* lengthChar = lengthString.c_str();
     messageLength = atoi(lengthChar);
-    data.test = messageLength;
 
     //Reads after the first ';' to get the type of content
     int contentType;
     String contentString;
-    for (i + 1; rawString[i] != ';'; i++) {
+    for (i = i + 1; rawString[i] != ';'; i++) {
         contentString = contentString + rawString[i];
     }
     const char* contentChar = contentString.c_str();
@@ -35,7 +34,7 @@ void BluetoothDataInterpreter::interpretData(String rawString) {
     int content;
     int currentLength = 1;
     String messageString;
-    for (i + 1; messageLength > currentLength; i++) {
+    for (i = i + 1; messageLength >= currentLength; i++) {
         messageString = messageString + rawString[i];
         currentLength++;
     }
@@ -43,7 +42,7 @@ void BluetoothDataInterpreter::interpretData(String rawString) {
     content = atoi(messageChar);
 
     //Checks for end of message symbol and returns -1 if the symbol wasn't found
-    if (rawString[i + 1] != '$') {
+    if (rawString[i] != '$') {
         content = -1;
     }
 
@@ -73,12 +72,4 @@ int BluetoothDataInterpreter::getHeight() {
 
 int BluetoothDataInterpreter::getWeight() {
     return data.weight;
-}
-
-int BluetoothDataInterpreter::getTest() {
-    return data.test;
-}
-
-int BluetoothDataInterpreter::getCharTest() {
-    return data.charTest;
 }
