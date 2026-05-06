@@ -28,6 +28,4 @@ public:
     bool getMotorState();
     int getHeight();
     int getWeight();
-    int getTest();
-    int getCharTest();
 };
