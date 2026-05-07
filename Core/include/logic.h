@@ -6,6 +6,7 @@
 
 #define GRAVITY 9.81
 #define EXO_MASS 10 //kg
+#define MAX_TORQUE 15.0f //N*m
 
 
 struct RequiredData {
@@ -52,12 +53,18 @@ private:
      * @param val Value to map (float or int)
      * @param cap max/min reachable value (float or int)
      */
-    template <typename T>
-    void limitMinMax(T &val, T cap);
+    template <typename T, typename U>
+    static void limitMinMax(T &val, U cap);
 
 public :
     void calculateTorque(RequiredData data, float (&torque)[4]);
     Logic();
 };
 
+
+template <typename T, typename U>
+inline void Logic::limitMinMax(T &val, U cap) {
+    if (val > (T)cap) val = (T)cap;
+    if (val < -(T)cap) val = -(T)cap;
+}
 #endif

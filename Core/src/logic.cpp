@@ -52,7 +52,7 @@ void Logic::calculateTorque(RequiredData data, float (&torque)[4])
         //no torque if both foot of the ground (jumping)
         memset(torque, 0, sizeof(torque));
     }
-
+    
     Serial.print("Torque Knee Right ");
     Serial.println(torque[2]);
     Serial.print("Torque Hip Right ");
@@ -68,11 +68,13 @@ void Logic::calculateTorque(RequiredData data, float (&torque)[4])
 void Logic::calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded, float torque[2])
 {
     float torqueKnee = forceCalf*lengthCalf/2.0*sin(radians(angleKnee));
-    float torqueHips = torqueKnee + forceThigh*lengthThigh/2.0*sin(radians(angleHip))
+    float torqueHip = torqueKnee + forceThigh*lengthThigh/2.0*sin(radians(angleHip))
                     + forceCalf*(lengthThigh*sin(radians(angleHip)) + lengthCalf/2.0*sin(radians(angleKnee)));
     
+    limitMinMax(torqueKnee, MAX_TORQUE);
+    limitMinMax(torqueHip, MAX_TORQUE);
     torque[0] = torqueKnee;
-    torque[1] = torqueHips;
+    torque[1] = torqueHip;
 }
 
 
@@ -81,6 +83,8 @@ void Logic::calculateTorqueGrounded(float angleTorso, float angleThigh, float fo
     float torqueHip = lengthTorso/2.0*sin(radians(angleTorso)) * forceOnLeg;
     float torqueKnee = -lengthThigh*sin(radians(angleThigh))*(0.5*forceThigh + forceOnLeg) + torqueHip;
 
+    limitMinMax(torqueKnee, MAX_TORQUE);
+    limitMinMax(torqueHip, MAX_TORQUE);
     torque[0] = torqueKnee;
     torque[1] = torqueHip;
 }
@@ -123,20 +127,4 @@ void Logic::getNormalForces(RequiredData data, float& fnRight, float& fnLeft)
     fnLeft = forceTorso*distRightFoot/totalDist;
 }
 
-template <typename T>
-void Logic::limitMinMax(T &val, T cap)
-{
-    if (std::is_same<T, int>::value || std::is_same<T, float>::value)
-    {
-        if (val > cap)
-            val = cap;
-        else if (val < -cap)
-            val = -cap;
-    }
-    else
-    {
-        Serial.print("LimitMinMax Error - Invalid data type: ");
-        Serial.println(val);
-    }
-}
 

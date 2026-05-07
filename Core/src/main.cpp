@@ -30,9 +30,9 @@ void loop() {
 
   bnoHandler.requestData();
 
-  //Serial.println("---- Connected BNO Data ----");
-  //bnoHandler.printConnectedBNOsData(0, 5);
-  //Serial.println();
+  Serial.println("---- Connected BNO Data ----");
+  bnoHandler.printConnectedBNOsData(0, 5);
+  Serial.println();
 
   angleOutput_t angles;
   groundedOutput_t grounded;
