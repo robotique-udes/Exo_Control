@@ -104,7 +104,11 @@ void BnoHandler::requestData(){
             float gX = bnoDevices[i].getGravityX();
             float gY = bnoDevices[i].getGravityY();
             float gZ = bnoDevices[i].getGravityZ();
-            BNOAngles[i] = degrees(atan2(gX, gY)) + 180;
+
+            if (bnoIndex(EnumBnoPosition::MOBO) == i)
+                BNOAngles[i] = degrees(atan2(gZ, gX)) + 180;
+            else
+                BNOAngles[i] = degrees(atan2(gX, gY)) + 180;
 
             if (BNOAngles[i] > 180) BNOAngles[i] -= 360;
             else if (BNOAngles[i] <= -180) BNOAngles[i] += 360;

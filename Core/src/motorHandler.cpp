@@ -47,6 +47,7 @@ void MotorHandler::exitMotors()
 
 void MotorHandler::applyTorque(const float torque[NB_MOTORS])
 {
+    //TODO some motor should be the inverse of the other (left vs right leg)
     //iterate for all motors 
     for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
     {
