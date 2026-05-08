@@ -1,27 +1,77 @@
 #pragma once
 
+#include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
-#include "BluetoothDataInterpreter.h"
 
-#define SERVICE_UUID        "19b10000-e8f2-537e-4f6c-d104768a1214"
-#define HMI_CHARACTERISTIC_UUID "19b10001-e8f2-537e-4f6c-d104768a1214"
+#define SERVICE_UUID "19b10000-e8f2-537e-4f6c-d104768a1214"
+#define SENSOR_CHARACTERISTIC_UUID "19b10001-e8f2-537e-4f6c-d104768a1214"
+#define LED_CHARACTERISTIC_UUID "19b10002-e8f2-537e-4f6c-d104768a1214"
 
 class HMI_Comm
 {
+private:
+    BLECharacteristic* pSensorCharacteristic = nullptr;
+    BLECharacteristic* pLedCharacteristic = nullptr;
+
+
+    uint32_t value = 0;
+
+    enum DataType {
+        MOTOR_STATE = 1,
+        HEIGHT = 2,
+        WEIGHT = 3,
+    };
+
+    struct Data
+    {
+        bool stopMotors;
+        int height;
+        int weight;
+    };
+
+    Data data;
+
+    class ServerCallbacks : public BLEServerCallbacks
+    {
     private:
-        BLEServer* pServer = NULL;
-        BLECharacteristic* pHMICharacteristic = NULL;
-        bool deviceConnected = false;
-        bool oldDeviceConnected = false;
-
-        
-
-
+        HMI_Comm* owner;
 
     public:
+        ServerCallbacks(HMI_Comm* ownerPtr) : owner(ownerPtr) {}
 
-    void start();
-}
+        void onConnect(BLEServer* pServer) override;
+        void onDisconnect(BLEServer* pServer) override;
+    };
+
+    class CharacteristicCallbacks : public BLECharacteristicCallbacks
+    {
+    private:
+        HMI_Comm* owner;
+
+    public:
+        CharacteristicCallbacks(HMI_Comm* ownerPtr) : owner(ownerPtr) {}
+
+        void onWrite(BLECharacteristic* pCharacteristic) override;
+    };
+
+
+
+public:
+    void begin(const char* deviceName);
+    void update();
+    
+    bool deviceConnected = false;
+    bool oldDeviceConnected = false;
+    bool isConnected() const;
+    BLEServer* pServer = nullptr;
+
+    bool getMotorState() const;
+    int getHeight() const;
+    int getWeight() const;
+
+    void interpretData(String rawString);
+};
+
