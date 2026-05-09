@@ -100,6 +100,16 @@ int HMI_Comm::getWeight() const
     return data.weight;
 }
 
+void HMI_Comm::setLogic(Logic *logic)
+{
+    this->logic = logic;
+    this->logic = new Logic();
+}
+
+void HMI_Comm::setMotorHandler(MotorHandler *handler)
+{
+    this->motorHandler = handler;
+}
 
 void HMI_Comm::interpretData(String rawString) {
     int i = 0;
@@ -138,15 +148,20 @@ void HMI_Comm::interpretData(String rawString) {
         else if (content == 2) {
             data.stopMotors = false;
         }
+        //TODO
     }
     else if (contentType == HEIGHT) {
         data.height = content;
     }
     else if (contentType == WEIGHT) {
         data.weight = content;
-    }
 
-    Serial.print("Message received: ");
+        //TODO shouldnt be only when the weight arrives
+        //idealy both weight and heigth arrives in the same packet
+        logic->setMorphology(data.height, data.weight);
+    } 
+
+    Serial.print("Message received :o : ");
     Serial.println(rawString);
 
     Serial.print("Motor state: ");

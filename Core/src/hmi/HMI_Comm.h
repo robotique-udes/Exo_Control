@@ -5,6 +5,8 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
+#include "logic.h"
+#include "motorHandler.h"
 
 #define SERVICE_UUID "19b10000-e8f2-537e-4f6c-d104768a1214"
 #define SENSOR_CHARACTERISTIC_UUID "19b10001-e8f2-537e-4f6c-d104768a1214"
@@ -15,6 +17,9 @@ class HMI_Comm
 private:
     BLECharacteristic* pSensorCharacteristic = nullptr;
     BLECharacteristic* pLedCharacteristic = nullptr;
+
+    Logic* logic;
+    MotorHandler* motorHandler;
 
 
     uint32_t value = 0;
@@ -62,6 +67,9 @@ private:
 public:
     void begin(const char* deviceName);
     void update();
+
+    void setLogic(Logic *logic);
+    void setMotorHandler(MotorHandler *handler);
     
     bool deviceConnected = false;
     bool oldDeviceConnected = false;

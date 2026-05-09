@@ -29,6 +29,8 @@ class Logic
 {
 private:
 
+    SemaphoreHandle_t morphologyMutex;
+
     float userHeight;
     float userMass;
 
@@ -39,8 +41,6 @@ private:
     float forceTorso;
     float forceThigh;
     float forceCalf;
-
-    void setMorphology(float height, float mass);
     
     void calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded, float torque[2]);
     void calculateTorqueGrounded(float angleHip, float angleKnee, float fg, float torque[2]);
@@ -57,8 +57,9 @@ private:
     static void limitMinMax(T &val, U cap);
 
 public :
-    void calculateTorque(RequiredData data, float (&torque)[4]);
     Logic();
+    void setMorphology(int height, int mass);
+    void calculateTorque(RequiredData data, float (&torque)[4]);
 };
 
 
