@@ -26,7 +26,6 @@ void HMI_Comm::CharacteristicCallbacks::onWrite(BLECharacteristic* pCharacterist
     }
 }
 
-
 void HMI_Comm::begin()
 {
     BLEDevice::init(deviceName);
@@ -36,23 +35,23 @@ void HMI_Comm::begin()
 
     BLEService* pService = pServer->createService(SERVICE_UUID);
 
-    pSensorCharacteristic = pService->createCharacteristic(
-        SENSOR_CHARACTERISTIC_UUID,
+    pSendCharacteristic = pService->createCharacteristic(
+        SEND_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_READ |
         BLECharacteristic::PROPERTY_WRITE |
         BLECharacteristic::PROPERTY_NOTIFY |
         BLECharacteristic::PROPERTY_INDICATE
     );
 
-    pLedCharacteristic = pService->createCharacteristic(
-        LED_CHARACTERISTIC_UUID,
+    pReceiveCharacteristic = pService->createCharacteristic(
+        RECEIVE_CHARACTERISTIC_UUID,
         BLECharacteristic::PROPERTY_WRITE
     );
 
-    pLedCharacteristic->setCallbacks(new CharacteristicCallbacks(this));
+    pReceiveCharacteristic->setCallbacks(new CharacteristicCallbacks(this));
 
-    pSensorCharacteristic->addDescriptor(new BLE2902());
-    pLedCharacteristic->addDescriptor(new BLE2902());
+    pSendCharacteristic->addDescriptor(new BLE2902());
+    pReceiveCharacteristic->addDescriptor(new BLE2902());
 
     pService->start();
 
@@ -163,4 +162,9 @@ void HMI_Comm::interpretData(String rawString) {
 
     Serial.print("Weight: ");
     Serial.println(getWeight());
+}
+
+void HMI_Comm::sendBatteryData(int batteryCharge) {
+    pSendCharacteristic->setValue(String(batteryCharge).c_str());
+    pSendCharacteristic->notify();
 }

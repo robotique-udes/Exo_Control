@@ -12,4 +12,6 @@ void setup()
 void loop()
 {
     hmi.update();
+    hmi.sendBatteryData(90);
+    delay(200);
 }
