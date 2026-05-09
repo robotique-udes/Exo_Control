@@ -67,6 +67,13 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
             motorTorque /= SAMPLE_COUNT;
         }
 
+        
+        if (motorIndex == static_cast<int>(EnumMotorPosition::HIP_L)
+            || motorIndex == static_cast<int> (EnumMotorPosition::KNEE_L))
+        {
+            motorTorque = -1*motorTorque;
+        }  
+
         //send torque request to the respective motor
         motors[motorIndex]->sendRequest(TORQUE, motorTorque);
         initialShutdownTorque[motorIndex] = motorTorque;
