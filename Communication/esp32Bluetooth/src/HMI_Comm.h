@@ -16,6 +16,7 @@ private:
     BLECharacteristic* pSensorCharacteristic = nullptr;
     BLECharacteristic* pLedCharacteristic = nullptr;
 
+    char* deviceName = "BioGenius";
 
     uint32_t value = 0;
 
@@ -57,10 +58,10 @@ private:
         void onWrite(BLECharacteristic* pCharacteristic) override;
     };
 
-
-
 public:
-    void begin(const char* deviceName);
+    HMI_Comm();
+
+    void begin();
     void update();
     
     bool deviceConnected = false;

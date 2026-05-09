@@ -6,7 +6,7 @@ HMI_Comm hmi;
 void setup()
 {
     Serial.begin(115200);
-    hmi.begin("BioGenius");
+    hmi.begin();
 }
 
 void loop()

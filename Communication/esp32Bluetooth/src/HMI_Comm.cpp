@@ -1,5 +1,11 @@
 #include "HMI_Comm.h"
 
+HMI_Comm::HMI_Comm() {
+    data.stopMotors = true;
+    data.height = 171;
+    data.weight = 77;
+}
+
 void HMI_Comm::ServerCallbacks::onConnect(BLEServer* pServer)
 {
     owner->deviceConnected = true;
@@ -21,7 +27,7 @@ void HMI_Comm::CharacteristicCallbacks::onWrite(BLECharacteristic* pCharacterist
 }
 
 
-void HMI_Comm::begin(const char* deviceName)
+void HMI_Comm::begin()
 {
     BLEDevice::init(deviceName);
 
