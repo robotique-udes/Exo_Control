@@ -21,7 +21,9 @@ void MotorV2::sendRequest(MotorMode mode, float value)
 void MotorV2::start()
 {
   enterMode();
+  delay(100);
   zeroSet();
+  delay(100);
 }
 
 void MotorV2::stop()

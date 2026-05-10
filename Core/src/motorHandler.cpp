@@ -4,10 +4,12 @@ MotorHandler::MotorHandler()
 {
     stateMutex = xSemaphoreCreateMutex();
 
-    motors[0] = new MotorV3(static_cast<int>(EnumMotorPosition::HIP_R));
-    motors[1] = new MotorV2(static_cast<int>(EnumMotorPosition::HIP_L));
-    motors[2] = new MotorV3(static_cast<int>(EnumMotorPosition::KNEE_R)); 
-    motors[3] = new MotorV2(static_cast<int>(EnumMotorPosition::KNEE_L));
+    motors[static_cast<int>(EnumMotorPosition::HIP_R)] = new MotorV3(static_cast<int>(EnumMotorPosition::HIP_R));
+    motors[static_cast<int>(EnumMotorPosition::HIP_L)] = new MotorV2(static_cast<int>(EnumMotorPosition::HIP_L));
+    motors[static_cast<int>(EnumMotorPosition::KNEE_R)] = new MotorV3(static_cast<int>(EnumMotorPosition::KNEE_R)); 
+    motors[static_cast<int>(EnumMotorPosition::KNEE_L)] = new MotorV2(static_cast<int>(EnumMotorPosition::KNEE_L));
+
+    
 }
 
 MotorHandler::~MotorHandler()
@@ -22,14 +24,14 @@ MotorHandler::~MotorHandler()
 
 void MotorHandler::Update(const float torque[NB_MOTORS])
 {
-    if (tempTooHigh == true)
+/*     if (tempTooHigh == true)
     {
         //slowShutDown();
         //TODO remplacer ca par le slow shutdown
         float shutDown[NB_MOTORS] = {0,0,0,0};
         applyTorque(shutDown);
         return;
-    }
+    } */
 
     applyTorque(torque);
 }
@@ -37,7 +39,9 @@ void MotorHandler::Update(const float torque[NB_MOTORS])
 void MotorHandler::initializeMotors()
 {
     for (int motorPos = 0; motorPos < NB_MOTORS; motorPos++)
+    {
         motors[motorPos]->start();
+    }
 
     initialized = true;
 }
@@ -79,6 +83,12 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
         //send torque request to the respective motor
         if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) 
         {
+            Serial.print("Motor : ");
+            Serial.print(motorIndex);
+            Serial.print(" id : ");
+            Serial.print(motors[motorIndex]->getMotorId());
+            Serial.print(" | Torque : ");
+            Serial.println(motorTorque);
             motors[motorIndex]->sendRequest(TORQUE, motorTorque*motorOn);
             xSemaphoreGive(stateMutex);
         }
@@ -86,13 +96,18 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
 
         //checks if the respective motor is overheating
         float temperature = motors[motorIndex]->getTemperature();
+        Serial.print("Temperature : ");
+        Serial.println(temperature);
+        continue;
         if (temperature > TEMP_THRESHOLD)
         {
+            Serial.println(temperature);
             tempTooHigh = true;
             shutdownStartTime = millis();
             return;
         }
     }
+    Serial.println();
 }
 
 //TODO tester le slow shutdown

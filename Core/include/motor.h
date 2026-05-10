@@ -16,7 +16,7 @@ class Motor
 protected:
     //DataCore instanciation
     CanFrame msg;
-    float temperature; 
+    float temperature = 0.0; 
     int motorId;
     float currentTorque;
     float motorCorrectionSlope;

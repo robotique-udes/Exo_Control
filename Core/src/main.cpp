@@ -78,7 +78,7 @@ void loop() {
   data.groundedL = grounded.isLeftGrounded;
   data.groundedR = grounded.isRightGrounded;
 
-  data.backAngle = 0.0;
+  //data.backAngle = 0.0;
   //data.hipAngleL = 0.0;
   //data.hipAngleR = 0.0;
 

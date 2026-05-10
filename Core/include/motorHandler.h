@@ -8,10 +8,10 @@
 
 enum class EnumMotorPosition
 {
-    HIP_R  = 0,
-    HIP_L  = 1,
-    KNEE_R = 2,
-    KNEE_L = 3
+    KNEE_L = 0,
+    KNEE_R = 1,
+    HIP_L  = 2,
+    HIP_R  = 3
 };
 
 class MotorHandler
@@ -19,7 +19,7 @@ class MotorHandler
 private:
     enum EnumMotorPosition motorPos;
     SemaphoreHandle_t stateMutex;
-    bool motorOn = false;
+    bool motorOn = true;
 
     //TODO : verifier les IDs
     Motor* motors[NB_MOTORS];
