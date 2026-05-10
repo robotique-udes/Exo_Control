@@ -52,6 +52,15 @@ void setup() {
   } else {
     Serial.println("BNO setup complete. Reading connected sensors only.");
   }
+  pinMode(CAN_TERMINAL_PIN, OUTPUT);
+  digitalWrite(CAN_TERMINAL_PIN, HIGH);
+
+  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), CAN_TX, CAN_RX, 5, 5)) {
+    Serial.println("CAN bus started!!!");
+  } else {
+    Serial.println("CAN bus failed!");
+  }
+  delay(1000);
 
   motorHandler.initializeMotors();
 }

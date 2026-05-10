@@ -20,6 +20,8 @@ void MotorV2::sendRequest(MotorMode mode, float value)
 
 void MotorV2::start()
 {
+  Serial.print("Starting motor : ");
+  Serial.println(this->motorId);
   enterMode();
   delay(100);
   zeroSet();
@@ -138,7 +140,7 @@ void MotorV2::sendCommand(MotorMode mode,float value){
   case TORQUE:
     currentTorque = value;
     /// Correction of the torque value ///
-    value = (value - motorCorrectionOffset) / motorCorrectionSlope;
+    //value = (value - motorCorrectionOffset) / motorCorrectionSlope;
 
     packCmd(0, 0, 0, 0, value);
     sendCanMessage(&msg);
