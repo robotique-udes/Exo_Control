@@ -4,7 +4,7 @@
 Logic::Logic()
 {
     morphologyMutex = xSemaphoreCreateMutex();
-    setMorphology(1.70, 70);
+    setMorphology(170, 70);
 }
 
 
@@ -12,7 +12,7 @@ Logic::Logic()
 void Logic::setMorphology(int height, int mass)
 {
     if (xSemaphoreTake(morphologyMutex, portMAX_DELAY) == pdTRUE) {
-        userHeight = height / 10.0; 
+        userHeight = height / 100.0; 
         userMass = mass;
         
         float gravitationalForce = userMass*GRAVITY;
@@ -25,6 +25,8 @@ void Logic::setMorphology(int height, int mass)
         forceTorso = 0.678*gravitationalForce + exoForce; 
         forceThigh = 0.1*gravitationalForce;   
         forceCalf = 0.061*gravitationalForce;  
+
+        xSemaphoreGive(morphologyMutex);
     }
 }
 
@@ -76,6 +78,7 @@ void Logic::calculateTorqueAirborne(float angleHip, float angleKnee, bool ground
         float torqueKnee = forceCalf*lengthCalf/2.0*sin(radians(angleKnee));
         float torqueHip = torqueKnee + forceThigh*lengthThigh/2.0*sin(radians(angleHip))
                         + forceCalf*(lengthThigh*sin(radians(angleHip)) + lengthCalf/2.0*sin(radians(angleKnee)));
+        xSemaphoreGive(morphologyMutex);
     }
     
     limitMinMax(torqueKnee, MAX_TORQUE);
@@ -87,13 +90,15 @@ void Logic::calculateTorqueAirborne(float angleHip, float angleKnee, bool ground
 
 void Logic::calculateTorqueGrounded(float angleTorso, float angleThigh, float forceOnLeg, float torque[2])
 {
-    float torqueKnee;
-    float torqueHip;
+    float torqueKnee = 0.0;
+    float torqueHip = 0.0;
+    Serial.println(angleThigh);
+    Serial.println(forceOnLeg);
     if (xSemaphoreTake(morphologyMutex, portMAX_DELAY) == pdTRUE) {
-        float torqueHip = lengthTorso/2.0*sin(radians(angleTorso)) * forceOnLeg;
-        float torqueKnee = -lengthThigh*sin(radians(angleThigh))*(0.5*forceThigh + forceOnLeg) + torqueHip;
+        torqueHip = lengthTorso/2.0*sin(radians(angleTorso)) * forceOnLeg;
+        torqueKnee = -lengthThigh*sin(radians(angleThigh))*(0.5*forceThigh + forceOnLeg) + torqueHip;
+        xSemaphoreGive(morphologyMutex);
     }
-
     limitMinMax(torqueKnee, MAX_TORQUE);
     limitMinMax(torqueHip, MAX_TORQUE);
     torque[0] = torqueKnee;
@@ -110,8 +115,8 @@ void Logic::getDistanceFromCenterMass(RequiredData data, float& distLeftFoot, fl
         distRightFoot = lengthCalf*sin(radians(data.kneeAngleR))
                         + lengthThigh*sin(radians(data.hipAngleR))
                         - lengthTorso/2.0*sin(radians(data.backAngle));
-    }
-                    
+        xSemaphoreGive(morphologyMutex);
+    }               
 }
 
 
@@ -120,24 +125,38 @@ void Logic::getNormalForces(RequiredData data, float& fnRight, float& fnLeft)
     float distLeftFoot;
     float distRightFoot;
     getDistanceFromCenterMass(data, distLeftFoot, distRightFoot);
-    float totalDist = abs(distLeftFoot - distRightFoot);
 
+    float totalDist = abs(distLeftFoot - distRightFoot);
+    
+    if (totalDist < abs(distLeftFoot) || totalDist < abs(distRightFoot))
+    {
+        //TODO crab mode
+        totalDist = 0.0;
+    }
+
+    
 /*     Serial.print("Dist left foot : ");
     Serial.println(distLeftFoot);
     Serial.print("Dist right foot : ");
     Serial.println(distRightFoot);
     Serial.print("Dist total : ");
-    Serial.println(totalDist); */
+    Serial.println(totalDist); 
+    Serial.print("force t :");
+    Serial.println(forceTorso);  */
+                    
     if (xSemaphoreTake(morphologyMutex, portMAX_DELAY) == pdTRUE) {
         if (totalDist == 0)
         {
             fnRight = forceTorso/2.0;
             fnLeft = forceTorso/2.0;
-            return;
+        }
+        else 
+        {
+            fnRight = forceTorso*distLeftFoot/totalDist;
+            fnLeft = forceTorso*distRightFoot/totalDist;
         }
 
-        fnRight = forceTorso*distLeftFoot/totalDist;
-        fnLeft = forceTorso*distRightFoot/totalDist;
+        xSemaphoreGive(morphologyMutex);
     }
 }
 
