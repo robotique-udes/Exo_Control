@@ -74,9 +74,13 @@ void loop() {
   data.hipAngleR = angles.hipRight;
   data.kneeAngleL =angles.KneeLeft;
   data.kneeAngleR =angles.KneeRight;
-  data.backAngle = 0.0;
+  data.backAngle = angles.back;
   data.groundedL = grounded.isLeftGrounded;
   data.groundedR = grounded.isRightGrounded;
+
+  data.backAngle = 0.0;
+  //data.hipAngleL = 0.0;
+  //data.hipAngleR = 0.0;
 
   float torque[NB_MOTORS] = {0};
   logic.calculateTorque(data, torque);

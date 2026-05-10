@@ -31,7 +31,7 @@ void Logic::setMorphology(int height, int mass)
 }
 
 
-void Logic::calculateTorque(RequiredData data, float (&torque)[4])
+void Logic::calculateTorque(RequiredData data, float (&torque)[NB_MOTOR])
 {
   
    if (data.groundedL && data.groundedR)
@@ -57,6 +57,7 @@ void Logic::calculateTorque(RequiredData data, float (&torque)[4])
         //no torque if both foot of the ground (jumping)
         memset(torque, 0, sizeof(torque));
     }
+    valideTorque(data, torque);
     
     Serial.print("Torque Knee Right ");
     Serial.println(torque[2]);
@@ -161,3 +162,61 @@ void Logic::getNormalForces(RequiredData data, float& fnRight, float& fnLeft)
 }
 
 
+void Logic::valideTorque(RequiredData data, float (&torque)[NB_MOTOR])
+{  
+    if (limitAngleHip(data.backAngle, data.hipAngleL))
+    {
+        Serial.print("HIP LEFT not good : ");
+        Serial.println(data.backAngle + data.hipAngleL);
+        torque[HIP_LEFT] = 0.0;
+    }
+    if (limitAngleHip(data.backAngle, data.hipAngleR))
+    {
+        Serial.print("HIP RIGHT not good : ");
+        Serial.println(data.backAngle + data.hipAngleR);
+        torque[HIP_RIGHT] = 0.0;
+    }
+    if (limitAngleKnee(data.backAngle, data.hipAngleL, data.kneeAngleL))
+    {
+        Serial.print("KNEE LEFT not good : ");
+        Serial.println(data.backAngle + data.hipAngleL + data.kneeAngleL);
+        torque[KNEE_LEFT] = 0.0;
+    }
+    if (limitAngleKnee(data.backAngle, data.hipAngleR, data.kneeAngleR))
+    {
+        Serial.print("KNEE right not good : ");
+        Serial.println(data.backAngle + data.hipAngleR + data.kneeAngleR);
+        torque[KNEE_RIGHT] = 0.0;
+    }
+}
+
+
+bool Logic::limitAngleHip(float angleBack, float angleHip)
+{
+    const uint8_t max_angle_positive = 80;
+    const int8_t max_angle_negative = -70;
+    const float max_angle_hip[2] = {angleBack + max_angle_positive, 
+                                    angleBack + max_angle_negative};
+    if (angleHip > max_angle_hip[0])
+        return true;
+    if (angleHip < max_angle_hip[1])
+        return true;
+    else 
+        return false;
+}
+
+bool Logic::limitAngleKnee(float angleBack, float angleHip, float angleKnee)
+{
+    const uint8_t max_angle_positive = 0;
+    const int8_t max_angle_negative = -100;
+
+    const float max_angle_hip[2] = {angleBack + angleHip + max_angle_positive, 
+                                    angleBack + angleHip + max_angle_negative};
+
+    if (angleKnee > max_angle_hip[0])
+        return true;
+    if (angleKnee < max_angle_hip[1])
+        return true;
+    else 
+        return false;
+}

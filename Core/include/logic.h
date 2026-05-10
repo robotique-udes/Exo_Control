@@ -8,6 +8,14 @@
 #define EXO_MASS 10 //kg
 #define MAX_TORQUE 15.0f //N*m
 
+#define NB_MOTOR 4
+#define KNEE_LEFT 0
+#define HIP_LEFT 1
+#define KNEE_RIGHT 2
+#define HIP_RIGHT 3
+
+
+
 
 struct RequiredData {
     float hipAngleL;
@@ -46,6 +54,9 @@ private:
     void calculateTorqueGrounded(float angleHip, float angleKnee, float fg, float torque[2]);
     void getDistanceFromCenterMass(RequiredData data, float& distLeftFoot, float& distRightFoot);
     void getNormalForces(RequiredData data, float& fnRight, float& fnLeft);
+    void valideTorque(RequiredData data, float (&torque)[NB_MOTOR]);
+    bool limitAngleHip(float angleBack, float angleHip);
+    bool limitAngleKnee(float angleBack, float angleHip, float angleKnee);
 
     // -------------------------- UTILITIES --------------------------
     /**
@@ -59,7 +70,7 @@ private:
 public :
     Logic();
     void setMorphology(int height, int mass);
-    void calculateTorque(RequiredData data, float (&torque)[4]);
+    void calculateTorque(RequiredData data, float (&torque)[NB_MOTOR]);
 };
 
 
