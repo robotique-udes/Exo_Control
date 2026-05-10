@@ -6,13 +6,15 @@
 
 #define GRAVITY 9.81
 #define EXO_MASS 10 //kg
-#define MAX_TORQUE 15.0f //N*m
 
 #define NB_MOTOR 4
 #define KNEE_LEFT 0
 #define HIP_LEFT 1
 #define KNEE_RIGHT 2
 #define HIP_RIGHT 3
+
+#define MAX_TORQUE 5.0f //N*m
+#define TORQUE_MULTIPLIER 0.1
 
 
 

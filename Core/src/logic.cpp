@@ -58,6 +58,11 @@ void Logic::calculateTorque(RequiredData data, float (&torque)[NB_MOTOR])
         memset(torque, 0, sizeof(torque));
     }
     valideTorque(data, torque);
+
+    for (auto& t : torque) {
+        t *= TORQUE_MULTIPLIER;
+        limitMinMax(t, MAX_TORQUE);
+    }
     
     Serial.print("Torque Knee Right ");
     Serial.println(torque[2]);
@@ -82,8 +87,6 @@ void Logic::calculateTorqueAirborne(float angleHip, float angleKnee, bool ground
         xSemaphoreGive(morphologyMutex);
     }
     
-    limitMinMax(torqueKnee, MAX_TORQUE);
-    limitMinMax(torqueHip, MAX_TORQUE);
     torque[0] = torqueKnee;
     torque[1] = torqueHip;
 }
@@ -100,8 +103,6 @@ void Logic::calculateTorqueGrounded(float angleTorso, float angleThigh, float fo
         torqueKnee = -lengthThigh*sin(radians(angleThigh))*(0.5*forceThigh + forceOnLeg) + torqueHip;
         xSemaphoreGive(morphologyMutex);
     }
-    limitMinMax(torqueKnee, MAX_TORQUE);
-    limitMinMax(torqueHip, MAX_TORQUE);
     torque[0] = torqueKnee;
     torque[1] = torqueHip;
 }
