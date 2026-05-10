@@ -2,6 +2,8 @@
 
 MotorHandler::MotorHandler()
 {
+    stateMutex = xSemaphoreCreateMutex();
+
     motors[0] = new MotorV3(static_cast<int>(EnumMotorPosition::HIP_R));
     motors[1] = new MotorV2(static_cast<int>(EnumMotorPosition::HIP_L));
     motors[2] = new MotorV3(static_cast<int>(EnumMotorPosition::KNEE_R)); 
@@ -22,7 +24,10 @@ void MotorHandler::Update(const float torque[NB_MOTORS])
 {
     if (tempTooHigh == true)
     {
-        slowShutDown();
+        //slowShutDown();
+        //TODO remplacer ca par le slow shutdown
+        float shutDown[NB_MOTORS] = {0,0,0,0};
+        applyTorque(shutDown);
         return;
     }
 
@@ -47,11 +52,8 @@ void MotorHandler::exitMotors()
 
 void MotorHandler::applyTorque(const float torque[NB_MOTORS])
 {
-    //TODO some motor should be the inverse of the other (left vs right leg)
-    //iterate for all motors 
     for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
     {
-        //calculate torque
         float motorTorque = 0.0f;
         if(initialized)
         {
@@ -75,7 +77,11 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
         }  
 
         //send torque request to the respective motor
-        motors[motorIndex]->sendRequest(TORQUE, motorTorque);
+        if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) 
+        {
+            motors[motorIndex]->sendRequest(TORQUE, motorTorque*motorOn);
+            xSemaphoreGive(stateMutex);
+        }
         initialShutdownTorque[motorIndex] = motorTorque;
 
         //checks if the respective motor is overheating
@@ -107,6 +113,16 @@ void MotorHandler::slowShutDown()
     {  
         float torque = initialShutdownTorque[motorIndex] * (1 - ((float)timeElapsed / SHUT_DOWN_TIME));
         motors[motorIndex]->sendRequest(TORQUE, torque);
+    }
+}
+
+
+
+void MotorHandler::setMotorState(bool state)
+{
+    if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) {
+        this->motorOn = state;
+        xSemaphoreGive(stateMutex);
     }
 }
 

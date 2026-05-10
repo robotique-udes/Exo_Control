@@ -18,6 +18,8 @@ class MotorHandler
 {
 private:
     enum EnumMotorPosition motorPos;
+    SemaphoreHandle_t stateMutex;
+    bool motorOn = false;
 
     //TODO : verifier les IDs
     Motor* motors[NB_MOTORS];
@@ -42,6 +44,7 @@ public:
     MotorHandler();
     ~MotorHandler();
 
+    void setMotorState(bool state);
     void initializeMotors();
     void Update(const float torque[NB_MOTORS]);
 };
