@@ -83,10 +83,10 @@ if(ESP32Can.begin(ESP32Can.convertSpeed(1000), CAN_TX, CAN_RX, 5, 5)) {
   //relais.setAllRelay(OFF);
 
   //setupCallbacks();
-  testMoteurV3_2.setMotorId(0x802);
+  testMoteurV3_2.setMotorId(2);
   testMoteurV3_2.setMotorCorrection(1, 0); 
 
-  testMoteurV2.setMotorId(0x01);
+  testMoteurV2.setMotorId(1);
   testMoteurV2.setMotorCorrection(1, 0); 
 
   pinMode(CAN_TERMINAL_PIN, OUTPUT);
@@ -97,7 +97,7 @@ if(ESP32Can.begin(ESP32Can.convertSpeed(1000), CAN_TX, CAN_RX, 5, 5)) {
 void loop()
 {
   //---------------Test multiple motors----------------
-    delay(100);
+    delay(1000);
     char rc = Serial.read();
     if(rc == 'e'){
         torqueV2=0.0;
@@ -116,14 +116,13 @@ void loop()
     else if(rc == 'a'){
         //float p_des, float v_des, float kp, float kd, float t_ff
         torqueV2+=0.5;
-        testMoteurV2.sendCommand(TORQUE, torqueV2);
+        
         Serial.println("Command send: a");
         Serial.println(torqueV2);
     }
+    testMoteurV2.sendCommand(TORQUE, torqueV2);
     Serial.print("Temperature V2 : ");
     Serial.println(testMoteurV2.getTemperature());
-
-
 
 
     if(rc == 'k') {
@@ -145,8 +144,8 @@ void loop()
     }
 
     testMoteurV3_2.sendCommand(TORQUE, torqueV3);
-    Serial1.print("Temperature V3 : ");
-    Serial1.println(testMoteurV3_2.getTemperature());
+    Serial.print("Temperature V3 : ");
+    Serial.println(testMoteurV3_2.getTemperature());
   
 
 

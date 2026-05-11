@@ -62,6 +62,7 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
 
 void MotorV3::unpackReply(){
     
+
     //from cubemars doc, we only use the temperature for now, should aslo check for error 
     //TODO also evaluate motor errors 
     int16_t pos_int = (msg.data[0] << 8 | msg.data[1]);
@@ -87,6 +88,11 @@ void MotorV3::sendCommand(MotorMode mode,float value){
         sendCanMessage(&msg);
     }
     receiveCanMessage(&msg);
-    unpackReply();
+    uint8_t source_id = msg.identifier;
+    Serial.print("id V3 : ");
+    Serial.println(source_id); 
+    if (source_id == this->motorId) {
+        unpackReply();
+    }
 } 
 

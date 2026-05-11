@@ -111,7 +111,7 @@ void MotorV2::packCmd(float position, float velocity, float kp, float kd, float 
 }
 // 
 void MotorV2::unpackReply(){
-    unsigned int id = msg.data[0];
+    int id = msg.data[0];
     unsigned int position_int = (msg.data[1] << 8) | msg.data[2];
     unsigned int velocity_int = (msg.data[3] << 4) | (msg.data[4] >> 4);
     unsigned int current_int = ((msg.data[4] & 0xF) << 8) | msg.data[5];
@@ -120,19 +120,37 @@ void MotorV2::unpackReply(){
 
 //
 void MotorV2::sendCommand(MotorMode mode,float value){
+  int header_id;
+  int data_id;
   switch (mode)
   {
   case TORQUE:
+  {
     currentTorque = value;
     /// Correction of the torque value ///
-    value = (value - motorCorrectionOffset) / motorCorrectionSlope;
+    //value = (value - motorCorrectionOffset) / motorCorrectionSlope;
 
     packCmd(0, 0, 0, 0, value);
     sendCanMessage(&msg);
-    receiveCanMessage(&msg);
-    unpackReply();
-    break;
-  
+
+    int attempts = 0;
+    while (attempts < 10) {
+
+      receiveCanMessage(&msg);
+      
+      header_id = msg.identifier & 0xFF; 
+      data_id = msg.data[0];
+      // If neither matches your expected motor ID (e.g., 1), ignore it
+      if (msg.data[0] == this->motorId) {
+          unpackReply();
+          return;
+      } 
+      attempts++;
+    }
+
+  }
+  break;
+    
   case VELOCITY:
     packCmd(0, value, KP, KD, 0);
     sendCanMessage(&msg);
