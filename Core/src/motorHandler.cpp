@@ -60,10 +60,9 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
     //TODO wtf is this
     float newTorque[4] = {torque[0], torque[2], torque[1], torque[3]};
 
-    for (int motorIndex = 0; motorIndex < NB_MOTORS; motorIndex++)
+    for (int motorIndex = 3; motorIndex >= 0; motorIndex--)
     {
-
-        if (motorIndex != 2 && motorIndex != 3)
+        if (motorIndex != 3)
             continue;
 
         float motorTorque = 0.0f;
@@ -98,7 +97,7 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
             Serial.print(" | Torque : ");
             Serial.println(motorTorque);
            // motors[motorIndex]->sendRequest(TORQUE, motorTorque*motorOn);
-            motors[motorIndex]->sendRequest(TORQUE, 2.0);
+            motors[motorIndex]->sendRequest(TORQUE, 0.0);
             xSemaphoreGive(stateMutex);
         }
         initialShutdownTorque[motorIndex] = motorTorque;
@@ -107,6 +106,7 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
         float temperature = motors[motorIndex]->getTemperature();
         Serial.print("Temperature : ");
         Serial.println(temperature);
+        delay(1000);
         continue;
         if (temperature > TEMP_THRESHOLD)
         {

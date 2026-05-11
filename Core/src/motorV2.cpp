@@ -139,13 +139,12 @@ void MotorV2::sendCommand(MotorMode mode,float value){
   {
   case TORQUE:
     currentTorque = value;
+    currentTorque = value;
     /// Correction of the torque value ///
     //value = (value - motorCorrectionOffset) / motorCorrectionSlope;
 
     packCmd(0, 0, 0, 0, value);
     sendCanMessage(&msg);
-    receiveCanMessage(&msg);
-    unpackReply();
     break;
   
   case VELOCITY:
@@ -161,6 +160,17 @@ void MotorV2::sendCommand(MotorMode mode,float value){
     unpackReply();
   default:
     break;
+  }
+
+  int attempts = 0;
+  while (attempts < 10) {
+
+    receiveCanMessage(&msg);
+    if (msg.data[0] == this->motorId) {
+        unpackReply();
+        return;
+    } 
+    attempts++;
   }
 } 
 

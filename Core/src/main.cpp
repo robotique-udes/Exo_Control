@@ -60,7 +60,7 @@ void setup() {
   } else {
     Serial.println("CAN bus failed!");
   }
-  delay(1000);
+  delay(3000);
 
   motorHandler.initializeMotors();
 }
@@ -71,6 +71,7 @@ void loop() {
   Serial.println("---- Connected BNO Data ----");
   bnoHandler.printConnectedBNOsData(0, 5);
   Serial.println();
+
 
   angleOutput_t angles;
   groundedOutput_t grounded;
@@ -93,7 +94,6 @@ void loop() {
 
   float torque[NB_MOTORS] = {0};
   logic.calculateTorque(data, torque);
-
   motorHandler.Update(torque);
 
   delay(100);

@@ -87,6 +87,9 @@ void MotorV3::sendCommand(MotorMode mode,float value){
         sendCanMessage(&msg);
     }
     receiveCanMessage(&msg);
-    unpackReply();
+    uint8_t source_id = msg.identifier;
+    if (source_id == this->motorId) {
+        unpackReply();
+    }
 } 
 
