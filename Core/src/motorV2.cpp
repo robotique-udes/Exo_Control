@@ -46,6 +46,9 @@ void MotorV2::enterMode(){
     msg.extd = 0;
     msg.ss = 1;
     msg.data_length_code = 8;
+    msg.dlc_non_comp = 0;
+    msg.rtr = 0;
+    msg.self = 0;
   sendCanMessage(&msg);
 }
 
@@ -62,6 +65,9 @@ void MotorV2::exitMode(){
     msg.extd = 0;
     msg.ss = 1;
     msg.data_length_code = 8;
+    msg.dlc_non_comp = 0;
+    msg.rtr = 0;
+    msg.self = 0;
     sendCanMessage(&msg);
 }
 
@@ -78,6 +84,9 @@ void MotorV2::zeroSet(){
     msg.extd = 0;
     msg.ss = 1;
     msg.data_length_code = 8;
+    msg.dlc_non_comp = 0;
+    msg.rtr = 0;
+    msg.self = 0;
     sendCanMessage(&msg);
     
 }
@@ -123,14 +132,17 @@ void MotorV2::packCmd(float position, float velocity, float kp, float kd, float 
     msg.extd = 0;
     msg.ss = 1;
     msg.data_length_code = 8;
+    msg.dlc_non_comp = 0;
+    msg.rtr = 0;
+    msg.self = 0;
 }
 // 
-void MotorV2::unpackReply(){
-    unsigned int id = msg.data[0];
-    unsigned int position_int = (msg.data[1] << 8) | msg.data[2];
-    unsigned int velocity_int = (msg.data[3] << 4) | (msg.data[4] >> 4);
-    unsigned int current_int = ((msg.data[4] & 0xF) << 8) | msg.data[5];
-    temperature = msg.data[6]-40;
+void MotorV2::unpackReply(CanFrame msgReply){
+    unsigned int id = msgReply.data[0];
+    unsigned int position_int = (msgReply.data[1] << 8) | msgReply.data[2];
+    unsigned int velocity_int = (msgReply.data[3] << 4) | (msgReply.data[4] >> 4);
+    unsigned int current_int = ((msgReply.data[4] & 0xF) << 8) | msgReply.data[5];
+    temperature = msgReply.data[6]-40;
 }
 
 //
@@ -150,27 +162,27 @@ void MotorV2::sendCommand(MotorMode mode,float value){
   case VELOCITY:
     packCmd(0, value, KP, KD, 0);
     sendCanMessage(&msg);
-    receiveCanMessage(&msg);
-    unpackReply();
+    //receiveCanMessage(&msg);
+    //unpackReply();
     break;
   case POSITION:
     packCmd(value, 0, KP, KD, 0);
     sendCanMessage(&msg);
-    receiveCanMessage(&msg);
-    unpackReply();
+    //receiveCanMessage(&msg);
+    //unpackReply();
   default:
     break;
   }
 
-  int attempts = 0;
+/*   int attempts = 0;
   while (attempts < 10) {
 
-    receiveCanMessage(&msg);
+    //receiveCanMessage(&msg);
     if (msg.data[0] == this->motorId) {
-        unpackReply();
+        //unpackReply();
         return;
     } 
     attempts++;
-  }
+  } */
 } 
 

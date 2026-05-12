@@ -58,20 +58,48 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
     msg.extd = 1;
     msg.ss = 1;
     msg.data_length_code = 8;
+    msg.dlc_non_comp = 0;
+    msg.rtr = 0;
+    msg.self = 0;
+
+/*     Serial.println("Message Motor");
+    Serial.print("id : ");
+    Serial.println(msg.identifier);
+    Serial.print("msg.extd : ");
+    Serial.println(msg.extd);
+    Serial.print("msg.ss : ");
+    Serial.println(msg.ss);
+    Serial.print("msg.data_length_code : ");
+    Serial.println(msg.data_length_code);    
+    Serial.print("msg.rtr : ");
+    Serial.println(msg.rtr); 
+    Serial.print("msg.self : ");
+    Serial.println(msg.self); 
+    Serial.print("msg.dlc_non_comp : ");
+    Serial.println(msg.dlc_non_comp); 
+    Serial.print("msg.reserved : ");
+    Serial.println(msg.reserved); 
+    for(int i = 0;i < 8; i++){
+        Serial.print("data id ");
+        Serial.print(i);
+        Serial.print(" : ");
+        Serial.println(msg.data[i]);
+    }
+    Serial.println("--------------"); */
 }
 
-void MotorV3::unpackReply(){
+void MotorV3::unpackReply(CanFrame msgReply){
     
     //from cubemars doc, we only use the temperature for now, should aslo check for error 
     //TODO also evaluate motor errors 
-    int16_t pos_int = (msg.data[0] << 8 | msg.data[1]);
-    int16_t spd_int = (msg.data[2] << 8 | msg.data[3]);
-    int16_t cur_int = (msg.data[4] << 8 | msg.data[5]);
+    int16_t pos_int = (msgReply.data[0] << 8 | msgReply.data[1]);
+    int16_t spd_int = (msgReply.data[2] << 8 | msgReply.data[3]);
+    int16_t cur_int = (msgReply.data[4] << 8 | msgReply.data[5]);
     float motor_pos = (float)( pos_int * 0.1f); //Motor position
     float motor_spd = (float)( spd_int * 10.0f);//Motor speed
     float motor_cur = (float) ( cur_int * 0.01f);//Motor current
-    temperature = msg.data[6] ;//Motor temperature
-    int8_t motor_error = msg.data[7] ;//Motor error code
+    temperature = msgReply.data[6] ;//Motor temperature
+    int8_t motor_error = msgReply.data[7] ;//Motor error code
 }
 
 
@@ -86,10 +114,12 @@ void MotorV3::sendCommand(MotorMode mode,float value){
         packCmd(0,0,0,0,value);
         sendCanMessage(&msg);
     }
-    receiveCanMessage(&msg);
+/*     receiveCanMessage(&msg);
     uint8_t source_id = msg.identifier;
     if (source_id == this->motorId) {
-        unpackReply();
-    }
+        Serial.print("MEssage received : ");
+        Serial.println(source_id);
+        //unpackReply();
+    } */
 } 
 

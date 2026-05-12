@@ -5,6 +5,7 @@
 #include "motor.h"
 #include "motorV2.h"
 #include "motorV3.h"
+#include "ESP32-TWAI-CAN.hpp"
 
 enum class EnumMotorPosition
 {
@@ -21,6 +22,8 @@ private:
     SemaphoreHandle_t stateMutex;
     bool motorOn = true;
 
+    CanFrame msg;
+
     //TODO : verifier les IDs
     Motor* motors[NB_MOTORS];
     bool initialized = false;
@@ -35,6 +38,8 @@ private:
     void applyTorque(const float torque[NB_MOTORS]);
     void exitMotors();
     void slowShutDown();
+
+    void readCanReplyBuffer();
 
     //! Things to add  !//
     // -Pin setup 

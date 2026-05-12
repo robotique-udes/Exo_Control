@@ -60,14 +60,14 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
     //TODO wtf is this
     float newTorque[4] = {torque[0], torque[2], torque[1], torque[3]};
 
-    for (int motorIndex = 3; motorIndex >= 0; motorIndex--)
+    for (int motorIndex = 0; motorIndex < NB_MOTORS ; motorIndex++)
     {
-        if (motorIndex != 3)
-            continue;
-
         float motorTorque = 0.0f;
         if(initialized)
         {
+            if (motorIndex > 1)
+                continue;
+
             for(int sampleIndex = 0; sampleIndex < (SAMPLE_COUNT - 1); ++sampleIndex)
             {
                 movingAverage[motorIndex][sampleIndex] = movingAverage[motorIndex][sampleIndex + 1];
@@ -97,16 +97,16 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
             Serial.print(" | Torque : ");
             Serial.println(motorTorque);
            // motors[motorIndex]->sendRequest(TORQUE, motorTorque*motorOn);
-            motors[motorIndex]->sendRequest(TORQUE, 0.0);
+            motors[motorIndex]->sendRequest(TORQUE, 10.0);
             xSemaphoreGive(stateMutex);
         }
         initialShutdownTorque[motorIndex] = motorTorque;
+        readCanReplyBuffer();
 
         //checks if the respective motor is overheating
         float temperature = motors[motorIndex]->getTemperature();
         Serial.print("Temperature : ");
         Serial.println(temperature);
-        delay(1000);
         continue;
         if (temperature > TEMP_THRESHOLD)
         {
@@ -151,3 +151,16 @@ void MotorHandler::setMotorState(bool state)
 }
 
 
+
+void MotorHandler::readCanReplyBuffer()
+{
+    while(ESP32Can.readFrame(&msg, 0))
+    {
+
+    uint8_t source_id = msg.identifier;
+    if (source_id >= 0 && source_id <= NB_MOTORS) {
+        motors[source_id]->unpackReply(msg);
+    }
+}
+
+}

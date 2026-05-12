@@ -30,7 +30,7 @@ void stop();
 
     void packCmd(float position, float velocity, float kp, float kd, float torque);
 
-    void unpackReply();
+    void unpackReply(CanFrame msgReply);
 
     void sendCommand(MotorMode mode,float value); 
 

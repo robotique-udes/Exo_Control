@@ -21,6 +21,11 @@ void Motor::stop()
 {
 }
 
+void Motor::unpackReply(CanFrame msgReply)
+{
+  
+}
+
 void Motor::sendCanMessage(CanFrame* msg){
   ESP32Can.writeFrame(msg);
 }
@@ -33,6 +38,12 @@ void Motor::receiveCanMessage(CanFrame* msg){
 int Motor::getTemperature(){
   return temperature;
 }
+
+void Motor::setTemperature(int temperature)
+{
+  this->temperature = temperature;
+}
+
 
 //
 void Motor::setMotorId(int id){

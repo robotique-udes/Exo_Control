@@ -34,11 +34,15 @@ public:
     
     virtual void stop();
 
+    virtual void unpackReply(CanFrame msgReply);
+
     void sendCanMessage(CanFrame* msg);
 
     void receiveCanMessage(CanFrame* msg);
 
-    int getTemperature();   
+    int getTemperature();  
+    
+    void setTemperature(int temperature);
 
     void setMotorId(int id);
 
