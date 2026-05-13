@@ -68,7 +68,12 @@ void HMI_Comm::begin()
 
 void HMI_Comm::update()
 {
+    checkConnection();
+    sendBatteryData(50);
+}
 
+void HMI_Comm::checkConnection()
+{
     if (!deviceConnected && oldDeviceConnected)
     {
         Serial.println("Device disconnected.");
@@ -153,7 +158,7 @@ void HMI_Comm::interpretData(String rawString) {
         else if (content == 2) {
             data.stopMotors = false;
         }
-        //TODO
+        this->motorHandler->setMotorState(data.stopMotors);
     }
     else if (contentType == HEIGHT) {
         data.height = content;
@@ -180,6 +185,10 @@ void HMI_Comm::interpretData(String rawString) {
 }
 
 void HMI_Comm::sendBatteryData(int batteryCharge) {
+
+    if (!deviceConnected)
+        return;
+        
     pSendCharacteristic->setValue(String(batteryCharge).c_str());
     pSendCharacteristic->notify();
 }

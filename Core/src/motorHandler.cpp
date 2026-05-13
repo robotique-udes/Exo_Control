@@ -140,7 +140,9 @@ void MotorHandler::slowShutDown()
 
 void MotorHandler::setMotorState(bool state)
 {
-    if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) {
+
+    if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) 
+    {    
         this->motorOn = state;
         xSemaphoreGive(stateMutex);
     }

@@ -21,7 +21,7 @@ private:
     Logic* logic;
     MotorHandler* motorHandler;
 
-    char* deviceName = "BioGenius";
+    const char* deviceName = "BioGenius";
 
     uint32_t value = 0;
 
@@ -62,6 +62,9 @@ private:
 
         void onWrite(BLECharacteristic* pCharacteristic) override;
     };
+
+
+    void checkConnection();
 
 public:
     HMI_Comm();
