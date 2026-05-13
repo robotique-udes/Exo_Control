@@ -21,6 +21,7 @@ protected:
     float currentTorque;
     float motorCorrectionSlope;
     float motorCorrectionOffset;
+    bool motorOn = false;
 
 public:
     Motor();
@@ -55,6 +56,8 @@ public:
     float getMotorCorrectionOffset();
 
     float getCurrentTorque();
+
+    void setMotorState(bool motorOn);
 
     unsigned int float_to_uint(float x, float x_min, float x_max, int bits);
 

@@ -107,6 +107,14 @@ void MotorV2::packCmd(float position, float velocity, float kp, float kd, float 
     torque = constrain(torque, T_MIN, T_MAX); ///fminf(fmaxf(T_MIN, t_in(, V_MAX);
 
 
+/*     torque = torque*motorOn;
+    Serial.print("packcmd Motor ID : ");
+    Serial.print(motorId);
+    Serial.print(" - state : ");
+    Serial.print(motorOn);
+    Serial.print(" - Torque : ");
+    Serial.println(torque); */
+
     ///convert floats to unsigned ints///
     unsigned int position_int = float_to_uint(position, P_MIN, P_MAX, 16);
     unsigned int velocity_int = float_to_uint(velocity, V_MIN, V_MAX, 12);

@@ -143,6 +143,10 @@ void MotorHandler::setMotorState(bool state)
 
     if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) 
     {    
+        for (int motorIndex = 0; motorIndex < NB_MOTORS ; motorIndex++)
+        {
+            motors[motorIndex]->setMotorState(state);
+        }
         this->motorOn = state;
         xSemaphoreGive(stateMutex);
     }

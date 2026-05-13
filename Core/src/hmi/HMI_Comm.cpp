@@ -153,10 +153,10 @@ void HMI_Comm::interpretData(String rawString) {
 
     if (contentType == MOTOR_STATE) {
         if (content == 1) {
-            data.stopMotors = true;
+            data.stopMotors = false;
         }
         else if (content == 2) {
-            data.stopMotors = false;
+            data.stopMotors = true;
         }
         this->motorHandler->setMotorState(data.stopMotors);
     }
@@ -188,7 +188,7 @@ void HMI_Comm::sendBatteryData(int batteryCharge) {
 
     if (!deviceConnected)
         return;
-        
+
     pSendCharacteristic->setValue(String(batteryCharge).c_str());
     pSendCharacteristic->notify();
 }

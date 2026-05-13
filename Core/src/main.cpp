@@ -45,7 +45,6 @@ void setup() {
   );
 
 
-  return;
   Serial.println("Starting BnoHandler...");
   const bool hasConnectedBno = bnoHandler.begin();
 
@@ -68,9 +67,6 @@ void setup() {
 }
 
 void loop() {
-
-  delay(100);
-  return;
 
   bnoHandler.requestData();
 

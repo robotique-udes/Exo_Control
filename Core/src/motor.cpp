@@ -76,6 +76,12 @@ float Motor::getMotorCorrectionOffset()
   return motorCorrectionOffset;
 }
 
+void Motor::setMotorState(bool motorOn)
+{
+  this->motorOn = motorOn;
+}
+
+
 unsigned int Motor::float_to_uint(float x, float x_min, float x_max, int bits){
     ///Converts a  float to an unsigned int, given range and number of bits///
     float span = x_max-x_min;
