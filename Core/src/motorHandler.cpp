@@ -71,8 +71,10 @@ void MotorHandler::applyTorque(const float torque[NB_MOTORS])
                 movingAverage[motorIndex][sampleIndex] = movingAverage[motorIndex][sampleIndex + 1];
                 motorTorque += movingAverage[motorIndex][sampleIndex];
             }
-                
-            movingAverage[motorIndex][SAMPLE_COUNT - 1] = newTorque[motorIndex];
+            
+            //to keep the moving average smooth
+            // TODO moving avg should be in the motor class
+            movingAverage[motorIndex][SAMPLE_COUNT - 1] = newTorque[motorIndex]*motorOn;
             motorTorque += movingAverage[motorIndex][SAMPLE_COUNT - 1];
 
             motorTorque /= SAMPLE_COUNT;
@@ -161,7 +163,6 @@ void MotorHandler::readCanReplyBuffer()
         uint8_t source_id = msg.identifier;
         if (source_id >= 0 && source_id <= NB_MOTORS) {
             motors[source_id]->unpackReply(msg);
+        }
     }
-}
-
 }
