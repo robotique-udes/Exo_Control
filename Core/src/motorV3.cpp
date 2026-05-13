@@ -41,6 +41,7 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
     unsigned int torque_int = float_to_uint(torque, T_MIN, T_MAX, 12);
 
 
+    
     /// pack ints into the can buffer///
     byte buf[8];
     buf[0] = kp_int >> 8;
@@ -54,7 +55,7 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
     for(int i = 0;i < 8; i++){
         msg.data[i] = buf[i];
     }
-    msg.identifier = motorId;
+    msg.identifier = motorId | FORCE_CONTROL_MODE;
     msg.extd = 1;
     msg.ss = 1;
     msg.data_length_code = 8;

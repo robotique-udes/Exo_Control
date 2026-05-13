@@ -14,7 +14,7 @@
 #define HIP_RIGHT 3
 
 
-#define MAX_TORQUE 5.0f //N*m
+#define MAX_TORQUE 1.0f //N*m
 #define TORQUE_MULTIPLIER 0.1
 
 

@@ -196,8 +196,9 @@ bool Logic::limitAngleHip(float angleBack, float angleHip)
 {
     const uint8_t max_angle_positive = 80;
     const int8_t max_angle_negative = -70;
-    const float max_angle_hip[2] = {angleBack + max_angle_positive, 
-                                    angleBack + max_angle_negative};
+    const uint8_t tolerence = 10;
+    const float max_angle_hip[2] = {angleBack + max_angle_positive + tolerence, 
+                                    angleBack + max_angle_negative - tolerence};
     if (angleHip > max_angle_hip[0])
         return true;
     if (angleHip < max_angle_hip[1])
@@ -210,9 +211,10 @@ bool Logic::limitAngleKnee(float angleBack, float angleHip, float angleKnee)
 {
     const uint8_t max_angle_positive = 0;
     const int8_t max_angle_negative = -100;
+    const uint8_t tolerence = 10;
 
-    const float max_angle_hip[2] = {angleBack + angleHip + max_angle_positive, 
-                                    angleBack + angleHip + max_angle_negative};
+    const float max_angle_hip[2] = {angleBack + angleHip + max_angle_positive + tolerence, 
+                                    angleBack + angleHip + max_angle_negative - tolerence};
 
     if (angleKnee > max_angle_hip[0])
         return true;

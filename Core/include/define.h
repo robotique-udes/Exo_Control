@@ -29,8 +29,9 @@
 #define KP_MAX 500.0f
 #define KD_MIN 0.0f
 #define KD_MAX 5.0f
-#define T_MIN -65.0f  
-#define T_MAX 65.0f 
+#define T_MIN -15.0f  
+#define T_MAX 15.0f
+#define FORCE_CONTROL_MODE 0x800
 
 #define MOTEUR_GENOU_GAUCHE 0
 #define MOTEUR_GENOU_DROIT 1
@@ -38,7 +39,7 @@
 #define MOTEUR_HANCHE_DROITE 3
 
 #define NB_MOTORS 4         //nombre de moteurs sur l'exo
-#define SAMPLE_COUNT 5      //nombre d'echantillon pour la moyenne mobile
+#define SAMPLE_COUNT 20      //nombre d'echantillon pour la moyenne mobile
 #define TEMP_THRESHOLD 75   // la temperature max que les moteur peuvent atteindre
 #define SHUT_DOWN_TIME (10 * 1000)   // the time in milliseconds that it takes to shut down motors when overheating 
 
