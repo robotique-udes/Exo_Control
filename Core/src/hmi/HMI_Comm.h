@@ -9,18 +9,19 @@
 #include "motorHandler.h"
 
 #define SERVICE_UUID "19b10000-e8f2-537e-4f6c-d104768a1214"
-#define SENSOR_CHARACTERISTIC_UUID "19b10001-e8f2-537e-4f6c-d104768a1214"
-#define LED_CHARACTERISTIC_UUID "19b10002-e8f2-537e-4f6c-d104768a1214"
+#define SEND_CHARACTERISTIC_UUID "19b10001-e8f2-537e-4f6c-d104768a1214"
+#define RECEIVE_CHARACTERISTIC_UUID "19b10002-e8f2-537e-4f6c-d104768a1214"
 
 class HMI_Comm
 {
 private:
-    BLECharacteristic* pSensorCharacteristic = nullptr;
-    BLECharacteristic* pLedCharacteristic = nullptr;
+    BLECharacteristic* pSendCharacteristic = nullptr;
+    BLECharacteristic* pReceiveCharacteristic = nullptr;
 
     Logic* logic;
     MotorHandler* motorHandler;
 
+    char* deviceName = "BioGenius";
 
     uint32_t value = 0;
 
@@ -62,14 +63,15 @@ private:
         void onWrite(BLECharacteristic* pCharacteristic) override;
     };
 
-
-
 public:
-    void begin(const char* deviceName);
+    HMI_Comm();
+
+    void begin();
     void update();
 
     void setLogic(Logic *logic);
     void setMotorHandler(MotorHandler *handler);
+    void sendBatteryData(int batteryCharge);
     
     bool deviceConnected = false;
     bool oldDeviceConnected = false;
