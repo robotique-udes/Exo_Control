@@ -120,9 +120,9 @@ void loop()
         Serial.println("Command send: a");
         Serial.println(torqueV2);
     }
-    testMoteurV2.sendCommand(TORQUE, torqueV2);
+/*     testMoteurV2.sendCommand(TORQUE, torqueV2);
     Serial.print("Temperature V2 : ");
-    Serial.println(testMoteurV2.getTemperature());
+    Serial.println(testMoteurV2.getTemperature()); */
 
 
     if(rc == 'k') {

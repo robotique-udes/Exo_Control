@@ -54,7 +54,7 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
     for(int i = 0;i < 8; i++){
         msg.data[i] = buf[i];
     }
-    msg.identifier = motorId;
+    msg.identifier = motorId | 0x800;
     msg.extd = 1;
     msg.ss = 1;
     msg.data_length_code = 8;
