@@ -10,7 +10,7 @@ MotorHandler::MotorHandler()
     motors[motor_config::knee_left] = new MotorV2(motor_config::knee_left);
 
 
-    setMotorState(true); //TODO delete
+    //setMotorState(true); //TODO delete
 
     
 }
@@ -71,9 +71,6 @@ void MotorHandler::applyTorque(const float torque[motor_config::amount])
         float motorTorque = 0.0f;
         if(initialized)
         {
-            if(motorIndex > 1)
-                continue;
-
             for(int sampleIndex = 0; sampleIndex < (motor_config::moving_avg_size - 1); ++sampleIndex)
             {
                 movingAverage[motorIndex][sampleIndex] = movingAverage[motorIndex][sampleIndex + 1];

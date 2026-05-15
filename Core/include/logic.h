@@ -45,14 +45,6 @@ private:
 
     bool limitAngleKnee(float angleBack, float angleHip, float angleKnee);
 
-    // -------------------------- UTILITIES --------------------------
-    /**
-     * @brief Cap input value to max/min value
-     * @param val Value to map (float or int)
-     * @param cap max/min reachable value (float or int)
-     */
-    template <typename T, typename U>
-    static void limitMinMax(T &val, U cap);
 
 public :
     Logic();
@@ -62,10 +54,4 @@ public :
                             float (&torque)[motor_config::amount]);
 };
 
-
-template <typename T, typename U>
-inline void Logic::limitMinMax(T &val, U cap) {
-    if (val > (T)cap) val = (T)cap;
-    if (val < -(T)cap) val = -(T)cap;
-}
 #endif

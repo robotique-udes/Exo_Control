@@ -40,15 +40,15 @@ void setup() {
   delay(500);
 
   //starts the hmi logic on the core 0
-  //xTaskCreatePinnedToCore(
-  //  hmiLoop, 
-  //  "Hmi_Task_on_Core0", 
-  //  10000,      
-  //  NULL,       
-  //  1,          
-  //  NULL,       
-  //  0           // <--- Pinned to Core 0
-  //);
+  xTaskCreatePinnedToCore(
+    hmiLoop, 
+    "Hmi_Task_on_Core0", 
+    10000,      
+    NULL,       
+    1,          
+    NULL,       
+    0           // <--- Pinned to Core 0
+  );
 
 
   Serial.println("Starting BnoHandler...");
@@ -96,9 +96,9 @@ void loop() {
   float torque[motor_config::amount] = {0};
   logic.calculateTorque(angles, grounded, torque);
 
-  float val = 10;
-  float test[4] = {val, val, val, val};
-  motorHandler.update(test);
+/*   float val = 15;
+  float test[4] = {val, val, val, val}; */
+  motorHandler.update(torque);
 
   delay(100);
 }

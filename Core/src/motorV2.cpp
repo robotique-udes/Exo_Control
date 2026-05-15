@@ -124,8 +124,7 @@ void MotorV2::packCmd(float position, float velocity, float kp, float kd, float 
     unsigned int velocity_int = float_to_uint(velocity, motor_config::v_min, motor_config::v_max, 12);
     unsigned int kp_int = float_to_uint(kp, motor_config::kp_min, motor_config::kp_max, 12);
     unsigned int kd_int = float_to_uint(kd, motor_config::kd_min, motor_config::kd_max, 12);
-    unsigned int torque_int = float_to_uint(torque, -1*motor_config::torque_max, motor_config::torque_max, 12);
-
+    unsigned int torque_int = float_to_uint(torque, motor_config::t_min_V2, motor_config::t_max_V2, 12);
 
     /// pack ints into the can buffer///
     byte buf[8];
