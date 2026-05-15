@@ -4,6 +4,12 @@
 #include "logic.h"
 #include "motorHandler.h"
 #include "hmi/HMI_Comm.h"
+#include "config.h"
+
+namespace pin_config = app::config::pins;
+namespace motor_config = app::config::motors;
+namespace bno_config = app::config::bnos;
+namespace debug = app::config::debug;
 
 void hmiLoop(void * pvParameters);
 
@@ -34,15 +40,15 @@ void setup() {
   delay(500);
 
   //starts the hmi logic on the core 0
-  xTaskCreatePinnedToCore(
-    hmiLoop, 
-    "Hmi_Task_on_Core0", 
-    10000,      
-    NULL,       
-    1,          
-    NULL,       
-    0           // <--- Pinned to Core 0
-  );
+  //xTaskCreatePinnedToCore(
+  //  hmiLoop, 
+  //  "Hmi_Task_on_Core0", 
+  //  10000,      
+  //  NULL,       
+  //  1,          
+  //  NULL,       
+  //  0           // <--- Pinned to Core 0
+  //);
 
 
   Serial.println("Starting BnoHandler...");
@@ -53,10 +59,10 @@ void setup() {
   } else {
     Serial.println("BNO setup complete. Reading connected sensors only.");
   }
-  pinMode(CAN_TERMINAL_PIN, OUTPUT);
-  digitalWrite(CAN_TERMINAL_PIN, HIGH);
+  pinMode(pin_config::can_terminal, OUTPUT);
+  digitalWrite(pin_config::can_terminal, HIGH);
 
-  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), CAN_TX, CAN_RX, 5, 5)) {
+  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), pin_config::can_tx, pin_config::can_rx, 5, 5)) {
     Serial.println("CAN bus started!!!");
   } else {
     Serial.println("CAN bus failed!");
@@ -67,36 +73,32 @@ void setup() {
 }
 
 void loop() {
-
   bnoHandler.requestData();
 
-  Serial.println("---- Connected BNO Data ----");
-  bnoHandler.printConnectedBNOsData(0, 5);
-  Serial.println();
+  if (debug::main)
+  {
+    Serial.println("---- Connected BNO Data ----");
+    bnoHandler.printConnectedBNOsData(0, 5);
+    Serial.println();
+  }
 
-
-  angleOutput_t angles;
-  groundedOutput_t grounded;
-  angles = bnoHandler.getAngle();
-  grounded = bnoHandler.getGroundedState();
-
+  float angles[bno_config::amount] = {0};
+  bool grounded[bno_config::nb_leg] = {true};
+  bnoHandler.getAngle(angles);
+  bnoHandler.getGroundedState(grounded);
   
-  RequiredData data;
-  data.hipAngleL = angles.hipLeft;
-  data.hipAngleR = angles.hipRight;
-  data.kneeAngleL =angles.KneeLeft;
-  data.kneeAngleR =angles.KneeRight;
-  data.backAngle = angles.back;
-  data.groundedL = grounded.isLeftGrounded;
-  data.groundedR = grounded.isRightGrounded;
+  for (int i = 0; i < bno_config::amount; i++)
+    Serial.println(angles[i]);
 
-  //data.backAngle = 0.0;
-  //data.hipAngleL = 0.0;
-  //data.hipAngleR = 0.0;
+  Serial.println(grounded[0]);
+  Serial.println(grounded[1]);
 
-  float torque[NB_MOTORS] = {0};
-  logic.calculateTorque(data, torque);
-  motorHandler.Update(torque);
+  float torque[motor_config::amount] = {0};
+  logic.calculateTorque(angles, grounded, torque);
+
+  float val = 10;
+  float test[4] = {val, val, val, val};
+  motorHandler.update(test);
 
   delay(100);
 }

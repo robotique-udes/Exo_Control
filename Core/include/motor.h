@@ -1,9 +1,11 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 #include <Arduino.h>
-#include "define.h"
+#include "config.h"
 #include "ESP32-TWAI-CAN.hpp"
 
+namespace motor_config = app::config::motors;
+namespace debug = app::config::debug;
 
 enum MotorMode
 {

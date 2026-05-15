@@ -2,39 +2,14 @@
 #define LOGIC_H
 
 #include <Arduino.h>
+#include "config.h"
 
+namespace  physics = app::config::physics;
+namespace anatomy = app::config::anatomy;
+namespace debug = app::config::debug;
+namespace motor_config = app::config::motors;
+namespace bno_config = app::config::bnos;
 
-#define GRAVITY 9.81
-#define EXO_MASS 10 //kg
-
-#define NB_MOTOR 4
-#define KNEE_LEFT 0
-#define HIP_LEFT 1
-#define KNEE_RIGHT 2
-#define HIP_RIGHT 3
-
-
-#define MAX_TORQUE 1.0f //N*m
-#define TORQUE_MULTIPLIER 0.1
-
-
-
-
-struct RequiredData {
-    float hipAngleL;
-    float hipAngleR;
-    float kneeAngleL;
-    float kneeAngleR;
-    float backAngle;
-    bool groundedL;
-    bool groundedR;
-}; 
-
-
-struct Position {
-    float x;
-    float y;
-}; 
 
 class Logic
 {
@@ -53,12 +28,21 @@ private:
     float forceThigh;
     float forceCalf;
     
-    void calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded, float torque[2]);
-    void calculateTorqueGrounded(float angleHip, float angleKnee, float fg, float torque[2]);
-    void getDistanceFromCenterMass(RequiredData data, float& distLeftFoot, float& distRightFoot);
-    void getNormalForces(RequiredData data, float& fnRight, float& fnLeft);
-    void valideTorque(RequiredData data, float (&torque)[NB_MOTOR]);
+    void calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded,
+                                    float &torqueHip, float &torqueKnee);
+    
+    void calculateTorqueGrounded(float angleHip, float angleKnee, float fg,
+                                    float &torqueHip, float &torqueKnee);
+
+    void getDistanceFromCenterMass(const float angles[bno_config::amount], 
+                                    float& distLeftFoot, float& distRightFoot);
+    void getNormalForces(const float angles[bno_config::amount], 
+                            float& fnRight, float& fnLeft);
+
+    void valideTorque(const float angles[bno_config::amount], float (&torque)[motor_config::amount]);
+
     bool limitAngleHip(float angleBack, float angleHip);
+
     bool limitAngleKnee(float angleBack, float angleHip, float angleKnee);
 
     // -------------------------- UTILITIES --------------------------
@@ -73,7 +57,9 @@ private:
 public :
     Logic();
     void setMorphology(int height, int mass);
-    void calculateTorque(RequiredData data, float (&torque)[NB_MOTOR]);
+    void calculateTorque(const float angles[bno_config::amount], 
+                            const bool grounded[bno_config::nb_leg],
+                            float (&torque)[motor_config::amount]);
 };
 
 

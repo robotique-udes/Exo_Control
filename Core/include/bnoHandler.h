@@ -2,46 +2,14 @@
 #define BNOHANDLER_H_
 #include "SparkFun_BNO080_Arduino_Library.h"
 #include "multiplex.h"
-#include "define.h"
+#include "config.h"
 #include <array>
 using namespace std;
 
-#define NUMBER_OF_BNO 6
+namespace bno_config = app::config::bnos;
+namespace path_config = app::config::path;
+namespace debug = app::config::debug;
 
-/**
- * @brief Physical BNO locations on the exoskeleton.
- */
-enum class EnumBnoPosition
-{
-    THIGH_L    =   0,
-    THIGH_R    =   1,
-    TIBIA_L    =   2,
-    TIBIA_R    =   3,
-    EXO_BACK   =   4,
-    MOBO       =   5
-};
-
-/**
- * @brief Aggregated joint angles returned by `getAngle()`.
- */
-typedef struct
-{
-    float hipLeft;
-    float hipRight;
-    float KneeLeft;
-    float KneeRight;
-    float back;
-
-} angleOutput_t;
-/**
- * @brief Result of ground-contact detection for left / right legs.
- */
-typedef struct
-{
-    bool isLeftGrounded;
-    bool isRightGrounded;
-
-} groundedOutput_t;
 
 /**
  * @brief Simple 3-axis linear-acceleration container.
@@ -65,33 +33,33 @@ typedef struct
 class BnoHandler {
     private:
         // Array of physical BNO08x instances, ordered by EnumBnoPosition
-        array<BNO080, NUMBER_OF_BNO> bnoDevices;
+        array<BNO080, bno_config::amount> bnoDevices;
         // BNO connection state
-        array<bool, NUMBER_OF_BNO> bnoConnected;
+        array<bool, bno_config::amount> bnoConnected;
         // Mux channel for each BNO
-        array<uint8_t, NUMBER_OF_BNO> muxChannels;
+        array<uint8_t, bno_config::amount> muxChannels;
         // I2C address for each BNO
-        array<uint8_t, NUMBER_OF_BNO> i2cAddresses;
+        array<uint8_t, bno_config::amount> i2cAddresses;
         // Linear acceleration for each bno
-        array<linearAcceleration_t, NUMBER_OF_BNO> linearAccelerations;
+        array<linearAcceleration_t, bno_config::amount> linearAccelerations;
         // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
-        array<float, NUMBER_OF_BNO> BNOAngles;
+        array<float, bno_config::amount> BNOAngles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
         // Time of last update, based on millis()
         long last_update = 0;
 
         int bufferIndexLeft;
-        float linAccelBufferLeft[BUFFER_SIZE];
+        float linAccelBufferLeft[bno_config::buffer_size];
         int bufferIndexRight;
-        float linAccelBufferRight[BUFFER_SIZE];
+        float linAccelBufferRight[bno_config::buffer_size];
 
         /**
          * @brief Convert BNO enum position to array index
          * @param position EnumBnoPosition value
          * @return Zero-based index matching internal storage order
          */
-        static constexpr size_t bnoIndex(EnumBnoPosition position) {
+        static constexpr size_t bnoIndex(uint8_t position) {
             return static_cast<size_t>(position);
         }
 
@@ -100,13 +68,13 @@ class BnoHandler {
          * specified `position` and advance the write pointer.
          * @param position BNO position to update buffer for
          */
-        void updateBuffer(EnumBnoPosition position);
+        void updateBuffer(uint8_t position);
 
         /**
          * @brief Configure the reports/features required from the BNO080 at `position`.
          * @param position BNO to configure
          */
-        void setupReports(EnumBnoPosition position);
+        void setupReports(uint8_t position);
 
         /**
          * @brief Probe a device by selecting the proper mux channel and attempting
@@ -114,7 +82,7 @@ class BnoHandler {
          * @param position BNO to probe
          * @return true if the device acknowledged on I2C
          */
-        bool checkIfConnected(EnumBnoPosition position);
+        bool checkIfConnected(uint8_t position);
 
         /**
          * @brief Read the buffered linear-acceleration Y for `position` and
@@ -122,7 +90,7 @@ class BnoHandler {
          * @param position BNO position
          * @return Scaled Y linear-acceleration (int16_t)
          */
-        int16_t getLinAccelYScaled(EnumBnoPosition position);
+        int16_t getLinAccelYScaled(uint8_t position);
         int offset = 0;
         
         public:
@@ -144,14 +112,14 @@ class BnoHandler {
          * @brief Return computed joint angles.
          * @return `angleOutput_t` with current joint angles in degrees.
          */
-        angleOutput_t getAngle();
+        void getAngle(float angles[bno_config::amount]);
 
         /**
          * @brief Compute and return left/right grounded state using the
          * moving-average linear-accel buffers.
          * @return `groundedOutput_t` with booleans for left/right ground contact.
          */
-        groundedOutput_t getGroundedState();
+        void getGroundedState(bool grounded[bno_config::nb_leg]);
 
         /**
          * @brief Initialise all BNO devices (select mux channel and call BNO begin).
@@ -185,13 +153,13 @@ class BnoHandler {
          * @brief Print human-readable name for one angle/part enum
          * @param position EnumBnoPosition value to print
          */
-        void printName(EnumBnoPosition position);
+        void printName(uint8_t position);
 
         /**
          * @brief Print accelerometer and linear-acceleration data for one BNO
          * @param position EnumBnoPosition of the BNO to print
          */
-        void printBNOData(EnumBnoPosition position);
+        void printBNOData(uint8_t position);
 
 };
 #endif

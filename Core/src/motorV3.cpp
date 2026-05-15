@@ -26,27 +26,33 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
     /// Bits 52-63:  Feed forward torque, range: -18 to 18 N-m
 
     ///limit data to be withing bounds///
-    position = constrain(position, P_MIN, P_MAX); ///fminf(fmaxf(P_MIN, p_in(, P_MAX);
-    velocity = constrain(velocity, V_MIN, V_MAX); ///fminf(fmaxf(V_MIN, v_in(, V_MAX);
-    kp = constrain(kp, KP_MIN, KP_MAX); ///fminf(fmaxf(KP_MIN, kp_in(, KP_MAX);
-    kd = constrain(kd, KD_MIN, KD_MAX); ///fminf(fmaxf(KD_MIN, kd_in(, KD_MAX);
-    torque = constrain(torque, T_MIN, T_MAX); ///fminf(fmaxf(T_MIN, t_in(, V_MAX);
+    position = constrain(position, motor_config::p_min, motor_config::p_max); ///fminf(fmaxf(P_MIN, p_in(, P_MAX);
+    velocity = constrain(velocity, motor_config::v_min, motor_config::v_max); ///fminf(fmaxf(V_MIN, v_in(, V_MAX);
+    kp = constrain(kp, motor_config::kp_min, motor_config::kp_max); ///fminf(fmaxf(KP_MIN, kp_in(, KP_MAX);
+    kd = constrain(kd, motor_config::kd_min, motor_config::kd_max); ///fminf(fmaxf(KD_MIN, kd_in(, KD_MAX);
 
+    torque = torque * motor_config::torque_multiplier;
+    torque = constrain(torque, -1*motor_config::torque_max, motor_config::torque_max); ///fminf(fmaxf(T_MIN, t_in(, V_MAX);
 
-/*     torque = torque*motorOn;
-    Serial.print("packcmd Motor ID : ");
-    Serial.print(motorId);
-    Serial.print(" - state : ");
-    Serial.print(motorOn);
-    Serial.print(" - Torque : ");
-    Serial.println(torque); */
+    if (debug::motor)
+    {
+        torque = torque*motorOn;
+        Serial.print("packcmd Motor ID : ");
+        Serial.print(motorId);
+        Serial.print(" - state : ");
+        Serial.print(motorOn);
+        Serial.print(" - Torque : ");
+        Serial.println(torque); 
+    }
+
 
     ///convert floats to unsigned ints///
-    unsigned int position_int = float_to_uint(position, P_MIN, P_MAX, 16);
-    unsigned int velocity_int = float_to_uint(velocity, V_MIN, V_MAX, 12);
-    unsigned int kp_int = float_to_uint(kp, KP_MIN, KP_MAX, 12);
-    unsigned int kd_int = float_to_uint(kd, KD_MIN, KD_MAX, 12);
-    unsigned int torque_int = float_to_uint(torque, T_MIN, T_MAX, 12);
+    unsigned int position_int = float_to_uint(position, motor_config::p_min, motor_config::p_max, 16);
+    unsigned int velocity_int = float_to_uint(velocity, motor_config::v_min, motor_config::v_max, 12);
+    unsigned int kp_int = float_to_uint(kp, motor_config::kp_min, motor_config::kp_max, 12);
+    unsigned int kd_int = float_to_uint(kd, motor_config::kd_min, motor_config::kd_max, 12);
+    unsigned int torque_int = float_to_uint(torque, -1*motor_config::torque_max, motor_config::torque_max, 12);
+
 
     
     /// pack ints into the can buffer///
@@ -62,7 +68,7 @@ void MotorV3::packCmd(float position, float velocity, float kp, float kd, float 
     for(int i = 0;i < 8; i++){
         msg.data[i] = buf[i];
     }
-    msg.identifier = motorId | FORCE_CONTROL_MODE;
+    msg.identifier = motorId | motor_config::force_control_mode;
     msg.extd = 1;
     msg.ss = 1;
     msg.data_length_code = 8;

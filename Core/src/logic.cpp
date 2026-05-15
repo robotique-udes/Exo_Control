@@ -15,118 +15,135 @@ void Logic::setMorphology(int height, int mass)
         userHeight = height / 100.0; 
         userMass = mass;
         
-        float gravitationalForce = userMass*GRAVITY;
-        float exoForce = EXO_MASS*GRAVITY;
+        float gravitationalForce = userMass * physics::gravity;
+        float exoForce = physics::exo_mass * physics::gravity;
 
-        lengthTorso = 0.47*userHeight;   
-        lengthThigh = 0.245*userHeight;   
-        lengthCalf = 0.285*userHeight;    
+        lengthTorso = anatomy::proportion_torso_length * userHeight;   
+        lengthThigh = anatomy::proportion_thigh_length * userHeight;   
+        lengthCalf = anatomy::proportion_calf_length * userHeight;    
 
-        forceTorso = 0.678*gravitationalForce + exoForce; 
-        forceThigh = 0.1*gravitationalForce;   
-        forceCalf = 0.061*gravitationalForce;  
+        forceTorso = anatomy::proportion_torso_mass * gravitationalForce + exoForce; 
+        forceThigh = anatomy::proportion_thigh_mass * gravitationalForce;   
+        forceCalf = anatomy::proportion_calf_mass * gravitationalForce;  
 
         xSemaphoreGive(morphologyMutex);
     }
 }
 
 
-void Logic::calculateTorque(RequiredData data, float (&torque)[NB_MOTOR])
+void Logic::calculateTorque(const float angles[bno_config::amount], 
+                            const bool grounded[bno_config::nb_leg],
+                            float (&torque)[motor_config::amount])
 {
-  
-   if (data.groundedL && data.groundedR)
+    float torqueKneeL;
+    float torqueHipL;
+    float torqueKneeR;
+    float torqueHipR;
+
+    if (grounded[bno_config::left_leg] && grounded[bno_config::right_leg])
     {
         float fnRight = 0.0;
         float fnLeft = 0.0;
-        getNormalForces(data, fnRight, fnLeft);
-        calculateTorqueGrounded(data.backAngle,data.hipAngleL, fnLeft, torque);
-        calculateTorqueGrounded(data.backAngle,data.hipAngleR, fnRight, torque+2);
+        getNormalForces(angles, fnRight, fnLeft);
+        calculateTorqueGrounded(angles[bno_config::mobo], angles[bno_config::left_thigh], fnLeft, 
+                                torqueHipL, torqueKneeL);
+        calculateTorqueGrounded(angles[bno_config::mobo], angles[bno_config::right_thigh], fnRight,
+                                torqueHipR, torqueKneeR);
     }
-    else if (data.groundedL)
+    else if (grounded[bno_config::left_leg])
     {
-        calculateTorqueGrounded(data.backAngle,data.hipAngleL, forceTorso, torque);
-        calculateTorqueAirborne(data.hipAngleR,data.kneeAngleR, data.groundedR, torque+2);
+        calculateTorqueGrounded(angles[bno_config::mobo], angles[bno_config::left_thigh], 
+                                forceTorso, torqueHipL, torqueKneeL);
+        calculateTorqueAirborne(angles[bno_config::right_thigh], angles[bno_config::right_shin], 
+                                grounded[bno_config::right_leg], torqueHipR, torqueKneeR);
     }
-    else if (data.groundedR)
+    else if (grounded[bno_config::right_leg])
     {
-        calculateTorqueGrounded(data.backAngle,data.hipAngleR, forceTorso, torque+2);
-        calculateTorqueAirborne(data.hipAngleL,data.kneeAngleL, data.groundedL, torque);
+        calculateTorqueGrounded(angles[bno_config::mobo], angles[bno_config::right_thigh], 
+                                forceTorso, torqueHipR, torqueKneeR);
+        calculateTorqueAirborne(angles[bno_config::left_thigh], angles[bno_config::left_shin], 
+                                grounded[bno_config::left_leg], torqueHipL, torqueKneeL);
     }
     else 
     {
         //no torque if both foot of the ground (jumping)
         memset(torque, 0, sizeof(torque));
     }
-    valideTorque(data, torque);
-
-    for (auto& t : torque) {
-        t *= TORQUE_MULTIPLIER;
-        limitMinMax(t, MAX_TORQUE);
-    }
+    valideTorque(angles, torque);
     
-    Serial.print("Torque Knee Right ");
-    Serial.println(torque[2]);
-    Serial.print("Torque Hip Right ");
-    Serial.println(torque[3]);
-    Serial.print("Torque Knee Left ");
-    Serial.println(torque[0]);
-    Serial.print("Torque Hip Left ");
-    Serial.println(torque[1]);
-    Serial.println("-------------------");
-    Serial.println();
+    torque[motor_config::hip_left] = torqueHipL;
+    torque[motor_config::hip_right] = torqueHipR;
+    torque[motor_config::knee_left] = torqueKneeL;
+    torque[motor_config::knee_right] = torqueKneeR;
+    
+    if (debug::logic)
+    {
+        Serial.print("Torque Knee Right ");
+        Serial.println(torque[motor_config::knee_right]);
+        Serial.print("Torque Hip Right ");
+        Serial.println(torque[motor_config::hip_right]);
+        Serial.print("Torque Knee Left ");
+        Serial.println(torque[motor_config::knee_left]);
+        Serial.print("Torque Hip Left ");
+        Serial.println(torque[motor_config::hip_left]);
+        Serial.println("-------------------");
+        Serial.println();
+    }
+
 }
 
-void Logic::calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded, float torque[2])
+void Logic::calculateTorqueAirborne(float angleHip, float angleKnee, bool grounded,
+                                        float &torqueHip, float &torqueKnee)
 {
-    float torqueKnee;
-    float torqueHip;
     if (xSemaphoreTake(morphologyMutex, portMAX_DELAY) == pdTRUE) {
         float torqueKnee = forceCalf*lengthCalf/2.0*sin(radians(angleKnee));
         float torqueHip = torqueKnee + forceThigh*lengthThigh/2.0*sin(radians(angleHip))
                         + forceCalf*(lengthThigh*sin(radians(angleHip)) + lengthCalf/2.0*sin(radians(angleKnee)));
         xSemaphoreGive(morphologyMutex);
     }
-    
-    torque[0] = torqueKnee;
-    torque[1] = torqueHip;
 }
 
 
-void Logic::calculateTorqueGrounded(float angleTorso, float angleThigh, float forceOnLeg, float torque[2])
+void Logic::calculateTorqueGrounded(float angleTorso, float angleThigh, float forceOnLeg,
+                                    float &torqueHip, float &torqueKnee)
 {
-    float torqueKnee = 0.0;
-    float torqueHip = 0.0;
-    Serial.println(angleThigh);
-    Serial.println(forceOnLeg);
     if (xSemaphoreTake(morphologyMutex, portMAX_DELAY) == pdTRUE) {
         torqueHip = lengthTorso/2.0*sin(radians(angleTorso)) * forceOnLeg;
         torqueKnee = -lengthThigh*sin(radians(angleThigh))*(0.5*forceThigh + forceOnLeg) + torqueHip;
         xSemaphoreGive(morphologyMutex);
     }
-    torque[0] = torqueKnee;
-    torque[1] = torqueHip;
+/*     Serial.print("torque hip ");
+    Serial.println(torqueHip);
+    Serial.print("lengthTorso ");
+    Serial.println(lengthTorso);
+    Serial.print("angleTorso ");
+    Serial.println(angleTorso);
+    Serial.print("forceOnLeg ");
+    Serial.println(forceOnLeg); */
 }
 
 
-void Logic::getDistanceFromCenterMass(RequiredData data, float& distLeftFoot, float& distRightFoot)
+void Logic::getDistanceFromCenterMass(const float angles[bno_config::amount], 
+                                      float& distLeftFoot, float& distRightFoot)
 {
     if (xSemaphoreTake(morphologyMutex, portMAX_DELAY) == pdTRUE) {
-        distLeftFoot = lengthCalf*sin(radians(data.kneeAngleL))
-                        + lengthThigh*sin(radians(data.hipAngleL))
-                        - lengthTorso/2.0*sin(radians(data.backAngle));
-        distRightFoot = lengthCalf*sin(radians(data.kneeAngleR))
-                        + lengthThigh*sin(radians(data.hipAngleR))
-                        - lengthTorso/2.0*sin(radians(data.backAngle));
+        distLeftFoot = lengthCalf*sin(radians(angles[bno_config::left_shin]))
+                        + lengthThigh*sin(radians(angles[bno_config::left_thigh]))
+                        - lengthTorso/2.0*sin(radians(angles[bno_config::mobo]));
+        distRightFoot = lengthCalf*sin(radians(angles[bno_config::right_shin]))
+                        + lengthThigh*sin(radians(angles[bno_config::right_thigh]))
+                        - lengthTorso/2.0*sin(radians(angles[bno_config::mobo]));
         xSemaphoreGive(morphologyMutex);
-    }               
+    }    
 }
 
 
-void Logic::getNormalForces(RequiredData data, float& fnRight, float& fnLeft)
+void Logic::getNormalForces(const float angles[bno_config::amount], 
+                            float& fnRight, float& fnLeft)
 {
     float distLeftFoot;
     float distRightFoot;
-    getDistanceFromCenterMass(data, distLeftFoot, distRightFoot);
+    getDistanceFromCenterMass(angles, distLeftFoot, distRightFoot);
 
     float totalDist = abs(distLeftFoot - distRightFoot);
     
@@ -135,16 +152,6 @@ void Logic::getNormalForces(RequiredData data, float& fnRight, float& fnLeft)
         //TODO crab mode
         totalDist = 0.0;
     }
-
-    
-/*     Serial.print("Dist left foot : ");
-    Serial.println(distLeftFoot);
-    Serial.print("Dist right foot : ");
-    Serial.println(distRightFoot);
-    Serial.print("Dist total : ");
-    Serial.println(totalDist); 
-    Serial.print("force t :");
-    Serial.println(forceTorso);  */
                     
     if (xSemaphoreTake(morphologyMutex, portMAX_DELAY) == pdTRUE) {
         if (totalDist == 0)
@@ -163,31 +170,47 @@ void Logic::getNormalForces(RequiredData data, float& fnRight, float& fnLeft)
 }
 
 
-void Logic::valideTorque(RequiredData data, float (&torque)[NB_MOTOR])
+void Logic::valideTorque(const float angles[bno_config::amount], float (&torque)[motor_config::amount])
 {  
-    if (limitAngleHip(data.backAngle, data.hipAngleL))
+    if (limitAngleHip(angles[bno_config::mobo], angles[bno_config::left_thigh]))
     {
-        Serial.print("HIP LEFT not good : ");
-        Serial.println(data.backAngle + data.hipAngleL);
-        torque[HIP_LEFT] = 0.0;
+        if (debug::logic)
+        {
+            Serial.print("HIP LEFT not good : ");
+            Serial.println(angles[bno_config::mobo] + angles[bno_config::left_thigh]);
+        }
+        torque[motor_config::hip_left] = 0.0;
     }
-    if (limitAngleHip(data.backAngle, data.hipAngleR))
+    if (limitAngleHip(angles[bno_config::mobo], angles[bno_config::right_thigh]))
     {
-        Serial.print("HIP RIGHT not good : ");
-        Serial.println(data.backAngle + data.hipAngleR);
-        torque[HIP_RIGHT] = 0.0;
+        if (debug::logic)
+        {   
+            Serial.print("HIP RIGHT not good : ");
+            Serial.println(angles[bno_config::mobo] + angles[bno_config::right_thigh]);
+        }
+        torque[motor_config::hip_right] = 0.0;
     }
-    if (limitAngleKnee(data.backAngle, data.hipAngleL, data.kneeAngleL))
+    if (limitAngleKnee(angles[bno_config::mobo], angles[bno_config::left_thigh], 
+                        angles[bno_config::left_shin]))
     {
-        Serial.print("KNEE LEFT not good : ");
-        Serial.println(data.backAngle + data.hipAngleL + data.kneeAngleL);
-        torque[KNEE_LEFT] = 0.0;
+        if (debug::logic)
+        {
+            Serial.print("KNEE LEFT not good : ");
+            Serial.println(angles[bno_config::mobo] + angles[bno_config::left_thigh] 
+                            + angles[bno_config::left_shin]);
+        }
+        torque[motor_config::knee_left] = 0.0;
     }
-    if (limitAngleKnee(data.backAngle, data.hipAngleR, data.kneeAngleR))
+    if (limitAngleKnee(angles[bno_config::mobo], angles[bno_config::right_thigh], 
+                        angles[bno_config::right_shin]))
     {
-        Serial.print("KNEE right not good : ");
-        Serial.println(data.backAngle + data.hipAngleR + data.kneeAngleR);
-        torque[KNEE_RIGHT] = 0.0;
+        if (debug::logic)
+        {
+            Serial.print("KNEE right not good : ");
+            Serial.println(angles[bno_config::mobo] + angles[bno_config::right_thigh] 
+                            + angles[bno_config::right_shin]);
+        }
+        torque[motor_config::knee_right] = 0.0;
     }
 }
 

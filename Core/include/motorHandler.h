@@ -7,35 +7,31 @@
 #include "motorV3.h"
 #include "ESP32-TWAI-CAN.hpp"
 
-enum class EnumMotorPosition
-{
-    KNEE_L = 0,
-    KNEE_R = 1,
-    HIP_L  = 2,
-    HIP_R  = 3
-};
+namespace debug = app::config::debug;
+namespace motor_config = app::config::motors;
+
 
 class MotorHandler
 {
 private:
-    enum EnumMotorPosition motorPos;
+
     SemaphoreHandle_t stateMutex;
     bool motorOn = true;
 
     CanFrame msg;
 
     //TODO : verifier les IDs
-    Motor* motors[NB_MOTORS];
+    Motor* motors[motor_config::amount];
     bool initialized = false;
     
     //variables pour le slow shut down
     bool tempTooHigh = true;
     unsigned long shutdownStartTime = 0;
 
-    float movingAverage[NB_MOTORS][SAMPLE_COUNT] = {0};
-    float initialShutdownTorque[NB_MOTORS] = {0};
+    float movingAverage[motor_config::amount][motor_config::moving_avg_size] = {0};
+    float initialShutdownTorque[motor_config::amount] = {0};
 
-    void applyTorque(const float torque[NB_MOTORS]);
+    void applyTorque(const float torque[motor_config::amount]);
     void exitMotors();
     void slowShutDown();
 
@@ -51,7 +47,7 @@ public:
 
     void setMotorState(bool state);
     void initializeMotors();
-    void Update(const float torque[NB_MOTORS]);
+    void update(const float torque[motor_config::amount]);
 };
 
 #endif
