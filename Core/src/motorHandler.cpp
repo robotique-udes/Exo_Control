@@ -4,27 +4,15 @@ MotorHandler::MotorHandler()
 {
     stateMutex = xSemaphoreCreateMutex();
 
-    motors[motor_config::hip_right] = new MotorV3(motor_config::hip_right);
-    motors[motor_config::hip_left] = new MotorV3(motor_config::hip_left);
-    motors[motor_config::knee_right] = new MotorV2(motor_config::knee_right); 
-    motors[motor_config::knee_left] = new MotorV2(motor_config::knee_left);
-
-
-    //setMotorState(true); //TODO delete
-
-    
+    motors[motor_config::hip_right] = &hipRightMotor;
+    motors[motor_config::hip_left] = &hipLeftMotor;
+    motors[motor_config::knee_right] = &kneeRightMotor; 
+    motors[motor_config::knee_left] = &kneeLeftMotor;
 }
 
 MotorHandler::~MotorHandler()
 {
     exitMotors();
-
-    for (int motorID = 0; motorID < motor_config::amount; motorID++)
-        delete motors[motorID];
-/*     delete motors[0];
-    delete motors[1];
-    delete motors[2];
-    delete motors[3]; */
 }
 
 void MotorHandler::update(const float torque[motor_config::amount])
@@ -45,7 +33,7 @@ void MotorHandler::initializeMotors()
 {
     for (int motorPos = 0; motorPos < motor_config::amount; motorPos++)
     {
-        motors[motorPos]->start();
+        motors[motorPos]->enterMode();
     }
 
     initialized = true;
@@ -54,7 +42,7 @@ void MotorHandler::initializeMotors()
 void MotorHandler::exitMotors()
 {
     for (int motorPos = 0; motorPos < motor_config::amount; motorPos++)
-        motors[motorPos]->stop();
+        //motors[motorPos]->stop();
 
     initialized = false;
 }
@@ -98,12 +86,12 @@ void MotorHandler::applyTorque(const float torque[motor_config::amount])
                 Serial.print("Motor : ");
                 Serial.print(motorIndex);
                 Serial.print(" id : ");
-                Serial.print(motors[motorIndex]->getMotorId());
+                Serial.print(motors[motorIndex]->getMotorID());
                 Serial.print(" | Torque : ");
                 Serial.println(motorTorque);
             }
            // motors[motorIndex]->sendRequest(TORQUE, motorTorque*motorOn);
-            motors[motorIndex]->sendRequest(TORQUE, motorTorque);
+            motors[motorIndex]->sendCommand(0.0f, 0.0f, motorTorque, 0.0f, 0.0f);
             xSemaphoreGive(stateMutex);
         }
         initialShutdownTorque[motorIndex] = motorTorque;
@@ -147,7 +135,7 @@ void MotorHandler::slowShutDown()
     {  
         float torque = initialShutdownTorque[motorIndex] 
             * (1 - ((float)timeElapsed / motor_config::shut_down_time));
-        motors[motorIndex]->sendRequest(TORQUE, torque);
+        motors[motorIndex]->sendCommand(0.0f, 0.0f, torque, 0.0f, 0.0f);
     }
 }
 
@@ -160,7 +148,7 @@ void MotorHandler::setMotorState(bool state)
     {    
         for (int motorIndex = 0; motorIndex < motor_config::amount ; motorIndex++)
         {
-            motors[motorIndex]->setMotorState(state);
+            //motors[motorIndex]->setMotorState(state);
         }
         this->motorOn = state;
         xSemaphoreGive(stateMutex);
@@ -175,7 +163,7 @@ void MotorHandler::readCanReplyBuffer()
     {
         uint8_t source_id = msg.identifier;
         if (source_id >= 0 && source_id <= motor_config::amount) {
-            motors[source_id]->unpackReply(msg);
+            motors[source_id]->receiveCommand(msg);
         }
     }
 }

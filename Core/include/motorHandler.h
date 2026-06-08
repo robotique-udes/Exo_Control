@@ -1,11 +1,9 @@
 #ifndef MOTOR_HANDLER_H
 #define MOTOR_HANDLER_H
 
-#include <Arduino.h>
-#include "motor.h"
-#include "motorV2.h"
-#include "motorV3.h"
-#include "ESP32-TWAI-CAN.hpp"
+#include "config.h"
+#include "cubemarsAK10-9KV100V2.h"
+#include "cubemarsAK10-9KV60V3.h"
 
 namespace debug = app::config::debug;
 namespace motor_config = app::config::motors;
@@ -21,7 +19,11 @@ private:
     CanFrame msg;
 
     //TODO : verifier les IDs
-    Motor* motors[motor_config::amount];
+    IMitModeMotor* motors[motor_config::amount];
+    Cubemars_AK10_9_KV100_V2 kneeLeftMotor = Cubemars_AK10_9_KV100_V2(motor_config::knee_left);
+    Cubemars_AK10_9_KV100_V2 kneeRightMotor = Cubemars_AK10_9_KV100_V2(motor_config::knee_right);
+    Cubemars_AK10_9_KV60_V3 hipLeftMotor = Cubemars_AK10_9_KV60_V3(motor_config::hip_left);
+    Cubemars_AK10_9_KV60_V3 hipRightMotor = Cubemars_AK10_9_KV60_V3(motor_config::hip_right);
     bool initialized = false;
     
     //variables pour le slow shut down

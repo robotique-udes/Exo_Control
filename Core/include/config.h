@@ -25,23 +25,8 @@ namespace app::config
         constexpr float max_temperature = 60.0f;
         constexpr uint16_t shut_down_time = (10 * 1000);
 
-        constexpr float p_max = 12.5f;
-        constexpr float p_min = -12.5f;
-        constexpr float v_max = 50.0f;
-        constexpr float v_min = -50.0f;
-        constexpr float kp_max = 500.0f;
-        constexpr float kp_min = 0.0f;
-        constexpr float kd_min = 0.0f;
-        constexpr float kd_max = 5.0f;
-        constexpr float t_max_V2 = 65;
-        constexpr float t_min_V2 = -65;
-        constexpr float t_max_V3 = 54;
-        constexpr float t_min_V3 = -54;
-
-
         constexpr float torque_max = 8;
         constexpr float torque_multiplier = 0.2f;
-        constexpr int force_control_mode = 0x800;
     }
 
     namespace anatomy 
