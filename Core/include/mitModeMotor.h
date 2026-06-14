@@ -12,18 +12,6 @@
 #include <cstdint>
 #include <limits>
 
-enum class CubeMarsErrorCode : uint8_t
-{
-    NoFault = 0,
-    MotorOverTemperature = 1,
-    OverCurrent = 2,
-    OverVoltage = 3,
-    UnderVoltage = 4,
-    EncoderFault = 5,
-    MosfetOverTemperature = 6,
-    MotorStall = 7
-};
-
 /**
  * @brief Provides an interface for using a CubeMars motor in MIT mode.
  *
@@ -31,7 +19,7 @@ enum class CubeMarsErrorCode : uint8_t
  *          The function sendCommand sends a MIT mode command to the motor
  *          The function receiveCommand takes a CAN message and parses it
  *          The parsed values can be obtained using their respective getter
- *          enterMode and exitMode are used to enter and exit MIT mode
+ *          enterMode is used to enter MIT mode
  *
  * @author Samuel Savaria
  * @date 2026-06-05
@@ -44,7 +32,7 @@ protected:
     float speed = std::numeric_limits<float>::quiet_NaN();    // Speed in RPM
     float torque = std::numeric_limits<float>::quiet_NaN();   // Torque in newton-meters
     int8_t temperature = INT8_MIN;                            // Temperature in Celcius
-    CubeMarsErrorCode errorCode = CubeMarsErrorCode::NoFault;
+    uint8_t errorCode = 0;
 
     /**
      * @brief CubeMars function to convert a float to an unsigned int, given a range and number of bits.
@@ -80,7 +68,7 @@ public:
     IMitModeMotor(uint8_t id);
 
     /**
-     * @brief Enter MIT mode
+     * @brief Enter MIT mode and reset the error state
      */
     virtual void enterMode() = 0;
 
@@ -108,7 +96,7 @@ public:
     uint8_t getMotorID() const;
 
     /**
-     * @return The position of the motor, in degrees
+     * @return The position of the motor, in radians
      */
     float getPosition() const;
 
@@ -123,14 +111,23 @@ public:
     float getTorque() const;
 
     /**
-     * @return The temperature of the motor, in Celcius
+     * @return The temperature of the drive, in Celcius
      */
-    int8_t getTemperature() const;
+    int8_t getMosfetTemperature() const;
 
     /**
-     * @return The motor error code. The value is reset by enterMode.
+     * @brief Returns an error code. This value is reset by enterMode
+     * 
+     * @return The error code. 0 means no error
      */
-    CubeMarsErrorCode getErrorCode() const;
+    uint8_t getErrorCode() const;
+
+    /**
+     * @brief Returns an error description corresponding to the error code
+     * 
+     * @return The error description
+     */
+    virtual const char* getErrorDescription() const = 0;
 };
 
 #endif

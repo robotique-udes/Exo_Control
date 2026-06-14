@@ -32,12 +32,12 @@ float IMitModeMotor::getTorque() const
     return torque;
 }
 
-int8_t IMitModeMotor::getTemperature() const
+int8_t IMitModeMotor::getMosfetTemperature() const
 {
     return temperature;
 }
 
-CubeMarsErrorCode IMitModeMotor::getErrorCode() const
+uint8_t IMitModeMotor::getErrorCode() const
 {
     return errorCode;
 }

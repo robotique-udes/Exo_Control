@@ -11,10 +11,22 @@
 
 #include "mitModeMotor.h"
 
+enum CubemarsV3ErrorCode : uint8_t
+{
+    NoFault = 0,
+    MotorOverTemperature = 1,
+    OverCurrent = 2,
+    OverVoltage = 3,
+    UnderVoltage = 4,
+    EncoderFault = 5,
+    MosfetOverTemperature = 6,
+    MotorStall = 7
+};
+
 /**
  * @brief Implementation of the IMitModeMotor interface for a CubeMars AK10-9 KV60 V3 motor
  *
- * @details The class contains the parameter range for the AK10-9 KV60 V3 model
+ * @details The class contains the parameter range and errors for the AK10-9 KV60 V3 model
  *          and implements the interface's pure virtual functions
  *
  * @author Samuel Savaria
@@ -23,18 +35,29 @@
 class Cubemars_AK10_9_KV60_V3 : public IMitModeMotor
 {
 private:
-    static constexpr inline float POSITION_MIN = -12.56f;
-    static constexpr inline float POSITION_MAX =  12.56f;
-    static constexpr inline float VELOCITY_MIN = -28.0f;
-    static constexpr inline float VELOCITY_MAX =  28.0f;
-    static constexpr inline float TORQUE_MIN   = -54.0f;
-    static constexpr inline float TORQUE_MAX   =  54.0f;
-    static constexpr inline float KP_MIN       =  0.0f;
-    static constexpr inline float KP_MAX       =  500.0f;
-    static constexpr inline float KD_MIN       =  0.0f;
-    static constexpr inline float KD_MAX       =  5.0f;
-    static constexpr inline uint32_t FORCE_CONTROL_MODE = 0x800;
-    static constexpr inline uint32_t REPLY_MESSAGE_CODE = 0x2900;
+    static constexpr float POSITION_MIN = -12.56f;
+    static constexpr float POSITION_MAX =  12.56f;
+    static constexpr float VELOCITY_MIN = -28.0f;
+    static constexpr float VELOCITY_MAX =  28.0f;
+    static constexpr float TORQUE_MIN   = -54.0f;
+    static constexpr float TORQUE_MAX   =  54.0f;
+    static constexpr float KP_MIN       =  0.0f;
+    static constexpr float KP_MAX       =  500.0f;
+    static constexpr float KD_MIN       =  0.0f;
+    static constexpr float KD_MAX       =  5.0f;
+    static constexpr uint32_t FORCE_CONTROL_MODE = 0x800;
+    static constexpr uint32_t REPLY_MESSAGE_CODE = 0x2900;
+    static constexpr uint8_t ERROR_COUNT = 8; // The number of possible errors
+    static constexpr const char* ERROR_DESCRIPTIONS[ERROR_COUNT] = {
+    "NoFault",
+    "MotorOverTemperature",
+    "OverCurrent",
+    "OverVoltage",
+    "UnderVoltage",
+    "EncoderFault",
+    "MosfetOverTemperature",
+    "MotorStall"
+    };
 
 public:
 /**
@@ -66,6 +89,13 @@ public:
      * @param message The CAN message to parse
      */
     void receiveCommand(const CanFrame& message) override;
+
+    /**
+     * @brief Returns an error description corresponding to the error code
+     * 
+     * @return The error description
+     */
+    const char* getErrorDescription() const override;
 };
 
 #endif

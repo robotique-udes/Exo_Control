@@ -6,13 +6,15 @@
  * @date 2026-06-06
  */
 #include "cubemarsAK10-9KV60V3.h"
+#include <cmath> // For M_PI
+constexpr const char* Cubemars_AK10_9_KV60_V3::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
 
 Cubemars_AK10_9_KV60_V3::Cubemars_AK10_9_KV60_V3(uint8_t id) : IMitModeMotor(id) {}
 
 void Cubemars_AK10_9_KV60_V3::enterMode() 
 {
     // Reset error flag
-    errorCode = CubeMarsErrorCode::NoFault;
+    errorCode = 0;
 }
 
 void Cubemars_AK10_9_KV60_V3::sendCommand(float position, float velocity, float torque, float kp, float kd)
@@ -69,12 +71,24 @@ void Cubemars_AK10_9_KV60_V3::receiveCommand(const CanFrame& message)
     uint8_t err_int = message.data[7];
 
     // Save the data
-    position = pos_int * 0.1f;
+    position = pos_int * 0.1f * (M_PI / 180.0f); // Convert position to radians from degrees
     speed    = spd_int * 10.0f;
     torque  = trq_int * 0.01f;
     temperature = temp_int;
     if(err_int != 0)
     {
-        errorCode = static_cast<CubeMarsErrorCode>(err_int);
+        errorCode = err_int;
+    }
+}
+
+const char* Cubemars_AK10_9_KV60_V3::getErrorDescription() const
+{
+    if(errorCode < ERROR_COUNT)
+    {
+        return ERROR_DESCRIPTIONS[errorCode];
+    }
+    else
+    {
+        return "UnknownError";
     }
 }

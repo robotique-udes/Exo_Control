@@ -11,6 +11,29 @@
 
 #include "mitModeMotor.h"
 
+enum CubemarsV2ErrorCode : uint8_t
+{
+    FAULT_CODE_NONE = 0, 
+    FAULT_CODE_OVER_VOLTAGE = 1,
+    FAULT_CODE_UNDER_VOLTAGE = 2,
+    FAULT_CODE_DRV = 3,
+    FAULT_CODE_ABS_OVER_CURRENT = 4,
+    FAULT_CODE_OVER_TEMP_FET = 5,
+    FAULT_CODE_OVER_TEMP_MOTOR = 6,
+    FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE = 7,
+    FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE = 8,
+    FAULT_CODE_MCU_UNDER_VOLTAGE = 9,
+    FAULT_CODE_BOOTING_FROM_WATCHDOG_RESET = 10,
+    FAULT_CODE_ENCODER_SPI = 11,
+    FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE = 12,
+    FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE = 13,
+    FAULT_CODE_FLASH_CORRUPTION = 14,
+    FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_1 = 15,
+    FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_2 = 16,
+    FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_3 = 17,
+    FAULT_CODE_UNBALANCED_CURRENTS = 18
+};
+
 /**
  * @brief Implementation of the IMitModeMotor interface for a CubeMars AK10-9 KV100 V2 motor
  *
@@ -23,16 +46,38 @@
 class Cubemars_AK10_9_KV100_V2 : public IMitModeMotor
 {
 private:
-    static constexpr inline float POSITION_MIN = -12.5f;
-    static constexpr inline float POSITION_MAX =  12.5f;
-    static constexpr inline float VELOCITY_MIN = -50.0f;
-    static constexpr inline float VELOCITY_MAX =  50.0f;
-    static constexpr inline float TORQUE_MIN   = -65.0f;
-    static constexpr inline float TORQUE_MAX   =  65.0f;
-    static constexpr inline float KP_MIN       =  0.0f;
-    static constexpr inline float KP_MAX       =  500.0f;
-    static constexpr inline float KD_MIN       =  0.0f;
-    static constexpr inline float KD_MAX       =  5.0f;
+    static constexpr float POSITION_MIN = -12.5f;
+    static constexpr float POSITION_MAX =  12.5f;
+    static constexpr float VELOCITY_MIN = -50.0f;
+    static constexpr float VELOCITY_MAX =  50.0f;
+    static constexpr float TORQUE_MIN   = -65.0f;
+    static constexpr float TORQUE_MAX   =  65.0f;
+    static constexpr float KP_MIN       =  0.0f;
+    static constexpr float KP_MAX       =  500.0f;
+    static constexpr float KD_MIN       =  0.0f;
+    static constexpr float KD_MAX       =  5.0f;
+    static constexpr uint8_t ERROR_COUNT = 19; // The number of possible errors
+    static constexpr const char* ERROR_DESCRIPTIONS[ERROR_COUNT] = {
+    "None",                          // FAULT_CODE_NONE
+    "OverVoltage",                   // FAULT_CODE_OVER_VOLTAGE
+    "UnderVoltage",                  // FAULT_CODE_UNDER_VOLTAGE
+    "DriverFault",                   // FAULT_CODE_DRV
+    "AbsOverCurrent",                // FAULT_CODE_ABS_OVER_CURRENT
+    "OverTemperatureFet",            // FAULT_CODE_OVER_TEMP_FET
+    "OverTemperatureMotor",          // FAULT_CODE_OVER_TEMP_MOTOR
+    "GateDriverOverVoltage",         // FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE
+    "GateDriverUnderVoltage",        // FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE
+    "McuUnderVoltage",               // FAULT_CODE_MCU_UNDER_VOLTAGE
+    "BootingFromWatchdogReset",      // FAULT_CODE_BOOTING_FROM_WATCHDOG_RESET
+    "EncoderSpi",                    // FAULT_CODE_ENCODER_SPI
+    "EncoderSincosBelowMinAmplitude",// FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE
+    "EncoderSincosAboveMaxAmplitude",// FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE
+    "FlashCorruption",               // FAULT_CODE_FLASH_CORRUPTION
+    "HighOffsetCurrentSensor1",      // FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_1
+    "HighOffsetCurrentSensor2",      // FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_2
+    "HighOffsetCurrentSensor3",      // FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_3
+    "UnbalancedCurrents"             // FAULT_CODE_UNBALANCED_CURRENTS
+    };
 
 public:
 /**
@@ -64,6 +109,13 @@ public:
      * @param message The CAN message to parse
      */
     void receiveCommand(const CanFrame& message) override;
+
+    /**
+     * @brief Returns an error description corresponding to the error code
+     * 
+     * @return The error description
+     */
+    const char* getErrorDescription() const override;
 };
 
 #endif

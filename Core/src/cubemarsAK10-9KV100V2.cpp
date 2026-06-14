@@ -6,7 +6,7 @@
  * @date 2026-06-07
  */
 #include "cubemarsAK10-9KV100V2.h"
-#include <cmath> // For M_PI
+constexpr const char* Cubemars_AK10_9_KV100_V2::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
 
 Cubemars_AK10_9_KV100_V2::Cubemars_AK10_9_KV100_V2(uint8_t id) : IMitModeMotor(id) {}
 
@@ -59,7 +59,7 @@ void Cubemars_AK10_9_KV100_V2::enterMode()
     ESP32Can.writeFrame(zeroSetMessage);\
 
     // Reset error flag
-    errorCode = CubeMarsErrorCode::NoFault;
+    errorCode = 0;
 }
 
 void Cubemars_AK10_9_KV100_V2::sendCommand(float position, float velocity, float torque, float kp, float kd)
@@ -116,12 +116,24 @@ void Cubemars_AK10_9_KV100_V2::receiveCommand(const CanFrame& message)
     uint8_t err_int = message.data[7];
     
     // Save the data
-    position = uint_to_float(pos_int, POSITION_MIN, POSITION_MAX, 16) * (180.0f / M_PI); // Convert position from radians to degrees
+    position = uint_to_float(pos_int, POSITION_MIN, POSITION_MAX, 16);
     speed = uint_to_float(spd_int, VELOCITY_MIN, VELOCITY_MAX, 12); 
     torque = uint_to_float(trq_int, TORQUE_MIN, TORQUE_MAX, 12); 
     temperature = (int)temp_int - 40;
     if(err_int != 0)
     {
-        errorCode = static_cast<CubeMarsErrorCode>(err_int);
+        errorCode = err_int;
+    }
+}
+
+const char* Cubemars_AK10_9_KV100_V2::getErrorDescription() const
+{
+    if(errorCode < ERROR_COUNT)
+    {
+        return ERROR_DESCRIPTIONS[errorCode];
+    }
+    else
+    {
+        return "UnknownError";
     }
 }

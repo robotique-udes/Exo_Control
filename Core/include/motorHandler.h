@@ -19,7 +19,7 @@
  * @brief Owns all motors and passes the torques through safety mechanisms before sending them
  *
  * @details Passes the torques through the following safety mechanisms:
- *          1) Disables the motors if they are too hot to prevent overheating
+ *          1) Disables the motors if they are too hot or in a error state
  *          2) Limits the maximum torque the motors can receive to avoid excessive torques
  *          3) Sets the torques to 0 if the motors are disabled to stop the motors
  *          4) Pass the torques through a moving average to avoid sudden changes
