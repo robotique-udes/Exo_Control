@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="15.1">
-  <zoom_level>3</zoom_level>
+  <zoom_level>4</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>396</x>
-      <y>54</y>
-      <w>102</w>
-      <h>81</h>
+      <x>464</x>
+      <y>0</y>
+      <w>136</w>
+      <h>108</h>
     </coordinates>
     <panel_attributes>MotorHandler
 --
-- motors : std::array&lt;Motor, 4&gt;
-- kneeLeft : Cubemars_AK10-9_KV100_V2
-- kneeRight : Cubemars_AK10-9_KV100_V2
-- hipLeft : Cubemars_AK10-9_KV60_V3
-- hipRight : Cubemars_AK10-9_KV60_V3
-- enabled : bool
+- m_motors : std::array&lt;Motor, 4&gt;
+- m_kneeLeft : Cubemars_AK10-9_KV100_V2
+- m_kneeRight : Cubemars_AK10-9_KV100_V2
+- m_hipLeft : Cubemars_AK10-9_KV60_V3
+- m_hipRight : Cubemars_AK10-9_KV60_V3
+- m_enabled : bool
 --
 + enableMotors() : void
 + disableMotors() : void
@@ -32,20 +32,20 @@ preventing overheating
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>249</x>
-      <y>204</y>
-      <w>186</w>
-      <h>117</h>
+      <x>268</x>
+      <y>200</y>
+      <w>248</w>
+      <h>156</h>
     </coordinates>
     <panel_attributes>&lt;&lt;Interface&gt;&gt;
 IMitModeMotor
 --
-# motorID : uint8_t
-# position : float
-# speed : float
-# torque : float
-# temperature : int8_t
-# errorCode : uint8_t
+# m_motorID : uint8_t
+# m_position : float
+# m_speed : float
+# m_torque : float
+# m_temperature : int8_t
+# m_errorCode : uint8_t
 _# float_to_uint(value : float, min : float, max : float, bits : uint8_t) : uint32_t_
 _# uint_to_float(value : uint32_t, min : float, max : float, bits : uint8_t) : float_
 --
@@ -68,18 +68,18 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>471</x>
-      <y>204</y>
-      <w>108</w>
-      <h>69</h>
+      <x>564</x>
+      <y>200</y>
+      <w>144</w>
+      <h>92</h>
     </coordinates>
     <panel_attributes>MovingAverage
 --
-- dataPoints : std::queue&lt;DataPoint&gt;
-- head : DataPoint
-- tail : DataPoint
-- currentAverage : float
-- period : unsigned long
+- m_dataPoints : std::queue&lt;DataPoint&gt;
+- m_head : DataPoint
+- m_tail : DataPoint
+- m_currentAverage : float
+- m_period : unsigned long
 --
 + MovingAverage()
 + MovingAverage(period : unsigned long)
@@ -94,10 +94,10 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>471</x>
-      <y>285</y>
-      <w>108</w>
-      <h>18</h>
+      <x>564</x>
+      <y>308</y>
+      <w>144</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>DataPoint
 --
@@ -108,10 +108,10 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>171</x>
-      <y>357</y>
-      <w>165</w>
-      <h>114</h>
+      <x>164</x>
+      <y>404</y>
+      <w>220</w>
+      <h>152</h>
     </coordinates>
     <panel_attributes>Cubemars_AK10-9_KV60_V3
 --
@@ -143,10 +143,10 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>345</x>
-      <y>357</y>
-      <w>168</w>
-      <h>114</h>
+      <x>396</x>
+      <y>404</y>
+      <w>224</w>
+      <h>152</h>
     </coordinates>
     <panel_attributes>Cubemars_AK10-9_KV100_V2
 --
@@ -176,10 +176,10 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>396</x>
-      <y>153</y>
-      <w>102</w>
-      <h>24</h>
+      <x>464</x>
+      <y>132</y>
+      <w>136</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>Motor
 --
@@ -190,10 +190,10 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>444</x>
-      <y>132</y>
-      <w>12</w>
-      <h>27</h>
+      <x>528</x>
+      <y>104</y>
+      <w>16</w>
+      <h>36</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 4</panel_attributes>
@@ -202,10 +202,10 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>519</x>
-      <y>270</y>
-      <w>9</w>
-      <h>21</h>
+      <x>628</x>
+      <y>288</y>
+      <w>12</w>
+      <h>28</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 *</panel_attributes>
@@ -214,10 +214,10 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>246</x>
-      <y>318</y>
-      <w>102</w>
-      <h>45</h>
+      <x>264</x>
+      <y>352</y>
+      <w>136</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>320.0;10.0;320.0;60.0;10.0;60.0;10.0;130.0</additional_attributes>
@@ -225,10 +225,10 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>339</x>
-      <y>318</y>
-      <w>96</w>
-      <h>45</h>
+      <x>388</x>
+      <y>352</y>
+      <w>128</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;60.0;300.0;60.0;300.0;130.0</additional_attributes>
@@ -236,10 +236,10 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>339</x>
-      <y>159</y>
-      <w>63</w>
-      <h>51</h>
+      <x>388</x>
+      <y>140</y>
+      <w>84</w>
+      <h>68</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 1</panel_attributes>
@@ -248,10 +248,10 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>495</x>
-      <y>162</y>
-      <w>39</w>
-      <h>48</h>
+      <x>596</x>
+      <y>144</y>
+      <w>52</w>
+      <h>64</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 1</panel_attributes>
@@ -260,31 +260,31 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>90</x>
-      <y>357</y>
-      <w>63</w>
-      <h>57</h>
+      <x>48</x>
+      <y>404</y>
+      <w>92</w>
+      <h>76</h>
     </coordinates>
     <panel_attributes>&lt;&lt;Enumeration&gt;&gt;
 CubemarsV3ErrorCode
 --
-NoFault
-MotorOverTemperature
-OverCurrent
-OverVoltage
-UnderVoltage
-EncoderFault
-MosfetOverTemperature
-MotorStall</panel_attributes>
+NO_FAULT
+MOTOR_OVER_TEMPERATURE
+OVER_CURRENT
+OVER_VOLTAGE
+UNDER_VOLTAGE
+ENCODER_FAULT
+MOSFET_OVER_TEMPERATURE
+MOTOR_STALL</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>537</x>
-      <y>357</y>
-      <w>129</w>
-      <h>108</h>
+      <x>652</x>
+      <y>404</y>
+      <w>172</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>&lt;&lt;Enumeration&gt;&gt;
 CubemarsV2ErrorCode
@@ -313,10 +313,10 @@ FAULT_CODE_UNBALANCED_CURRENTS</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>150</x>
-      <y>384</y>
-      <w>27</w>
-      <h>9</h>
+      <x>136</x>
+      <y>440</y>
+      <w>36</w>
+      <h>12</h>
     </coordinates>
     <panel_attributes>lt=-</panel_attributes>
     <additional_attributes>10.0;10.0;70.0;10.0</additional_attributes>
@@ -324,10 +324,10 @@ FAULT_CODE_UNBALANCED_CURRENTS</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>510</x>
-      <y>411</y>
-      <w>33</w>
-      <h>9</h>
+      <x>616</x>
+      <y>476</y>
+      <w>44</w>
+      <h>12</h>
     </coordinates>
     <panel_attributes>lt=-</panel_attributes>
     <additional_attributes>10.0;10.0;90.0;10.0</additional_attributes>
@@ -335,10 +335,10 @@ FAULT_CODE_UNBALANCED_CURRENTS</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>423</x>
-      <y>81</y>
-      <w>279</w>
-      <h>417</h>
+      <x>500</x>
+      <y>36</y>
+      <w>372</w>
+      <h>556</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 2</panel_attributes>
@@ -347,10 +347,10 @@ FAULT_CODE_UNBALANCED_CURRENTS</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>48</x>
-      <y>87</y>
-      <w>354</w>
-      <h>411</h>
+      <x>0</x>
+      <y>44</y>
+      <w>472</w>
+      <h>548</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 2</panel_attributes>

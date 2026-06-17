@@ -1,50 +1,49 @@
 /**
- * @file motorHandler.cpp
+ * @file MotorHandler.cpp
  * @brief Implementation of the MotorHandler class
  * 
  * @author Samuel Savaria
  * @date 2026-06-10
  */
-#include "motorHandler.h"
+#include "MotorHandler.h"
 
 MotorHandler::MotorHandler()
 {
-    motors[app::config::motors::knee_left].motor = &kneeLeft;
-    motors[app::config::motors::knee_right].motor = &kneeRight;
-    motors[app::config::motors::hip_left].motor = &hipLeft;
-    motors[app::config::motors::hip_right].motor = &kneeRight;
+    m_motors[app::config::motors::knee_left].motor = &m_kneeLeft;
+    m_motors[app::config::motors::knee_right].motor = &m_kneeRight;
+    m_motors[app::config::motors::hip_left].motor = &m_hipLeft;
+    m_motors[app::config::motors::hip_right].motor = &m_kneeRight;
 
-    for(Motor motor : motors)
+    for(Motor motor : m_motors)
     {
         motor.avg = MovingAverage(app::config::motors::moving_avg_length);
     }
 
-    enabled = false;
+    m_enabled = false;
 }
 
 void MotorHandler::enableMotors()
 {
-    // Enter MIT mode and reset the moving average
-    for(Motor motor : motors)
+    for(Motor& motor : m_motors)
     {
         motor.motor->enterMode();
         motor.avg.reset();
     }
 
-    enabled = true;
+    m_enabled = true;
 }
 
 void MotorHandler::disableMotors()
 {
-    enabled  = false;
+    m_enabled  = false;
 }
 
-void MotorHandler::update(std::array<float, app::config::motors::amount> torques)
+void MotorHandler::update(std::array<float, app::config::motors::amount> p_torques)
 {
     CanFrame msg;
     while(ESP32Can.readFrame(&msg, 0))
     {
-        for(Motor motor : motors)
+        for(Motor& motor : m_motors)
         {
             motor.motor->receiveCommand(msg);
         }
@@ -53,24 +52,24 @@ void MotorHandler::update(std::array<float, app::config::motors::amount> torques
     for(uint8_t i = 0; i < app::config::motors::amount; ++i)
     {
         // 1) Disables the motors if they are too hot to prevent overheating
-        if(motors[i].motor->getMosfetTemperature() > app::config::motors::max_temperature ||
-           motors[i].motor->getErrorCode() != 0)
+        if(m_motors[i].motor->getMosfetTemperature() > app::config::motors::max_temperature ||
+           m_motors[i].motor->getErrorCode() != 0)
         {
             disableMotors();
         }
 
         // 2) Limits the maximum torque the motors can receive to avoid excessive torques
-        torques[i] = constrain(torques[i], -app::config::motors::torque_max, app::config::motors::torque_max);
+        p_torques[i] = constrain(p_torques[i], -app::config::motors::torque_max, app::config::motors::torque_max);
 
         // 3) Sets the torques to 0 if the motors are disabled to stop the motors
-        if(!enabled)
+        if(!m_enabled)
         {
-            torques[i] = 0.0f;
+            p_torques[i] = 0.0f;
         }
 
         // 4) Pass the torques through a moving average to avoid sudden changes
-        torques[i] = motors[i].avg.addValue(torques[i]);
+        p_torques[i] = m_motors[i].avg.addValue(p_torques[i]);
 
-        motors[i].motor->sendCommand(0.0f, 0.0f, torques[i], 0.0f, 0.0f);
+        m_motors[i].motor->sendCommand(0.0f, 0.0f, p_torques[i], 0.0f, 0.0f);
     }
 }

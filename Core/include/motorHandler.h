@@ -1,5 +1,5 @@
 /**
- * @file motorHandler.h
+ * @file MotorHandler.h
  * @brief Declaration of the MotorHandler class
  * 
  * @author Samuel Savaria
@@ -11,9 +11,9 @@
 #include <array>
 
 #include "config.h"
-#include "cubemarsAK10-9KV100V2.h"
-#include "cubemarsAK10-9KV60V3.h"
-#include "movingAverage.h"
+#include "CubemarsAK10-9KV100V2.h"
+#include "CubemarsAK10-9KV60V3.h"
+#include "MovingAverage.h"
 
 /**
  * @brief Owns all motors and passes the torques through safety mechanisms before sending them
@@ -29,21 +29,6 @@
  */
 class MotorHandler
 {
-private:
-    struct Motor
-    {
-        IMitModeMotor* motor;
-        MovingAverage avg;
-    };
-
-    std::array<Motor, app::config::motors::amount> motors;
-    Cubemars_AK10_9_KV100_V2 kneeLeft = Cubemars_AK10_9_KV100_V2(app::config::motors::knee_left);
-    Cubemars_AK10_9_KV100_V2 kneeRight = Cubemars_AK10_9_KV100_V2(app::config::motors::knee_right);
-    Cubemars_AK10_9_KV60_V3 hipLeft = Cubemars_AK10_9_KV60_V3(app::config::motors::hip_left);
-    Cubemars_AK10_9_KV60_V3 hipRight = Cubemars_AK10_9_KV60_V3(app::config::motors::hip_right);
-
-    bool enabled = false;
-
 public:
     /**
      * @brief Constructor
@@ -63,9 +48,24 @@ public:
     /**
      * @brief Sends new torques to the motors
      *
-     * @param torques Array of torques. The index of the array corresponds to the CAN ID of the motor
+     * @param[in] torques Array of torques. The index of the array corresponds to the CAN ID of the motor
      */
     void update(std::array<float, app::config::motors::amount> torques);
+
+private:
+    struct Motor
+    {
+        IMitModeMotor* motor;
+        MovingAverage avg;
+    };
+
+    std::array<Motor, app::config::motors::amount> m_motors;
+    Cubemars_AK10_9_KV100_V2 m_kneeLeft = Cubemars_AK10_9_KV100_V2(app::config::motors::knee_left);
+    Cubemars_AK10_9_KV100_V2 m_kneeRight = Cubemars_AK10_9_KV100_V2(app::config::motors::knee_right);
+    Cubemars_AK10_9_KV60_V3 m_hipLeft = Cubemars_AK10_9_KV60_V3(app::config::motors::hip_left);
+    Cubemars_AK10_9_KV60_V3 m_hipRight = Cubemars_AK10_9_KV60_V3(app::config::motors::hip_right);
+
+    bool m_enabled = false;
 };
 
 #endif

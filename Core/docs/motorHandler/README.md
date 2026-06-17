@@ -12,7 +12,7 @@ The motor handler instanciates and owns all of the motors. It receives the torqu
 | `CubemarsAK10-9KV100V2` | Implementation of `IMitModeMotor` for a Cubemars V2 motor. |
 | `CubemarsAK10-9KV60V3` | Implementation of `IMitModeMotor` for a Cubemars V3 motor. |
 
-![Class diagram of the MotorHandler layer](motorHandler_dclass.png)
+![Class diagram of the MotorHandler layer](motorHandler_dclass.svg)
 
 ## Dependencies
 

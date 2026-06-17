@@ -1,5 +1,5 @@
 /**
- * @file mitModeMotor.h
+ * @file MitModeMotor.h
  * @brief Declaration of the IMitModeMotor interface class
  * 
  * @author Samuel Savaria
@@ -26,44 +26,11 @@
  */
 class IMitModeMotor
 {
-protected:
-    uint8_t motorID = 0;
-    float position = std::numeric_limits<float>::quiet_NaN(); // Position in degrees
-    float speed = std::numeric_limits<float>::quiet_NaN();    // Speed in RPM
-    float torque = std::numeric_limits<float>::quiet_NaN();   // Torque in newton-meters
-    int8_t temperature = INT8_MIN;                            // Temperature in Celcius
-    uint8_t errorCode = 0;
-
-    /**
-     * @brief CubeMars function to convert a float to an unsigned int, given a range and number of bits.
-     *        All floats must be converted to unsigned ints before sending to the motor
-     *
-     * @param value The value to convert
-     * @param min   The minimum value of the range
-     * @param max   The maximum value of the range
-     * @param bits  The number of bits in the resulting integer
-     * 
-     * @return The value converted to integer
-     */
-    static uint32_t float_to_uint(float value, float min, float max, uint8_t bits);
-
-    /**
-     * @brief CubeMars function to convert an unsigned int to a float, given a range and number of bits.
-     *
-     * @param value The value to convert
-     * @param min   The minimum value of the range
-     * @param max   The maximum value of the range
-     * @param bits  The number of bits in the value to convert
-     * 
-     * @return The value converted to float
-     */
-    static float uint_to_float(uint32_t value, float min, float max, uint8_t bits);
-
 public:
     /**
      * @brief Constructor
      *
-     * @param id The 8-bit CAN ID of the motor
+     * @param[in] id The 8-bit CAN ID of the motor
      */
     IMitModeMotor(uint8_t id);
 
@@ -75,18 +42,18 @@ public:
     /**
      * @brief Sends a MIT mode command
      *
-     * @param position The target position in radians. Also requires KP and KD
-     * @param velocity The target velocity in radians/second. Also requires KD
-     * @param torque   The target torque in newtons-meter.
-     * @param kp       The proportional gain. Required by position
-     * @param kd       The derivative gain. Required by position and velocity
+     * @param[in] position The target position in radians. Also requires KP and KD
+     * @param[in] velocity The target velocity in radians/second. Also requires KD
+     * @param[in] torque   The target torque in newtons-meter.
+     * @param[in] kp       The proportional gain. Required by position
+     * @param[in] kd       The derivative gain. Required by position and velocity
      */
     virtual void sendCommand(float position, float velocity, float torque, float kp, float kd) = 0;
     
     /**
      * @brief Parses a CAN message sent by the motor containing the position, speed, torque, temperature and error code
      *
-     * @param message The CAN message to parse
+     * @param[in] message The CAN message to parse
      */
     virtual void receiveCommand(const CanFrame& message) = 0;
 
@@ -118,7 +85,8 @@ public:
     /**
      * @brief Returns an error code. This value is reset by enterMode
      * 
-     * @return The error code. 0 means no error
+     * @return The error code. See the error enum for each motor implementation
+     * @retval 0 No error
      */
     uint8_t getErrorCode() const;
 
@@ -128,6 +96,39 @@ public:
      * @return The error description
      */
     virtual const char* getErrorDescription() const = 0;
+
+protected:
+    /**
+     * @brief CubeMars function to convert a float to an unsigned int, given a range and number of bits.
+     *        All floats must be converted to unsigned ints before sending to the motor
+     *
+     * @param[in] value The value to convert
+     * @param[in] min   The minimum value of the range
+     * @param[in] max   The maximum value of the range
+     * @param[in] bits  The number of bits in the resulting integer
+     * 
+     * @return The value converted to integer
+     */
+    static uint32_t float_to_uint(float value, float min, float max, uint8_t bits);
+
+    /**
+     * @brief CubeMars function to convert an unsigned int to a float, given a range and number of bits.
+     *
+     * @param[in] value The value to convert
+     * @param[in] min   The minimum value of the range
+     * @param[in] max   The maximum value of the range
+     * @param[in] bits  The number of bits in the value to convert
+     * 
+     * @return The value converted to float
+     */
+    static float uint_to_float(uint32_t value, float min, float max, uint8_t bits);
+
+    uint8_t m_motorId = 0;
+    float m_position = std::numeric_limits<float>::quiet_NaN(); // Position in degrees
+    float m_speed = std::numeric_limits<float>::quiet_NaN();    // Speed in RPM
+    float m_torque = std::numeric_limits<float>::quiet_NaN();   // Torque in newton-meters
+    int8_t m_temperature = INT8_MIN;                            // Temperature in Celcius
+    uint8_t m_errorCode = 0;
 };
 
 #endif

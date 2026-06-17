@@ -1,15 +1,15 @@
 /**
- * @file cubemarsAK10-9KV100V2.h
+ * @file CubemarsAK10-9KV100V2.h
  * @brief Declaration of the Cubemars_AK10_9_KV100_V2 implementation class
  * @see Datasheet: https://www.cubemars.com/data/cms/202604/ak-series-driver-manual-v1-0-18-for-ak-2-0-robotic-actuator.pdf
  * 
  * @author Samuel Savaria
  * @date 2026-06-07
  */
-#ifndef BIOGENIUS_CUBEMARS_AK10_KV10_9_KV100_V2_H
-#define BIOGENIUS_CUBEMARS_AK10_KV10_9_KV100_V2_H
+#ifndef BIOGENIUS_CUBEMARS_AK10_9_KV100_V2_H
+#define BIOGENIUS_CUBEMARS_AK10_9_KV100_V2_H
 
-#include "mitModeMotor.h"
+#include "MitModeMotor.h"
 
 enum CubemarsV2ErrorCode : uint8_t
 {
@@ -45,6 +45,44 @@ enum CubemarsV2ErrorCode : uint8_t
  */
 class Cubemars_AK10_9_KV100_V2 : public IMitModeMotor
 {
+public:
+/**
+     * @brief Constructor
+     *
+     * @param[in] id The 8-bit CAN ID of the motor
+     */
+    Cubemars_AK10_9_KV100_V2(uint8_t id);
+
+    /**
+     * @brief Enter MIT mode
+     */
+    void enterMode() override;
+
+    /**
+     * @brief Sends a MIT mode command
+     *
+     * @param[in] position The target position in radians. Also requires KP and KD
+     * @param[in] velocity The target velocity in radians/second. Also requires KD
+     * @param[in] torque   The target torque in newtons-meter.
+     * @param[in] kp       The proportional gain. Required by position
+     * @param[in] kd       The derivative gain. Required by position and velocity
+     */
+    void sendCommand(float position, float velocity, float torque, float kp, float kd) override;
+
+    /**
+     * @brief Parses a CAN message sent by the motor containing the position, speed, torque, temperature and error code
+     *
+     * @param[in] message The CAN message to parse
+     */
+    void receiveCommand(const CanFrame& message) override;
+
+    /**
+     * @brief Returns an error description corresponding to the error code
+     * 
+     * @return The error description
+     */
+    const char* getErrorDescription() const override;
+    
 private:
     static constexpr float POSITION_MIN = -12.5f;
     static constexpr float POSITION_MAX =  12.5f;
@@ -78,44 +116,6 @@ private:
     "HighOffsetCurrentSensor3",      // FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_3
     "UnbalancedCurrents"             // FAULT_CODE_UNBALANCED_CURRENTS
     };
-
-public:
-/**
-     * @brief Constructor
-     *
-     * @param id The 8-bit CAN ID of the motor
-     */
-    Cubemars_AK10_9_KV100_V2(uint8_t id);
-
-    /**
-     * @brief Enter MIT mode
-     */
-    void enterMode() override;
-
-    /**
-     * @brief Sends a MIT mode command
-     *
-     * @param position The target position in radians. Also requires KP and KD
-     * @param velocity The target velocity in radians/second. Also requires KD
-     * @param torque   The target torque in newtons-meter.
-     * @param kp       The proportional gain. Required by position
-     * @param kd       The derivative gain. Required by position and velocity
-     */
-    void sendCommand(float position, float velocity, float torque, float kp, float kd) override;
-
-    /**
-     * @brief Parses a CAN message sent by the motor containing the position, speed, torque, temperature and error code
-     *
-     * @param message The CAN message to parse
-     */
-    void receiveCommand(const CanFrame& message) override;
-
-    /**
-     * @brief Returns an error description corresponding to the error code
-     * 
-     * @return The error description
-     */
-    const char* getErrorDescription() const override;
 };
 
 #endif

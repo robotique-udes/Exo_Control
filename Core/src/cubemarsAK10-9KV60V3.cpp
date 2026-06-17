@@ -1,11 +1,11 @@
 /**
- * @file cubemarsAK10-9KV60V3.cpp
+ * @file CubemarsAK10-9KV60V3.cpp
  * @brief Definition of the Cubemars_AK10_9_KV60_V3 implementation class
  * 
  * @author Samuel Savaria
  * @date 2026-06-06
  */
-#include "cubemarsAK10-9KV60V3.h"
+#include "CubemarsAK10-9KV60V3.h"
 #include <cmath> // For M_PI
 constexpr const char* Cubemars_AK10_9_KV60_V3::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
 
@@ -14,34 +14,34 @@ Cubemars_AK10_9_KV60_V3::Cubemars_AK10_9_KV60_V3(uint8_t id) : IMitModeMotor(id)
 void Cubemars_AK10_9_KV60_V3::enterMode() 
 {
     // Reset error flag
-    errorCode = 0;
+    m_errorCode = 0;
 }
 
-void Cubemars_AK10_9_KV60_V3::sendCommand(float position, float velocity, float torque, float kp, float kd)
+void Cubemars_AK10_9_KV60_V3::sendCommand(float p_position, float p_velocity, float p_torque, float p_kp, float p_kd)
 {
     // Refer to section 4.2 of the datasheet
 
     // Convert floats to unsigned ints
-    uint32_t position_int = float_to_uint(position, POSITION_MIN, POSITION_MAX, 16);
-    uint32_t velocity_int = float_to_uint(velocity, VELOCITY_MIN, VELOCITY_MAX, 12);
-    uint32_t torque_int = float_to_uint(torque, TORQUE_MIN, TORQUE_MAX, 12);
-    uint32_t kp_int = float_to_uint(kp, KP_MIN, KP_MAX, 12);
-    uint32_t kd_int = float_to_uint(kd, KD_MIN, KD_MAX, 12);
+    uint32_t positionInt = float_to_uint(p_position, POSITION_MIN, POSITION_MAX, 16);
+    uint32_t velocityInt = float_to_uint(p_velocity, VELOCITY_MIN, VELOCITY_MAX, 12);
+    uint32_t torqueInt = float_to_uint(p_torque, TORQUE_MIN, TORQUE_MAX, 12);
+    uint32_t kpInt = float_to_uint(p_kp, KP_MIN, KP_MAX, 12);
+    uint32_t kdInt = float_to_uint(p_kd, KD_MIN, KD_MAX, 12);
 
     // Pack ints to the buffer
     uint8_t buffer[8];
-    buffer[0] = kp_int >> 8;
-    buffer[1] = ((kp_int & 0xF) << 4) | (kd_int >> 8);
-    buffer[2] = kd_int >> 4;
-    buffer[3] = position_int >> 8;
-    buffer[4] = position_int & 0xFF;
-    buffer[5] = velocity_int >> 4;
-    buffer[6] = ((velocity_int & 0xF) << 4) | (torque_int >> 8);
-    buffer[7] = torque_int & 0xFF;
+    buffer[0] = kpInt >> 8;
+    buffer[1] = ((kpInt & 0xF) << 4) | (kdInt >> 8);
+    buffer[2] = kdInt >> 4;
+    buffer[3] = positionInt >> 8;
+    buffer[4] = positionInt & 0xFF;
+    buffer[5] = velocityInt >> 4;
+    buffer[6] = ((velocityInt & 0xF) << 4) | (torqueInt >> 8);
+    buffer[7] = torqueInt & 0xFF;
 
     // Send CAN message
     CanFrame message;
-    message.identifier = motorID | FORCE_CONTROL_MODE;
+    message.identifier = m_motorId | FORCE_CONTROL_MODE;
     message.extd = 1;         //=========================================//
     message.rtr = 0;          //= The bit field is not zero initialized =//
     message.ss = 1;           //= Each field has to be set to avoid     =//
@@ -56,36 +56,36 @@ void Cubemars_AK10_9_KV60_V3::sendCommand(float position, float velocity, float 
     ESP32Can.writeFrame(message);
 }
 
-void Cubemars_AK10_9_KV60_V3::receiveCommand(const CanFrame& message)
+void Cubemars_AK10_9_KV60_V3::receiveCommand(const CanFrame& p_message)
 {
     // Refer to section 4.3.1 of the datasheet
 
     // Ignore the message if this motor is not the target
-    if(message.identifier != (motorID | REPLY_MESSAGE_CODE)) return;
+    if(p_message.identifier != (m_motorId | REPLY_MESSAGE_CODE)) return;
 
     // Parse the data into ints
-    int16_t pos_int = message.data[0] << 8 | message.data[1];
-    int16_t spd_int = message.data[2] << 8 | message.data[3];
-    int16_t trq_int = message.data[4] << 8 | message.data[5];
-    int8_t temp_int = message.data[6];
-    uint8_t err_int = message.data[7];
+    int16_t posInt = p_message.data[0] << 8 | p_message.data[1];
+    int16_t spdInt = p_message.data[2] << 8 | p_message.data[3];
+    int16_t trqInt = p_message.data[4] << 8 | p_message.data[5];
+    int8_t tempInt = p_message.data[6];
+    uint8_t errInt = p_message.data[7];
 
     // Save the data
-    position = pos_int * 0.1f * (M_PI / 180.0f); // Convert position to radians from degrees
-    speed    = spd_int * 10.0f;
-    torque  = trq_int * 0.01f;
-    temperature = temp_int;
-    if(err_int != 0)
+    m_position = posInt * 0.1f * (M_PI / 180.0f); // Convert position to radians from degrees
+    m_speed    = spdInt * 10.0f;
+    m_torque  = trqInt * 0.01f;
+    m_temperature = tempInt;
+    if(errInt != 0)
     {
-        errorCode = err_int;
+        m_errorCode = errInt;
     }
 }
 
 const char* Cubemars_AK10_9_KV60_V3::getErrorDescription() const
 {
-    if(errorCode < ERROR_COUNT)
+    if(m_errorCode < ERROR_COUNT)
     {
-        return ERROR_DESCRIPTIONS[errorCode];
+        return ERROR_DESCRIPTIONS[m_errorCode];
     }
     else
     {

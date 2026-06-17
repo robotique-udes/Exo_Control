@@ -1,76 +1,76 @@
 /**
- * @file movingAverage.h
+ * @file MovingAverage.cpp
  * @brief Implementation of the MovingAverage class
  * 
  * @author Samuel Savaria
  * @date 2026-06-09
  */
-#include "movingAverage.h"
+#include "MovingAverage.h"
 
 MovingAverage::MovingAverage() {}
 
-MovingAverage::MovingAverage(unsigned long new_period)
+MovingAverage::MovingAverage(unsigned long p_period)
 {
-    setPeriod(new_period);
+    setPeriod(p_period);
     reset();
 }
 
 void MovingAverage::reset()
 {
-    dataPoints = std::queue<DataPoint>(); // Destroy the old queue and start anew
-    DataPoint head = {0.0f, 0};
-    DataPoint tail = {0.0f, 0};
+    m_dataPoints = std::queue<DataPoint>(); // Destroy the old queue and start anew
+    m_head = {0.0f, 0};
+    m_tail = {0.0f, 0};
 
-    currentAverage = 0.0f;
+    m_currentAverage = 0.0f;
 }
 
-void MovingAverage::setPeriod(unsigned long new_period)
+void MovingAverage::setPeriod(unsigned long p_period)
 {
-    period = new_period;
+    m_period = p_period;
 }
 
-float MovingAverage::addValue(float value, unsigned long time)
+float MovingAverage::addValue(float p_value, unsigned long p_time)
 {
     // Reusable variables and edge cases
     unsigned long timeSpan = 0;
-    if(dataPoints.empty()) // Edge case for the first value
+    if(m_dataPoints.empty()) // Edge case for the first value
     {
-        dataPoints.push({value, time});
-        head = {value, time};
+        m_dataPoints.push({p_value, p_time});
+        m_head = {p_value, p_time};
 
         return 0.0f;
     }
 
     // Add the new portion to the average
-    timeSpan = time - head.time;
-    currentAverage += head.value * ((float)timeSpan / period);
+    timeSpan = p_time - m_head.time;
+    m_currentAverage += m_head.value * ((float)timeSpan / m_period);
 
     // Removes the old portion to the average
     bool newTail = false;
     unsigned long previousTimeSpan = 0; // In case multiple value needs to be popped
-    while(dataPoints.front().time <= time - period)
+    while(m_dataPoints.front().time <= p_time - m_period)
     {
-        timeSpan = dataPoints.front().time - (head.time - period) - previousTimeSpan; // Subtract the previous timeSpan to avoid counting the same timeSpan twice
+        timeSpan = m_dataPoints.front().time - (m_head.time - m_period) - previousTimeSpan; // Subtract the previous timeSpan to avoid counting the same timeSpan twice
         previousTimeSpan += timeSpan;
-        currentAverage -= tail.value * ((float)timeSpan / period);
-        tail = dataPoints.front();
-        dataPoints.pop();
+        m_currentAverage -= m_tail.value * ((float)timeSpan / m_period);
+        m_tail = m_dataPoints.front();
+        m_dataPoints.pop();
         newTail = true;
     }
 
     if(newTail)
     {
-        timeSpan = (time - period) - tail.time;
+        timeSpan = (p_time - m_period) - m_tail.time;
     }
     else
     {
-        timeSpan = (time - period) - (head.time - period);
+        timeSpan = (p_time - m_period) - (m_head.time - m_period);
     }
-    currentAverage -= tail.value * ((float)timeSpan / period);
+    m_currentAverage -= m_tail.value * ((float)timeSpan / m_period);
         
     // Book keeping
-    dataPoints.push({value, time});
-    head = {value, time};
+    m_head = {p_value, p_time};
+    m_dataPoints.push(m_head);
 
-    return currentAverage;
+    return m_currentAverage;
 }

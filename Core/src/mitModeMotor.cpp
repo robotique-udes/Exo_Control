@@ -1,60 +1,60 @@
 /**
- * @file mitModeMotor.cpp
+ * @file MitModeMotor.cpp
  * @brief Definition of the IMitModeMotor interface class non-virtual functions
  * 
  * @author Samuel Savaria
  * @date 2026-06-05
  */
-#include "mitModeMotor.h"
+#include "MitModeMotor.h"
 
-IMitModeMotor::IMitModeMotor(uint8_t id)
+IMitModeMotor::IMitModeMotor(uint8_t p_id)
 {
-    motorID = id;
+    m_motorId = p_id;
 }
 
 uint8_t IMitModeMotor::getMotorID() const
 {
-    return motorID;
+    return m_motorId;
 }
 
 float IMitModeMotor::getPosition() const
 {
-    return position;
+    return m_position;
 }
 
 float IMitModeMotor::getSpeed() const
 {
-    return speed;
+    return m_speed;
 }
 
 float IMitModeMotor::getTorque() const
 {
-    return torque;
+    return m_torque;
 }
 
 int8_t IMitModeMotor::getMosfetTemperature() const
 {
-    return temperature;
+    return m_temperature;
 }
 
 uint8_t IMitModeMotor::getErrorCode() const
 {
-    return errorCode;
+    return m_errorCode;
 }
 
-uint32_t IMitModeMotor::float_to_uint(float value, float min, float max, uint8_t bits)
+uint32_t IMitModeMotor::float_to_uint(float p_value, float p_min, float p_max, uint8_t p_bits)
 {
     // This is CubeMars code, please don't judge me
-    float span = max - min; 
-    if(value < min) value = min; 
-    else if(value > max) value = max; 
-    return (uint32_t) ((value - min)*((float)((1<<bits)/span)));
+    float span = p_max - p_min; 
+    if(p_value < p_min) p_value = p_min; 
+    else if(p_value > p_max) p_value = p_max; 
+    return (uint32_t) ((p_value - p_min)*((float)((1<<p_bits)/span)));
 }
 
-float IMitModeMotor::uint_to_float(uint32_t value, float min, float max, uint8_t bits)
+float IMitModeMotor::uint_to_float(uint32_t p_value, float p_min, float p_max, uint8_t p_bits)
 {
     // This is CubeMars code, please don't judge me
-    float span = max - min; 
-    float offset = min; 
-    return ((float)value)*span/((float)((1<<bits)-1)) + offset; 
+    float span = p_max - p_min; 
+    float offset = p_min; 
+    return ((float)p_value)*span/((float)((1<<p_bits)-1)) + offset; 
 }

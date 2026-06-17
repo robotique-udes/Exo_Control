@@ -1,23 +1,23 @@
 /**
- * @file cubemarsAK10-9KV100V2.cpp
+ * @file CubemarsAK10-9KV100V2.cpp
  * @brief Definition of the Cubemars_AK10_9_KV100_V2 implementation class
  *
  * @author Samuel Savaria
  * @date 2026-06-07
  */
-#include "cubemarsAK10-9KV100V2.h"
+#include "CubemarsAK10-9KV100V2.h"
 constexpr const char* Cubemars_AK10_9_KV100_V2::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
 
-Cubemars_AK10_9_KV100_V2::Cubemars_AK10_9_KV100_V2(uint8_t id) : IMitModeMotor(id) {}
+Cubemars_AK10_9_KV100_V2::Cubemars_AK10_9_KV100_V2(uint8_t p_id) : IMitModeMotor(p_id) {}
 
 void Cubemars_AK10_9_KV100_V2::enterMode()
 {
     // Refer to section 5.3 of the datasheet
 
-    // Create enter mode message
+    // Enter Mode command
     CanFrame enterModeMessage;
 
-    enterModeMessage.identifier = motorID; 
+    enterModeMessage.identifier = m_motorId; 
     enterModeMessage.extd = 0;             //=========================================//
     enterModeMessage.rtr = 0;              //= The bit field is not zero initialized =//
     enterModeMessage.ss = 1;               //= Each field has to be set to avoid     =//
@@ -34,10 +34,12 @@ void Cubemars_AK10_9_KV100_V2::enterMode()
     enterModeMessage.data[6] = 0xFF;
     enterModeMessage.data[7] = 0xFC;
 
-    // Create zero set message
+    ESP32Can.writeFrame(enterModeMessage);
+
+    // Zero Set command
     CanFrame zeroSetMessage;
 
-    zeroSetMessage.identifier = motorID; 
+    zeroSetMessage.identifier = m_motorId; 
     zeroSetMessage.extd = 0;             //=========================================//
     zeroSetMessage.rtr = 0;              //= The bit field is not zero initialized =//
     zeroSetMessage.ss = 1;               //= Each field has to be set to avoid     =//
@@ -54,39 +56,37 @@ void Cubemars_AK10_9_KV100_V2::enterMode()
     zeroSetMessage.data[6] = 0xFF;
     zeroSetMessage.data[7] = 0xFE;
     
-    // Send messages
-    ESP32Can.writeFrame(enterModeMessage);
-    ESP32Can.writeFrame(zeroSetMessage);\
+    ESP32Can.writeFrame(zeroSetMessage);
 
     // Reset error flag
-    errorCode = 0;
+    m_errorCode = 0;
 }
 
-void Cubemars_AK10_9_KV100_V2::sendCommand(float position, float velocity, float torque, float kp, float kd)
+void Cubemars_AK10_9_KV100_V2::sendCommand(float p_position, float p_velocity, float p_torque, float p_kp, float p_kd)
 {
     // Refer to section 5.3 of the datasheet
 
     // Convert floats to unsigned ints
-    uint32_t position_int = float_to_uint(position, POSITION_MIN, POSITION_MAX, 16);
-    uint32_t velocity_int = float_to_uint(velocity, VELOCITY_MIN, VELOCITY_MAX, 12);
-    uint32_t torque_int = float_to_uint(torque, TORQUE_MIN, TORQUE_MAX, 12);
-    uint32_t kp_int = float_to_uint(kp, KP_MIN, KP_MAX, 12);
-    uint32_t kd_int = float_to_uint(kd, KD_MIN, KD_MAX, 12);
+    uint32_t positionInt = float_to_uint(p_position, POSITION_MIN, POSITION_MAX, 16);
+    uint32_t velocityInt = float_to_uint(p_velocity, VELOCITY_MIN, VELOCITY_MAX, 12);
+    uint32_t torqueInt = float_to_uint(p_torque, TORQUE_MIN, TORQUE_MAX, 12);
+    uint32_t kpInt = float_to_uint(p_kp, KP_MIN, KP_MAX, 12);
+    uint32_t kdInt = float_to_uint(p_kd, KD_MIN, KD_MAX, 12);
 
     // Pack ints to the buffer
     uint8_t buffer[8];
-    buffer[0] = position_int >> 8;
-    buffer[1] = position_int & 0xFF;
-    buffer[2] = velocity_int >> 4;
-    buffer[3] = ((velocity_int & 0xF) << 4) | (kp_int >> 8);
-    buffer[4] = kp_int & 0xFF;
-    buffer[5] = kd_int >> 4;
-    buffer[6] = ((kd_int & 0xF) << 4) | (torque_int >> 8);
-    buffer[7] = torque_int & 0xFF;
+    buffer[0] = positionInt >> 8;
+    buffer[1] = positionInt & 0xFF;
+    buffer[2] = velocityInt >> 4;
+    buffer[3] = ((velocityInt & 0xF) << 4) | (kpInt >> 8);
+    buffer[4] = kpInt & 0xFF;
+    buffer[5] = kdInt >> 4;
+    buffer[6] = ((kdInt & 0xF) << 4) | (torqueInt >> 8);
+    buffer[7] = torqueInt & 0xFF;
 
     // Send CAN message
     CanFrame message;
-    message.identifier = motorID;
+    message.identifier = m_motorId;
     message.extd = 0;         //=========================================//
     message.rtr = 0;          //= The bit field is not zero initialized =//
     message.ss = 1;           //= Each field has to be set to avoid     =//
@@ -101,36 +101,36 @@ void Cubemars_AK10_9_KV100_V2::sendCommand(float position, float velocity, float
     ESP32Can.writeFrame(message);
 }
 
-void Cubemars_AK10_9_KV100_V2::receiveCommand(const CanFrame& message)
+void Cubemars_AK10_9_KV100_V2::receiveCommand(const CanFrame& p_message)
 {
     // Refer to section 5.3 of the datasheet
 
     // Ignore the message if this motor is not the target
-    if(message.identifier != motorID) return;
+    if(p_message.identifier != m_motorId) return;
 
     // Parse the data into ints
-    uint16_t pos_int = message.data[1] << 8 | message.data[2];
-    uint16_t spd_int = message.data[3] << 4 | message.data[4] >> 4;
-    uint16_t trq_int = (message.data[4] & 0xF) << 8 | message.data[5];
-    uint8_t temp_int = message.data[6];
-    uint8_t err_int = message.data[7];
+    uint16_t posInt = p_message.data[1] << 8 | p_message.data[2];
+    uint16_t spdInt = p_message.data[3] << 4 | p_message.data[4] >> 4;
+    uint16_t trqInt = (p_message.data[4] & 0xF) << 8 | p_message.data[5];
+    uint8_t tempInt = p_message.data[6];
+    uint8_t errInt = p_message.data[7];
     
     // Save the data
-    position = uint_to_float(pos_int, POSITION_MIN, POSITION_MAX, 16);
-    speed = uint_to_float(spd_int, VELOCITY_MIN, VELOCITY_MAX, 12); 
-    torque = uint_to_float(trq_int, TORQUE_MIN, TORQUE_MAX, 12); 
-    temperature = (int)temp_int - 40;
-    if(err_int != 0)
+    m_position = uint_to_float(posInt, POSITION_MIN, POSITION_MAX, 16);
+    m_speed = uint_to_float(spdInt, VELOCITY_MIN, VELOCITY_MAX, 12); 
+    m_torque = uint_to_float(trqInt, TORQUE_MIN, TORQUE_MAX, 12); 
+    m_temperature = (int)tempInt - 40;
+    if(errInt != 0)
     {
-        errorCode = err_int;
+        m_errorCode = errInt;
     }
 }
 
 const char* Cubemars_AK10_9_KV100_V2::getErrorDescription() const
 {
-    if(errorCode < ERROR_COUNT)
+    if(m_errorCode < ERROR_COUNT)
     {
-        return ERROR_DESCRIPTIONS[errorCode];
+        return ERROR_DESCRIPTIONS[m_errorCode];
     }
     else
     {
