@@ -12,10 +12,10 @@
     <panel_attributes>MotorHandler
 --
 - m_motors : std::array&lt;Motor, 4&gt;
-- m_kneeLeft : Cubemars_AK10-9_KV100_V2
-- m_kneeRight : Cubemars_AK10-9_KV100_V2
-- m_hipLeft : Cubemars_AK10-9_KV60_V3
-- m_hipRight : Cubemars_AK10-9_KV60_V3
+- m_kneeLeft : CubemarsMotorV2
+- m_kneeRight : CubemarsMotorV2
+- m_hipLeft : CubemarsMotorV3
+- m_hipRight : CubemarsMotorV3
 - m_enabled : bool
 --
 + enableMotors() : void
@@ -38,7 +38,7 @@ preventing overheating
       <h>156</h>
     </coordinates>
     <panel_attributes>&lt;&lt;Interface&gt;&gt;
-IMitModeMotor
+ICubemarsMotor
 --
 # m_motorID : uint8_t
 # m_position : float
@@ -113,7 +113,7 @@ Responsibilities
       <w>220</w>
       <h>152</h>
     </coordinates>
-    <panel_attributes>Cubemars_AK10-9_KV60_V3
+    <panel_attributes>CubemarsMotorV3
 --
 _- POSITION_MIN : float_
 _- POSITION_MAX : float_
@@ -130,7 +130,7 @@ _- REPLY_MESSAGE_CODE : uint32_t_
 _- ERROR_COUNT : uint8_t_
 _- ERROR_DESCRIPTIONS : const char*[]_
 --
-+ Cubemars_AK10_9_KV60_V3(id : uint8_t)
++ CubemarsMotorV3(id : uint8_t)
 + enterMode() : void
 + sendCommand(position : float, velocity : float, torque : float, kp : float, kd : float) : void
 + receiveCommand(messsage : CanFrame) : void
@@ -148,7 +148,7 @@ Responsibilities
       <w>224</w>
       <h>152</h>
     </coordinates>
-    <panel_attributes>Cubemars_AK10-9_KV100_V2
+    <panel_attributes>CubemarsMotorV2
 --
 _- POSITION_MIN : float_
 _- POSITION_MAX : float_
@@ -163,7 +163,7 @@ _- KD_MAX : float_
 _- ERROR_COUNT : uint8_t_
 _- ERROR_DESCRIPTIONS : const char*[]_
 --
-+ Cubemars_AK10_9_KV100_V2(id : uint8_t)
++ CubemarsMotorV2(id : uint8_t)
 + enterMode() : void
 + sendCommand(position : float, velocity : float, torque : float, kp : float, kd : float) : void
 + receiveCommand(messsage : CanFrame) : void
@@ -183,7 +183,7 @@ Responsibilities
     </coordinates>
     <panel_attributes>Motor
 --
-+ motor : IMitModeMotor*
++ motor : ICubemarsMotor*
 + value : MovingAverage</panel_attributes>
     <additional_attributes/>
   </element>
