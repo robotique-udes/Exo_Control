@@ -1,12 +1,12 @@
 /**
- * @file MitModeMotor.h
- * @brief Declaration of the IMitModeMotor interface class
+ * @file ICubemarsMotor.hpp
+ * @brief Declaration of the ICubemarsMotor interface class
  * 
  * @author Samuel Savaria
  * @date 2026-06-05
  */
-#ifndef BIOGENIUS_MIT_MODE_MOTOR_H
-#define BIOGENIUS_MIT_MODE_MOTOR_H
+#ifndef BIOGENIUS_CUBEMARS_MOTOR_HPP
+#define BIOGENIUS_CUBEMARS_MOTOR_HPP
 
 #include <ESP32-TWAI-CAN.hpp>
 #include <cstdint>
@@ -24,7 +24,7 @@
  * @author Samuel Savaria
  * @date 2026-06-05
  */
-class IMitModeMotor
+class ICubemarsMotor
 {
 public:
     /**
@@ -32,7 +32,7 @@ public:
      *
      * @param[in] id The 8-bit CAN ID of the motor
      */
-    IMitModeMotor(uint8_t id);
+    ICubemarsMotor(uint8_t id);
 
     /**
      * @brief Enter MIT mode and reset the error state

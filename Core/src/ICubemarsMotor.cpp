@@ -1,48 +1,48 @@
 /**
- * @file MitModeMotor.cpp
- * @brief Definition of the IMitModeMotor interface class non-virtual functions
+ * @file ICubemarsMotor.cpp
+ * @brief Definition of the ICubemarsMotor interface class non-virtual functions
  * 
  * @author Samuel Savaria
  * @date 2026-06-05
  */
-#include "MitModeMotor.h"
+#include "ICubemarsMotor.hpp"
 
-IMitModeMotor::IMitModeMotor(uint8_t p_id)
+ICubemarsMotor::ICubemarsMotor(uint8_t p_id)
 {
     m_motorId = p_id;
 }
 
-uint8_t IMitModeMotor::getMotorID() const
+uint8_t ICubemarsMotor::getMotorID() const
 {
     return m_motorId;
 }
 
-float IMitModeMotor::getPosition() const
+float ICubemarsMotor::getPosition() const
 {
     return m_position;
 }
 
-float IMitModeMotor::getSpeed() const
+float ICubemarsMotor::getSpeed() const
 {
     return m_speed;
 }
 
-float IMitModeMotor::getTorque() const
+float ICubemarsMotor::getTorque() const
 {
     return m_torque;
 }
 
-int8_t IMitModeMotor::getMosfetTemperature() const
+int8_t ICubemarsMotor::getMosfetTemperature() const
 {
     return m_temperature;
 }
 
-uint8_t IMitModeMotor::getErrorCode() const
+uint8_t ICubemarsMotor::getErrorCode() const
 {
     return m_errorCode;
 }
 
-uint32_t IMitModeMotor::float_to_uint(float p_value, float p_min, float p_max, uint8_t p_bits)
+uint32_t ICubemarsMotor::float_to_uint(float p_value, float p_min, float p_max, uint8_t p_bits)
 {
     // This is CubeMars code, please don't judge me
     float span = p_max - p_min; 
@@ -51,7 +51,7 @@ uint32_t IMitModeMotor::float_to_uint(float p_value, float p_min, float p_max, u
     return (uint32_t) ((p_value - p_min)*((float)((1<<p_bits)/span)));
 }
 
-float IMitModeMotor::uint_to_float(uint32_t p_value, float p_min, float p_max, uint8_t p_bits)
+float ICubemarsMotor::uint_to_float(uint32_t p_value, float p_min, float p_max, uint8_t p_bits)
 {
     // This is CubeMars code, please don't judge me
     float span = p_max - p_min; 

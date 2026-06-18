@@ -5,7 +5,7 @@
  * @author Samuel Savaria
  * @date 2026-06-10
  */
-#include "MotorHandler.h"
+#include "MotorHandler.hpp"
 
 MotorHandler::MotorHandler()
 {

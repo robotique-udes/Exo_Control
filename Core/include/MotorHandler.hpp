@@ -1,19 +1,19 @@
 /**
- * @file MotorHandler.h
+ * @file MotorHandler.hpp
  * @brief Declaration of the MotorHandler class
  * 
  * @author Samuel Savaria
  * @date 2026-06-10
  */
-#ifndef BIOGENIUS_MOTOR_HANDLER_H
-#define BIOGENIUS_MOTOR_HANDLER_H
+#ifndef BIOGENIUS_MOTOR_HANDLER_HPP
+#define BIOGENIUS_MOTOR_HANDLER_HPP
 
 #include <array>
 
 #include "config.h"
-#include "CubemarsAK10-9KV100V2.h"
-#include "CubemarsAK10-9KV60V3.h"
-#include "MovingAverage.h"
+#include "CubemarsMotorV2.hpp"
+#include "CubemarsMotorV3.hpp"
+#include "MovingAverage.hpp"
 
 /**
  * @brief Owns all motors and passes the torques through safety mechanisms before sending them
@@ -55,15 +55,15 @@ public:
 private:
     struct Motor
     {
-        IMitModeMotor* motor;
+        ICubemarsMotor* motor;
         MovingAverage avg;
     };
 
     std::array<Motor, app::config::motors::amount> m_motors;
-    Cubemars_AK10_9_KV100_V2 m_kneeLeft = Cubemars_AK10_9_KV100_V2(app::config::motors::knee_left);
-    Cubemars_AK10_9_KV100_V2 m_kneeRight = Cubemars_AK10_9_KV100_V2(app::config::motors::knee_right);
-    Cubemars_AK10_9_KV60_V3 m_hipLeft = Cubemars_AK10_9_KV60_V3(app::config::motors::hip_left);
-    Cubemars_AK10_9_KV60_V3 m_hipRight = Cubemars_AK10_9_KV60_V3(app::config::motors::hip_right);
+    CubemarsMotorV2 m_kneeLeft = CubemarsMotorV2(app::config::motors::knee_left);
+    CubemarsMotorV2 m_kneeRight = CubemarsMotorV2(app::config::motors::knee_right);
+    CubemarsMotorV3 m_hipLeft = CubemarsMotorV3(app::config::motors::hip_left);
+    CubemarsMotorV3 m_hipRight = CubemarsMotorV3(app::config::motors::hip_right);
 
     bool m_enabled = false;
 };

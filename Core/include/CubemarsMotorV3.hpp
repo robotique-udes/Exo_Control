@@ -1,15 +1,15 @@
 /**
- * @file CubemarsAK10-9KV60V3.h
- * @brief Declaration of the Cubemars_AK10_9_KV60_V3 implementation class
+ * @file CubemarsMotorV3.hpp
+ * @brief Declaration of the CubemarsMotorV3 implementation class
  * @see Datasheet: https://www.cubemars.com/images/file/20241217/1734428582786471.pdf
  * 
  * @author Samuel Savaria
  * @date 2026-06-06
  */
-#ifndef BIOGENIUS_CUBEMARS_AK10_9_KV60_V3_H
-#define BIOGENIUS_CUBEMARS_AK10_9_KV60_V3_H
+#ifndef BIOGENIUS_CUBEMARS_MOTOR_V3_HPP
+#define BIOGENIUS_CUBEMARS_MOTOR_V3_HPP
 
-#include "MitModeMotor.h"
+#include "ICubemarsMotor.hpp"
 
 enum CubemarsV3ErrorCode : uint8_t
 {
@@ -24,15 +24,15 @@ enum CubemarsV3ErrorCode : uint8_t
 };
 
 /**
- * @brief Implementation of the IMitModeMotor interface for a CubeMars AK10-9 KV60 V3 motor
+ * @brief Implementation of the ICubemarsMotor interface for a CubeMars V3 motor
  *
- * @details The class contains the parameter range and errors for the AK10-9 KV60 V3 model
- *          and implements the interface's pure virtual functions
+ * @warning The parameter range for the AK10-9 KV60 V3 model is hardcoded in this class
+ *          If more V3 models were to be used, the parameters would need to be member variables instead of class attributes
  *
  * @author Samuel Savaria
  * @date 2026-06-06
  */
-class Cubemars_AK10_9_KV60_V3 : public IMitModeMotor
+class CubemarsMotorV3 : public ICubemarsMotor
 {
 public:
 /**
@@ -40,7 +40,7 @@ public:
      *
      * @param[in] id The 8-bit CAN ID of the motor
      */
-    Cubemars_AK10_9_KV60_V3(uint8_t id);
+    CubemarsMotorV3(uint8_t id);
 
     /**
      * @brief Enter MIT mode

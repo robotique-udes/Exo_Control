@@ -1,23 +1,23 @@
 /**
- * @file CubemarsAK10-9KV60V3.cpp
- * @brief Definition of the Cubemars_AK10_9_KV60_V3 implementation class
+ * @file CubemarsMotorV3.cpp
+ * @brief Definition of the CubemarsMotorV3 implementation class
  * 
  * @author Samuel Savaria
  * @date 2026-06-06
  */
-#include "CubemarsAK10-9KV60V3.h"
+#include "CubemarsMotorV3.hpp"
 #include <cmath> // For M_PI
-constexpr const char* Cubemars_AK10_9_KV60_V3::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
+constexpr const char* CubemarsMotorV3::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
 
-Cubemars_AK10_9_KV60_V3::Cubemars_AK10_9_KV60_V3(uint8_t id) : IMitModeMotor(id) {}
+CubemarsMotorV3::CubemarsMotorV3(uint8_t id) : ICubemarsMotor(id) {}
 
-void Cubemars_AK10_9_KV60_V3::enterMode() 
+void CubemarsMotorV3::enterMode() 
 {
     // Reset error flag
     m_errorCode = 0;
 }
 
-void Cubemars_AK10_9_KV60_V3::sendCommand(float p_position, float p_velocity, float p_torque, float p_kp, float p_kd)
+void CubemarsMotorV3::sendCommand(float p_position, float p_velocity, float p_torque, float p_kp, float p_kd)
 {
     // Refer to section 4.2 of the datasheet
 
@@ -56,7 +56,7 @@ void Cubemars_AK10_9_KV60_V3::sendCommand(float p_position, float p_velocity, fl
     ESP32Can.writeFrame(message);
 }
 
-void Cubemars_AK10_9_KV60_V3::receiveCommand(const CanFrame& p_message)
+void CubemarsMotorV3::receiveCommand(const CanFrame& p_message)
 {
     // Refer to section 4.3.1 of the datasheet
 
@@ -81,7 +81,7 @@ void Cubemars_AK10_9_KV60_V3::receiveCommand(const CanFrame& p_message)
     }
 }
 
-const char* Cubemars_AK10_9_KV60_V3::getErrorDescription() const
+const char* CubemarsMotorV3::getErrorDescription() const
 {
     if(m_errorCode < ERROR_COUNT)
     {

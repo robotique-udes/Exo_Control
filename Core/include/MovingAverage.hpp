@@ -1,12 +1,12 @@
 /**
- * @file MovingAverage.h
+ * @file MovingAverage.hpp
  * @brief Declaration of the MovingAverage class
  * 
  * @author Samuel Savaria
  * @date 2026-06-09
  */
-#ifndef BIOGENIUS_MOVING_AVERAGE_H
-#define BIOGENIUS_MOVING_AVERAGE_H
+#ifndef BIOGENIUS_MOVING_AVERAGE_HPP
+#define BIOGENIUS_MOVING_AVERAGE_HPP
 
 #include <Arduino.h>
 #include <queue>

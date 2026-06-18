@@ -5,7 +5,7 @@
  * @author Samuel Savaria
  * @date 2026-06-09
  */
-#include "MovingAverage.h"
+#include "MovingAverage.hpp"
 
 MovingAverage::MovingAverage() {}
 

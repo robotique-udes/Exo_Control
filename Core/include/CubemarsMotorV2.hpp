@@ -1,15 +1,15 @@
 /**
- * @file CubemarsAK10-9KV100V2.h
- * @brief Declaration of the Cubemars_AK10_9_KV100_V2 implementation class
+ * @file CubemarsMotorV2.hpp
+ * @brief Declaration of the CubemarsMotorV2 implementation class
  * @see Datasheet: https://www.cubemars.com/data/cms/202604/ak-series-driver-manual-v1-0-18-for-ak-2-0-robotic-actuator.pdf
  * 
  * @author Samuel Savaria
  * @date 2026-06-07
  */
-#ifndef BIOGENIUS_CUBEMARS_AK10_9_KV100_V2_H
-#define BIOGENIUS_CUBEMARS_AK10_9_KV100_V2_H
+#ifndef BIOGENIUS_CUBEMARS_MOTOR_V2_HPP
+#define BIOGENIUS_CUBEMARS_MOTOR_V2_HPP
 
-#include "MitModeMotor.h"
+#include "ICubemarsMotor.hpp"
 
 enum CubemarsV2ErrorCode : uint8_t
 {
@@ -35,15 +35,15 @@ enum CubemarsV2ErrorCode : uint8_t
 };
 
 /**
- * @brief Implementation of the IMitModeMotor interface for a CubeMars AK10-9 KV100 V2 motor
+ * @brief Implementation of the ICubemarsMotor interface for a CubeMars V2 motor
  *
- * @details The class contains the parameter range for the AK10-9 KV100 V2 model
- *          and implements the interface's pure virtual functions
+ * @warning The parameter range for the AK10-9 KV100 V2 model is hardcoded in this class
+ *          If more V2 models were to be used, the parameters would need to be member variables instead of class attributes
  *
  * @author Samuel Savaria
  * @date 2026-06-07
  */
-class Cubemars_AK10_9_KV100_V2 : public IMitModeMotor
+class CubemarsMotorV2 : public ICubemarsMotor
 {
 public:
 /**
@@ -51,7 +51,7 @@ public:
      *
      * @param[in] id The 8-bit CAN ID of the motor
      */
-    Cubemars_AK10_9_KV100_V2(uint8_t id);
+    CubemarsMotorV2(uint8_t id);
 
     /**
      * @brief Enter MIT mode
