@@ -7,8 +7,6 @@
  */
 #include "CubemarsMotorV2.hpp"
 
-constexpr const char* CubemarsMotorV2::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
-
 CubemarsMotorV2::CubemarsMotorV2(uint8_t p_id) : ICubemarsMotor(p_id) {}
 
 void CubemarsMotorV2::enterMode()
@@ -60,7 +58,7 @@ void CubemarsMotorV2::enterMode()
     ESP32Can.writeFrame(zeroSetMessage);
 
     // Reset error flag
-    m_errorCode = 0;
+    m_errorCode = CubemarsErrorCode::NO_FAULT;
 }
 
 void CubemarsMotorV2::sendCommand(float p_position, float p_velocity, float p_torque, float p_kp, float p_kd)
@@ -123,18 +121,6 @@ void CubemarsMotorV2::receiveCommand(const CanFrame& p_message)
     m_temperature = (int)tempInt - 40;
     if(errInt != 0)
     {
-        m_errorCode = errInt;
-    }
-}
-
-const char* CubemarsMotorV2::getErrorDescription() const
-{
-    if(m_errorCode < ERROR_COUNT)
-    {
-        return ERROR_DESCRIPTIONS[m_errorCode];
-    }
-    else
-    {
-        return "UnknownError";
+        m_errorCode = static_cast<CubemarsErrorCode>(errInt);
     }
 }

@@ -13,6 +13,21 @@
 #include <limits>
 
 /**
+ * @brief Error codes returned by Cubemars over CAN
+*/
+enum class CubemarsErrorCode : uint8_t
+{
+    NO_FAULT = 0,
+    MOTOR_OVER_TEMPERATURE = 1,
+    OVER_CURRENT = 2,
+    OVER_VOLTAGE = 3,
+    UNDER_VOLTAGE = 4,
+    ENCODER_FAULT = 5,
+    MOSFET_OVER_TEMPERATURE = 6,
+    MOTOR_STALL = 7
+};
+
+/**
  * @brief Provides an interface for using a CubeMars motor in MIT mode.
  *
  * @details The constructor requires the 8-bits CAN ID of the motor
@@ -86,16 +101,16 @@ public:
      * @brief Returns an error code. This value is reset by enterMode
      * 
      * @return The error code. See the error enum for each motor implementation
-     * @retval 0 No error
+     * @retval CubemarsErrorCode::NO_FAULT: No errors
      */
-    uint8_t getErrorCode() const;
+    CubemarsErrorCode getErrorCode() const;
 
     /**
      * @brief Returns an error description corresponding to the error code
      * 
      * @return The error description
      */
-    virtual const char* getErrorDescription() const = 0;
+    const char* getErrorDescription() const;
 
 protected:
     /**
@@ -128,7 +143,20 @@ protected:
     float m_speed = std::numeric_limits<float>::quiet_NaN();    // Speed in RPM
     float m_torque = std::numeric_limits<float>::quiet_NaN();   // Torque in newton-meters
     int8_t m_temperature = INT8_MIN;                            // Temperature in Celcius
-    uint8_t m_errorCode = 0;
+    CubemarsErrorCode m_errorCode = CubemarsErrorCode::NO_FAULT;
+
+private:
+    static constexpr uint8_t MAX_ERROR = 8;
+    static constexpr const char* ERROR_DESCRIPTIONS[MAX_ERROR] = {
+    "NO_FAULT",
+    "MOTOR_OVER_TEMPERATURE",
+    "OVER_CURRENT",
+    "OVER_VOLTAGE",
+    "UNDER_VOLTAGE",
+    "ENCODER_FAULT",
+    "MOSFET_OVER_TEMPERATURE",
+    "MOTOR_STALL"
+    };
 };
 
 #endif

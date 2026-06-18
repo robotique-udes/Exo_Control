@@ -7,14 +7,13 @@
  */
 #include "CubemarsMotorV3.hpp"
 #include <cmath> // For M_PI
-constexpr const char* CubemarsMotorV3::ERROR_DESCRIPTIONS[]; // Avoids linker error with C++14 and below
 
 CubemarsMotorV3::CubemarsMotorV3(uint8_t id) : ICubemarsMotor(id) {}
 
 void CubemarsMotorV3::enterMode() 
 {
     // Reset error flag
-    m_errorCode = 0;
+    m_errorCode = CubemarsErrorCode::NO_FAULT;
 }
 
 void CubemarsMotorV3::sendCommand(float p_position, float p_velocity, float p_torque, float p_kp, float p_kd)
@@ -77,18 +76,6 @@ void CubemarsMotorV3::receiveCommand(const CanFrame& p_message)
     m_temperature = tempInt;
     if(errInt != 0)
     {
-        m_errorCode = errInt;
-    }
-}
-
-const char* CubemarsMotorV3::getErrorDescription() const
-{
-    if(m_errorCode < ERROR_COUNT)
-    {
-        return ERROR_DESCRIPTIONS[m_errorCode];
-    }
-    else
-    {
-        return "UnknownError";
+        m_errorCode = static_cast<CubemarsErrorCode>(errInt);
     }
 }

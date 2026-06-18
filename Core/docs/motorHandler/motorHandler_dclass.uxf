@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>464</x>
-      <y>0</y>
+      <x>444</x>
+      <y>8</y>
       <w>136</w>
       <h>108</h>
     </coordinates>
@@ -32,10 +32,10 @@ preventing overheating
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>268</x>
-      <y>200</y>
+      <x>248</x>
+      <y>196</y>
       <w>248</w>
-      <h>156</h>
+      <h>168</h>
     </coordinates>
     <panel_attributes>&lt;&lt;Interface&gt;&gt;
 ICubemarsMotor
@@ -45,9 +45,9 @@ ICubemarsMotor
 # m_speed : float
 # m_torque : float
 # m_temperature : int8_t
-# m_errorCode : uint8_t
-_# float_to_uint(value : float, min : float, max : float, bits : uint8_t) : uint32_t_
-_# uint_to_float(value : uint32_t, min : float, max : float, bits : uint8_t) : float_
+# m_errorCode : CubemarsErrorCode
+_- ERROR_COUNT : uint8_t_
+_- ERROR_DESCRIPTIONS : const char*[]_
 --
 + IMitModeMotor(id : uint8_t)
 /+ enterMode() : void {abstract}/
@@ -59,7 +59,9 @@ _# uint_to_float(value : uint32_t, min : float, max : float, bits : uint8_t) : f
 + getSpeed() : float
 + getTorque() : float
 + getMosfetTemperature() : int8_t
-+ getErrorCode() : uint8_t
++ getErrorCode() : CubemarsErrorCode
+_# float_to_uint(value : float, min : float, max : float, bits : uint8_t) : uint32_t_
+_# uint_to_float(value : uint32_t, min : float, max : float, bits : uint8_t) : float_
 --
 Responsibilities
 -- Provides an interface for using a CubeMars motor in MIT mode</panel_attributes>
@@ -68,8 +70,8 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>564</x>
-      <y>200</y>
+      <x>544</x>
+      <y>208</y>
       <w>144</w>
       <h>92</h>
     </coordinates>
@@ -94,8 +96,8 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>564</x>
-      <y>308</y>
+      <x>544</x>
+      <y>316</y>
       <w>144</w>
       <h>24</h>
     </coordinates>
@@ -108,10 +110,10 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>164</x>
-      <y>404</y>
+      <x>144</x>
+      <y>412</y>
       <w>220</w>
-      <h>152</h>
+      <h>136</h>
     </coordinates>
     <panel_attributes>CubemarsMotorV3
 --
@@ -127,14 +129,11 @@ _- KD_MIN : float_
 _- KD_MAX : float_
 _- FORCE_CONTROL_MODE : uint32_t_
 _- REPLY_MESSAGE_CODE : uint32_t_
-_- ERROR_COUNT : uint8_t_
-_- ERROR_DESCRIPTIONS : const char*[]_
 --
 + CubemarsMotorV3(id : uint8_t)
 + enterMode() : void
 + sendCommand(position : float, velocity : float, torque : float, kp : float, kd : float) : void
 + receiveCommand(messsage : CanFrame) : void
-+ getErrorDescription() : const char*
 --
 Responsibilities
 -- Implementation of CubeMars AK10-9 KV60 V3</panel_attributes>
@@ -143,10 +142,10 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>396</x>
-      <y>404</y>
+      <x>376</x>
+      <y>412</y>
       <w>224</w>
-      <h>152</h>
+      <h>136</h>
     </coordinates>
     <panel_attributes>CubemarsMotorV2
 --
@@ -160,14 +159,11 @@ _- KP_MIN : float_
 _- KP_MAX : float_
 _- KD_MIN : float_
 _- KD_MAX : float_
-_- ERROR_COUNT : uint8_t_
-_- ERROR_DESCRIPTIONS : const char*[]_
 --
 + CubemarsMotorV2(id : uint8_t)
 + enterMode() : void
 + sendCommand(position : float, velocity : float, torque : float, kp : float, kd : float) : void
 + receiveCommand(messsage : CanFrame) : void
-+ getErrorDescription() : const char*
 --
 Responsibilities
 -- Implementation of CubeMars AK10-9 KV100 V2</panel_attributes>
@@ -176,8 +172,8 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>464</x>
-      <y>132</y>
+      <x>444</x>
+      <y>140</y>
       <w>136</w>
       <h>32</h>
     </coordinates>
@@ -190,8 +186,8 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>528</x>
-      <y>104</y>
+      <x>508</x>
+      <y>112</y>
       <w>16</w>
       <h>36</h>
     </coordinates>
@@ -202,8 +198,8 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>628</x>
-      <y>288</y>
+      <x>608</x>
+      <y>296</y>
       <w>12</w>
       <h>28</h>
     </coordinates>
@@ -214,8 +210,8 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>264</x>
-      <y>352</y>
+      <x>244</x>
+      <y>360</y>
       <w>136</w>
       <h>60</h>
     </coordinates>
@@ -225,8 +221,8 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>388</x>
-      <y>352</y>
+      <x>368</x>
+      <y>360</y>
       <w>128</w>
       <h>60</h>
     </coordinates>
@@ -236,20 +232,20 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>388</x>
-      <y>140</y>
+      <x>368</x>
+      <y>148</y>
       <w>84</w>
-      <h>68</h>
+      <h>56</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 1</panel_attributes>
-    <additional_attributes>190.0;20.0;10.0;20.0;10.0;150.0</additional_attributes>
+    <additional_attributes>190.0;20.0;10.0;20.0;10.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>596</x>
-      <y>144</y>
+      <x>576</x>
+      <y>152</y>
       <w>52</w>
       <h>64</h>
     </coordinates>
@@ -258,15 +254,39 @@ Responsibilities
     <additional_attributes>10.0;10.0;100.0;10.0;100.0;140.0</additional_attributes>
   </element>
   <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>480</x>
+      <y>44</y>
+      <w>244</w>
+      <h>556</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+2</panel_attributes>
+    <additional_attributes>250.0;10.0;580.0;10.0;580.0;1370.0;10.0;1370.0;10.0;1260.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>104</x>
+      <y>52</y>
+      <w>348</w>
+      <h>548</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+2</panel_attributes>
+    <additional_attributes>850.0;10.0;20.0;10.0;10.0;1350.0;350.0;1350.0;350.0;1240.0</additional_attributes>
+  </element>
+  <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>48</x>
-      <y>404</y>
+      <x>128</x>
+      <y>240</y>
       <w>92</w>
       <h>76</h>
     </coordinates>
     <panel_attributes>&lt;&lt;Enumeration&gt;&gt;
-CubemarsV3ErrorCode
+CubemarsErrorCode
 --
 NO_FAULT
 MOTOR_OVER_TEMPERATURE
@@ -279,81 +299,15 @@ MOTOR_STALL</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>652</x>
-      <y>404</y>
-      <w>172</w>
-      <h>144</h>
-    </coordinates>
-    <panel_attributes>&lt;&lt;Enumeration&gt;&gt;
-CubemarsV2ErrorCode
---
-FAULT_CODE_NONE
-FAULT_CODE_OVER_VOLTAGE
-FAULT_CODE_UNDER_VOLTAGE
-FAULT_CODE_DRV
-FAULT_CODE_ABS_OVER_CURRENT
-FAULT_CODE_OVER_TEMP_FET
-FAULT_CODE_OVER_TEMP_MOTOR
-FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE
-FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE
-FAULT_CODE_MCU_UNDER_VOLTAGE
-FAULT_CODE_BOOTING_FROM_WATCHDOG_RESET
-FAULT_CODE_ENCODER_SPI
-FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE
-FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE
-FAULT_CODE_FLASH_CORRUPTION
-FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_1
-FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_2
-FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_3
-FAULT_CODE_UNBALANCED_CURRENTS</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
     <id>Relation</id>
     <coordinates>
-      <x>136</x>
-      <y>440</y>
-      <w>36</w>
-      <h>12</h>
-    </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>10.0;10.0;70.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>616</x>
-      <y>476</y>
-      <w>44</w>
-      <h>12</h>
-    </coordinates>
-    <panel_attributes>lt=-</panel_attributes>
-    <additional_attributes>10.0;10.0;90.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>500</x>
-      <y>36</y>
-      <w>372</w>
-      <h>556</h>
+      <x>216</x>
+      <y>276</y>
+      <w>40</w>
+      <h>16</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
-2</panel_attributes>
-    <additional_attributes>250.0;10.0;910.0;10.0;900.0;1370.0;10.0;1370.0;10.0;1300.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>0</x>
-      <y>44</y>
-      <w>472</w>
-      <h>548</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
-2</panel_attributes>
-    <additional_attributes>1160.0;10.0;10.0;20.0;20.0;1350.0;660.0;1350.0;660.0;1280.0</additional_attributes>
+1</panel_attributes>
+    <additional_attributes>80.0;20.0;10.0;20.0</additional_attributes>
   </element>
 </diagram>

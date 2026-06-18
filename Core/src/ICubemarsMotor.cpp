@@ -37,9 +37,14 @@ int8_t ICubemarsMotor::getMosfetTemperature() const
     return m_temperature;
 }
 
-uint8_t ICubemarsMotor::getErrorCode() const
+CubemarsErrorCode ICubemarsMotor::getErrorCode() const
 {
     return m_errorCode;
+}
+
+const char* ICubemarsMotor::getErrorDescription() const
+{
+    return ERROR_DESCRIPTIONS[static_cast<uint8_t>(m_errorCode)];
 }
 
 uint32_t ICubemarsMotor::float_to_uint(float p_value, float p_min, float p_max, uint8_t p_bits)

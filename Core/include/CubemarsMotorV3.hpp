@@ -11,18 +11,6 @@
 
 #include "ICubemarsMotor.hpp"
 
-enum CubemarsV3ErrorCode : uint8_t
-{
-    NO_FAULT = 0,
-    MOTOR_OVER_TEMPERATURE = 1,
-    OVER_CURRENT = 2,
-    OVER_VOLTAGE = 3,
-    UNDER_VOLTAGE = 4,
-    ENCODER_FAULT = 5,
-    MOSFET_OVER_TEMPERATURE = 6,
-    MOTOR_STALL = 7
-};
-
 /**
  * @brief Implementation of the ICubemarsMotor interface for a CubeMars V3 motor
  *
@@ -65,14 +53,10 @@ public:
      */
     void receiveCommand(const CanFrame& message) override;
 
-    /**
-     * @brief Returns an error description corresponding to the error code
-     * 
-     * @return The error description
-     */
-    const char* getErrorDescription() const override;
-
 private:
+    static constexpr uint32_t FORCE_CONTROL_MODE = 0x800;
+    static constexpr uint32_t REPLY_MESSAGE_CODE = 0x2900;
+
     static constexpr float POSITION_MIN = -12.56f;
     static constexpr float POSITION_MAX =  12.56f;
     static constexpr float VELOCITY_MIN = -28.0f;
@@ -83,19 +67,6 @@ private:
     static constexpr float KP_MAX       =  500.0f;
     static constexpr float KD_MIN       =  0.0f;
     static constexpr float KD_MAX       =  5.0f;
-    static constexpr uint32_t FORCE_CONTROL_MODE = 0x800;
-    static constexpr uint32_t REPLY_MESSAGE_CODE = 0x2900;
-    static constexpr uint8_t ERROR_COUNT = 8; // The number of possible errors
-    static constexpr const char* ERROR_DESCRIPTIONS[ERROR_COUNT] = {
-    "NoFault",
-    "MotorOverTemperature",
-    "OverCurrent",
-    "OverVoltage",
-    "UnderVoltage",
-    "EncoderFault",
-    "MosfetOverTemperature",
-    "MotorStall"
-    };
 };
 
 #endif

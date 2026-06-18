@@ -53,7 +53,7 @@ void MotorHandler::update(std::array<float, app::config::motors::amount> p_torqu
     {
         // 1) Disables the motors if they are too hot to prevent overheating
         if(m_motors[i].motor->getMosfetTemperature() > app::config::motors::max_temperature ||
-           m_motors[i].motor->getErrorCode() != 0)
+           m_motors[i].motor->getErrorCode() != CubemarsErrorCode::NO_FAULT)
         {
             disableMotors();
         }

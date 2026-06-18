@@ -11,29 +11,6 @@
 
 #include "ICubemarsMotor.hpp"
 
-enum CubemarsV2ErrorCode : uint8_t
-{
-    FAULT_CODE_NONE = 0, 
-    FAULT_CODE_OVER_VOLTAGE = 1,
-    FAULT_CODE_UNDER_VOLTAGE = 2,
-    FAULT_CODE_DRV = 3,
-    FAULT_CODE_ABS_OVER_CURRENT = 4,
-    FAULT_CODE_OVER_TEMP_FET = 5,
-    FAULT_CODE_OVER_TEMP_MOTOR = 6,
-    FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE = 7,
-    FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE = 8,
-    FAULT_CODE_MCU_UNDER_VOLTAGE = 9,
-    FAULT_CODE_BOOTING_FROM_WATCHDOG_RESET = 10,
-    FAULT_CODE_ENCODER_SPI = 11,
-    FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE = 12,
-    FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE = 13,
-    FAULT_CODE_FLASH_CORRUPTION = 14,
-    FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_1 = 15,
-    FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_2 = 16,
-    FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_3 = 17,
-    FAULT_CODE_UNBALANCED_CURRENTS = 18
-};
-
 /**
  * @brief Implementation of the ICubemarsMotor interface for a CubeMars V2 motor
  *
@@ -75,13 +52,6 @@ public:
      * @param[in] message The CAN message to parse
      */
     void receiveCommand(const CanFrame& message) override;
-
-    /**
-     * @brief Returns an error description corresponding to the error code
-     * 
-     * @return The error description
-     */
-    const char* getErrorDescription() const override;
     
 private:
     static constexpr float POSITION_MIN = -12.5f;
@@ -94,28 +64,6 @@ private:
     static constexpr float KP_MAX       =  500.0f;
     static constexpr float KD_MIN       =  0.0f;
     static constexpr float KD_MAX       =  5.0f;
-    static constexpr uint8_t ERROR_COUNT = 19; // The number of possible errors
-    static constexpr const char* ERROR_DESCRIPTIONS[ERROR_COUNT] = {
-    "None",                          // FAULT_CODE_NONE
-    "OverVoltage",                   // FAULT_CODE_OVER_VOLTAGE
-    "UnderVoltage",                  // FAULT_CODE_UNDER_VOLTAGE
-    "DriverFault",                   // FAULT_CODE_DRV
-    "AbsOverCurrent",                // FAULT_CODE_ABS_OVER_CURRENT
-    "OverTemperatureFet",            // FAULT_CODE_OVER_TEMP_FET
-    "OverTemperatureMotor",          // FAULT_CODE_OVER_TEMP_MOTOR
-    "GateDriverOverVoltage",         // FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE
-    "GateDriverUnderVoltage",        // FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE
-    "McuUnderVoltage",               // FAULT_CODE_MCU_UNDER_VOLTAGE
-    "BootingFromWatchdogReset",      // FAULT_CODE_BOOTING_FROM_WATCHDOG_RESET
-    "EncoderSpi",                    // FAULT_CODE_ENCODER_SPI
-    "EncoderSincosBelowMinAmplitude",// FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE
-    "EncoderSincosAboveMaxAmplitude",// FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE
-    "FlashCorruption",               // FAULT_CODE_FLASH_CORRUPTION
-    "HighOffsetCurrentSensor1",      // FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_1
-    "HighOffsetCurrentSensor2",      // FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_2
-    "HighOffsetCurrentSensor3",      // FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_3
-    "UnbalancedCurrents"             // FAULT_CODE_UNBALANCED_CURRENTS
-    };
 };
 
 #endif
