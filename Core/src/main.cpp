@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include "bnoHandler.h"
 #include "logic.h"
-#include "motorHandler.h"
+#include "motorHandler.hpp"
 #include "hmi/HMI_Comm.h"
 #include "config.h"
 
