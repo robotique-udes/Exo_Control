@@ -7,6 +7,10 @@
  */
 #include "ICubemarsMotor.hpp"
 
+// This is necessary to avoid linker errors with C++14 and below
+// I am not sure why this specific member is a problem
+constexpr const char* ICubemarsMotor::ERROR_DESCRIPTIONS[ICubemarsMotor::MAX_ERROR];
+
 ICubemarsMotor::ICubemarsMotor(uint8_t p_id)
 {
     m_motorId = p_id;

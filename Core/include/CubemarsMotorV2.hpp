@@ -54,6 +54,17 @@ public:
     void receiveCommand(const CanFrame& message) override;
     
 private:
+    /**
+     * @brief Enter MIT mode. Cubemars V2 motors have two seperate modes for Servo and MIT.
+     */
+    void enterMitMode();
+
+    /**
+     * @brief Set the current position as 0
+     */
+    void zeroSet();
+
+    // Refer to section 5.3 of the datasheet for the parameter range of the AK10-9
     static constexpr float POSITION_MIN = -12.5f;
     static constexpr float POSITION_MAX =  12.5f;
     static constexpr float VELOCITY_MIN = -50.0f;
@@ -64,6 +75,9 @@ private:
     static constexpr float KP_MAX       =  500.0f;
     static constexpr float KD_MIN       =  0.0f;
     static constexpr float KD_MAX       =  5.0f;
+
+    // Refer to the Specification table of https://www.cubemars.com/product/ak10-9-v2-0-kv100-robotic-actuator.html
+    static constexpr float RATED_TORQUE = 18.0f;
 };
 
 #endif

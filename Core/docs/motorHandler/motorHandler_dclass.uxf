@@ -113,7 +113,7 @@ Responsibilities
       <x>144</x>
       <y>412</y>
       <w>220</w>
-      <h>136</h>
+      <h>140</h>
     </coordinates>
     <panel_attributes>CubemarsMotorV3
 --
@@ -127,6 +127,7 @@ _- KP_MIN : float_
 _- KP_MAX : float_
 _- KD_MIN : float_
 _- KD_MAX : float_
+_- RATED_TORQUE : float_
 _- FORCE_CONTROL_MODE : uint32_t_
 _- REPLY_MESSAGE_CODE : uint32_t_
 --
@@ -145,7 +146,7 @@ Responsibilities
       <x>376</x>
       <y>412</y>
       <w>224</w>
-      <h>136</h>
+      <h>140</h>
     </coordinates>
     <panel_attributes>CubemarsMotorV2
 --
@@ -159,7 +160,10 @@ _- KP_MIN : float_
 _- KP_MAX : float_
 _- KD_MIN : float_
 _- KD_MAX : float_
+_- RATED_TORQUE : float_
 --
+- enterMitMode():void
+- zeroSet() : void
 + CubemarsMotorV2(id : uint8_t)
 + enterMode() : void
 + sendCommand(position : float, velocity : float, torque : float, kp : float, kd : float) : void
@@ -263,7 +267,7 @@ Responsibilities
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 2</panel_attributes>
-    <additional_attributes>250.0;10.0;580.0;10.0;580.0;1370.0;10.0;1370.0;10.0;1260.0</additional_attributes>
+    <additional_attributes>250.0;10.0;580.0;10.0;580.0;1370.0;10.0;1370.0;10.0;1270.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -275,7 +279,7 @@ Responsibilities
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 2</panel_attributes>
-    <additional_attributes>850.0;10.0;20.0;10.0;10.0;1350.0;350.0;1350.0;350.0;1240.0</additional_attributes>
+    <additional_attributes>850.0;10.0;20.0;10.0;10.0;1350.0;350.0;1350.0;350.0;1250.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>

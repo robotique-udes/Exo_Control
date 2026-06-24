@@ -13,7 +13,7 @@
 #include "config.h"
 #include "CubemarsMotorV2.hpp"
 #include "CubemarsMotorV3.hpp"
-#include "MovingAverage.hpp"
+#include "utils/MovingAverage.hpp"
 
 /**
  * @brief Owns all motors and passes the torques through safety mechanisms before sending them

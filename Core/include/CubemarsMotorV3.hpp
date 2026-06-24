@@ -54,9 +54,7 @@ public:
     void receiveCommand(const CanFrame& message) override;
 
 private:
-    static constexpr uint32_t FORCE_CONTROL_MODE = 0x800;
-    static constexpr uint32_t REPLY_MESSAGE_CODE = 0x2900;
-
+    // Refer to section 4.2 of the datasheet for the parameter range of the AK10-9
     static constexpr float POSITION_MIN = -12.56f;
     static constexpr float POSITION_MAX =  12.56f;
     static constexpr float VELOCITY_MIN = -28.0f;
@@ -67,6 +65,13 @@ private:
     static constexpr float KP_MAX       =  500.0f;
     static constexpr float KD_MIN       =  0.0f;
     static constexpr float KD_MAX       =  5.0f;
+
+    // Refer to the Specification table of https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html
+    static constexpr float RATED_TORQUE = 18.0f;
+
+    // Bits 9-29 of the message ID
+    static constexpr uint32_t FORCE_CONTROL_MODE = 0x800;
+    static constexpr uint32_t REPLY_MESSAGE_CODE = 0x2900;
 };
 
 #endif

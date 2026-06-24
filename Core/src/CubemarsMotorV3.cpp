@@ -20,6 +20,9 @@ void CubemarsMotorV3::sendCommand(float p_position, float p_velocity, float p_to
 {
     // Refer to section 4.2 of the datasheet
 
+    // Limit the torque to the rated continuous torque
+    p_torque = constrain(p_torque, -RATED_TORQUE, RATED_TORQUE);
+
     // Convert floats to unsigned ints
     uint32_t positionInt = float_to_uint(p_position, POSITION_MIN, POSITION_MAX, 16);
     uint32_t velocityInt = float_to_uint(p_velocity, VELOCITY_MIN, VELOCITY_MAX, 12);
@@ -41,11 +44,15 @@ void CubemarsMotorV3::sendCommand(float p_position, float p_velocity, float p_to
     // Send CAN message
     CanFrame message;
     message.identifier = m_motorId | FORCE_CONTROL_MODE;
-    message.extd = 1;         //=========================================//
-    message.rtr = 0;          //= The bit field is not zero initialized =//
-    message.ss = 1;           //= Each field has to be set to avoid     =//
-    message.self = 0;         //= garbage values                        =//
-    message.dlc_non_comp = 0; //==========================================//
+
+    // The bit field for CAN flags is not zero initialized
+    // Each field has to be set to avoid garbage values
+    message.extd = 1;
+    message.rtr = 0;
+    message.ss = 1;
+    message.self = 0;
+    message.dlc_non_comp = 0;
+
     message.data_length_code = sizeof(buffer);
     for(int i = 0; i < message.data_length_code; ++i)
     {
