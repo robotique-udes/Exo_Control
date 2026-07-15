@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include "bnoHandler.h"
 #include "logic.h"
-#include "motorHandler.h"
+#include "motorHandler.hpp"
 #include "hmi/HMI_Comm.h"
 #include "config.h"
 
@@ -68,8 +68,6 @@ void setup() {
     Serial.println("CAN bus failed!");
   }
   delay(3000);
-
-  motorHandler.initializeMotors();
 }
 
 void loop() {
@@ -98,7 +96,7 @@ void loop() {
 
 /*   float val = 15;
   float test[4] = {val, val, val, val}; */
-  motorHandler.update(torque);
+  motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
 
   delay(100);
 }

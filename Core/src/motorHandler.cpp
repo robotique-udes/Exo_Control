@@ -1,181 +1,75 @@
-#include "motorHandler.h"
+/**
+ * @file MotorHandler.cpp
+ * @brief Implementation of the MotorHandler class
+ * 
+ * @author Samuel Savaria
+ * @date 2026-06-10
+ */
+#include "MotorHandler.hpp"
 
 MotorHandler::MotorHandler()
 {
-    stateMutex = xSemaphoreCreateMutex();
+    m_motors[app::config::motors::knee_left].motor = &m_kneeLeft;
+    m_motors[app::config::motors::knee_right].motor = &m_kneeRight;
+    m_motors[app::config::motors::hip_left].motor = &m_hipLeft;
+    m_motors[app::config::motors::hip_right].motor = &m_kneeRight;
 
-    motors[motor_config::hip_right] = new MotorV3(motor_config::hip_right);
-    motors[motor_config::hip_left] = new MotorV3(motor_config::hip_left);
-    motors[motor_config::knee_right] = new MotorV2(motor_config::knee_right); 
-    motors[motor_config::knee_left] = new MotorV2(motor_config::knee_left);
-
-
-    //setMotorState(true); //TODO delete
-
-    
-}
-
-MotorHandler::~MotorHandler()
-{
-    exitMotors();
-
-    for (int motorID = 0; motorID < motor_config::amount; motorID++)
-        delete motors[motorID];
-/*     delete motors[0];
-    delete motors[1];
-    delete motors[2];
-    delete motors[3]; */
-}
-
-void MotorHandler::update(const float torque[motor_config::amount])
-{
-/*     if (tempTooHigh == true)
+    for(Motor motor : m_motors)
     {
-        //slowShutDown();
-        //TODO remplacer ca par le slow shutdown
-        float shutDown[NB_MOTORS] = {0,0,0,0};
-        applyTorque(shutDown);
-        return;
-    } */
+        motor.avg = MovingAverage(app::config::motors::moving_avg_length);
+    }
 
-    applyTorque(torque);
+    m_enabled = false;
 }
 
-void MotorHandler::initializeMotors()
+void MotorHandler::enableMotors()
 {
-    for (int motorPos = 0; motorPos < motor_config::amount; motorPos++)
+    for(Motor& motor : m_motors)
     {
-        motors[motorPos]->start();
+        motor.motor->enterMode();
+        motor.avg.reset();
     }
 
-    initialized = true;
+    m_enabled = true;
 }
 
-void MotorHandler::exitMotors()
+void MotorHandler::disableMotors()
 {
-    for (int motorPos = 0; motorPos < motor_config::amount; motorPos++)
-        motors[motorPos]->stop();
-
-    initialized = false;
+    m_enabled  = false;
 }
 
-void MotorHandler::applyTorque(const float torque[motor_config::amount])
+void MotorHandler::update(std::array<float, app::config::motors::amount> p_torques)
 {
-
-    //TODO wtf is this
-    //float newTorque[4] = {torque[0], torque[2], torque[1], torque[3]};
-    //float newTorque[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-
-    for (int motorIndex = 0; motorIndex < motor_config::amount ; motorIndex++)
-    {
-        float motorTorque = 0.0f;
-        if(initialized)
-        {
-            for(int sampleIndex = 0; sampleIndex < (motor_config::moving_avg_size - 1); ++sampleIndex)
-            {
-                movingAverage[motorIndex][sampleIndex] = movingAverage[motorIndex][sampleIndex + 1];
-                motorTorque += movingAverage[motorIndex][sampleIndex];
-            }
-            
-            //to keep the moving average smooth
-            // TODO moving avg should be in the motor class
-            movingAverage[motorIndex][motor_config::moving_avg_size - 1] = torque[motorIndex]*motorOn;
-            motorTorque += movingAverage[motorIndex][motor_config::moving_avg_size - 1];
-
-            motorTorque /= motor_config::moving_avg_size;
-        }
-        if (motorIndex == motor_config::hip_left
-            || motorIndex == motor_config::knee_left)
-        {
-            motorTorque = -1*motorTorque;
-        }  
-
-        //send torque request to the respective motor
-        if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) 
-        {
-            if (debug::motor_handler)
-            {
-                Serial.print("Motor : ");
-                Serial.print(motorIndex);
-                Serial.print(" id : ");
-                Serial.print(motors[motorIndex]->getMotorId());
-                Serial.print(" | Torque : ");
-                Serial.println(motorTorque);
-            }
-           // motors[motorIndex]->sendRequest(TORQUE, motorTorque*motorOn);
-            motors[motorIndex]->sendRequest(TORQUE, motorTorque);
-            xSemaphoreGive(stateMutex);
-        }
-        initialShutdownTorque[motorIndex] = motorTorque;
-        readCanReplyBuffer();
-
-        //checks if the respective motor is overheating
-        float temperature = motors[motorIndex]->getTemperature();
-
-        if (debug::motor_handler)
-        {
-            Serial.print("Temperature : ");
-            Serial.println(temperature);
-        }
-        continue;
-        if (temperature > motor_config::max_temperature)
-        {
-            Serial.println(temperature);
-            tempTooHigh = true;
-            shutdownStartTime = millis();
-            return;
-        }
-    }
-    Serial.println();
-}
-
-//TODO tester le slow shutdown
-void MotorHandler::slowShutDown()
-{
-    unsigned long timeElapsed = millis() - shutdownStartTime;
-
-    //if the timer is done, shuts down all the motors
-    if (timeElapsed > motor_config::shut_down_time)
-    {  
-        tempTooHigh = false;
-        exitMotors();
-        return;
-    }
-
-    //if not, linearly reduces the torque until the timer ends
-    for (int motorIndex = 0; motorIndex < motor_config::amount; motorIndex++)
-    {  
-        float torque = initialShutdownTorque[motorIndex] 
-            * (1 - ((float)timeElapsed / motor_config::shut_down_time));
-        motors[motorIndex]->sendRequest(TORQUE, torque);
-    }
-}
-
-
-
-void MotorHandler::setMotorState(bool state)
-{
-
-    if (xSemaphoreTake(stateMutex, portMAX_DELAY) == pdTRUE) 
-    {    
-        for (int motorIndex = 0; motorIndex < motor_config::amount ; motorIndex++)
-        {
-            motors[motorIndex]->setMotorState(state);
-        }
-        this->motorOn = state;
-        xSemaphoreGive(stateMutex);
-    }
-}
-
-
-
-void MotorHandler::readCanReplyBuffer()
-{
+    CanFrame msg;
     while(ESP32Can.readFrame(&msg, 0))
     {
-        uint8_t source_id = msg.identifier;
-        if (source_id >= 0 && source_id <= motor_config::amount) {
-            motors[source_id]->unpackReply(msg);
+        for(Motor& motor : m_motors)
+        {
+            motor.motor->receiveCommand(msg);
         }
+    }
+
+    for(uint8_t i = 0; i < app::config::motors::amount; ++i)
+    {
+        // 1) Disables the motors if they are too hot to prevent overheating
+        if(m_motors[i].motor->getMosfetTemperature() > app::config::motors::max_temperature ||
+           m_motors[i].motor->getErrorCode() != CubemarsErrorCode::NO_FAULT)
+        {
+            disableMotors();
+        }
+
+        // 2) Limits the maximum torque the motors can receive to avoid excessive torques
+        p_torques[i] = constrain(p_torques[i], -app::config::motors::torque_max, app::config::motors::torque_max);
+
+        // 3) Sets the torques to 0 if the motors are disabled to stop the motors
+        if(!m_enabled)
+        {
+            p_torques[i] = 0.0f;
+        }
+
+        // 4) Pass the torques through a moving average to avoid sudden changes
+        p_torques[i] = m_motors[i].avg.addValue(p_torques[i]);
+
+        m_motors[i].motor->sendCommand(0.0f, 0.0f, p_torques[i], 0.0f, 0.0f);
     }
 }

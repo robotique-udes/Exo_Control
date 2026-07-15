@@ -154,11 +154,12 @@ void HMI_Comm::interpretData(String rawString) {
     if (contentType == MOTOR_STATE) {
         if (content == 1) {
             data.stopMotors = false;
+            this->motorHandler->disableMotors();
         }
         else if (content == 2) {
             data.stopMotors = true;
+            this->motorHandler->enableMotors();
         }
-        this->motorHandler->setMotorState(data.stopMotors);
     }
     else if (contentType == HEIGHT) {
         data.height = content;

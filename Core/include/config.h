@@ -21,27 +21,11 @@ namespace app::config
         constexpr uint8_t hip_left = 2;
         constexpr uint8_t hip_right = 3;
 
-        constexpr uint8_t moving_avg_size = 10;
-        constexpr float max_temperature = 60.0f;
-        constexpr uint16_t shut_down_time = (10 * 1000);
+        constexpr unsigned long moving_avg_length = 1000; // In milliseconds
+        constexpr float max_temperature = 60.0f; // In Celcius
+        constexpr float torque_max = 8; // In newtons-meter
 
-        constexpr float p_max = 12.5f;
-        constexpr float p_min = -12.5f;
-        constexpr float v_max = 50.0f;
-        constexpr float v_min = -50.0f;
-        constexpr float kp_max = 500.0f;
-        constexpr float kp_min = 0.0f;
-        constexpr float kd_min = 0.0f;
-        constexpr float kd_max = 5.0f;
-        constexpr float t_max_V2 = 65;
-        constexpr float t_min_V2 = -65;
-        constexpr float t_max_V3 = 54;
-        constexpr float t_min_V3 = -54;
-
-
-        constexpr float torque_max = 8;
         constexpr float torque_multiplier = 0.2f;
-        constexpr int force_control_mode = 0x800;
     }
 
     namespace anatomy 
