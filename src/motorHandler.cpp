@@ -9,14 +9,14 @@
 
 MotorHandler::MotorHandler()
 {
-    m_motors[app::config::motors::knee_left].motor = &m_kneeLeft;
-    m_motors[app::config::motors::knee_right].motor = &m_kneeRight;
-    m_motors[app::config::motors::hip_left].motor = &m_hipLeft;
-    m_motors[app::config::motors::hip_right].motor = &m_kneeRight;
+    m_motors[exo_config::motors::KNEE_LEFT].motor = &m_kneeLeft;
+    m_motors[exo_config::motors::KNEE_RIGHT].motor = &m_kneeRight;
+    m_motors[exo_config::motors::HIP_LEFT].motor = &m_hipLeft;
+    m_motors[exo_config::motors::HIP_RIGHT].motor = &m_kneeRight;
 
     for(Motor motor : m_motors)
     {
-        motor.avg = MovingAverage(app::config::motors::moving_avg_length);
+        motor.avg = MovingAverage(exo_config::motors::MOVING_AVG_LENGTH);
     }
 
     m_enabled = false;
@@ -38,7 +38,7 @@ void MotorHandler::disableMotors()
     m_enabled  = false;
 }
 
-void MotorHandler::update(std::array<float, app::config::motors::amount> p_torques)
+void MotorHandler::update(std::array<float, exo_config::motors::AMOUNT> p_torques)
 {
     CanFrame msg;
     while(ESP32Can.readFrame(&msg, 0))
@@ -49,17 +49,17 @@ void MotorHandler::update(std::array<float, app::config::motors::amount> p_torqu
         }
     }
 
-    for(uint8_t i = 0; i < app::config::motors::amount; ++i)
+    for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
     {
         // 1) Disables the motors if they are too hot to prevent overheating
-        if(m_motors[i].motor->getMosfetTemperature() > app::config::motors::max_temperature ||
+        if(m_motors[i].motor->getMosfetTemperature() > exo_config::motors::MAX_TEMPERATURE ||
            m_motors[i].motor->getErrorCode() != CubemarsErrorCode::NO_FAULT)
         {
             disableMotors();
         }
 
         // 2) Limits the maximum torque the motors can receive to avoid excessive torques
-        p_torques[i] = constrain(p_torques[i], -app::config::motors::torque_max, app::config::motors::torque_max);
+        p_torques[i] = constrain(p_torques[i], -exo_config::motors::TORQUE_MAX, exo_config::motors::TORQUE_MAX);
 
         // 3) Sets the torques to 0 if the motors are disabled to stop the motors
         if(!m_enabled)

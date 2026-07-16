@@ -4,13 +4,6 @@
 #include <Arduino.h>
 #include "config.h"
 
-namespace  physics = app::config::physics;
-namespace anatomy = app::config::anatomy;
-namespace debug = app::config::debug;
-namespace motor_config = app::config::motors;
-namespace bno_config = app::config::bnos;
-
-
 /**
  * @brief Computes motor torque commands from posture and support-state data.
  *
@@ -40,9 +33,9 @@ public :
      * @param[in] p_grounded Support state for each leg, where true indicates the foot is grounded.
      * @param[out] p_torque Output torque array filled with the computed motor commands.
      */
-    void calculateTorque(const float p_angles[bno_config::amount], 
-                            const bool p_grounded[bno_config::nb_leg],
-                            float (&p_torque)[motor_config::amount]);
+    void calculateTorque(const float p_angles[exo_config::bnos::AMOUNT], 
+                            const bool p_grounded[exo_config::bnos::NB_LEG],
+                            float (&p_torque)[exo_config::motors::AMOUNT]);
 
 private:
 
@@ -75,7 +68,7 @@ private:
      * @param[out] p_distLeftFoot Estimated distance from the center of mass to the left foot in meters.
      * @param[out] p_distRightFoot Estimated distance from the center of mass to the right foot in meters.
      */
-    void getDistanceFromCenterMass(const float p_angles[bno_config::amount], 
+    void getDistanceFromCenterMass(const float p_angles[exo_config::bnos::AMOUNT], 
                                     float& p_distLeftFoot, float& p_distRightFoot);
 
     /**
@@ -85,7 +78,7 @@ private:
      * @param[out] p_fnRight Normal force on the right foot in Newtons.
      * @param[out] p_fnLeft Normal force on the left foot in Newtons.
      */
-    void getNormalForces(const float p_angles[bno_config::amount], 
+    void getNormalForces(const float p_angles[exo_config::bnos::AMOUNT], 
                             float& p_fnRight, float& p_fnLeft);
 
     /**
@@ -94,7 +87,7 @@ private:
      * @param[in] p_angles Joint angles measured by the BNO sensors in degrees.
      * @param[out] p_torque Torque values to validate and adjust in Nm.
      */
-    void valideTorque(const float p_angles[bno_config::amount], float (&p_torque)[motor_config::amount]);
+    void valideTorque(const float p_angles[exo_config::bnos::AMOUNT], float (&p_torque)[exo_config::motors::AMOUNT]);
 
     /**
      * @brief Check whether the hip angle remains within the allowed range.

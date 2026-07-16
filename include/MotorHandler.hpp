@@ -50,7 +50,7 @@ public:
      *
      * @param[in] torques Array of torques. The index of the array corresponds to the CAN ID of the motor
      */
-    void update(std::array<float, app::config::motors::amount> torques);
+    void update(std::array<float, exo_config::motors::AMOUNT> torques);
 
 private:
     struct Motor
@@ -59,11 +59,11 @@ private:
         MovingAverage avg;
     };
 
-    std::array<Motor, app::config::motors::amount> m_motors;
-    CubemarsMotorV2 m_kneeLeft = CubemarsMotorV2(app::config::motors::knee_left);
-    CubemarsMotorV2 m_kneeRight = CubemarsMotorV2(app::config::motors::knee_right);
-    CubemarsMotorV3 m_hipLeft = CubemarsMotorV3(app::config::motors::hip_left);
-    CubemarsMotorV3 m_hipRight = CubemarsMotorV3(app::config::motors::hip_right);
+    std::array<Motor, exo_config::motors::AMOUNT> m_motors;
+    CubemarsMotorV2 m_kneeLeft = CubemarsMotorV2(exo_config::motors::KNEE_LEFT);
+    CubemarsMotorV2 m_kneeRight = CubemarsMotorV2(exo_config::motors::KNEE_RIGHT);
+    CubemarsMotorV3 m_hipLeft = CubemarsMotorV3(exo_config::motors::HIP_LEFT);
+    CubemarsMotorV3 m_hipRight = CubemarsMotorV3(exo_config::motors::HIP_RIGHT);
 
     bool m_enabled = false;
 };

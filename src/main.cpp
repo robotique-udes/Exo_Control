@@ -6,10 +6,6 @@
 #include "hmi/HMI_Comm.h"
 #include "config.h"
 
-namespace pin_config = app::config::pins;
-namespace motor_config = app::config::motors;
-namespace bno_config = app::config::bnos;
-namespace debug = app::config::debug;
 
 void hmiLoop(void * pvParameters);
 
@@ -59,10 +55,10 @@ void setup() {
   } else {
     Serial.println("BNO setup complete. Reading connected sensors only.");
   }
-  pinMode(pin_config::can_terminal, OUTPUT);
-  digitalWrite(pin_config::can_terminal, HIGH);
+  pinMode(exo_config::pins::CAN_TERMINAL, OUTPUT);
+  digitalWrite(exo_config::pins::CAN_TERMINAL, HIGH);
 
-  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), pin_config::can_tx, pin_config::can_rx, 5, 5)) {
+  if(ESP32Can.begin(ESP32Can.convertSpeed(1000), exo_config::pins::CAN_TX, exo_config::pins::CAN_RX, 5, 5)) {
     Serial.println("CAN bus started!!!");
   } else {
     Serial.println("CAN bus failed!");
@@ -73,25 +69,25 @@ void setup() {
 void loop() {
   bnoHandler.requestData();
 
-  if (debug::main)
+  if (exo_config::debug::MAIN)
   {
     Serial.println("---- Connected BNO Data ----");
     bnoHandler.printConnectedBNOsData(0, 5);
     Serial.println();
   }
 
-  float angles[bno_config::amount] = {0};
-  bool grounded[bno_config::nb_leg] = {true};
+  float angles[exo_config::bnos::AMOUNT] = {0};
+  bool grounded[exo_config::bnos::NB_LEG] = {true};
   bnoHandler.getAngle(angles);
   bnoHandler.getGroundedState(grounded);
   
-  for (int i = 0; i < bno_config::amount; i++)
+  for (int i = 0; i < exo_config::bnos::AMOUNT; i++)
     Serial.println(angles[i]);
 
   Serial.println(grounded[0]);
   Serial.println(grounded[1]);
 
-  float torque[motor_config::amount] = {0};
+  float torque[exo_config::motors::AMOUNT] = {0};
   logic.calculateTorque(angles, grounded, torque);
 
 /*   float val = 15;

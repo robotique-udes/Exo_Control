@@ -4,12 +4,6 @@
 #include "multiplex.h"
 #include "config.h"
 #include <array>
-using namespace std;
-
-namespace bno_config = app::config::bnos;
-namespace path_config = app::config::path;
-namespace debug = app::config::debug;
-
 
 /**
  * @brief Simple 3-axis linear-acceleration container.
@@ -19,7 +13,6 @@ typedef struct
     float x;
     float y;
     float z;
-
 } linearAcceleration_t;
 
 
@@ -33,26 +26,26 @@ typedef struct
 class BnoHandler {
     private:
         // Array of physical BNO08x instances, ordered by EnumBnoPosition
-        array<BNO080, bno_config::amount> bnoDevices;
+        std::array<BNO080, exo_config::bnos::AMOUNT> bnoDevices;
         // BNO connection state
-        array<bool, bno_config::amount> bnoConnected;
+        std::array<bool, exo_config::bnos::AMOUNT> bnoConnected;
         // Mux channel for each BNO
-        array<uint8_t, bno_config::amount> muxChannels;
+        std::array<uint8_t, exo_config::bnos::AMOUNT> muxChannels;
         // I2C address for each BNO
-        array<uint8_t, bno_config::amount> i2cAddresses;
+        std::array<uint8_t, exo_config::bnos::AMOUNT> i2cAddresses;
         // Linear acceleration for each bno
-        array<linearAcceleration_t, bno_config::amount> linearAccelerations;
+        std::array<linearAcceleration_t, exo_config::bnos::AMOUNT> linearAccelerations;
         // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
-        array<float, bno_config::amount> BNOAngles;
+        std::array<float, exo_config::bnos::AMOUNT> BNOAngles;
         // Multiplexer used to switch between BNOs
         Multiplex mux;
         // Time of last update, based on millis()
         long last_update = 0;
 
         int bufferIndexLeft;
-        float linAccelBufferLeft[bno_config::buffer_size];
+        float linAccelBufferLeft[exo_config::bnos::BUFFER_SIZE];
         int bufferIndexRight;
-        float linAccelBufferRight[bno_config::buffer_size];
+        float linAccelBufferRight[exo_config::bnos::BUFFER_SIZE];
 
         /**
          * @brief Convert BNO enum position to array index
@@ -112,21 +105,20 @@ class BnoHandler {
          * @brief Return computed joint angles.
          * @return `angleOutput_t` with current joint angles in degrees.
          */
-        void getAngle(float angles[bno_config::amount]);
+        void getAngle(float angles[exo_config::bnos::AMOUNT]);
 
         /**
          * @brief Compute and return left/right grounded state using the
          * moving-average linear-accel buffers.
          * @return `groundedOutput_t` with booleans for left/right ground contact.
          */
-        void getGroundedState(bool grounded[bno_config::nb_leg]);
+        void getGroundedState(bool grounded[exo_config::bnos::NB_LEG]);
 
         /**
          * @brief Initialise all BNO devices (select mux channel and call BNO begin).
          * @return true if at least one device was successfully initialised
          */
         bool begin();
-
 
         /**
          * @brief Print the name and connection status of all BNOs
@@ -160,6 +152,5 @@ class BnoHandler {
          * @param position EnumBnoPosition of the BNO to print
          */
         void printBNOData(uint8_t position);
-
 };
 #endif
