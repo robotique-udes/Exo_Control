@@ -1,9 +1,8 @@
-#include "bnoHandler.h"
+#include "bnoHandler.hpp"
 #include "Arduino.h"
 #include <Wire.h>
 #include <cmath>
 #include <cstring>
-using namespace std;
 
 BnoHandler::BnoHandler(){
     this->mux = Multiplex();

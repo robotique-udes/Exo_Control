@@ -1,8 +1,8 @@
-#ifndef LOGIC_H
-#define LOGIC_H
+#ifndef LOGIC_HPP
+#define LOGIC_HPP
 
 #include <Arduino.h>
-#include "config.h"
+#include "config.hpp"
 
 /**
  * @brief Computes motor torque commands from posture and support-state data.

@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include "bnoHandler.h"
+#include "bnoHandler.hpp"
 #include "logic.hpp"
 #include "motorHandler.hpp"
-#include "hmi/HMI_Comm.h"
-#include "config.h"
+#include "hmi/HMI_Comm.hpp"
+#include "config.hpp"
 
 
 void hmiLoop(void * pvParameters);

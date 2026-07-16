@@ -1,4 +1,4 @@
-#include "HMI_Comm.h"
+#include "HMI_Comm.hpp"
 
 HMI_Comm::HMI_Comm() {
     data.stopMotors = true;

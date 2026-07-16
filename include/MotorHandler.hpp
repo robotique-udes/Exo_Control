@@ -10,7 +10,7 @@
 
 #include <array>
 
-#include "config.h"
+#include "config.hpp"
 #include "CubemarsMotorV2.hpp"
 #include "CubemarsMotorV3.hpp"
 #include "utils/MovingAverage.hpp"

@@ -1,8 +1,8 @@
-#ifndef BNOHANDLER_H_
-#define BNOHANDLER_H_
+#ifndef BNOHANDLER_HPP
+#define BNOHANDLER_HPP
 #include "SparkFun_BNO080_Arduino_Library.h"
-#include "multiplex.h"
-#include "config.h"
+#include "multiplex.hpp"
+#include "config.hpp"
 #include <array>
 
 /**

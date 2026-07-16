@@ -1,7 +1,7 @@
-#include "multiplex.h"
+#include "multiplex.hpp"
 #include <Wire.h>
 #include "Arduino.h"
-#include "config.h"
+#include "config.hpp"
 
 Multiplex::Multiplex(){
     this->monWire = &Wire;
