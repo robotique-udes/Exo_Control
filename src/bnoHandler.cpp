@@ -1,4 +1,4 @@
-#include "bnoHandler.hpp"
+#include "BNOHandler.hpp"
 #include "Arduino.h"
 #include <Wire.h>
 #include <cmath>

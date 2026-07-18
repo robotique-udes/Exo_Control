@@ -1,7 +1,7 @@
 #ifndef MULTIPLEX_HPP
 #define MULTIPLEX_HPP
 #include <Wire.h>
-#include "config.hpp"
+#include "Config.hpp"
 
 class Multiplex{
 

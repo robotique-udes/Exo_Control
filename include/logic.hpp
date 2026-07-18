@@ -2,7 +2,7 @@
 #define LOGIC_HPP
 
 #include <Arduino.h>
-#include "config.hpp"
+#include "Config.hpp"
 
 /**
  * @brief Computes motor torque commands from posture and support-state data.
@@ -108,15 +108,15 @@ private:
      */
     bool limitAngleKnee(float p_angleBack, float p_angleHip, float p_angleKnee);
 
-    SemaphoreHandle_t m_morphologyMutex; ///>Mutex used to protect morphology values from concurrent HMI access.
-    float m_userHeight;   ///> User height used to compute the torque model [cm].
-    float m_userMass;     ///> User mass used to compute the torque model [kg].
-    float m_lengthTorso;  ///> Length of the torso segment used in the biomechanical model [m].
-    float m_lengthThigh;  ///> Length of the thigh segment used in the biomechanical model [m].
-    float m_lengthCalf;   ///> Length of the calf segment used in the biomechanical model [m].
-    float m_forceTorso;   ///> Estimated force applied on the torso segment [N].
-    float m_forceThigh;   ///> Estimated force applied on the thigh segment [N].
-    float m_forceCalf;    ///> Estimated force applied on the calf segment [N].
+    SemaphoreHandle_t m_morphologyMutex; ///< Mutex used to protect morphology values from concurrent HMI access.
+    float m_userHeight;   ///<  User height used to compute the torque model [cm].
+    float m_userMass;     ///<  User mass used to compute the torque model [kg].
+    float m_lengthTorso;  ///<  Length of the torso segment used in the biomechanical model [m].
+    float m_lengthThigh;  ///<  Length of the thigh segment used in the biomechanical model [m].
+    float m_lengthCalf;   ///<  Length of the calf segment used in the biomechanical model [m].
+    float m_forceTorso;   ///<  Estimated force applied on the torso segment [N].
+    float m_forceThigh;   ///<  Estimated force applied on the thigh segment [N].
+    float m_forceCalf;    ///<  Estimated force applied on the calf segment [N].
 };
 
 #endif

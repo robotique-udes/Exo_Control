@@ -1,4 +1,4 @@
-#include "multiplex.hpp"
+#include "Multiplex.hpp"
 #include <Wire.h>
 #include "Arduino.h"
 #include "config.hpp"

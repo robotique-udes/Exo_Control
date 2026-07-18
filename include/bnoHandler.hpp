@@ -3,7 +3,7 @@
 
 #include "SparkFun_BNO080_Arduino_Library.h"
 #include "multiplex.hpp"
-#include "config.hpp"
+#include "Config.hpp"
 #include <array>
 
 /**
