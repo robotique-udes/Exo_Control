@@ -1,5 +1,6 @@
 #ifndef BNOHANDLER_HPP
 #define BNOHANDLER_HPP
+
 #include "SparkFun_BNO080_Arduino_Library.h"
 #include "multiplex.hpp"
 #include "config.hpp"
@@ -19,138 +20,142 @@ typedef struct
 /**
  * @brief Manager for multiple BNO080 devices connected through an I2C multiplexer.
  *
- * The class maintains an array of `BNO080` objects, per-device connection state,
- * recent linear acceleration samples and computed joint angles. It provides
- * methods to initialize devices, poll sensor data and query processed outputs.
+ * @details The class maintains BNO080 objects, connection state, recent linear-acceleration
+ *          samples and computed joint angles. It provides methods to initialize devices,
+ *          poll sensor data and query processed outputs.
  */
 class BnoHandler {
-    private:
-        // Array of physical BNO08x instances, ordered by EnumBnoPosition
-        std::array<BNO080, exo_config::bnos::AMOUNT> bnoDevices;
-        // BNO connection state
-        std::array<bool, exo_config::bnos::AMOUNT> bnoConnected;
-        // Mux channel for each BNO
-        std::array<uint8_t, exo_config::bnos::AMOUNT> muxChannels;
-        // I2C address for each BNO
-        std::array<uint8_t, exo_config::bnos::AMOUNT> i2cAddresses;
-        // Linear acceleration for each bno
-        std::array<linearAcceleration_t, exo_config::bnos::AMOUNT> linearAccelerations;
-        // Angle output (HipLeft, HipRight, KneeLeft, KneeRight, Back)
-        std::array<float, exo_config::bnos::AMOUNT> BNOAngles;
-        // Multiplexer used to switch between BNOs
-        Multiplex mux;
-        // Time of last update, based on millis()
-        long last_update = 0;
+public:
+    // --- 1. PUBLIC METHODS ---
 
-        int bufferIndexLeft;
-        float linAccelBufferLeft[exo_config::bnos::BUFFER_SIZE];
-        int bufferIndexRight;
-        float linAccelBufferRight[exo_config::bnos::BUFFER_SIZE];
+    /**
+     * @brief Construct the BNO handler and initialize the internal buffers.
+     */
+    BnoHandler();
+    
+    /**
+     * @brief Poll all connected BNOs for available reports and update
+     * internal `angles` and `linearAccelerations` buffers.
+     */
+    void requestData();
 
-        /**
-         * @brief Convert BNO enum position to array index
-         * @param position EnumBnoPosition value
-         * @return Zero-based index matching internal storage order
-         */
-        static constexpr size_t bnoIndex(uint8_t position) {
-            return static_cast<size_t>(position);
-        }
+    /**
+     * @brief Return the computed joint angles.
+     *
+     * @param[out] p_angles Output array filled with the current joint angles in degrees.
+     */
+    void getAngle(float p_angles[exo_config::bnos::AMOUNT]);
 
-        /**
-         * @brief Write latest linear-accel Y value into the circular buffer for the
-         * specified `position` and advance the write pointer.
-         * @param position BNO position to update buffer for
-         */
-        void updateBuffer(uint8_t position);
+    /**
+     * @brief Compute and return the left and right grounded state.
+     *
+     * @param[out] p_grounded Output array filled with the grounded state for each leg.
+     */
+    void getGroundedState(bool p_grounded[exo_config::bnos::NB_LEG]);
 
-        /**
-         * @brief Configure the reports/features required from the BNO080 at `position`.
-         * @param position BNO to configure
-         */
-        void setupReports(uint8_t position);
+    /**
+     * @brief Initialize all BNO devices by selecting the mux channel and calling begin.
+     *
+     * @return true if at least one device was successfully initialized, false otherwise.
+     */
+    bool begin();
 
-        /**
-         * @brief Probe a device by selecting the proper mux channel and attempting
-         * an I2C transmission to its configured address.
-         * @param position BNO to probe
-         * @return true if the device acknowledged on I2C
-         */
-        bool checkIfConnected(uint8_t position);
+    /**
+     * @brief Print the name and connection status of all BNOs.
+     *
+     * @param[in] p_startIndex Index of the first BNO to print.
+     * @param[in] p_endIndex Index of the last BNO to print.
+     */
+    void printBNOsStatus(int p_startIndex = 0, int p_endIndex = 4);
 
-        /**
-         * @brief Read the buffered linear-acceleration Y for `position` and
-         * return it in fixed-point Q8 format (value * 256).
-         * @param position BNO position
-         * @return Scaled Y linear-acceleration (int16_t)
-         */
-        int16_t getLinAccelYScaled(uint8_t position);
-        int offset = 0;
-        
-        public:
-        /**
-         * @brief Construct the BNO handler and initialise internal buffers.
-         *
-         * This does not start data acquisition on the sensors; call `begin()` to
-         * initialise hardware and enable reports.
-         */
-        BnoHandler();
-        
-        /**
-         * @brief Poll all connected BNOs for available reports and update
-         * internal `angles` and `linearAccelerations` buffers.
-         */
-        void requestData();
+    /**
+     * @brief Print accelerometer and linear-acceleration values for a BNO range.
+     *
+     * @param[in] p_startIndex Index of the first BNO to print.
+     * @param[in] p_endIndex Index of the last BNO to print.
+     */
+    void printBNOsData(int p_startIndex = 0, int p_endIndex = 4);
 
-        /**
-         * @brief Return computed joint angles.
-         * @return `angleOutput_t` with current joint angles in degrees.
-         */
-        void getAngle(float angles[exo_config::bnos::AMOUNT]);
+    /**
+     * @brief Print sensor values only for BNOs that are currently connected.
+     *
+     * @param[in] p_startIndex Index of the first BNO to print.
+     * @param[in] p_endIndex Index of the last BNO to print.
+     */
+    void printConnectedBNOsData(int p_startIndex = 0, int p_endIndex = 4);
 
-        /**
-         * @brief Compute and return left/right grounded state using the
-         * moving-average linear-accel buffers.
-         * @return `groundedOutput_t` with booleans for left/right ground contact.
-         */
-        void getGroundedState(bool grounded[exo_config::bnos::NB_LEG]);
+    /**
+     * @brief Print a human-readable name for one BNO position.
+     *
+     * @param[in] p_position BNO position to print.
+     */
+    void printName(uint8_t p_position);
 
-        /**
-         * @brief Initialise all BNO devices (select mux channel and call BNO begin).
-         * @return true if at least one device was successfully initialised
-         */
-        bool begin();
+    /**
+     * @brief Print accelerometer and linear-acceleration data for one BNO.
+     *
+     * @param[in] p_position BNO position to print.
+     */
+    void printBNOData(uint8_t p_position);
 
-        /**
-         * @brief Print the name and connection status of all BNOs
-         * @param startIndex Index of the first BNO to print (value of EnumBnoPosition)
-         * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
-         */
-        void printBNOsStatus(int startIndex = 0, int endIndex = 4);
+private:
+    // --- 2. PRIVATE METHODS ---
 
-        /**
-         * @brief Print accelerometer and linear-acceleration values for a BNO range
-         * @param startIndex Index of the first BNO to print (value of EnumBnoPosition)
-         * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
-         */
-        void printBNOsData(int startIndex = 0, int endIndex = 4);
+    /**
+     * @brief Convert a BNO position enum value to an array index.
+     *
+     * @param[in] p_position BNO position value.
+     * @return Zero-based index matching the internal storage order.
+     */
+    static constexpr size_t bnoIndex(uint8_t p_position) {
+        return static_cast<size_t>(p_position);
+    }
 
-        /**
-         * @brief Print sensor values only for BNOs that are currently connected
-         * @param startIndex Index of the first BNO to print (value of EnumBnoPosition)
-         * @param endIndex Index of the last BNO to print (value of EnumBnoPosition)
-         */
-        void printConnectedBNOsData(int startIndex = 0, int endIndex = 4);
+    /**
+     * @brief Write the latest linear-acceleration Y value into the circular buffer.
+     *
+     * @param[in] p_position BNO position whose buffer must be updated.
+     */
+    void updateBuffer(uint8_t p_position);
 
-        /**
-         * @brief Print human-readable name for one angle/part enum
-         * @param position EnumBnoPosition value to print
-         */
-        void printName(uint8_t position);
+    /**
+     * @brief Configure the reports required from the BNO080 at the given position.
+     *
+     * @param[in] p_position BNO position to configure.
+     */
+    void setupReports(uint8_t p_position);
 
-        /**
-         * @brief Print accelerometer and linear-acceleration data for one BNO
-         * @param position EnumBnoPosition of the BNO to print
-         */
-        void printBNOData(uint8_t position);
+    /**
+     * @brief Probe a BNO device by selecting the mux channel and attempting an I2C access.
+     *
+     * @param[in] p_position BNO position to probe.
+     * @return true if the device acknowledged on I2C, false otherwise.
+     */
+    bool checkIfConnected(uint8_t p_position);
+
+    /**
+     * @brief Read the buffered linear-acceleration Y value and scale it to Q8 format.
+     *
+     * @param[in] p_position BNO position to read from.
+     * @return Scaled Y linear-acceleration value in Q8 format.
+     */
+    int16_t getLinAccelYScaled(uint8_t p_position);
+
+    // --- 3. PRIVATE ATTRIBUTES ---
+
+    std::array<BNO080, exo_config::bnos::AMOUNT> m_bnoDevices; ///< Array of physical BNO08x instances, ordered by position.
+    std::array<bool, exo_config::bnos::AMOUNT> m_bnoConnected; ///< Connection state for every BNO.
+    std::array<uint8_t, exo_config::bnos::AMOUNT> m_muxChannels; ///< Mux channel used for each BNO.
+    std::array<uint8_t, exo_config::bnos::AMOUNT> m_i2cAddresses; ///< I2C address used for each BNO.
+    std::array<linearAcceleration_t, exo_config::bnos::AMOUNT> m_linearAccelerations; ///< Linear-acceleration values for each BNO.
+    std::array<float, exo_config::bnos::AMOUNT> m_bnoAngles; ///< Angle output for every BNO.
+    Multiplex m_mux; ///< Multiplexer used to switch between BNO sensors.
+
+    long m_lastUpdate = 0; ///< Time of the last update, based on millis().
+    int m_bufferIndexLeft;
+    float m_linAccelBufferLeft[exo_config::bnos::BUFFER_SIZE];
+    int m_bufferIndexRight;
+    float m_linAccelBufferRight[exo_config::bnos::BUFFER_SIZE];
+    int m_offset = 0;
 };
 #endif

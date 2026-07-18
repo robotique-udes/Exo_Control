@@ -43,7 +43,7 @@ void setup() {
 		NULL,       
 		1,          
 		NULL,       
-		0           // <--- Pinned to Core 0
+		0           //Pinned to Core 0
 	);
 
 
@@ -90,9 +90,6 @@ void loop() {
 
 	float torque[exo_config::motors::AMOUNT] = {0};
 	logic.calculateTorque(angles, grounded, torque);
-
-/*   float val = 15;
-	float test[4] = {val, val, val, val}; */
 	motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
 
 	delay(100);

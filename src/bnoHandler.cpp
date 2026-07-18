@@ -4,227 +4,276 @@
 #include <cmath>
 #include <cstring>
 
-BnoHandler::BnoHandler(){
-    this->mux = Multiplex();
+BnoHandler::BnoHandler() 
+{
+    m_mux = Multiplex();
 
     // Keep this order, position in arrays is same as EnumBnoPosition value
-    muxChannels[exo_config::bnos::LEFT_THIGH] = exo_config::path::LEFT_MOUSTACHE_CHANNEL;
-    muxChannels[exo_config::bnos::RIGHT_THIGH] = exo_config::path::RIGHT_MOUSTACHE_CHANNEL;
-    muxChannels[exo_config::bnos::LEFT_SHIN] = exo_config::path::LEFT_MOUSTACHE_CHANNEL;
-    muxChannels[exo_config::bnos::RIGHT_SHIN] = exo_config::path::RIGHT_MOUSTACHE_CHANNEL;
-    muxChannels[exo_config::bnos::EXO_BACK] = exo_config::path::BACK_CHANNEL;
-    muxChannels[exo_config::bnos::MOBO] = exo_config::path::MOBO_CHANNEL;
+    m_muxChannels[exo_config::bnos::LEFT_THIGH] = exo_config::path::LEFT_MOUSTACHE_CHANNEL;
+    m_muxChannels[exo_config::bnos::RIGHT_THIGH] = exo_config::path::RIGHT_MOUSTACHE_CHANNEL;
+    m_muxChannels[exo_config::bnos::LEFT_SHIN] = exo_config::path::LEFT_MOUSTACHE_CHANNEL;
+    m_muxChannels[exo_config::bnos::RIGHT_SHIN] = exo_config::path::RIGHT_MOUSTACHE_CHANNEL;
+    m_muxChannels[exo_config::bnos::EXO_BACK] = exo_config::path::BACK_CHANNEL;
+    m_muxChannels[exo_config::bnos::MOBO] = exo_config::path::MOBO_CHANNEL;
 
-    i2cAddresses[exo_config::bnos::LEFT_THIGH] = exo_config::path::ADDRESS_1;
-    i2cAddresses[exo_config::bnos::RIGHT_THIGH] = exo_config::path::ADDRESS_1;
-    i2cAddresses[exo_config::bnos::LEFT_SHIN] = exo_config::path::ADDRESS_2;
-    i2cAddresses[exo_config::bnos::RIGHT_SHIN] = exo_config::path::ADDRESS_2;
-    i2cAddresses[exo_config::bnos::EXO_BACK] = exo_config::path::ADDRESS_1;
-    i2cAddresses[exo_config::bnos::MOBO] = exo_config::path::ADDRESS_2;
+    m_i2cAddresses[exo_config::bnos::LEFT_THIGH] = exo_config::path::ADDRESS_1;
+    m_i2cAddresses[exo_config::bnos::RIGHT_THIGH] = exo_config::path::ADDRESS_1;
+    m_i2cAddresses[exo_config::bnos::LEFT_SHIN] = exo_config::path::ADDRESS_2;
+    m_i2cAddresses[exo_config::bnos::RIGHT_SHIN] = exo_config::path::ADDRESS_2;
+    m_i2cAddresses[exo_config::bnos::EXO_BACK] = exo_config::path::ADDRESS_1;
+    m_i2cAddresses[exo_config::bnos::MOBO] = exo_config::path::ADDRESS_2;
 
-    bufferIndexLeft = 0;
-    bufferIndexRight = 0;
+    m_bufferIndexLeft = 0;
+    m_bufferIndexRight = 0;
 
     for(int i = 0; i < exo_config::bnos::BUFFER_SIZE; i++)
     {
-        linAccelBufferLeft[i]=0;
-        linAccelBufferRight[i]=0;
+        m_linAccelBufferLeft[i]=0;
+        m_linAccelBufferRight[i]=0;
     }
 
-    for (int i = 0; i < bnoDevices.size(); i++) {
-        bnoConnected[i] = false;
-        BNOAngles[i] = 0;
+    for (int i = 0; i < m_bnoDevices.size(); i++) 
+    {
+        m_bnoConnected[i] = false;
+        m_bnoAngles[i] = 0;
     }
-
 }
 
-bool BnoHandler::begin(){
+bool BnoHandler::begin() 
+{
     int8_t connected = 0;
 
-    if (exo_config::debug::BNO) Serial.print("===== BnoHandler STARTING =====\n");
+    if (exo_config::debug::BNO) 
+    {
+        Serial.print("===== BnoHandler STARTING =====\n");
+    }
 
-    for (int i = 0; i < bnoDevices.size(); i++){
-        mux.selectChannel(muxChannels[i]);
+    for (size_t i = 0; i < m_bnoDevices.size(); ++i) 
+    {
+        m_mux.selectChannel(m_muxChannels[i]);
 
-        const bool isConnected = bnoDevices[i].begin(i2cAddresses[i], Wire);
-        setupReports(i);
-        bnoConnected[i] = isConnected;
+        const bool isConnected = m_bnoDevices[i].begin(m_i2cAddresses[i], Wire);
+        setupReports(static_cast<uint8_t>(i));
+        m_bnoConnected[i] = isConnected;
 
-        if (isConnected){
+        if (isConnected)
+        {
             connected++;
         }
 
-        if (exo_config::debug::BNO) {
-            Serial.print("BNO "); Serial.print(i); Serial.print("\t");
-            Serial.print("Connected: "); Serial.println(isConnected);
+        if (exo_config::debug::BNO) 
+        {
+            Serial.print("BNO ");
+            Serial.print(i);
+            Serial.print("\t");
+            Serial.print("Connected: ");
+            Serial.println(isConnected);
             delay(500);
         }
     }
 
-    // At least one BNO is up and running
     return connected > 0;
 }
 
-void BnoHandler::setupReports(uint8_t position)
+void BnoHandler::setupReports(uint8_t p_position) 
 {
-    const size_t index = bnoIndex(position);
-    // Enable common reports using SparkFun API. Time between reports set to 10 (library-specific unit).
-    bnoDevices[index].enableGravity(10);
-    bnoDevices[index].enableLinearAccelerometer(10);
-
+    const size_t index = bnoIndex(p_position);
+    m_bnoDevices[index].enableGravity(10);
+    m_bnoDevices[index].enableLinearAccelerometer(10);
 }
 
-bool BnoHandler::checkIfConnected(uint8_t position)
+bool BnoHandler::checkIfConnected(uint8_t p_position) 
 {
-    const size_t index = bnoIndex(position);
-    mux.selectChannel(muxChannels[index]);
-    Wire.beginTransmission(i2cAddresses[index]);
+    const size_t index = bnoIndex(p_position);
+    m_mux.selectChannel(m_muxChannels[index]);
+    Wire.beginTransmission(m_i2cAddresses[index]);
     const bool connected = (Wire.endTransmission() == 0);
-    bnoConnected[index] = connected;
+    m_bnoConnected[index] = connected;
     return connected;
 }
 
-void BnoHandler::requestData(){
-    for (int i = 0; i < exo_config::bnos::AMOUNT; i++){
-        if (!bnoConnected[i]) continue;
-        mux.selectChannel(muxChannels[i]);
-
-        if (bnoDevices[i].hasReset()) {
-            setupReports(i);
+void BnoHandler::requestData() {
+    for (size_t i = 0; i < exo_config::bnos::AMOUNT; ++i) 
+    {
+        if (!m_bnoConnected[i]) {
+            continue;
         }
 
-        // Read available reports and populate compatibility structures
-        while (bnoDevices[i].dataAvailable()) {
+        m_mux.selectChannel(m_muxChannels[i]);
 
-            float gX = bnoDevices[i].getGravityX();
-            float gY = bnoDevices[i].getGravityY();
-            float gZ = bnoDevices[i].getGravityZ();
+        if (m_bnoDevices[i].hasReset()) 
+        {
+            setupReports(static_cast<uint8_t>(i));
+        }
 
-            if (exo_config::bnos::MOBO == i)
-                BNOAngles[i] = -1*(degrees(atan2(gY, gX)) + 180);
-            else
-                BNOAngles[i] = degrees(atan2(gX, gY)) + 180;
+        while (m_bnoDevices[i].dataAvailable()) 
+        {
+            float gX = m_bnoDevices[i].getGravityX();
+            float gY = m_bnoDevices[i].getGravityY();
+            float gZ = m_bnoDevices[i].getGravityZ();
 
-            if (BNOAngles[i] > 180) BNOAngles[i] -= 360;
-            else if (BNOAngles[i] <= -180) BNOAngles[i] += 360;
-
-            if (exo_config::bnos::LEFT_THIGH == i
-                || exo_config::bnos::LEFT_SHIN == i)
+            if (exo_config::bnos::MOBO == i) 
             {
-                BNOAngles[i] = -1*BNOAngles[i];
+                m_bnoAngles[i] = -1.0f * (degrees(atan2(gY, gX)) + 180.0f);
+            } 
+            else 
+            {
+                m_bnoAngles[i] = degrees(atan2(gX, gY)) + 180.0f;
             }
-        
-            // Linear acceleration
-            float lax, lay, laz; uint8_t lac;
-            bnoDevices[i].getLinAccel(lax, lay, laz, lac);
-            linearAccelerations[i].x = lax;
-            linearAccelerations[i].y = lay;
-            linearAccelerations[i].z = laz;
 
+            if (m_bnoAngles[i] > 180.0f) 
+            {
+                m_bnoAngles[i] -= 360.0f;
+            } 
+            else if (m_bnoAngles[i] <= -180.0f) 
+            {
+                m_bnoAngles[i] = -1*m_bnoAngles[i];
+            }
+
+            if (exo_config::bnos::LEFT_THIGH == i || exo_config::bnos::LEFT_SHIN == i) 
+            {
+                m_bnoAngles[i] = -1.0f * m_bnoAngles[i];
+            }
+
+            float lax = 0.0f;
+            float lay = 0.0f;
+            float laz = 0.0f;
+            uint8_t lac = 0;
+            m_bnoDevices[i].getLinAccel(lax, lay, laz, lac);
+            m_linearAccelerations[i].x = lax;
+            m_linearAccelerations[i].y = lay;
+            m_linearAccelerations[i].z = laz;
         }
     }
-    last_update = millis();
+
+    m_lastUpdate = millis();
 }
 
 void BnoHandler::getAngle(float angles[exo_config::bnos::AMOUNT])
 {
-    memcpy(angles, &BNOAngles, sizeof(BNOAngles));
+    memcpy(angles, &m_bnoAngles, sizeof(m_bnoAngles));
 }
 
-void BnoHandler::updateBuffer(uint8_t position)
+void BnoHandler::updateBuffer(uint8_t p_position) 
 {
-    const int16_t yAccel = getLinAccelYScaled(position);
-    if (position==exo_config::bnos::LEFT_SHIN){
-        linAccelBufferLeft[bufferIndexLeft] = abs(yAccel) < (exo_config::bnos::ACCEL_BUFFER_THRESHOLD + offset);
-        if(bufferIndexLeft < (exo_config::bnos::BUFFER_SIZE-1)) bufferIndexLeft++;
-        else bufferIndexLeft = 0;
-    }
-    else if (position==exo_config::bnos::RIGHT_SHIN){
-        linAccelBufferRight[bufferIndexRight] = abs(yAccel) < (exo_config::bnos::ACCEL_BUFFER_THRESHOLD + offset);
-        if(bufferIndexRight < (exo_config::bnos::BUFFER_SIZE-1)) bufferIndexRight++;
-        else bufferIndexRight = 0;
+    const int16_t yAccel = getLinAccelYScaled(p_position);
+
+    if (p_position == exo_config::bnos::LEFT_SHIN) 
+    {
+        m_linAccelBufferLeft[m_bufferIndexLeft] = abs(yAccel) < (exo_config::bnos::ACCEL_BUFFER_THRESHOLD + m_offset);
+        if (m_bufferIndexLeft < (exo_config::bnos::BUFFER_SIZE - 1)) 
+        {
+            ++m_bufferIndexLeft;
+        } 
+        else 
+        {
+            m_bufferIndexLeft = 0;
+        }
+    } 
+    else if (p_position == exo_config::bnos::RIGHT_SHIN) 
+    {
+        m_linAccelBufferRight[m_bufferIndexRight] = abs(yAccel) < (exo_config::bnos::ACCEL_BUFFER_THRESHOLD + m_offset);
+        if (m_bufferIndexRight < (exo_config::bnos::BUFFER_SIZE - 1)) 
+        {
+            ++m_bufferIndexRight;
+        } 
+        else
+        {
+            m_bufferIndexRight = 0;
+        }
     }
 }
 
-void BnoHandler::getGroundedState(bool grounded[exo_config::bnos::NB_LEG])
-{
-    float bufferAvg = 0;
+void BnoHandler::getGroundedState(bool p_grounded[exo_config::bnos::NB_LEG]) {
+    float bufferAvg = 0.0f;
     updateBuffer(exo_config::bnos::LEFT_SHIN);
-    for(int i=0; i<exo_config::bnos::BUFFER_SIZE;i++)
-    {
-        bufferAvg += linAccelBufferLeft[i];
-    }
-    bufferAvg /= exo_config::bnos::BUFFER_SIZE;
-    grounded[exo_config::bnos::LEFT_LEG] = bufferAvg >= exo_config::bnos::ACCEL_BUFFER_THRESHOLD;
 
-    bufferAvg = 0;
-    updateBuffer(exo_config::bnos::RIGHT_SHIN);
-    for(int i=0; i<exo_config::bnos::BUFFER_SIZE;i++)
+    for (size_t i = 0; i < exo_config::bnos::BUFFER_SIZE; ++i) 
     {
-        bufferAvg += linAccelBufferRight[i];
+        bufferAvg += m_linAccelBufferLeft[i];
     }
+
     bufferAvg /= exo_config::bnos::BUFFER_SIZE;
-    grounded[exo_config::bnos::RIGHT_LEG] = bufferAvg >= exo_config::bnos::ACCEL_BUFFER_THRESHOLD;
+    p_grounded[exo_config::bnos::LEFT_LEG] = bufferAvg >= exo_config::bnos::ACCEL_BUFFER_THRESHOLD;
+
+    bufferAvg = 0.0f;
+    updateBuffer(exo_config::bnos::RIGHT_SHIN);
+
+    for (size_t i = 0; i < exo_config::bnos::BUFFER_SIZE; ++i) 
+    {
+        bufferAvg += m_linAccelBufferRight[i];
+    }
+
+    bufferAvg /= exo_config::bnos::BUFFER_SIZE;
+    p_grounded[exo_config::bnos::RIGHT_LEG] = bufferAvg >= exo_config::bnos::ACCEL_BUFFER_THRESHOLD;
 }
 
-int16_t BnoHandler::getLinAccelYScaled(uint8_t position)
+int16_t BnoHandler::getLinAccelYScaled(uint8_t p_position) 
 {
-    const float y = linearAccelerations[bnoIndex(position)].y;
+    const float y = m_linearAccelerations[bnoIndex(p_position)].y;
     return static_cast<int16_t>(y * 256.0f);
 }
 
-void BnoHandler::printName(uint8_t position){
-
-    switch (position)
+void BnoHandler::printName(uint8_t p_position) 
+{
+    switch (p_position) 
     {
-    case exo_config::bnos::LEFT_THIGH:
-        Serial.print("THIGH_L");
-        break;
-    case exo_config::bnos::RIGHT_THIGH:
-        Serial.print("THIGH_R");
-        break;
-    case exo_config::bnos::LEFT_SHIN:
-        Serial.print("TIBIA_L");
-        break;
-    case exo_config::bnos::RIGHT_SHIN:
-        Serial.print("TIBIA_R");
-        break;
-    case exo_config::bnos::EXO_BACK:
-        Serial.print("EXO_BACK");
-        break;
-    case exo_config::bnos::MOBO:
-        Serial.print("MOBO");
-        break;
-    default:
-        Serial.print("Unknown");
-        break;
+        case exo_config::bnos::LEFT_THIGH:
+            Serial.print("THIGH_L");
+            break;
+        case exo_config::bnos::RIGHT_THIGH:
+            Serial.print("THIGH_R");
+            break;
+        case exo_config::bnos::LEFT_SHIN:
+            Serial.print("TIBIA_L");
+            break;
+        case exo_config::bnos::RIGHT_SHIN:
+            Serial.print("TIBIA_R");
+            break;
+        case exo_config::bnos::EXO_BACK:
+            Serial.print("EXO_BACK");
+            break;
+        case exo_config::bnos::MOBO:
+            Serial.print("MOBO");
+            break;
+        default:
+            Serial.print("Unknown");
+            break;
     }
 }
 
-void BnoHandler::printBNOData(uint8_t position){
-
-    Serial.print("IMU "); printName(position); Serial.print("\n");
-    Serial.print("Y: "); Serial.print(BNOAngles[bnoIndex(position)]);
+void BnoHandler::printBNOData(uint8_t p_position) 
+{
+    Serial.print("IMU ");
+    printName(p_position);
+    Serial.print("\n");
+    Serial.print("Y: ");
+    Serial.print(m_bnoAngles[bnoIndex(p_position)]);
     Serial.print("\n");
 }
 
-// Print relevant IMU information
-void BnoHandler::printBNOsStatus(int startIndex, int endIndex){
-    for (int i = startIndex; i<=endIndex; i++){
-        Serial.print("\tIMU "); printName(i); Serial.print("\t");
-        Serial.print("LINK: "); Serial.print(checkIfConnected(i));
+void BnoHandler::printBNOsStatus(int p_startIndex, int p_endIndex) 
+{
+    for (int i = p_startIndex; i <= p_endIndex; ++i) {
+        Serial.print("\tIMU ");
+        printName(i);
+        Serial.print("\t");
+        Serial.print("LINK: ");
+        Serial.print(checkIfConnected(i));
     }
 }
 
-void BnoHandler::printBNOsData(int startIndex, int endIndex){
-    for (int i = startIndex; i<=endIndex; i++){
+void BnoHandler::printBNOsData(int p_startIndex, int p_endIndex) 
+{
+    for (int i = p_startIndex; i <= p_endIndex; ++i) {
         printBNOData(i);
     }
 }
 
-void BnoHandler::printConnectedBNOsData(int startIndex, int endIndex){
-    for (int i = startIndex; i <= endIndex; i++){
-        if (bnoConnected[i]) {
+void BnoHandler::printConnectedBNOsData(int p_startIndex, int p_endIndex) 
+{
+    for (int i = p_startIndex; i <= p_endIndex; ++i) {
+        if (m_bnoConnected[i]) {
             printBNOData(i);
         }
     }
