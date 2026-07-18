@@ -3,6 +3,7 @@
 #include "bnoHandler.h"
 #include "logic.h"
 #include "motorHandler.hpp"
+#include "SerialHandler.hpp"
 #include "hmi/HMI_Comm.h"
 #include "config.h"
 
@@ -16,6 +17,7 @@ void hmiLoop(void * pvParameters);
 static BnoHandler bnoHandler;
 static Logic logic;
 static MotorHandler motorHandler;
+static SerialHandler serialHandler;
 static HMI_Comm hmi;
 SemaphoreHandle_t motorPowerMutex;
 
@@ -71,28 +73,40 @@ void setup() {
 }
 
 void loop() {
-  bnoHandler.requestData();
-
-  if (debug::main)
-  {
-    Serial.println("---- Connected BNO Data ----");
-    bnoHandler.printConnectedBNOsData(0, 5);
-    Serial.println();
-  }
-
-  float angles[bno_config::amount] = {0};
-  bool grounded[bno_config::nb_leg] = {true};
-  bnoHandler.getAngle(angles);
-  bnoHandler.getGroundedState(grounded);
-  
-  for (int i = 0; i < bno_config::amount; i++)
-    Serial.println(angles[i]);
-
-  Serial.println(grounded[0]);
-  Serial.println(grounded[1]);
-
   float torque[motor_config::amount] = {0};
-  logic.calculateTorque(angles, grounded, torque);
+
+  if(app::config::debug::MANUAL_MODE)
+  {
+    std::array<float, 4> torqueTemp = serialHandler.update();
+    torque[0] = torqueTemp[0];
+    torque[1] = torqueTemp[1];
+    torque[2] = torqueTemp[2];
+    torque[3] = torqueTemp[3];
+  }
+  else
+  {
+    bnoHandler.requestData();
+
+    if (debug::main)
+    {
+      Serial.println("---- Connected BNO Data ----");
+      bnoHandler.printConnectedBNOsData(0, 5);
+      Serial.println();
+    }
+
+    float angles[bno_config::amount] = {0};
+    bool grounded[bno_config::nb_leg] = {true};
+    bnoHandler.getAngle(angles);
+    bnoHandler.getGroundedState(grounded);
+    
+    for (int i = 0; i < bno_config::amount; i++)
+      Serial.println(angles[i]);
+
+    Serial.println(grounded[0]);
+    Serial.println(grounded[1]);
+
+    logic.calculateTorque(angles, grounded, torque);
+  }
 
 /*   float val = 15;
   float test[4] = {val, val, val, val}; */

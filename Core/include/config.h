@@ -87,6 +87,7 @@ namespace app::config
         constexpr bool motor_handler = true;
         constexpr bool motor = true;
         constexpr bool main = true;
+        constexpr bool MANUAL_MODE = false;
     }
 }  
 #endif
