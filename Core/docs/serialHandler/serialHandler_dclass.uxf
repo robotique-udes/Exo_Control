@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>310</x>
+      <y>150</y>
+      <w>330</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>SerialHandler
+--
+- m_torques : std::array&lt;float, 4&gt;
+- m_selectedMotorID : uint8_t
+--
++ update() : std::array&lt;float, 4&gt;
+- setTorque(torque : float) : void
+- setMotorID(id : uint8_t) : void
+- restart() : void
+--
+Responsibilities
+-- Manually controls the torque using the serial port</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
