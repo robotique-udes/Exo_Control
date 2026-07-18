@@ -2,7 +2,7 @@
  * @file MotorHandler.cpp
  * @brief Implementation of the MotorHandler class
  * 
- * @author Samuel Savaria
+ * @author Samuel Savaria, Gabriel Desrochers
  * @date 2026-06-10
  */
 #include "MotorHandler.hpp"

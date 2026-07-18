@@ -2,7 +2,7 @@
  * @file ICubemarsMotor.hpp
  * @brief Declaration of the ICubemarsMotor interface class
  * 
- * @author Samuel Savaria
+ * @author Samuel Savaria, Eloi Charbonneau, Gabriel Desrochers
  * @date 2026-06-05
  */
 #ifndef BIOGENIUS_CUBEMARS_MOTOR_HPP

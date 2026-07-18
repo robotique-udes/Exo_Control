@@ -1,3 +1,11 @@
+/**
+ * @file Multiplex.hpp
+ * @brief Definition of the Multiplex class
+ * 
+ * @author Eloi Charbonneau
+ * @date 2026-07-18
+ */
+
 #ifndef MULTIPLEX_HPP
 #define MULTIPLEX_HPP
 #include <Wire.h>

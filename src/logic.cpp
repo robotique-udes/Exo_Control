@@ -1,3 +1,12 @@
+/**
+ * @file Logic.cpp
+ * @brief Implementation of the Logic class
+ * 
+ * @author Gabriel Desrochers
+ * @date 2026-07-18
+ */
+
+
 #include "Logic.hpp"
 
 

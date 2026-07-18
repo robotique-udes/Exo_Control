@@ -1,3 +1,11 @@
+/**
+ * @file Logic.hpp
+ * @brief Declaration of the Logic class
+ * 
+ * @author Gabriel Desrochers
+ * @date 2026-07-18
+ */
+
 #ifndef LOGIC_HPP
 #define LOGIC_HPP
 

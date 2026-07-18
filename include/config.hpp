@@ -1,3 +1,10 @@
+ /** 
+ * @file Config.hpp
+ * @brief Configuration file for this exosqueleton
+ * @author Gabriel Desrochers
+ * @date 2026-07-18
+ */
+
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 

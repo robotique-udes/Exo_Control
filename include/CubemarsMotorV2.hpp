@@ -3,7 +3,7 @@
  * @brief Declaration of the CubemarsMotorV2 implementation class
  * @see Datasheet: https://www.cubemars.com/data/cms/202604/ak-series-driver-manual-v1-0-18-for-ak-2-0-robotic-actuator.pdf
  * 
- * @author Samuel Savaria
+ * @author Samuel Savaria, Eloi Charbonneau, Gabriel Desrochers
  * @date 2026-06-07
  */
 #ifndef BIOGENIUS_CUBEMARS_MOTOR_V2_HPP

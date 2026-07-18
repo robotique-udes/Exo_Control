@@ -1,3 +1,9 @@
+ /** 
+ * @file BNOHandler.hpp
+ * @author Eloi Charbonneau
+ * @date 2026-07-18
+ */
+
 #ifndef BNOHANDLER_HPP
 #define BNOHANDLER_HPP
 

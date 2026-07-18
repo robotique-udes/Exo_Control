@@ -1,3 +1,11 @@
+/**
+ * @file BNOHandler.cpp
+ * @brief Implementation of the BNOHandler class
+ * 
+ * @author Eloi Charbonneau
+ * @date 2026-07-18
+ */
+
 #include "BNOHandler.hpp"
 #include "Arduino.h"
 #include <Wire.h>

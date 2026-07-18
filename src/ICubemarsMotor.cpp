@@ -2,7 +2,7 @@
  * @file ICubemarsMotor.cpp
  * @brief Definition of the ICubemarsMotor interface class non-virtual functions
  * 
- * @author Samuel Savaria
+ * @author Samuel Savaria, Eloi Charbonneau, Gabriel Desrochers
  * @date 2026-06-05
  */
 #include "ICubemarsMotor.hpp"

@@ -3,7 +3,7 @@
  * @brief Declaration of the CubemarsMotorV3 implementation class
  * @see Datasheet: https://www.cubemars.com/images/file/20241217/1734428582786471.pdf
  * 
- * @author Samuel Savaria
+ * @author Samuel Savaria, Eloi Charbonneau, Gabriel Desrochers
  * @date 2026-06-06
  */
 #ifndef BIOGENIUS_CUBEMARS_MOTOR_V3_HPP

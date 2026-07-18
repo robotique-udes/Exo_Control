@@ -2,7 +2,7 @@
  * @file CubemarsMotorV2.cpp
  * @brief Definition of the CubemarsMotorV2 implementation class
  *
- * @author Samuel Savaria
+ * @author Samuel Savaria, Eloi Charbonneau, Gabriel Desrochers
  * @date 2026-06-07
  */
 #include "CubemarsMotorV2.hpp"

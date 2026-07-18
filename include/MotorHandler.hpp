@@ -2,9 +2,10 @@
  * @file MotorHandler.hpp
  * @brief Declaration of the MotorHandler class
  * 
- * @author Samuel Savaria
+ * @author Samuel Savaria, Gabriel Desrochers
  * @date 2026-06-10
  */
+
 #ifndef BIOGENIUS_MOTOR_HANDLER_HPP
 #define BIOGENIUS_MOTOR_HANDLER_HPP
 
