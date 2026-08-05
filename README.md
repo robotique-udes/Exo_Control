@@ -1,92 +1,105 @@
-# Core
+# Exo_Control - ACE 2026
 
 ## Table of Contents
 
-- [Core](#core)
-  - [Table of Contents](#table-of-contents)
-  - [Description](#description)
-  - [Hardware](#hardware)
-  - [Getting Started](#getting-started)
-  - [Class description](#class-description)
-  - [Testing](#testing)
-  - [License](#license)
-  - [Acknowledgments](#acknowledgments)
-  - [Authors](#authors)
+- [Our Team](#our-team)
+- [Description](#description)
+- [Project Overview](#project-overview)
+- [Hardware](#hardware)
+- [Getting Started](#getting-started)
+- [Folder Overview](#folder-overview)
+- [Development Notes](#development-notes)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Authors](#authors)
+
+## Our Team
+![alt text](Core/docs/team_picture.jpg "Title")
 
 ## Description
 
-**BioGénius** is a technical project within the Robotique UdeS group that focuses on designing a lightweight and powerful exoskeleton system. This innovative system provides support to the legs, hips, and back, making walking and load handling easier. Notably, our prototype led the team to secure the first-place position at the Applied Collegiate Exoskeleton (ACE) Competition in the United States in both 2022 and 2023.
+**BioGenius** is a technical project within the Robotique UdeS group focused on designing a lightweight and powerful exoskeleton system. This system provides support to the legs, hips, and back, making walking and load handling easier. Our prototype helped the team secure first place at the Applied Collegiate Exoskeleton (ACE) Competition in the United States in both 2022 and 2023.
 
-Founded in the fall of 2019 by two bioengineering enthusiasts, BioGénius has grown into a team of over fifteen members, bringing together expertise from various engineering disciplines and cohorts. This project represents a pioneering endeavor at the undergraduate engineering level in Quebec.
+Founded in the fall of 2019 by two bioengineering enthusiasts, BioGenius has grown into a team of more than 10 members with expertise from several engineering disciplines. This project represents a pioneering effort at the undergraduate engineering level in Quebec.
+
+
+
+This release corresponds to the code used for the **ACE 2026** competition at McMaster University.
+
+<div style="text-align: center;">
+  <img src="Core/docs/full_exo.png" alt="Description">
+</div>
 
 ## Hardware
 
-Our system comprises the following key hardware components:
+The system is built around the following main hardware components:
 
-- **Touch Screen (HMI)**: NX3224F024_11
-- **Microcontroller**: ESP32
-- **Inertial Measurement Units**: BNO085
-- **Motor Drives**: DBH-15
-- **Motor**: Servocity 638326
+- Microcontroller: Arduino ESP32 nano
+- Inertial Measurement Units: BNO085
+- Motor: CubemarsV2 AK10-9 KV100 and V3 AK10-9 KV60
 
 ## Getting Started
 
-Getting started with our project is a straightforward process. Simply clone the repository.
+To get started with the project, clone the repository and build it with PlatformIO.
 
-## Class description
+```bash
+git clone https://github.com/robotique-udes/Exo_Control.git
+cd Exo_Control
+pio run
+pio run -t upload
+```
 
-- main: 
-  - Not a class but some things are good to keep in mind:
-  - The main is separated in 3 blocs: test, logic and printing
-    - Test blocs need to be filled with unit tests for every component, will be commented when not in the process of testing 
-    - Logic bloc controls normal operation for the exo, needs to be active when using
-    - Printing bloc is for debugging, keep commented otherwise
-  - Setup starts IMUs and their wifi functions, comment either of those lines if not needed when testing
-- dataCore:
-  - Class holding every middleman variable for every other classes.
-  - Mostly composed of setter and getter
-- bnoHandler:
-  - This class orchestrates the calls to and from each BNO.
-- multiplex:
-  - Wrapper class to facilitate the use of i2c devices going through the multiplexer
-- BNO_085:
-  - Logic class to interact with the Adafruit BNO_085. Stores data in the BnoStruct
-  format for easy access, accessible with a getter.
-- proxiHandler:
-  - This class orchestrates the calls to and from each proximity sensor.
-- proximSensor:
-  - Proxim logic class, used to read distance from ground and determine whether or not the foot of the user is grounded
-- logic:
-  - This class handles mathematic operations. 
-  - It takes the angles of the legs and compute the required pwm out of it.
-- motor:
-  - Mainly send commands to directly to the motors.
-- quadratureEncoder:
-  - Alternative way to get the leg angles from the motor encoders.
-- relay:
-  - Relay logic class,  used to turn ON/OFF any relay
-- touchScreen:
-  - Used to customise the interface and functions of the HMI
-- test:
-  - Testing class composed of units test for every component
-  
-## Testing
+## Folder Overview
 
-To ensure the robustness of our system, you can run unit tests on all components by using the Test class.
+- [include](include): header files, class declarations, and shared configuration definitions
+- [src](src): implementation files for the firmware, sensor handling, control logic, and motor control
+- [docs](docs): development guidelines and supporting documentation
+- [test](test): test-related files and future validation work
+- [platformio.ini](platformio.ini): PlatformIO configuration for the embedded build
+
+## Development Notes
+
+The project follows the coding conventions documented in [docs/guideline/code_guideline.md](docs/guideline/code_guideline.md). In particular:
+
+- use clear and descriptive names
+- keep the code structure consistent
+- document headers with Doxygen comments
+- separate configuration, logic, and hardware interface concerns clearly
 
 ## License
 
-This project is open source, and you can access the full text of the license [here](link-to-license).
+Copyright (C) 2026,  Robotique UdeS
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+For more details, see <https://www.gnu.org/licenses/>.
+
 
 ## Acknowledgments
 
-We invite you to explore the [Robotique UdeS website](https://robotiqueudes.ca/) to learn more about our team and discover other intriguing projects we're involved in.
+We invite you to explore the [Robotique UdeS website](https://robotiqueudes.ca/) to learn more about the team and discover other projects.
 
 ## Authors
 
-The masterminds behind the Exo_Control project are:
+The main contributors to the Exo_Control project are:
 
-- Édouard Moffet, robot 67
-- Dannick Bilodeau,  info 68
-- Simon Trudeau,  info 68
-- Jorand Gagnon,  elec 69
+- Gabriel Desrochers
+- Josseran-Pierre Gay
+- Eloi Charbonneau
+- Samuel Savaria
+- Samuel Archambault
+- Halima Bourdi
+- Reem Youssef
+- Édouard Moffet
+- Jacob Turcotte
+- Dannick Bilodeau
+- Simon Trudeau
+- Jorand Gagnon
