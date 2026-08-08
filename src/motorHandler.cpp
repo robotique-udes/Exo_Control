@@ -7,6 +7,18 @@
  */
 #include "MotorHandler.hpp"
 
+#define DEBUG_MOTOR_HANDLER // uncomment to display prints in this file
+#ifdef DEBUG_MOTOR_HANDLER
+#define PRINT(x) Serial.print(x)
+#define PRINTLN(x) Serial.println(x)
+#define PRINTF(...) Serial.printf(__VA_ARGS__)
+#else 
+#define PRINT(x)
+#define PRINTLN(x)
+#define PRINTF(...)
+#endif
+
+
 MotorHandler::MotorHandler()
 {
     m_motors[exo_config::motors::KNEE_LEFT].motor = &m_kneeLeft;

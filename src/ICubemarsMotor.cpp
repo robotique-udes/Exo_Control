@@ -7,6 +7,17 @@
  */
 #include "ICubemarsMotor.hpp"
 
+//#define DEBUG_INTERFACE_MOTOR // uncomment to display prints in this file
+#ifdef DEBUG_INTERFACE_MOTOR
+#define PRINT(x) Serial.print(x)
+#define PRINTLN(x) Serial.println(x)
+#define PRINTF(...) Serial.printf(__VA_ARGS__)
+#else 
+#define PRINT(x)
+#define PRINTLN(x)
+#define PRINTF(...)
+#endif
+
 // This is necessary to avoid linker errors with C++14 and below
 // I am not sure why this specific member is a problem
 constexpr const char* ICubemarsMotor::ERROR_DESCRIPTIONS[ICubemarsMotor::MAX_ERROR];

@@ -6,6 +6,17 @@
 #include "hmi/HMI_Comm.hpp"
 #include "Config.hpp"
 
+#define DEBUG_MAIN	// uncomment to display prints in this file
+#ifdef DEBUG_MAIN
+#define PRINT(x) Serial.print(x)
+#define PRINTLN(x) Serial.println(x)
+#define PRINTF(...) Serial.printf(__VA_ARGS__)
+#else 
+#define PRINT(x)
+#define PRINTLN(x)
+#define PRINTF(...)
+#endif
+
 
 void hmiLoop(void * pvParameters);
 
@@ -29,9 +40,9 @@ void hmiLoop(void * pvParameters)
 }
 
 
-void setup() {
+void setup() 
+{
 	Serial.begin(115200);
-
 	Wire.begin();
 	delay(500);
 
@@ -47,35 +58,31 @@ void setup() {
 	);
 
 
-	Serial.println("Starting BnoHandler...");
+	PRINTLN("Starting BnoHandler...");
 	const bool hasConnectedBno = bnoHandler.begin();
 
 	if (!hasConnectedBno) {
-		Serial.println("No BNO connected.");
+		PRINTLN("No BNO connected.");
 	} else {
-		Serial.println("BNO setup complete. Reading connected sensors only.");
+		PRINTLN("BNO setup complete. Reading connected sensors only.");
 	}
 	pinMode(exo_config::pins::CAN_TERMINAL, OUTPUT);
 	digitalWrite(exo_config::pins::CAN_TERMINAL, HIGH);
 
 	if(ESP32Can.begin(ESP32Can.convertSpeed(1000), exo_config::pins::CAN_TX, exo_config::pins::CAN_RX, 5, 5)) {
-		Serial.println("CAN bus started!!!");
+		PRINTLN("CAN bus started!!!");
 	} else {
-		Serial.println("CAN bus failed!");
+		PRINTLN("CAN bus failed!");
 	}
 	delay(3000);
 }
 
-void loop() {
-
+void loop() 
+{
 	bnoHandler.requestData();
-
-	if (exo_config::debug::MAIN)
-	{
-		Serial.println("---- Connected BNO Data ----");
-		bnoHandler.printConnectedBNOsData(0, 5);
-		Serial.println();
-	}
+	PRINTLN("---- Connected BNO Data ----");
+	bnoHandler.printConnectedBNOsData(0, 5);
+	PRINTLN("");
 
 	float angles[exo_config::bnos::AMOUNT] = {0};
 	bool grounded[exo_config::bnos::NB_LEG] = {true};
@@ -83,10 +90,10 @@ void loop() {
 	bnoHandler.getGroundedState(grounded);
 	
 	for (int i = 0; i < exo_config::bnos::AMOUNT; i++)
-		Serial.println(angles[i]);
+		PRINTLN(angles[i]);
 
-	Serial.println(grounded[0]);
-	Serial.println(grounded[1]);
+	PRINTLN(grounded[0]);
+	PRINTLN(grounded[1]);
 
 	float torque[exo_config::motors::AMOUNT] = {0};
 	logic.calculateTorque(angles, grounded, torque);

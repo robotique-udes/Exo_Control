@@ -11,6 +11,18 @@
 #include "Arduino.h"
 #include "config.hpp"
 
+//#define DEBUG_MULTIPLEX // uncomment to display prints in this file
+#ifdef DEBUG_MULTIPLEX
+#define PRINT(x) Serial.print(x)
+#define PRINTLN(x) Serial.println(x)
+#define PRINTF(...) Serial.printf(__VA_ARGS__)
+#else 
+#define PRINT(x)
+#define PRINTLN(x)
+#define PRINTF(...)
+#endif
+
+
 Multiplex::Multiplex(){
     this->monWire = &Wire;
     selectChannel(0);

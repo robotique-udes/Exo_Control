@@ -8,6 +8,17 @@
 #include "CubemarsMotorV3.hpp"
 #include <cmath> // For M_PI
 
+//#define DEBUG_MOTOR_V3 // uncomment to display prints in this file
+#ifdef DEBUG_MOTOR_V3
+#define PRINT(x) Serial.print(x)
+#define PRINTLN(x) Serial.println(x)
+#define PRINTF(...) Serial.printf(__VA_ARGS__)
+#else 
+#define PRINT(x)
+#define PRINTLN(x)
+#define PRINTF(...)
+#endif
+
 CubemarsMotorV3::CubemarsMotorV3(uint8_t id) : ICubemarsMotor(id) {}
 
 void CubemarsMotorV3::enterMode() 
