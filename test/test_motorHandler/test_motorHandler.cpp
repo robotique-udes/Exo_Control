@@ -5,51 +5,33 @@
  * @details Reference example for testing the other src/ modules natively:
  *          - Source files are included directly (test_build_src = false, see platformio.ini)
  *          - Arduino core calls (millis, constrain, ...) are faked with ArduinoFake/FakeIt
- *          - Hardware-only dependencies (ESP32-TWAI-CAN) are faked in test/stubs and controlled
- *            directly from the test: push CanFrames onto ESP32Can.rxQueue to simulate what the
- *            motor reports, and inspect ESP32Can.txHistory to see what was sent to the motor.
+ *          - MotorHandler takes its motors via constructor injection, so tests give it a
+ *            FakeMotor (a minimal ICubemarsMotor implementation) instead of real CubemarsMotorV2/V3
+ *            objects. Torque is read directly from the FakeMotor, and temperature/error state is set
+ *            directly on it, so tests don't need to build/decode real CAN payloads. MotorHandler still
+ *            drains ESP32Can internally (see test/stubs/ESP32-TWAI-CAN.hpp), it's just left empty here.
  *          - Each test suite owns its own Unity main(), there is no shared runner.
  */
 #include <unity.h>
 #include <ArduinoFake.h>
+#include <FakeMotor.hpp>
 
 #include "../../src/utils/movingAverage.cpp"
 #include "../../src/ICubemarsMotor.cpp"
-#include "../../src/CubemarsMotorV2.cpp"
-#include "../../src/CubemarsMotorV3.cpp"
 #include "../../src/motorHandler.cpp"
 
 using namespace fakeit;
 
 namespace
 {
-    // Mirrors CubemarsMotorV2's private torque range/bit width (see CubemarsMotorV2.hpp) so the
-    // CAN payloads it sends can be decoded back into a torque value from the test.
-    constexpr float TORQUE_MIN = -65.0f;
-    constexpr float TORQUE_MAX = 65.0f;
-    constexpr uint8_t TORQUE_BITS = 12;
+    FakeMotor kneeLeft(exo_config::motors::KNEE_LEFT);
+    FakeMotor kneeRight(exo_config::motors::KNEE_RIGHT);
+    FakeMotor hipLeft(exo_config::motors::HIP_LEFT);
+    FakeMotor hipRight(exo_config::motors::HIP_RIGHT);
 
-    float decodeTorque(const CanFrame& frame)
+    MotorHandler makeMotorHandler()
     {
-        uint16_t raw = ((frame.data[6] & 0x0F) << 8) | frame.data[7];
-        float span = TORQUE_MAX - TORQUE_MIN;
-        return raw * span / ((1 << TORQUE_BITS) - 1) + TORQUE_MIN;
-    }
-
-    // Returns the most recent frame sent for the given motor identifier
-    const CanFrame& findLastFrame(uint32_t identifier)
-    {
-        for(auto it = ESP32Can.txHistory.rbegin(); it != ESP32Can.txHistory.rend(); ++it)
-        {
-            if(it->identifier == identifier)
-            {
-                return *it;
-            }
-        }
-
-        TEST_FAIL_MESSAGE("No CAN frame found for the requested motor identifier");
-        static CanFrame empty{};
-        return empty;
+        return MotorHandler({&kneeLeft, &kneeRight, &hipLeft, &hipRight});
     }
 }
 
@@ -58,61 +40,77 @@ void setUp(void)
     ArduinoFakeReset();
     When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
     ESP32Can.reset();
+
+    for(FakeMotor* motor : {&kneeLeft, &kneeRight, &hipLeft, &hipRight})
+    {
+        motor->enterModeCalls = 0;
+        motor->sendCommandCalls = 0;
+        motor->lastTorque = 0.0f;
+        motor->setTemperature(0);
+        motor->setErrorCode(CubemarsErrorCode::NO_FAULT);
+    }
 }
 
 void tearDown(void) {}
 
-void test_construction_sendsNoCanTraffic(void)
+void test_construction_doesNotCommandMotors(void)
 {
-    MotorHandler motorHandler;
+    MotorHandler motorHandler = makeMotorHandler();
 
-    TEST_ASSERT_TRUE(ESP32Can.txHistory.empty());
+    TEST_ASSERT_EQUAL_INT(0, kneeLeft.sendCommandCalls);
 }
 
 void test_disabledByDefault_forcesZeroTorque(void)
 {
-    MotorHandler motorHandler;
+    MotorHandler motorHandler = makeMotorHandler();
 
     motorHandler.update({5.0f, 5.0f, 5.0f, 5.0f});
 
-    const CanFrame& frame = findLastFrame(exo_config::motors::KNEE_LEFT);
-    TEST_ASSERT_FLOAT_WITHIN(0.05f, 0.0f, decodeTorque(frame));
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, kneeLeft.lastTorque);
 }
 
-void test_enableMotors_sendsModeSetupFrames(void)
+void test_enableMotors_entersModeOnEveryMotor(void)
 {
-    MotorHandler motorHandler;
+    MotorHandler motorHandler = makeMotorHandler();
 
     motorHandler.enableMotors();
 
-    TEST_ASSERT_FALSE(ESP32Can.txHistory.empty());
+    TEST_ASSERT_EQUAL_INT(1, kneeLeft.enterModeCalls);
+    TEST_ASSERT_EQUAL_INT(1, kneeRight.enterModeCalls);
+    TEST_ASSERT_EQUAL_INT(1, hipLeft.enterModeCalls);
+    TEST_ASSERT_EQUAL_INT(1, hipRight.enterModeCalls);
 }
 
-void test_overTemperatureReading_tripsSafetyAndZeroesTorque(void)
+void test_overTemperatureMotor_tripsSafetyAndZeroesTorqueOnEveryMotor(void)
 {
-    MotorHandler motorHandler;
+    MotorHandler motorHandler = makeMotorHandler();
     motorHandler.enableMotors();
-    ESP32Can.reset(); // Discard the mode-setup frames, keep only what update() sends below
-
-    // Simulate the left knee motor reporting an over-temperature reading over CAN
-    CanFrame overTempReply{};
-    overTempReply.identifier = exo_config::motors::KNEE_LEFT;
-    overTempReply.data_length_code = 8;
-    overTempReply.data[6] = 150; // temperature = data[6] - 40 = 110 degC, above MAX_TEMPERATURE
-    ESP32Can.rxQueue.push(overTempReply);
+    kneeLeft.setTemperature(90); // Above exo_config::motors::MAX_TEMPERATURE
 
     motorHandler.update({5.0f, 5.0f, 5.0f, 5.0f});
 
-    const CanFrame& frame = findLastFrame(exo_config::motors::KNEE_LEFT);
-    TEST_ASSERT_FLOAT_WITHIN(0.05f, 0.0f, decodeTorque(frame));
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, kneeLeft.lastTorque);
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, hipRight.lastTorque);
+}
+
+void test_motorError_tripsSafetyAndZeroesTorque(void)
+{
+    MotorHandler motorHandler = makeMotorHandler();
+    motorHandler.enableMotors();
+    hipLeft.setErrorCode(CubemarsErrorCode::ENCODER_FAULT);
+
+    motorHandler.update({5.0f, 5.0f, 5.0f, 5.0f});
+
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, hipLeft.lastTorque);
 }
 
 int main(int argc, char** argv)
 {
     UNITY_BEGIN();
-    RUN_TEST(test_construction_sendsNoCanTraffic);
+    RUN_TEST(test_construction_doesNotCommandMotors);
     RUN_TEST(test_disabledByDefault_forcesZeroTorque);
-    RUN_TEST(test_enableMotors_sendsModeSetupFrames);
-    RUN_TEST(test_overTemperatureReading_tripsSafetyAndZeroesTorque);
+    RUN_TEST(test_enableMotors_entersModeOnEveryMotor);
+    RUN_TEST(test_overTemperatureMotor_tripsSafetyAndZeroesTorqueOnEveryMotor);
+    RUN_TEST(test_motorError_tripsSafetyAndZeroesTorque);
     return UNITY_END();
 }

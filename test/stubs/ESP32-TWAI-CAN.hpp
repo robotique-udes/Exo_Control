@@ -2,11 +2,10 @@
  * @file ESP32-TWAI-CAN.hpp
  * @brief Native test stub for the ESP32-TWAI-CAN library
  *
- * @details Mirrors the CanFrame layout and ESP32Can API surface actually used by the production
- *          code (see motorHandler.cpp, CubemarsMotorV2.cpp, CubemarsMotorV3.cpp, main.cpp) so
- *          modules compile natively (env:native, see platformio.ini). Tests control it directly:
- *          push frames onto ESP32Can.rxQueue for the code under test to receive, and inspect
- *          ESP32Can.txHistory for what was sent. Call ESP32Can.reset() between tests.
+ * @details Provides the CanFrame type required by ICubemarsMotor's interface, plus a fake ESP32Can
+ *          object for modules that still talk to the CAN bus directly (e.g. CubemarsMotorV2/V3).
+ *          Tests control it directly: push frames onto ESP32Can.rxQueue for the code under test to
+ *          receive, and inspect ESP32Can.txHistory for what was sent. Call ESP32Can.reset() between tests.
  */
 #ifndef TEST_STUBS_ESP32_TWAI_CAN_HPP
 #define TEST_STUBS_ESP32_TWAI_CAN_HPP
