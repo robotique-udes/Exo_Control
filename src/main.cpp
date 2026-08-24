@@ -3,6 +3,8 @@
 #include "BNOHandler.hpp"
 #include "Logic.hpp"
 #include "MotorHandler.hpp"
+#include "CubemarsMotorV2.hpp"
+#include "CubemarsMotorV3.hpp"
 #include "hmi/HMI_Comm.hpp"
 #include "Config.hpp"
 
@@ -11,7 +13,11 @@ void hmiLoop(void * pvParameters);
 
 static BnoHandler bnoHandler;
 static Logic logic;
-static MotorHandler motorHandler;
+static CubemarsMotorV2 kneeLeftMotor(exo_config::motors::KNEE_LEFT);
+static CubemarsMotorV2 kneeRightMotor(exo_config::motors::KNEE_RIGHT);
+static CubemarsMotorV3 hipLeftMotor(exo_config::motors::HIP_LEFT);
+static CubemarsMotorV3 hipRightMotor(exo_config::motors::HIP_RIGHT);
+static MotorHandler motorHandler({&kneeLeftMotor, &kneeRightMotor, &hipLeftMotor, &hipRightMotor});
 static HMI_Comm hmi;
 SemaphoreHandle_t motorPowerMutex;
 
