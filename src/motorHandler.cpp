@@ -7,16 +7,12 @@
  */
 #include "MotorHandler.hpp"
 
-MotorHandler::MotorHandler()
+MotorHandler::MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> p_motors)
 {
-    m_motors[exo_config::motors::KNEE_LEFT].motor = &m_kneeLeft;
-    m_motors[exo_config::motors::KNEE_RIGHT].motor = &m_kneeRight;
-    m_motors[exo_config::motors::HIP_LEFT].motor = &m_hipLeft;
-    m_motors[exo_config::motors::HIP_RIGHT].motor = &m_kneeRight;
-
-    for(Motor motor : m_motors)
+    for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
     {
-        motor.avg = MovingAverage(exo_config::motors::MOVING_AVG_LENGTH);
+        m_motors[i].motor = p_motors[i];
+        m_motors[i].avg = MovingAverage(exo_config::motors::MOVING_AVG_LENGTH);
     }
 
     m_enabled = false;
@@ -40,15 +36,6 @@ void MotorHandler::disableMotors()
 
 void MotorHandler::update(std::array<float, exo_config::motors::AMOUNT> p_torques)
 {
-    CanFrame msg;
-    while(ESP32Can.readFrame(&msg, 0))
-    {
-        for(Motor& motor : m_motors)
-        {
-            motor.motor->receiveCommand(msg);
-        }
-    }
-
     for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
     {
         // 1) Disables the motors if they are too hot to prevent overheating

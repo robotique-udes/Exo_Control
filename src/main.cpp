@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "BNOHandler.hpp"
+#include "CanBusHandler.hpp"
+#include "CubemarsMotorV2.hpp"
+#include "CubemarsMotorV3.hpp"
 #include "Logic.hpp"
 #include "MotorHandler.hpp"
 #include "hmi/HMI_Comm.hpp"
@@ -11,7 +14,12 @@ void hmiLoop(void * pvParameters);
 
 static BnoHandler bnoHandler;
 static Logic logic;
-static MotorHandler motorHandler;
+static CanBusReceiver canBusReceiver;
+static CubemarsMotorV2 kneeLeft(exo_config::motors::KNEE_LEFT);
+static CubemarsMotorV2 kneeRight(exo_config::motors::KNEE_RIGHT);
+static CubemarsMotorV3 hipLeft(exo_config::motors::HIP_LEFT);
+static CubemarsMotorV3 hipRight(exo_config::motors::HIP_RIGHT);
+static MotorHandler motorHandler({&kneeLeft, &kneeRight, &hipLeft, &hipRight});
 static HMI_Comm hmi;
 SemaphoreHandle_t motorPowerMutex;
 
@@ -58,15 +66,23 @@ void setup() {
 	pinMode(exo_config::pins::CAN_TERMINAL, OUTPUT);
 	digitalWrite(exo_config::pins::CAN_TERMINAL, HIGH);
 
-	if(ESP32Can.begin(ESP32Can.convertSpeed(1000), exo_config::pins::CAN_TX, exo_config::pins::CAN_RX, 5, 5)) {
+	if(canBusReceiver.begin(exo_config::pins::CAN_TX, exo_config::pins::CAN_RX, 1000)) {
 		Serial.println("CAN bus started!!!");
 	} else {
 		Serial.println("CAN bus failed!");
 	}
+
+	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeLeft.receiveCommand(p_message); });
+	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeRight.receiveCommand(p_message); });
+	canBusReceiver.subscribe([](const CanFrame& p_message) { hipLeft.receiveCommand(p_message); });
+	canBusReceiver.subscribe([](const CanFrame& p_message) { hipRight.receiveCommand(p_message); });
+
 	delay(3000);
 }
 
 void loop() {
+
+	canBusReceiver.update();
 
 	bnoHandler.requestData();
 

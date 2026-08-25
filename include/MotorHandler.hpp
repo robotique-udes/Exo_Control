@@ -12,8 +12,7 @@
 #include <array>
 
 #include "config.hpp"
-#include "CubemarsMotorV2.hpp"
-#include "CubemarsMotorV3.hpp"
+#include "ICubemarsMotor.hpp"
 #include "utils/MovingAverage.hpp"
 
 /**
@@ -33,8 +32,10 @@ class MotorHandler
 public:
     /**
      * @brief Constructor
+     *
+     * @param[in] p_motors Array of motors, indexed by their exo_config::motors index
      */
-    MotorHandler();
+    MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> p_motors);
 
     /**
      * @brief Enables all motors
@@ -61,10 +62,6 @@ private:
     };
 
     std::array<Motor, exo_config::motors::AMOUNT> m_motors;
-    CubemarsMotorV2 m_kneeLeft = CubemarsMotorV2(exo_config::motors::KNEE_LEFT);
-    CubemarsMotorV2 m_kneeRight = CubemarsMotorV2(exo_config::motors::KNEE_RIGHT);
-    CubemarsMotorV3 m_hipLeft = CubemarsMotorV3(exo_config::motors::HIP_LEFT);
-    CubemarsMotorV3 m_hipRight = CubemarsMotorV3(exo_config::motors::HIP_RIGHT);
 
     bool m_enabled = false;
 };
