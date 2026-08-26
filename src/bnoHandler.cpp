@@ -14,13 +14,9 @@
 
 #define DEBUG_BNO_HANDLER // uncomment to display prints in this file
 #ifdef DEBUG_BNO_HANDLER
-#define PRINT(x) Serial.print(x)
-#define PRINTLN(x) Serial.println(x)
-#define PRINTF(...) Serial.printf(__VA_ARGS__)
+#include "prints/printMacro.hpp"
 #else 
-#define PRINT(x)
-#define PRINTLN(x)
-#define PRINTF(...)
+#include "prints/fakePrintMacro.hpp"
 #endif
 
 BnoHandler::BnoHandler() 
