@@ -17,10 +17,6 @@ void hmiLoop(void * pvParameters);
 static BnoHandler bnoHandler;
 static Logic logic;
 static CanBusReceiver canBusReceiver;
-static CubemarsMotorV2 kneeLeft(exo_config::motors::KNEE_LEFT);
-static CubemarsMotorV2 kneeRight(exo_config::motors::KNEE_RIGHT);
-static CubemarsMotorV3 hipLeft(exo_config::motors::HIP_LEFT);
-static CubemarsMotorV3 hipRight(exo_config::motors::HIP_RIGHT);
 static CubemarsMotorV2 kneeLeftMotor(exo_config::motors::KNEE_LEFT);
 static CubemarsMotorV2 kneeRightMotor(exo_config::motors::KNEE_RIGHT);
 static CubemarsMotorV3 hipLeftMotor(exo_config::motors::HIP_LEFT);
@@ -78,10 +74,10 @@ void setup() {
 		Serial.println("CAN bus failed!");
 	}
 
-	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeLeft.receiveCommand(p_message); });
-	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeRight.receiveCommand(p_message); });
-	canBusReceiver.subscribe([](const CanFrame& p_message) { hipLeft.receiveCommand(p_message); });
-	canBusReceiver.subscribe([](const CanFrame& p_message) { hipRight.receiveCommand(p_message); });
+	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeLeftMotor.receiveCommand(p_message); });
+	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeRightMotor.receiveCommand(p_message); });
+	canBusReceiver.subscribe([](const CanFrame& p_message) { hipLeftMotor.receiveCommand(p_message); });
+	canBusReceiver.subscribe([](const CanFrame& p_message) { hipRightMotor.receiveCommand(p_message); });
 
 	delay(3000);
 }
