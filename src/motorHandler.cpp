@@ -5,14 +5,22 @@
  * @author Samuel Savaria, Gabriel Desrochers
  * @date 2026-06-10
  */
+#include <assert.h>
+
 #include "MotorHandler.hpp"
 
 MotorHandler::MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> p_motors)
 {
     for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
     {
-        m_motors[i].motor = p_motors[i];
-        m_motors[i].avg = MovingAverage(exo_config::motors::MOVING_AVG_LENGTH);
+        for(uint8_t j = 0; j < exo_config::motors::AMOUNT; ++i)
+        {
+            if(i == p_motors[j]->getMotorID())
+            {
+                m_motors[i].motor = p_motors[i];
+                m_motors[i].avg = MovingAverage(exo_config::motors::MOVING_AVG_LENGTH);
+            }
+        }
     }
 
     m_enabled = false;
