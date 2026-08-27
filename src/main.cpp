@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "BNOHandler.hpp"
-#include "CanBusHandler.hpp"
+#include "CanBusReceiver.hpp"
 #include "CubemarsMotorV2.hpp"
 #include "CubemarsMotorV3.hpp"
 #include "Logic.hpp"

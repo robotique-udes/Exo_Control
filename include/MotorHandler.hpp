@@ -13,7 +13,6 @@
 
 #include "config.hpp"
 #include "ICubemarsMotor.hpp"
-#include "ICubemarsMotor.hpp"
 #include "utils/MovingAverage.hpp"
 
 /**

@@ -5,7 +5,7 @@
  * @author Eloi Charbonneau
  * @date 2026-08-25
  */
-#include "CanBusHandler.hpp"
+#include "CanBusReceiver.hpp"
 
 bool CanBusReceiver::begin(int p_txPin, int p_rxPin, int p_speedKbps, uint16_t p_rxQueueSize, uint16_t p_txQueueSize)
 {

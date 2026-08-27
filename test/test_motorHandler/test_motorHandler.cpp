@@ -41,7 +41,6 @@ void setUp(void)
     ArduinoFakeReset();
     fakeMillis = 0;
     fakeit::When(Method(ArduinoFake(), millis)).AlwaysDo([]() { return fakeMillis++; }); 
-    ESP32Can.reset();
 
     for(FakeMotor* motor : {&kneeLeft, &kneeRight, &hipLeft, &hipRight})
     {
