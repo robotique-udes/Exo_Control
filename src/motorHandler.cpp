@@ -5,14 +5,22 @@
  * @author Samuel Savaria, Gabriel Desrochers
  * @date 2026-06-10
  */
+#include <assert.h>
+
 #include "MotorHandler.hpp"
 
 MotorHandler::MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> p_motors)
 {
-    for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
+    for(uint8_t i = 0; i < exo_config::motors::AMOUNT; i++)
     {
-        m_motors[i].motor = p_motors[i];
-        m_motors[i].avg = MovingAverage(exo_config::motors::MOVING_AVG_LENGTH);
+        for(uint8_t j = 0; j < exo_config::motors::AMOUNT; j++)
+        {
+            if(i == p_motors[j]->getMotorID())
+            {
+                m_motors[i].motor = p_motors[i];
+                m_motors[i].avg = MovingAverage(exo_config::motors::MOVING_AVG_LENGTH);
+            }
+        }
     }
 
     m_enabled = false;
@@ -38,6 +46,7 @@ void MotorHandler::update(std::array<float, exo_config::motors::AMOUNT> p_torque
 {
     for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
     {
+        //TODO: Add ramp down for safety
         // 1) Disables the motors if they are too hot to prevent overheating
         if(m_motors[i].motor->getMosfetTemperature() > exo_config::motors::MAX_TEMPERATURE ||
            m_motors[i].motor->getErrorCode() != CubemarsErrorCode::NO_FAULT)
