@@ -11,9 +11,9 @@
 
 MotorHandler::MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> p_motors)
 {
-    for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
+    for(uint8_t i = 0; i < exo_config::motors::AMOUNT; i++)
     {
-        for(uint8_t j = 0; j < exo_config::motors::AMOUNT; ++i)
+        for(uint8_t j = 0; j < exo_config::motors::AMOUNT; j++)
         {
             if(i == p_motors[j]->getMotorID())
             {

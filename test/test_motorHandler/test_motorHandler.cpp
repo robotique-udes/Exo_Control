@@ -20,7 +20,6 @@
 #include "../../src/ICubemarsMotor.cpp"
 #include "../../src/motorHandler.cpp"
 
-using namespace fakeit;
 
 namespace
 {
@@ -28,6 +27,8 @@ namespace
     FakeMotor kneeRight(exo_config::motors::KNEE_RIGHT);
     FakeMotor hipLeft(exo_config::motors::HIP_LEFT);
     FakeMotor hipRight(exo_config::motors::HIP_RIGHT);
+
+    uint32_t fakeMillis = 0;
 
     MotorHandler makeMotorHandler()
     {
@@ -38,7 +39,8 @@ namespace
 void setUp(void)
 {
     ArduinoFakeReset();
-    When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
+    fakeMillis = 0;
+    fakeit::When(Method(ArduinoFake(), millis)).AlwaysDo([]() { return fakeMillis++; }); 
     ESP32Can.reset();
 
     for(FakeMotor* motor : {&kneeLeft, &kneeRight, &hipLeft, &hipRight})
@@ -104,6 +106,18 @@ void test_motorError_tripsSafetyAndZeroesTorque(void)
     TEST_ASSERT_EQUAL_FLOAT(0.0f, hipLeft.lastTorque);
 }
 
+void test_enabledMotor_appliesNonZeroTorque(void)
+{
+    MotorHandler motorHandler = makeMotorHandler();
+    motorHandler.enableMotors();
+
+    // The moving average returns 0 on its very first sample, so a second update is needed to observe the applied torque
+    motorHandler.update({5.0f, 5.0f, 5.0f, 5.0f});
+    motorHandler.update({5.0f, 5.0f, 5.0f, 5.0f});
+
+    TEST_ASSERT_GREATER_THAN_FLOAT(0.0f, kneeLeft.lastTorque);
+}
+
 int main(int argc, char** argv)
 {
     UNITY_BEGIN();
@@ -112,5 +126,6 @@ int main(int argc, char** argv)
     RUN_TEST(test_enableMotors_entersModeOnEveryMotor);
     RUN_TEST(test_overTemperatureMotor_tripsSafetyAndZeroesTorqueOnEveryMotor);
     RUN_TEST(test_motorError_tripsSafetyAndZeroesTorque);
+    RUN_TEST(test_enabledMotor_appliesNonZeroTorque);
     return UNITY_END();
 }
