@@ -8,13 +8,9 @@
 
 
 #include "Logic.hpp"
+#include "macros/printMacro.hpp"
 
-#define DEBUG_LOGIC // uncomment to display prints in this file
-#ifdef DEBUG_LOGIC
-#include "prints/printMacro.hpp"
-#else 
-#include "prints/fakePrintMacro.hpp"
-#endif
+static const bool DEBUG_PRINT = true; // true if you want to display prints in this file
 
 
 Logic::Logic()

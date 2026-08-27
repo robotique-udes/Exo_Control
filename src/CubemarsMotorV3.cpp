@@ -7,13 +7,9 @@
  */
 #include "CubemarsMotorV3.hpp"
 #include <cmath> // For M_PI
+#include "macros/printMacro.hpp"
 
-//#define DEBUG_MOTOR_V3 // uncomment to display prints in this file
-#ifdef DEBUG_MOTOR_V3
-#include "prints/printMacro.hpp"
-#else 
-#include "prints/fakePrintMacro.hpp"
-#endif
+static const bool DEBUG_PRINT = false; // true if you want to display prints in this file
 
 CubemarsMotorV3::CubemarsMotorV3(uint8_t id) : ICubemarsMotor(id) {}
 

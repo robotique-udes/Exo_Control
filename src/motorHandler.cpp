@@ -6,13 +6,9 @@
  * @date 2026-06-10
  */
 #include "MotorHandler.hpp"
+#include "macros/printMacro.hpp"
 
-#define DEBUG_MOTOR_HANDLER // uncomment to display prints in this file
-#ifdef DEBUG_MOTOR_HANDLER
-#include "prints/printMacro.hpp"
-#else 
-#include "prints/fakePrintMacro.hpp"
-#endif
+static const bool DEBUG_PRINT = true; // true if you want to display prints in this file
 
 
 MotorHandler::MotorHandler()

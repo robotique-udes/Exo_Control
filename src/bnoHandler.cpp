@@ -11,13 +11,9 @@
 #include <Wire.h>
 #include <cmath>
 #include <cstring>
+#include "macros/printMacro.hpp"
 
-#define DEBUG_BNO_HANDLER // uncomment to display prints in this file
-#ifdef DEBUG_BNO_HANDLER
-#include "prints/printMacro.hpp"
-#else 
-#include "prints/fakePrintMacro.hpp"
-#endif
+static const bool DEBUG_PRINT = true; // true if you want to display prints in this file
 
 BnoHandler::BnoHandler() 
 {

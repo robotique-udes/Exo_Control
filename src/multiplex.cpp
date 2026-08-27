@@ -10,13 +10,9 @@
 #include <Wire.h>
 #include "Arduino.h"
 #include "config.hpp"
+#include "macros/printMacro.hpp"
 
-//#define DEBUG_MULTIPLEX // uncomment to display prints in this file
-#ifdef DEBUG_MULTIPLEX
-#include "prints/printMacro.hpp"
-#else 
-#include "prints/fakePrintMacro.hpp"
-#endif
+static const bool DEBUG_PRINT = false; // true if you want to display prints in this file
 
 
 Multiplex::Multiplex(){

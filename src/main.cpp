@@ -5,14 +5,9 @@
 #include "MotorHandler.hpp"
 #include "hmi/HMI_Comm.hpp"
 #include "Config.hpp"
+#include "macros/printMacro.hpp"
 
-#define DEBUG_MAIN	// uncomment to display prints in this file
-#ifdef DEBUG_MAIN
-#include "prints/printMacro.hpp"
-#else 
-#include "prints/fakePrintMacro.hpp"
-#endif
-
+static const bool DEBUG_PRINT = true; // true if you want to display prints in this file
 
 void hmiLoop(void * pvParameters);
 
