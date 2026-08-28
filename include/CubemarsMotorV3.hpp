@@ -53,6 +53,9 @@ public:
      */
     void receiveCommand(const CanFrame& message) override;
 
+    // Bits 9-29 of the message ID
+    static constexpr uint32_t REPLY_MESSAGE_CODE = 0x2900;
+
 private:
     // Refer to section 4.2 of the datasheet for the parameter range of the AK10-9
     static constexpr float POSITION_MIN = -12.56f;
@@ -71,7 +74,6 @@ private:
 
     // Bits 9-29 of the message ID
     static constexpr uint32_t FORCE_CONTROL_MODE = 0x800;
-    static constexpr uint32_t REPLY_MESSAGE_CODE = 0x2900;
 };
 
 #endif

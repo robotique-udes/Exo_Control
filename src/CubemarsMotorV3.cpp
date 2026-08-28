@@ -66,9 +66,6 @@ void CubemarsMotorV3::receiveCommand(const CanFrame& p_message)
 {
     // Refer to section 4.3.1 of the datasheet
 
-    // Ignore the message if this motor is not the target
-    if(p_message.identifier != (m_motorId | REPLY_MESSAGE_CODE)) return;
-
     // Parse the data into ints
     int16_t posInt = p_message.data[0] << 8 | p_message.data[1];
     int16_t spdInt = p_message.data[2] << 8 | p_message.data[3];
