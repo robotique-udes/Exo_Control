@@ -12,6 +12,8 @@
 #include <cstdint>
 #include <limits>
 
+#include "ICanObserver.hpp"
+
 /**
  * @brief Error codes returned by Cubemars over CAN
 */
@@ -32,14 +34,14 @@ enum class CubemarsErrorCode : uint8_t
  *
  * @details The constructor requires the 8-bits CAN ID of the motor
  *          The function sendCommand sends a MIT mode command to the motor
- *          The function receiveCommand takes a CAN message and parses it
+ *          The function notify takes a CAN message and parses it
  *          The parsed values can be obtained using their respective getter
  *          enterMode is used to enter MIT mode
  *
  * @author Samuel Savaria
  * @date 2026-06-05
  */
-class ICubemarsMotor
+class ICubemarsMotor : public ICanObserver
 {
 public:
     /**
@@ -64,13 +66,13 @@ public:
      * @param[in] kd       The derivative gain. Required by position and velocity
      */
     virtual void sendCommand(float position, float velocity, float torque, float kp, float kd) = 0;
-    
+
     /**
      * @brief Parses a CAN message sent by the motor containing the position, speed, torque, temperature and error code
      *
      * @param[in] message The CAN message to parse
      */
-    virtual void receiveCommand(const CanFrame& message) = 0;
+    void notify(const CanFrame& message) override = 0;
 
     /**
      * @return The 8-bit CAN ID of the motor

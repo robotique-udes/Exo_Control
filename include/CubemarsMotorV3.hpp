@@ -51,7 +51,7 @@ public:
      *
      * @param[in] message The CAN message to parse
      */
-    void receiveCommand(const CanFrame& message) override;
+    void notify(const CanFrame& message) override;
 
 private:
     // Refer to section 4.2 of the datasheet for the parameter range of the AK10-9
