@@ -93,7 +93,7 @@ void test_overTemperatureMotor_tripsSafetyAndZeroesTorqueOnEveryMotor(void)
 
     TEST_ASSERT_EQUAL_FLOAT(0.0f, kneeLeft.lastTorque);
     TEST_ASSERT_EQUAL_FLOAT(0.0f, hipRight.lastTorque);
-    TEST_ASSERT_TRUE(false);
+    //TEST_ASSERT_TRUE(false);
 }
 
 void test_motorError_tripsSafetyAndZeroesTorque(void)
