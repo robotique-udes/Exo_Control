@@ -107,17 +107,5 @@ namespace exo_config
         constexpr int ADDRESS_1 = 0x4A;                 ///< First I2C address used by thes.
         constexpr int ADDRESS_2 = 0x4B;                 ///< Second I2C address used by thes.
     }
-
-    /**
-     * @brief Debug flags enabling or disabling runtime logs for specific components.
-     */
-    namespace debug
-    {
-        constexpr bool BNO = true;          ///< Enable BNO-related debug output.
-        constexpr bool LOGIC = true;        ///< Enable logic-related debug output.
-        constexpr bool MOTOR_HANDLER = true;///< Enable motor handler debug output.
-        constexpr bool MOTOR = true;        ///< Enable motor debug output.
-        constexpr bool MAIN = true;         ///< Enable main application debug output.
-    }
 }  
 #endif

@@ -11,6 +11,9 @@
 #include <Wire.h>
 #include <cmath>
 #include <cstring>
+#include "macros/printMacro.hpp"
+
+static const bool DEBUG_PRINT = true; // true if you want to display prints in this file
 
 BnoHandler::BnoHandler() 
 {
@@ -50,11 +53,7 @@ BnoHandler::BnoHandler()
 bool BnoHandler::begin() 
 {
     int8_t connected = 0;
-
-    if (exo_config::debug::BNO) 
-    {
-        Serial.print("===== BnoHandler STARTING =====\n");
-    }
+    PRINT("===== BnoHandler STARTING =====\n");
 
     for (size_t i = 0; i < m_bnoDevices.size(); ++i) 
     {
@@ -69,15 +68,12 @@ bool BnoHandler::begin()
             connected++;
         }
 
-        if (exo_config::debug::BNO) 
-        {
-            Serial.print("BNO ");
-            Serial.print(i);
-            Serial.print("\t");
-            Serial.print("Connected: ");
-            Serial.println(isConnected);
-            delay(500);
-        }
+        PRINT("BNO ");
+        PRINT(i);
+        PRINT("\t");
+        PRINT("Connected: ");
+        PRINTLN(isConnected);
+        delay(500);
     }
 
     return connected > 0;
@@ -227,47 +223,47 @@ void BnoHandler::printName(uint8_t p_position)
     switch (p_position) 
     {
         case exo_config::bnos::LEFT_THIGH:
-            Serial.print("THIGH_L");
+            PRINT("THIGH_L");
             break;
         case exo_config::bnos::RIGHT_THIGH:
-            Serial.print("THIGH_R");
+            PRINT("THIGH_R");
             break;
         case exo_config::bnos::LEFT_SHIN:
-            Serial.print("TIBIA_L");
+            PRINT("TIBIA_L");
             break;
         case exo_config::bnos::RIGHT_SHIN:
-            Serial.print("TIBIA_R");
+            PRINT("TIBIA_R");
             break;
         case exo_config::bnos::EXO_BACK:
-            Serial.print("EXO_BACK");
+            PRINT("EXO_BACK");
             break;
         case exo_config::bnos::MOBO:
-            Serial.print("MOBO");
+            PRINT("MOBO");
             break;
         default:
-            Serial.print("Unknown");
+            PRINT("Unknown");
             break;
     }
 }
 
 void BnoHandler::printBNOData(uint8_t p_position) 
 {
-    Serial.print("IMU ");
+    PRINT("IMU ");
     printName(p_position);
-    Serial.print("\n");
-    Serial.print("Y: ");
-    Serial.print(m_bnoAngles[bnoIndex(p_position)]);
-    Serial.print("\n");
+    PRINT("\n");
+    PRINT("Y: ");
+    PRINT(m_bnoAngles[bnoIndex(p_position)]);
+    PRINT("\n");
 }
 
 void BnoHandler::printBNOsStatus(int p_startIndex, int p_endIndex) 
 {
     for (int i = p_startIndex; i <= p_endIndex; ++i) {
-        Serial.print("\tIMU ");
+        PRINT("\tIMU ");
         printName(i);
-        Serial.print("\t");
-        Serial.print("LINK: ");
-        Serial.print(checkIfConnected(i));
+        PRINT("\t");
+        PRINT("LINK: ");
+        PRINT(checkIfConnected(i));
     }
 }
 
