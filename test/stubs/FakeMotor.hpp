@@ -24,7 +24,7 @@ public:
         lastTorque = torque;
     }
 
-    void receiveCommand(const CanFrame&) override {}
+    void notify(const CanFrame&) override {}
 
     void setTemperature(int8_t temperature) { m_temperature = temperature; }
     void setErrorCode(CubemarsErrorCode error) { m_errorCode = error; }

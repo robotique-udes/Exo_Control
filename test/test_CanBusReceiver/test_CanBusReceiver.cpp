@@ -11,6 +11,7 @@
  */
 #include <unity.h>
 #include <ESP32-TWAI-CAN.hpp>
+#include <vector>
 
 #include "../../src/CanBusReceiver.cpp"
 
@@ -23,6 +24,21 @@ namespace
         frame.data_length_code = 0;
         return frame;
     }
+
+    class RecordingObserver : public ICanObserver
+    {
+    public:
+        void notify(const CanFrame& p_frame) override
+        {
+            ++callCount;
+            lastId = p_frame.identifier;
+            receivedIds.push_back(p_frame.identifier);
+        }
+
+        int callCount = 0;
+        uint32_t lastId = 0;
+        std::vector<uint32_t> receivedIds;
+    };
 }
 
 void setUp(void)
@@ -32,68 +48,63 @@ void setUp(void)
 
 void tearDown(void) {}
 
-void test_update_withNoFrames_doesNotInvokeCallback(void)
+void test_update_withNoFrames_doesNotInvokeObserver(void)
 {
     CanBusReceiver receiver;
-    int callCount = 0;
-    receiver.subscribe([&](const CanFrame&) { ++callCount; }, false, 0);
+    RecordingObserver observer;
+    receiver.addObserver(&observer);
 
     receiver.update();
 
-    TEST_ASSERT_EQUAL_INT(0, callCount);
+    TEST_ASSERT_EQUAL_INT(0, observer.callCount);
 }
 
-void test_update_dispatchesFrameToSubscriber(void)
+void test_update_dispatchesFrameToObserver(void)
 {
     CanBusReceiver receiver;
-    uint32_t receivedId = 0;
-    int callCount = 0;
-    receiver.subscribe([&](const CanFrame& frame)
-    {
-        ++callCount;
-        receivedId = frame.identifier;
-    }, false, 0);
+    RecordingObserver observer;
+    receiver.addObserver(&observer);
     ESP32Can.rxQueue.push(makeFrame(0x123));
 
     receiver.update();
 
-    TEST_ASSERT_EQUAL_INT(1, callCount);
-    TEST_ASSERT_EQUAL_UINT32(0x123, receivedId);
+    TEST_ASSERT_EQUAL_INT(1, observer.callCount);
+    TEST_ASSERT_EQUAL_UINT32(0x123, observer.lastId);
 }
 
-void test_update_dispatchesFrameToEverySubscriber(void)
+void test_update_dispatchesFrameToEveryObserver(void)
 {
     CanBusReceiver receiver;
-    int firstCallCount = 0;
-    int secondCallCount = 0;
-    receiver.subscribe([&](const CanFrame&) { ++firstCallCount; }, false, 0);
-    receiver.subscribe([&](const CanFrame&) { ++secondCallCount; }, false, 0);
+    RecordingObserver firstObserver;
+    RecordingObserver secondObserver;
+    receiver.addObserver(&firstObserver);
+    receiver.addObserver(&secondObserver);
     ESP32Can.rxQueue.push(makeFrame(0x123));
 
     receiver.update();
 
-    TEST_ASSERT_EQUAL_INT(1, firstCallCount);
-    TEST_ASSERT_EQUAL_INT(1, secondCallCount);
+    TEST_ASSERT_EQUAL_INT(1, firstObserver.callCount);
+    TEST_ASSERT_EQUAL_INT(1, secondObserver.callCount);
 }
 
 void test_update_drainsEveryPendingFrame(void)
 {
     CanBusReceiver receiver;
-    std::vector<uint32_t> receivedIds;
-    receiver.subscribe([&](const CanFrame& frame) { receivedIds.push_back(frame.identifier); }, false, 0);
+    RecordingObserver observer;
+    receiver.addObserver(&observer);
     ESP32Can.rxQueue.push(makeFrame(0x111));
     ESP32Can.rxQueue.push(makeFrame(0x222));
     ESP32Can.rxQueue.push(makeFrame(0x333));
 
     receiver.update();
 
-    TEST_ASSERT_EQUAL_INT(3, receivedIds.size());
-    TEST_ASSERT_EQUAL_UINT32(0x111, receivedIds[0]);
-    TEST_ASSERT_EQUAL_UINT32(0x222, receivedIds[1]);
-    TEST_ASSERT_EQUAL_UINT32(0x333, receivedIds[2]);
+    TEST_ASSERT_EQUAL_INT(3, observer.receivedIds.size());
+    TEST_ASSERT_EQUAL_UINT32(0x111, observer.receivedIds[0]);
+    TEST_ASSERT_EQUAL_UINT32(0x222, observer.receivedIds[1]);
+    TEST_ASSERT_EQUAL_UINT32(0x333, observer.receivedIds[2]);
 }
 
-void test_update_withoutAnySubscriber_doesNotCrash(void)
+void test_update_withoutAnyObserver_doesNotCrash(void)
 {
     CanBusReceiver receiver;
     ESP32Can.rxQueue.push(makeFrame(0x123));
@@ -103,46 +114,33 @@ void test_update_withoutAnySubscriber_doesNotCrash(void)
     TEST_PASS();
 }
 
-void test_update_identifierFiltered_onlyFiresForMatchingId(void)
+void test_addObserver_upToArraySize_stillDispatchesToEveryObserver(void)
 {
     CanBusReceiver receiver;
-    int matchingCallCount = 0;
-    int otherCallCount = 0;
-    receiver.subscribe([&](const CanFrame&) { ++matchingCallCount; }, true, 0x123);
-    receiver.subscribe([&](const CanFrame&) { ++otherCallCount; }, true, 0x456);
-    ESP32Can.rxQueue.push(makeFrame(0x123));
-
-    receiver.update();
-
-    TEST_ASSERT_EQUAL_INT(1, matchingCallCount);
-    TEST_ASSERT_EQUAL_INT(0, otherCallCount);
-}
-
-void test_subscribe_upToArraySize_stillDispatchesToEverySubscriber(void)
-{
-    CanBusReceiver receiver;
-    int callCount = 0;
+    std::vector<RecordingObserver> observers(CanBusReceiver::MAX_SUBSCRIBERS);
     for(size_t i = 0; i < CanBusReceiver::MAX_SUBSCRIBERS; i++)
     {
-        receiver.subscribe([&](const CanFrame&) { ++callCount; }, false, 0);
+        receiver.addObserver(&observers[i]);
     }
     ESP32Can.rxQueue.push(makeFrame(0x123));
 
     receiver.update();
 
-    TEST_ASSERT_EQUAL_INT(CanBusReceiver::MAX_SUBSCRIBERS, callCount);
+    for(size_t i = 0; i < CanBusReceiver::MAX_SUBSCRIBERS; i++)
+    {
+        TEST_ASSERT_EQUAL_INT(1, observers[i].callCount);
+    }
 }
 
 
 int main(int argc, char** argv)
 {
     UNITY_BEGIN();
-    RUN_TEST(test_update_withNoFrames_doesNotInvokeCallback);
-    RUN_TEST(test_update_dispatchesFrameToSubscriber);
-    RUN_TEST(test_update_dispatchesFrameToEverySubscriber);
+    RUN_TEST(test_update_withNoFrames_doesNotInvokeObserver);
+    RUN_TEST(test_update_dispatchesFrameToObserver);
+    RUN_TEST(test_update_dispatchesFrameToEveryObserver);
     RUN_TEST(test_update_drainsEveryPendingFrame);
-    RUN_TEST(test_update_withoutAnySubscriber_doesNotCrash);
-    RUN_TEST(test_update_identifierFiltered_onlyFiresForMatchingId);
-    RUN_TEST(test_subscribe_upToArraySize_stillDispatchesToEverySubscriber);
+    RUN_TEST(test_update_withoutAnyObserver_doesNotCrash);
+    RUN_TEST(test_addObserver_upToArraySize_stillDispatchesToEveryObserver);
     return UNITY_END();
 }

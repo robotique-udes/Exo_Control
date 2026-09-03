@@ -51,8 +51,8 @@ public:
      *
      * @param[in] message The CAN message to parse
      */
-    void receiveCommand(const CanFrame& message) override;
-    
+    void notify(const CanFrame& message) override;
+
 private:
     /**
      * @brief Enter MIT mode. Cubemars V2 motors have two seperate modes for Servo and MIT.

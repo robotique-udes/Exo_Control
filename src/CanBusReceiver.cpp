@@ -13,11 +13,11 @@ bool CanBusReceiver::begin(int p_txPin, int p_rxPin, int p_speedKbps, uint16_t p
     return ESP32Can.begin(ESP32Can.convertSpeed(p_speedKbps), p_txPin, p_rxPin, p_rxQueueSize, p_txQueueSize);
 }
 
-void CanBusReceiver::subscribe(FrameCallback p_callback, bool p_identifierFiltered, uint32_t p_id)
+void CanBusReceiver::addObserver(ICanObserver* p_observer)
 {
-    assert(m_subscriberCount < MAX_SUBSCRIBERS);
+    assert(m_observerCount < MAX_SUBSCRIBERS);
 
-    m_subscribers[m_subscriberCount++] = Subscriber{p_id, p_identifierFiltered, std::move(p_callback)};
+    m_observers[m_observerCount++] = p_observer;
 }
 
 void CanBusReceiver::update()
@@ -25,14 +25,9 @@ void CanBusReceiver::update()
     CanFrame frame;
     while(ESP32Can.readFrame(&frame, 0))
     {
-        for(size_t i = 0; i < m_subscriberCount; ++i)
+        for(size_t i = 0; i < m_observerCount; ++i)
         {
-            Subscriber& subscriber = m_subscribers[i];
-            if((subscriber.identifierFiltered && subscriber.id == frame.identifier)
-                 || !subscriber.identifierFiltered)
-            {
-                subscriber.callback(frame);
-            }
+            m_observers[i]->notify(frame);
         }
     }
 }

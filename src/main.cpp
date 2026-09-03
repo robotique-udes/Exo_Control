@@ -74,14 +74,10 @@ void setup() {
 		Serial.println("CAN bus failed!");
 	}
 
-	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeLeftMotor.receiveCommand(p_message); },
-															 true, kneeLeftMotor.getMotorID());
-	canBusReceiver.subscribe([](const CanFrame& p_message) { kneeRightMotor.receiveCommand(p_message); },
-															 true, kneeRightMotor.getMotorID());
-	canBusReceiver.subscribe([](const CanFrame& p_message) { hipLeftMotor.receiveCommand(p_message); },
-															 true, hipLeftMotor.getMotorID() | hipLeftMotor.REPLY_MESSAGE_CODE);
-	canBusReceiver.subscribe([](const CanFrame& p_message) { hipRightMotor.receiveCommand(p_message); },
-															 true, hipRightMotor.getMotorID() | hipRightMotor.REPLY_MESSAGE_CODE);
+	canBusReceiver.addObserver(&kneeLeftMotor);
+	canBusReceiver.addObserver(&kneeRightMotor);
+	canBusReceiver.addObserver(&hipLeftMotor);
+	canBusReceiver.addObserver(&hipRightMotor);
 
 	delay(3000);
 }

@@ -64,7 +64,7 @@ void CubemarsMotorV2::sendCommand(float p_position, float p_velocity, float p_to
     ESP32Can.writeFrame(message);
 }
 
-void CubemarsMotorV2::receiveCommand(const CanFrame& p_message)
+void CubemarsMotorV2::notify(const CanFrame& p_message)
 {
     // Refer to section 5.3 of the datasheet
 
