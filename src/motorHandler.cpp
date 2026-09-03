@@ -8,6 +8,10 @@
 #include <assert.h>
 
 #include "MotorHandler.hpp"
+#include "macros/printMacro.hpp"
+
+static const bool DEBUG_PRINT = true; // true if you want to display prints in this file
+
 
 MotorHandler::MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> p_motors)
 {
