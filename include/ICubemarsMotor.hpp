@@ -75,6 +75,15 @@ public:
     void notify(const CanFrame& message) override = 0;
 
     /**
+     * @brief Checks the identifier against the reply identifier(s) used by this motor version
+     *
+     * @param[in] id The CAN identifier of the frame
+     * 
+     * @return True if id matches this motor's reply identifier
+     */
+    bool wantsFrame(uint32_t id) const override = 0;
+
+    /**
      * @return The 8-bit CAN ID of the motor
      */
     uint8_t getMotorID() const;

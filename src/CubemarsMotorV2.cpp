@@ -89,6 +89,11 @@ void CubemarsMotorV2::notify(const CanFrame& p_message)
     }
 }
 
+bool CubemarsMotorV2::wantsFrame(uint32_t p_id) const
+{
+    return p_id == m_motorId;
+}
+
 void CubemarsMotorV2::enterMitMode()
 {
     // Refer to section 5.3 of the datasheet

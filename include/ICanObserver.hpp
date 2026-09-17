@@ -23,6 +23,18 @@ public:
      * @param[in] message The CAN message the observer is notified with
      */
     virtual void notify(const CanFrame& message) = 0;
+
+    /**
+     * @brief Asks the observer whether it is interested in a frame with the given CAN identifier
+     *
+     * @details Lets the dispatcher filter frames before calling notify(), so each observer only
+     *          ever parses frames meant for it
+     *
+     * @param[in] id The CAN identifier of the frame
+     * 
+     * @return True if the observer wants to be notified of frames with this identifier
+     */
+    virtual bool wantsFrame(uint32_t id) const = 0;
 };
 
 #endif

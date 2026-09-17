@@ -27,7 +27,8 @@ void CanBusReceiver::update()
     {
         for(size_t i = 0; i < m_observerCount; ++i)
         {
-            m_observers[i]->notify(frame);
+            if(m_observers[i]->wantsFrame(frame.identifier))
+                m_observers[i]->notify(frame);
         }
     }
 }

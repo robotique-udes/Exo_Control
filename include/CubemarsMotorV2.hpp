@@ -53,6 +53,15 @@ public:
      */
     void notify(const CanFrame& message) override;
 
+    /**
+     * @brief Checks the identifier against this motor's CAN ID
+     *
+     * @param[in] id The CAN identifier of the frame
+     * 
+     * @return True if id matches this motor's CAN ID
+     */
+    bool wantsFrame(uint32_t id) const override;
+
 private:
     /**
      * @brief Enter MIT mode. Cubemars V2 motors have two seperate modes for Servo and MIT.

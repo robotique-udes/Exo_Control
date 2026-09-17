@@ -53,6 +53,15 @@ public:
      */
     void notify(const CanFrame& message) override;
 
+    /**
+     * @brief Checks the identifier against this motor's reply identifier (motor ID combined with REPLY_MESSAGE_CODE)
+     *
+     * @param[in] id The CAN identifier of the frame
+     * 
+     * @return True if id matches this motor's reply identifier
+     */
+    bool wantsFrame(uint32_t id) const override;
+
 private:
     // Refer to section 4.2 of the datasheet for the parameter range of the AK10-9
     static constexpr float POSITION_MIN = -12.56f;
