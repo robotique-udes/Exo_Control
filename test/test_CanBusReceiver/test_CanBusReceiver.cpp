@@ -35,6 +35,15 @@ namespace
             receivedIds.push_back(p_frame.identifier);
         }
 
+        bool wantsFrame(uint32_t p_id) const override
+        {
+            return acceptedId == ACCEPT_ALL || p_id == acceptedId;
+        }
+
+        // Sentinel meaning "accept every frame", used unless a test narrows acceptedId
+        static constexpr uint32_t ACCEPT_ALL = UINT32_MAX;
+
+        uint32_t acceptedId = ACCEPT_ALL;
         int callCount = 0;
         uint32_t lastId = 0;
         std::vector<uint32_t> receivedIds;
@@ -114,6 +123,23 @@ void test_update_withoutAnyObserver_doesNotCrash(void)
     TEST_PASS();
 }
 
+void test_update_onlyDispatchesToObserversThatWantTheFrame(void)
+{
+    CanBusReceiver receiver;
+    RecordingObserver wantedObserver;
+    RecordingObserver unrelatedObserver;
+    wantedObserver.acceptedId = 0x123;
+    unrelatedObserver.acceptedId = 0x456;
+    receiver.addObserver(&wantedObserver);
+    receiver.addObserver(&unrelatedObserver);
+    ESP32Can.rxQueue.push(makeFrame(0x123));
+
+    receiver.update();
+
+    TEST_ASSERT_EQUAL_INT(1, wantedObserver.callCount);
+    TEST_ASSERT_EQUAL_INT(0, unrelatedObserver.callCount);
+}
+
 void test_addObserver_upToArraySize_stillDispatchesToEveryObserver(void)
 {
     CanBusReceiver receiver;
@@ -141,6 +167,7 @@ int main(int argc, char** argv)
     RUN_TEST(test_update_dispatchesFrameToEveryObserver);
     RUN_TEST(test_update_drainsEveryPendingFrame);
     RUN_TEST(test_update_withoutAnyObserver_doesNotCrash);
+    RUN_TEST(test_update_onlyDispatchesToObserversThatWantTheFrame);
     RUN_TEST(test_addObserver_upToArraySize_stillDispatchesToEveryObserver);
     return UNITY_END();
 }
