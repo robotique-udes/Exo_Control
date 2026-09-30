@@ -17,7 +17,8 @@ void CanBusReceiver::addObserver(ICanObserver* p_observer)
 {
     assert(m_observerCount < MAX_SUBSCRIBERS);
 
-    m_observers[m_observerCount++] = p_observer;
+    m_observers[m_observerCount] = p_observer;
+    m_observerCount++;
 }
 
 void CanBusReceiver::update()
