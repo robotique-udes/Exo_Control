@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "BNOHandler.hpp"
-#include "Logic.hpp"
+#include "ContextStatic.hpp"
 #include "MotorHandler.hpp"
 #include "CubemarsMotorV2.hpp"
 #include "CubemarsMotorV3.hpp"
@@ -14,7 +14,7 @@ static const bool DEBUG_PRINT = true; // true if you want to display prints in t
 void hmiLoop(void * pvParameters);
 
 static BnoHandler bnoHandler;
-static Logic logic;
+static ContextStatic contextStatic;
 static CubemarsMotorV2 kneeLeftMotor(exo_config::motors::KNEE_LEFT);
 static CubemarsMotorV2 kneeRightMotor(exo_config::motors::KNEE_RIGHT);
 static CubemarsMotorV3 hipLeftMotor(exo_config::motors::HIP_LEFT);
@@ -27,7 +27,6 @@ SemaphoreHandle_t motorPowerMutex;
 void hmiLoop(void * pvParameters)
 {
 	hmi.begin();
-	hmi.setLogic(&logic);
 	hmi.setMotorHandler(&motorHandler);
 	while(true)
 	{
@@ -93,7 +92,7 @@ void loop()
 	PRINTLN(grounded[1]);
 
 	float torque[exo_config::motors::AMOUNT] = {0};
-	logic.calculateTorque(angles, grounded, torque);
+	contextStatic.computeTorque(angles, grounded, torque);
 	motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
 
 	delay(100);

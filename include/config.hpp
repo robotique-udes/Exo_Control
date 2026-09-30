@@ -74,6 +74,14 @@ namespace exo_config
     }
 
     /**
+     * @brief Parameters used to evaluate how well a context matches the current movement.
+     */
+    namespace context
+    {
+        constexpr unsigned long ANGLE_DELTA_WINDOW = 1000;      ///< Time window used to average angle variation in milliseconds.
+    }
+
+    /**
      * @brief BNO sensor indexing and thresholds used for posture estimation.
      */
     namespace bnos

@@ -28,7 +28,7 @@ public:
      * @param[in] p_grounded Support state for each leg, where true indicates the foot is grounded.
      * @param[out] p_torque Output torque array filled with the computed motor commands.
      */
-    virtual void calculateTorque(const float p_angles[exo_config::bnos::AMOUNT], 
+    virtual void computeTorque(const float p_angles[exo_config::bnos::AMOUNT], 
                             const bool p_grounded[exo_config::bnos::NB_LEG],
                             float (&p_torque)[exo_config::motors::AMOUNT]) = 0;
 

@@ -5,7 +5,7 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
-#include "Logic.hpp"
+#include "UserMorphology.hpp"
 #include "MotorHandler.hpp"
 
 #define SERVICE_UUID "19b10000-e8f2-537e-4f6c-d104768a1214"
@@ -18,7 +18,6 @@ private:
     BLECharacteristic* pSendCharacteristic = nullptr;
     BLECharacteristic* pReceiveCharacteristic = nullptr;
 
-    Logic* logic;
     MotorHandler* motorHandler;
 
     const char* deviceName = "BioGenius";
@@ -72,7 +71,6 @@ public:
     void begin();
     void update();
 
-    void setLogic(Logic *logic);
     void setMotorHandler(MotorHandler *handler);
     void sendBatteryData(int batteryCharge);
     
