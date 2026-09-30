@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "BNOHandler.hpp"
+#include "ContextRunner.hpp"
 #include "ContextStatic.hpp"
 #include "MotorHandler.hpp"
 #include "CubemarsMotorV2.hpp"
@@ -15,6 +16,7 @@ void hmiLoop(void * pvParameters);
 
 static BnoHandler bnoHandler;
 static ContextStatic contextStatic;
+static ContextRunner contextRunner;
 static CubemarsMotorV2 kneeLeftMotor(exo_config::motors::KNEE_LEFT);
 static CubemarsMotorV2 kneeRightMotor(exo_config::motors::KNEE_RIGHT);
 static CubemarsMotorV3 hipLeftMotor(exo_config::motors::HIP_LEFT);
@@ -40,6 +42,7 @@ void setup()
 {
 	Serial.begin(115200);
 	Wire.begin();
+	contextRunner.registerContext(&contextStatic);
 	delay(500);
 
 	//starts the hmi logic on the core 0
@@ -92,7 +95,7 @@ void loop()
 	PRINTLN(grounded[1]);
 
 	float torque[exo_config::motors::AMOUNT] = {0};
-	contextStatic.computeTorque(angles, grounded, torque);
+	contextRunner.update(angles, grounded, torque);
 	motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
 
 	delay(100);

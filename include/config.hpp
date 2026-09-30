@@ -78,6 +78,7 @@ namespace exo_config
      */
     namespace context
     {
+        constexpr uint8_t MAX_CONTEXTS = 1;                     ///< Maximum number of contexts the ContextRunner can hold.
         constexpr unsigned long ANGLE_DELTA_WINDOW = 1000;      ///< Time window used to average angle variation in milliseconds.
     }
 
