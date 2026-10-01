@@ -3,3 +3,18 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+
+# Host/native test artifacts
+.pioenvs/
+.piolibdeps/
+build/
+coverage/
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

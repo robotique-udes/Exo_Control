@@ -8,6 +8,9 @@
 
 
 #include "Logic.hpp"
+#include "macros/printMacro.hpp"
+
+static const bool DEBUG_PRINT = true; // true if you want to display prints in this file
 
 
 Logic::Logic()
@@ -86,20 +89,16 @@ void Logic::calculateTorque(const float p_angles[exo_config::bnos::AMOUNT],
     p_torque[exo_config::motors::KNEE_LEFT] = torqueKneeL;
     p_torque[exo_config::motors::KNEE_RIGHT] = torqueKneeR;
     
-    if (exo_config::debug::LOGIC)
-    {
-        Serial.print("Torque Knee Right ");
-        Serial.println(p_torque[exo_config::motors::KNEE_RIGHT]);
-        Serial.print("Torque Hip Right ");
-        Serial.println(p_torque[exo_config::motors::HIP_RIGHT]);
-        Serial.print("Torque Knee Left ");
-        Serial.println(p_torque[exo_config::motors::KNEE_LEFT]);
-        Serial.print("Torque Hip Left ");
-        Serial.println(p_torque[exo_config::motors::HIP_LEFT]);
-        Serial.println("-------------------");
-        Serial.println();
-    }
-
+    PRINT("Torque Knee Right ");
+    PRINTLN(p_torque[exo_config::motors::KNEE_RIGHT]);
+    PRINT("Torque Hip Right ");
+    PRINTLN(p_torque[exo_config::motors::HIP_RIGHT]);
+    PRINT("Torque Knee Left ");
+    PRINTLN(p_torque[exo_config::motors::KNEE_LEFT]);
+    PRINT("Torque Hip Left ");
+    PRINTLN(p_torque[exo_config::motors::HIP_LEFT]);
+    PRINTLN("-------------------");
+    PRINTLN();
 }
 
 void Logic::calculateTorqueAirborne(float p_angleHip, float p_angleKnee, float &p_torqueHip, float &p_torqueKnee)
@@ -174,42 +173,30 @@ void Logic::valideTorque(const float p_angles[exo_config::bnos::AMOUNT], float (
 {  
     if (limitAngleHip(p_angles[exo_config::bnos::MOBO], p_angles[exo_config::bnos::LEFT_THIGH]))
     {
-        if (exo_config::debug::LOGIC)
-        {
-            Serial.print("HIP LEFT not good : ");
-            Serial.println(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::LEFT_THIGH]);
-        }
+        PRINT("HIP LEFT not good : ");
+        PRINTLN(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::LEFT_THIGH]);
         p_torque[exo_config::motors::HIP_LEFT] = 0.0;
     }
     if (limitAngleHip(p_angles[exo_config::bnos::MOBO], p_angles[exo_config::bnos::RIGHT_THIGH]))
     {
-        if (exo_config::debug::LOGIC)
-        {   
-            Serial.print("HIP RIGHT not good : ");
-            Serial.println(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::RIGHT_THIGH]);
-        }
+        PRINT("HIP RIGHT not good : ");
+        PRINTLN(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::RIGHT_THIGH]);
         p_torque[exo_config::motors::HIP_RIGHT] = 0.0;
     }
     if (limitAngleKnee(p_angles[exo_config::bnos::MOBO], p_angles[exo_config::bnos::LEFT_THIGH], 
                         p_angles[exo_config::bnos::LEFT_SHIN]))
     {
-        if (exo_config::debug::LOGIC)
-        {
-            Serial.print("KNEE LEFT not good : ");
-            Serial.println(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::LEFT_THIGH] 
-                            + p_angles[exo_config::bnos::LEFT_SHIN]);
-        }
+        PRINT("KNEE LEFT not good : ");
+        PRINTLN(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::LEFT_THIGH] 
+                        + p_angles[exo_config::bnos::LEFT_SHIN]);
         p_torque[exo_config::motors::KNEE_LEFT] = 0.0;
     }
     if (limitAngleKnee(p_angles[exo_config::bnos::MOBO], p_angles[exo_config::bnos::RIGHT_THIGH], 
                         p_angles[exo_config::bnos::RIGHT_SHIN]))
     {
-        if (exo_config::debug::LOGIC)
-        {
-            Serial.print("KNEE right not good : ");
-            Serial.println(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::RIGHT_THIGH] 
-                            + p_angles[exo_config::bnos::RIGHT_SHIN]);
-        }
+        PRINT("KNEE right not good : ");
+        PRINTLN(p_angles[exo_config::bnos::MOBO] + p_angles[exo_config::bnos::RIGHT_THIGH] 
+                        + p_angles[exo_config::bnos::RIGHT_SHIN]);
         p_torque[exo_config::motors::KNEE_RIGHT] = 0.0;
     }
 }

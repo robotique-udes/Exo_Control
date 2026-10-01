@@ -6,6 +6,9 @@
  * @date 2026-06-07
  */
 #include "CubemarsMotorV2.hpp"
+#include "macros/printMacro.hpp"
+
+static const bool DEBUG_PRINT = false; // true if you want to display prints in this file
 
 CubemarsMotorV2::CubemarsMotorV2(uint8_t p_id) : ICubemarsMotor(p_id) {}
 

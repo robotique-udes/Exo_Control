@@ -46,11 +46,14 @@ float MovingAverage::addValue(float p_value, unsigned long p_time)
     m_currentAverage += m_head.value * ((float)timeSpan / m_period);
 
     // Removes the old portion to the average
+    // Clamped to 0 (instead of letting p_time - m_period underflow) since no eviction should occur before a full window has elapsed
+    unsigned long windowStart = (p_time > m_period) ? (p_time - m_period) : 0;
+    unsigned long headWindowStart = (m_head.time > m_period) ? (m_head.time - m_period) : 0;
     bool newTail = false;
     unsigned long previousTimeSpan = 0; // In case multiple value needs to be popped
-    while(m_dataPoints.front().time <= p_time - m_period)
+    while(!m_dataPoints.empty() && m_dataPoints.front().time <= windowStart)
     {
-        timeSpan = m_dataPoints.front().time - (m_head.time - m_period) - previousTimeSpan; // Subtract the previous timeSpan to avoid counting the same timeSpan twice
+        timeSpan = m_dataPoints.front().time - headWindowStart - previousTimeSpan; // Subtract the previous timeSpan to avoid counting the same timeSpan twice
         previousTimeSpan += timeSpan;
         m_currentAverage -= m_tail.value * ((float)timeSpan / m_period);
         m_tail = m_dataPoints.front();
@@ -60,11 +63,11 @@ float MovingAverage::addValue(float p_value, unsigned long p_time)
 
     if(newTail)
     {
-        timeSpan = (p_time - m_period) - m_tail.time;
+        timeSpan = windowStart - m_tail.time;
     }
     else
     {
-        timeSpan = (p_time - m_period) - (m_head.time - m_period);
+        timeSpan = windowStart - headWindowStart;
     }
     m_currentAverage -= m_tail.value * ((float)timeSpan / m_period);
         

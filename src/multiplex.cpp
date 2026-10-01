@@ -10,6 +10,10 @@
 #include <Wire.h>
 #include "Arduino.h"
 #include "config.hpp"
+#include "macros/printMacro.hpp"
+
+static const bool DEBUG_PRINT = false; // true if you want to display prints in this file
+
 
 Multiplex::Multiplex(){
     this->monWire = &Wire;

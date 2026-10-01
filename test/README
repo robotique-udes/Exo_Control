@@ -9,3 +9,43 @@ in the development cycle.
 
 More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+
+## Running the tests
+
+Tests run natively on your machine (not on the ESP32) via the `native`
+environment defined in [platformio.ini](../platformio.ini). This environment
+fakes the Arduino core with ArduinoFake, so no board or serial connection
+is required.
+
+### Using the PlatformIO CLI
+
+From the project root:
+
+```powershell
+# Run all test suites
+pio test -e native
+
+# Run a single suite, e.g. test_motorHandler
+pio test -e native -f test_motorHandler
+
+# Run with verbose output
+pio test -e native -v
+```
+
+If `pio` isn't on your PATH, use the full path instead, e.g.
+`C:\Users\<you>\.platformio\penv\Scripts\platformio.exe test -e native`.
+
+### Using the VS Code PlatformIO extension
+
+Open the PlatformIO sidebar (ant icon) > **PROJECT TASKS** > **native** >
+**Advanced** > **Test**, or click the checkmark icon in the PlatformIO
+status bar at the bottom of the window.
+
+### Notes
+
+- Do not compile test files directly with `g++`/a generic C/C++ task — they
+  depend on Unity, ArduinoFake, and the stubs in [test/stubs](stubs), which
+  PlatformIO wires up automatically for the `native` environment.
+- Each test suite includes the `src/` files it needs directly (see
+  `test_build_src = false` in [platformio.ini](../platformio.ini)) and owns
+  its own Unity `main()`, so suites can also be run independently.
