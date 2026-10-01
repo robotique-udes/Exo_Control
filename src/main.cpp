@@ -80,35 +80,39 @@ void loop()
 {
 	float torque[exo_config::motors::AMOUNT] = {0};
 
-  if(exo_config::motors::MANUAL_MODE)
-  {
-    std::array<float, 4> torqueTemp = serialHandler.update();
-    torque[0] = torqueTemp[0];
-    torque[1] = torqueTemp[1];
-    torque[2] = torqueTemp[2];
-    torque[3] = torqueTemp[3];
-  }
-  else
-  {
-    bnoHandler.requestData();
+	if(exo_config::motors::MANUAL_MODE)
+	{
+		std::array<float, 4> torqueTemp = serialHandler.update();
+		torque[0] = torqueTemp[0];
+		torque[1] = torqueTemp[1];
+		torque[2] = torqueTemp[2];
+		torque[3] = torqueTemp[3];
+	}
+	else
+	{
+		bnoHandler.requestData();
+		PRINTLN("---- Connected BNO Data ----");
+		bnoHandler.printConnectedBNOsData(0, 5);
+		PRINTLN("");
 
-	float angles[exo_config::bnos::AMOUNT] = {0};
-	bool grounded[exo_config::bnos::NB_LEG] = {true};
-	bnoHandler.getAngle(angles);
-	bnoHandler.getGroundedState(grounded);
-	
-	for (int i = 0; i < exo_config::bnos::AMOUNT; i++)
-		PRINTLN(angles[i]);
+		float angles[exo_config::bnos::AMOUNT] = {0};
+		bool grounded[exo_config::bnos::NB_LEG] = {true};
+		bnoHandler.getAngle(angles);
+		bnoHandler.getGroundedState(grounded);
+		
+		for (int i = 0; i < exo_config::bnos::AMOUNT; i++)
+			PRINTLN(angles[i]);
 
-	PRINTLN(grounded[0]);
-	PRINTLN(grounded[1]);
+		PRINTLN(grounded[0]);
+		PRINTLN(grounded[1]);
 
-    logic.calculateTorque(angles, grounded, torque);
-  }
+		float torque[exo_config::motors::AMOUNT] = {0};
+		logic.calculateTorque(angles, grounded, torque);
+	}
 
-/*   float val = 15;
-  float test[4] = {val, val, val, val}; */
-  motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
+	/*   float val = 15;
+	float test[4] = {val, val, val, val}; */
+	motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
 
-  delay(100);
+	delay(100);
 }
