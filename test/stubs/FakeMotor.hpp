@@ -24,7 +24,9 @@ public:
         lastTorque = torque;
     }
 
-    void receiveCommand(const CanFrame&) override {}
+    void notify(const CanFrame&) override {}
+
+    bool wantsFrame(uint32_t id) const override { return id == m_motorId; }
 
     void setTemperature(int8_t temperature) { m_temperature = temperature; }
     void setErrorCode(CubemarsErrorCode error) { m_errorCode = error; }

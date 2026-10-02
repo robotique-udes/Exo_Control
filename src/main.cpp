@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "BNOHandler.hpp"
+#include "CanBusReceiver.hpp"
+#include "CubemarsMotorV2.hpp"
+#include "CubemarsMotorV3.hpp"
 #include "Logic.hpp"
 #include "MotorHandler.hpp"
 #include "CubemarsMotorV2.hpp"
@@ -15,6 +18,7 @@ void hmiLoop(void * pvParameters);
 
 static BnoHandler bnoHandler;
 static Logic logic;
+static CanBusReceiver canBusReceiver;
 static CubemarsMotorV2 kneeLeftMotor(exo_config::motors::KNEE_LEFT);
 static CubemarsMotorV2 kneeRightMotor(exo_config::motors::KNEE_RIGHT);
 static CubemarsMotorV3 hipLeftMotor(exo_config::motors::HIP_LEFT);
@@ -66,16 +70,24 @@ void setup()
 	pinMode(exo_config::pins::CAN_TERMINAL, OUTPUT);
 	digitalWrite(exo_config::pins::CAN_TERMINAL, HIGH);
 
-	if(ESP32Can.begin(ESP32Can.convertSpeed(1000), exo_config::pins::CAN_TX, exo_config::pins::CAN_RX, 5, 5)) {
+	if(canBusReceiver.begin(exo_config::pins::CAN_TX, exo_config::pins::CAN_RX, 1000)) {
 		PRINTLN("CAN bus started!!!");
 	} else {
 		PRINTLN("CAN bus failed!");
 	}
+
+	canBusReceiver.addObserver(&kneeLeftMotor);
+	canBusReceiver.addObserver(&kneeRightMotor);
+	canBusReceiver.addObserver(&hipLeftMotor);
+	canBusReceiver.addObserver(&hipRightMotor);
+
 	delay(3000);
 }
 
-void loop() 
-{
+void loop() {
+
+	canBusReceiver.update();
+
 	bnoHandler.requestData();
 	PRINTLN("---- Connected BNO Data ----");
 	bnoHandler.printConnectedBNOsData(0, 5);

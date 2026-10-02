@@ -33,9 +33,9 @@ public:
     /**
      * @brief Constructor
      *
-     * @param[in] motors Motors to control, indexed the same way as the torques passed to update()
+     * @param[in] p_motors Array of motors, indexed by their exo_config::motors index
      */
-    MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> motors);
+    MotorHandler(std::array<ICubemarsMotor*, exo_config::motors::AMOUNT> p_motors);
 
     /**
      * @brief Enables all motors
