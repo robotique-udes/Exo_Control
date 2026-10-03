@@ -83,6 +83,8 @@ void setup()
 	canBusReceiver.addObserver(&hipLeftMotor);
 	canBusReceiver.addObserver(&hipRightMotor);
 
+	motorHandler.enableMotors();
+
 	delay(3000);
 }
 
