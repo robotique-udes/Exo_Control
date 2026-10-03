@@ -42,6 +42,8 @@ namespace exo_config
         constexpr float TORQUE_MAX = 8;                     ///< Maximum allowed torque in newton-meters.
 
         constexpr float TORQUE_MULTIPLIER = 0.2f;   ///< Scaling factor applied to torque commands.
+
+        constexpr bool MANUAL_MODE = false; ///< Enable manual control mode of the motors.
     }
 
     /**
