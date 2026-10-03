@@ -120,7 +120,6 @@ void loop()
 		PRINTLN(grounded[0]);
 		PRINTLN(grounded[1]);
 
-		float torque[exo_config::motors::AMOUNT] = {0};
 		logic.calculateTorque(angles, grounded, torque);
 	}
 
