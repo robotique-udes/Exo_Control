@@ -17,8 +17,17 @@
 #include <FakeMotor.hpp>
 
 #include "../../src/utils/movingAverage.cpp"
+
+// Each source file declares its own file-scoped "static const bool DEBUG_PRINT" (see printMacro.hpp).
+// Renamed via macro substitution so both definitions can coexist in this single translation unit.
+#define DEBUG_PRINT test_ICubemarsMotor_DEBUG_PRINT
 #include "../../src/ICubemarsMotor.cpp"
+#undef DEBUG_PRINT
+
+#define DEBUG_PRINT test_motorHandler_DEBUG_PRINT
 #include "../../src/motorHandler.cpp"
+#undef DEBUG_PRINT
+
 
 
 namespace
@@ -41,7 +50,6 @@ void setUp(void)
     ArduinoFakeReset();
     fakeMillis = 0;
     fakeit::When(Method(ArduinoFake(), millis)).AlwaysDo([]() { return fakeMillis++; }); 
-    ESP32Can.reset();
 
     for(FakeMotor* motor : {&kneeLeft, &kneeRight, &hipLeft, &hipRight})
     {

@@ -48,15 +48,6 @@ void MotorHandler::disableMotors()
 
 void MotorHandler::update(std::array<float, exo_config::motors::AMOUNT> p_torques)
 {
-    CanFrame msg;
-    while(ESP32Can.readFrame(&msg, 0))
-    {
-        for(Motor& motor : m_motors)
-        {
-            motor.motor->receiveCommand(msg);
-        }
-    }
-
     for(uint8_t i = 0; i < exo_config::motors::AMOUNT; ++i)
     {
         //TODO: Add ramp down for safety
