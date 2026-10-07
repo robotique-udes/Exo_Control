@@ -67,12 +67,9 @@ void CubemarsMotorV2::sendCommand(float p_position, float p_velocity, float p_to
     ESP32Can.writeFrame(message);
 }
 
-void CubemarsMotorV2::receiveCommand(const CanFrame& p_message)
+void CubemarsMotorV2::notify(const CanFrame& p_message)
 {
     // Refer to section 5.3 of the datasheet
-
-    // Ignore the message if this motor is not the target
-    if(p_message.identifier != m_motorId) return;
 
     // Parse the data into ints
     uint16_t posInt = p_message.data[1] << 8 | p_message.data[2];
@@ -90,6 +87,11 @@ void CubemarsMotorV2::receiveCommand(const CanFrame& p_message)
     {
         m_errorCode = static_cast<CubemarsErrorCode>(errInt);
     }
+}
+
+bool CubemarsMotorV2::wantsFrame(uint32_t p_id) const
+{
+    return p_id == m_motorId;
 }
 
 void CubemarsMotorV2::enterMitMode()
