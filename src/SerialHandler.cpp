@@ -7,6 +7,9 @@
  */
 #include "SerialHandler.hpp"
 #include "config.hpp"
+#include "macros/printMacro.hpp"
+
+static const bool DEBUG_PRINT = false; // true if you want to display prints in this file
 
 std::array<float, 4> SerialHandler::update()
 {
@@ -31,6 +34,7 @@ std::array<float, 4> SerialHandler::update()
             default: break;
         }
 
+        // Repeat until buffer is empty
         command = Serial.read();
     }
 
@@ -40,14 +44,13 @@ std::array<float, 4> SerialHandler::update()
 void SerialHandler::setTorque(float p_torque)
 {
     m_torques[m_selectedMotorID] = p_torque;
-    Serial.print("Motor #"); Serial.print(m_selectedMotorID);
-    Serial.print(": "); Serial.print(p_torque); Serial.println(" Nm");
+    PRINTF("Motor #%d: %.2f Nm\n", m_selectedMotorID, p_torque);
 }
 
 void SerialHandler::setMotorID(uint8_t p_motorID)
 {
     m_selectedMotorID = (p_motorID + exo_config::motors::AMOUNT) % exo_config::motors::AMOUNT;
-    Serial.print("Motor #"); Serial.print(m_selectedMotorID); Serial.println(" selected");
+    PRINTF("Motor #%d selected\n", m_selectedMotorID);
 }
 
 void SerialHandler::restart()
