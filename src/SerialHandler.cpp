@@ -14,28 +14,22 @@ static const bool DEBUG_PRINT = false; // true if you want to display prints in 
 std::array<float, 4> SerialHandler::update()
 {
     char command = Serial.read();
-    while(command != -1)
+    switch(command)
     {
-        switch(command)
-        {
-            case 'w': setTorque(m_torques[m_selectedMotorID] + 1);
-                      break;
-            case 's': setTorque(m_torques[m_selectedMotorID] - 1);
-                      break;
-            
-            case 'd': setMotorID(m_selectedMotorID + 1);
-                      break;
-            case 'a': setMotorID(m_selectedMotorID - 1);
-                      break;
-            
-            case 'r': restart();
-                      break;
-            
-            default: break;
-        }
-
-        // Repeat until buffer is empty
-        command = Serial.read();
+        case 'w': setTorque(m_torques[m_selectedMotorID] + 1);
+                    break;
+        case 's': setTorque(m_torques[m_selectedMotorID] - 1);
+                    break;
+        
+        case 'd': setMotorID(m_selectedMotorID + 1);
+                    break;
+        case 'a': setMotorID(m_selectedMotorID - 1);
+                    break;
+        
+        case 'r': restart();
+                    break;
+        
+        default: break;
     }
 
     return m_torques;
