@@ -7,6 +7,7 @@
 #include "ContextRunner.hpp"
 #include "ContextStatic.hpp"
 #include "MotorHandler.hpp"
+#include "SerialHandler.hpp"
 #include "CubemarsMotorV2.hpp"
 #include "CubemarsMotorV3.hpp"
 #include "hmi/HMI_Comm.hpp"
@@ -27,6 +28,7 @@ static CubemarsMotorV3 hipLeftMotor(exo_config::motors::HIP_LEFT);
 static CubemarsMotorV3 hipRightMotor(exo_config::motors::HIP_RIGHT);
 static MotorHandler motorHandler({&kneeLeftMotor, &kneeRightMotor, &hipLeftMotor, &hipRightMotor});
 static HMI_Comm hmi;
+static SerialHandler serialHandler;
 SemaphoreHandle_t motorPowerMutex;
 
 
@@ -83,31 +85,49 @@ void setup()
 	canBusReceiver.addObserver(&hipLeftMotor);
 	canBusReceiver.addObserver(&hipRightMotor);
 
+	motorHandler.enableMotors();
+
 	delay(3000);
 }
 
-void loop() {
-
+void loop()
+{
+	float torque[exo_config::motors::AMOUNT] = {0};
+	
 	canBusReceiver.update();
 
-	bnoHandler.requestData();
-	PRINTLN("---- Connected BNO Data ----");
-	bnoHandler.printConnectedBNOsData(0, 5);
-	PRINTLN("");
+	if(exo_config::motors::MANUAL_MODE)
+	{
+		std::array<float, 4> torqueTemp = serialHandler.update();
+		torque[0] = torqueTemp[0];
+		torque[1] = torqueTemp[1];
+		torque[2] = torqueTemp[2];
+		torque[3] = torqueTemp[3];
+	}
+	else
+	{
+		bnoHandler.requestData();
+		PRINTLN("---- Connected BNO Data ----");
+		bnoHandler.printConnectedBNOsData(0, 5);
+		PRINTLN("");
 
-	float angles[exo_config::bnos::AMOUNT] = {0};
-	bool grounded[exo_config::bnos::NB_LEG] = {true};
-	bnoHandler.getAngle(angles);
-	bnoHandler.getGroundedState(grounded);
+		float angles[exo_config::bnos::AMOUNT] = {0};
+		bool grounded[exo_config::bnos::NB_LEG] = {true};
+		bnoHandler.getAngle(angles);
+		bnoHandler.getGroundedState(grounded);
+		
+		for (int i = 0; i < exo_config::bnos::AMOUNT; i++)
+		{
+			PRINTLN(angles[i]);
+		}
+
+		PRINTLN(grounded[0]);
+		PRINTLN(grounded[1]);
+
+		float torque[exo_config::motors::AMOUNT] = {0};
+		contextRunner.update(angles, grounded, torque);
+	}
 	
-	for (int i = 0; i < exo_config::bnos::AMOUNT; i++)
-		PRINTLN(angles[i]);
-
-	PRINTLN(grounded[0]);
-	PRINTLN(grounded[1]);
-
-	float torque[exo_config::motors::AMOUNT] = {0};
-	contextRunner.update(angles, grounded, torque);
 	motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
 
 	delay(100);
