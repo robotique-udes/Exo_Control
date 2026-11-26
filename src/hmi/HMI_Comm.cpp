@@ -110,12 +110,6 @@ int HMI_Comm::getWeight() const
     return data.weight;
 }
 
-void HMI_Comm::setLogic(Logic *logic)
-{
-    this->logic = logic;
-    this->logic = new Logic();
-}
-
 void HMI_Comm::setMotorHandler(MotorHandler *handler)
 {
     this->motorHandler = handler;
@@ -169,7 +163,7 @@ void HMI_Comm::interpretData(String rawString) {
 
         //TODO shouldnt be only when the weight arrives
         //idealy both weight and heigth arrives in the same packet
-        logic->setMorphology(data.height, data.weight);
+        UserMorphology::getInstance().setMorphology(data.height, data.weight);
     } 
 
     Serial.print("Message received :o : ");

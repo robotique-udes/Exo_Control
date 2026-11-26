@@ -4,7 +4,8 @@
 #include "CanBusReceiver.hpp"
 #include "CubemarsMotorV2.hpp"
 #include "CubemarsMotorV3.hpp"
-#include "Logic.hpp"
+#include "ContextRunner.hpp"
+#include "ContextStatic.hpp"
 #include "MotorHandler.hpp"
 #include "SerialHandler.hpp"
 #include "CubemarsMotorV2.hpp"
@@ -18,7 +19,8 @@ static const bool DEBUG_PRINT = true; // true if you want to display prints in t
 void hmiLoop(void * pvParameters);
 
 static BnoHandler bnoHandler;
-static Logic logic;
+static ContextStatic contextStatic;
+static ContextRunner contextRunner;
 static CanBusReceiver canBusReceiver;
 static CubemarsMotorV2 kneeLeftMotor(exo_config::motors::KNEE_LEFT);
 static CubemarsMotorV2 kneeRightMotor(exo_config::motors::KNEE_RIGHT);
@@ -33,7 +35,6 @@ SemaphoreHandle_t motorPowerMutex;
 void hmiLoop(void * pvParameters)
 {
 	hmi.begin();
-	hmi.setLogic(&logic);
 	hmi.setMotorHandler(&motorHandler);
 	while(true)
 	{
@@ -47,6 +48,7 @@ void setup()
 {
 	Serial.begin(115200);
 	Wire.begin();
+	contextRunner.registerContext(&contextStatic);
 	delay(500);
 
 	//starts the hmi logic on the core 0
@@ -115,16 +117,16 @@ void loop()
 		bnoHandler.getGroundedState(grounded);
 		
 		for (int i = 0; i < exo_config::bnos::AMOUNT; i++)
+		{
 			PRINTLN(angles[i]);
+		}
 
 		PRINTLN(grounded[0]);
 		PRINTLN(grounded[1]);
 
-		logic.calculateTorque(angles, grounded, torque);
+		contextRunner.update(angles, grounded, torque);
 	}
-
-	/*   float val = 15;
-	float test[4] = {val, val, val, val}; */
+	
 	motorHandler.update({torque[0], torque[1], torque[2], torque[3]});
 
 	delay(100);

@@ -1,6 +1,6 @@
 # MotorHandler
 
-The motor handler instanciates and owns all of the motors. It receives the torques calculated by `logic` and preprocesses them before forwarding them to the motors.
+The motor handler instanciates and owns all of the motors. It receives the torques calculated by the active context and preprocesses them before forwarding them to the motors.
 
 ## Class overview
 
