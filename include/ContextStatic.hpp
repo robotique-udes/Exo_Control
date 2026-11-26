@@ -34,7 +34,7 @@ public:
 	 *          of (1 - average change in degrees) among those joints, clamped between 0 and 1.
 	 *          Must be called once per control cycle.
 	 * 
-	 * @param p_angles Joint angles in degrees
+	 * @param[in] p_angles Joint angles in degrees
 	 * @return value between 0-1 for context validity
 	 */
 	float computeContextValidity(const float p_angles[exo_config::bnos::AMOUNT]) override;

@@ -8,7 +8,7 @@
 #ifndef BIOGENIUS_CONTEXT_HPP
 #define BIOGENIUS_CONTEXT_HPP
 
-#include "Config.hpp"
+#include "config.hpp"
 
 class IContext
 {
